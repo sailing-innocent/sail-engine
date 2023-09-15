@@ -1,0 +1,15 @@
+{
+    cmdlines = {
+        [[xmake lua E:\tools\xmake\modules\private\utils\statistics.lua]],
+        [[xmake lua E:\tools\xmake\actions\build\cleaner.lua]],
+        "xmake run sail-engine-test",
+        "xmake ",
+        "xmake run se_test",
+        "xmake ",
+        "xmake ",
+        "xmake ",
+        "xmake ",
+        "xmake run se_test -ltc",
+        "xmake run se_test -tc=test_test"
+    }
+}

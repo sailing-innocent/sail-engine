@@ -1,0 +1,7 @@
+target("se_test")
+    set_kind("binary")
+    set_languages("cxx20")
+    add_files("**.cpp")
+    add_deps("external_doctest")
+    add_includedirs("./")
+target_end()

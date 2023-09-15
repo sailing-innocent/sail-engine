@@ -1,0 +1,23 @@
+{
+    ["lib.detect.has_flags"] = {
+        ["windows_x64_E:\\env\\Visual Studio\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x64\\cl.exe_19.37.32822_cxx_cxflags_-nologo_-std:c++20"] = true,
+        ["windows_x64_E:\\env\\Visual Studio\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x64\\cl.exe_19.37.32822_cxx_cxflags_-nologo_cl_sourceDependencies"] = true
+    },
+    find_program_msvc_arch_x64_plat_windows_checktoolcxx = {
+        ["cl.exe"] = [[E:\env\Visual Studio\Community\VC\Tools\MSVC\14.37.32822\bin\HostX64\x64\cl.exe]]
+    },
+    find_program_msvc_arch_x64_plat_windows_checktoolld = {
+        ["link.exe"] = [[E:\env\Visual Studio\Community\VC\Tools\MSVC\14.37.32822\bin\HostX64\x64\link.exe]]
+    },
+    find_programver = {
+        ["E:\\env\\Visual Studio\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x64\\cl.exe"] = "19.37.32822"
+    },
+    find_program_msvc_arch_x64_plat_windows_checktoolcc = {
+        ["cl.exe"] = [[E:\env\Visual Studio\Community\VC\Tools\MSVC\14.37.32822\bin\HostX64\x64\cl.exe]]
+    },
+    find_program = {
+        ["cl.exe"] = [[E:\env\Visual Studio\Community\VC\Tools\MSVC\14.37.32822\bin\HostX64\x64\cl.exe]],
+        ["E:\\env\\Visual Studio\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x64\\cl.exe"] = [[E:\env\Visual Studio\Community\VC\Tools\MSVC\14.37.32822\bin\HostX64\x64\cl.exe]],
+        zig = false
+    }
+}
