@@ -1,4 +1,4 @@
-set_xmakever("2.8.1")
+set_xmakever("2.8.5")
 
 set_project("sail-engine")
 
