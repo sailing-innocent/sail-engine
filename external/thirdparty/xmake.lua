@@ -1,5 +1,7 @@
-target("external_doctest")
-    set_kind("headeronly")
-    add_headerfiles("doctest/doctest.h")
-    add_includedirs("doctest", {public = true})
-target_end()
+includes("doctest")
+
+if get_config("enable_gl") then 
+    includes("glad")
+end 
+
+includes("stb_util")

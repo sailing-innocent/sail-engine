@@ -1,0 +1,6 @@
+target("graphics_api_opengl_survey")
+    add_rules("latex")
+    add_files("main.tex")
+    add_deps("learn_ogl_doc_en")
+    add_deps("si_template", { order = true})
+target_end()

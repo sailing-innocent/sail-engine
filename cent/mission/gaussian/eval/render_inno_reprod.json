@@ -1,0 +1,13 @@
+{
+    "name": "gaussian_render_inno_reprod",
+    "render_name": "inno_reprod",
+    "usage": "render",
+    "checkpoints": [
+        {
+            "dataset": "nerf_blender",
+            "obj_name": "lego",
+            "path": "gaussian",
+            "iter": 30000
+        }
+    ]
+}

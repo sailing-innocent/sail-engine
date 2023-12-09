@@ -1,0 +1,5 @@
+target("vk_shaders")
+    set_kind("object")
+    add_files("**.vert", "**.frag")
+    add_rules("sail.glsl")
+target_end()

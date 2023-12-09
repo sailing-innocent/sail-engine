@@ -1,0 +1,41 @@
+\begin{frame}
+    \frametitle{Coupling}
+    \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{fig_coupling_csig2023.png}
+        \caption{SPH-XPBD Coupling}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \begin{enumerate}
+        \item SPH Predict Phase: Update the position of SPH particles
+        \item XPBD Collision Detection Phase: Wait for the completion of SPH Predict Phase
+        \item SPH Second Update Phase: Wait for the completion of XPBD Collision Detection Phase
+        \item After that, SPH and XPBD solvers can work independently until the iteration ends.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Coupling with External Collider}
+    To coupling SPH and XPBD with external collider, we employ the SDF-based collision method from \cite{macklin_local_2020}, using Frank-Wolfe algorithm to solve the following non-linear constrained optimization problem:
+    \begin{align}
+        \mathbf {x}_i =	\arg\min_{\alpha,\beta,\gamma}\phi(\mathbf{x}_i), \notag \\
+        s.t.\ \mathbf{x}_i =\alpha \mathbf{p}_i + \beta\mathbf{q}_i + \gamma\mathbf{r}_i, \alpha +\beta  + \gamma = 1. \notag
+    \end{align}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\linewidth,keepaspectratio]{fig_sdf_csig2023.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Our Implementation}
+    %下图展示了当流体与静态SDF边界模块交互，该模块以后处理的策略执行\hl{constrain()}的数据流与函数调用。
+    The following figure shows the data flow and function calls of the \textbf{constrain()} function when the fluid interacts with the static SDF boundary module.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\linewidth,keepaspectratio]{fig_volume_boundary_package_csig2023.eps}
+    \end{figure}
+\end{frame}
+

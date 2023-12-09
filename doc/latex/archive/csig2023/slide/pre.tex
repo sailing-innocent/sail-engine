@@ -1,0 +1,61 @@
+\documentclass[10pt, hyperref={colorlinks=true,linkcolor=blue},xcolor=dvipsnames]{beamer}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{listings} % for code
+%--------------------
+%	STYLES AND THEME
+%--------------------
+\setbeamertemplate{bibliography item}[text]
+\usepackage{booktabs}
+\usetheme{Dresden}
+\usecolortheme{dove}
+\usefonttheme{structureitalicserif} 
+\usepackage{mathptmx}
+\usepackage{inconsolata}
+\usepackage[default]{lato}
+\useinnertheme{rectangles}
+\useoutertheme{shadow}
+
+%------------------------------
+%	PRESENTATION INFORMATION
+%------------------------------
+
+\title[title]{ CSIG-2023 Project Report }
+\subtitle{A High-Performance and Comprehensive Computation Framework for Real-Time SPH Fluid Simulation, Visualization and Interaction with Cloth}
+
+\author[SPHere Group]{\texorpdfstring{SPHere Group \\ \smallskip \textit{Zhu Zihang, Lu Xinyu, Luo Xukun, Lu Zixian, Huang Kemeng}}{}}
+
+\date[\today]{\texorpdfstring{Pre \\ \today}{}}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\input{group_introduction}
+
+\begin{frame}
+    \frametitle{TOC}
+    \tableofcontents
+\end{frame}
+
+\input{feature_list}
+
+\section{Background: Luisa Compute}
+\input{luisa_compute_intro_slide_en}
+\section{method}
+\input{method}
+\section{Result}
+\input{csig2023_result_slide_en}
+
+\section{Reference}
+
+\begin{frame}[allowframebreaks]{Reference}
+    \bibliography{ref}
+    \bibliographystyle{plain}
+\end{frame}
+
+\end{document}

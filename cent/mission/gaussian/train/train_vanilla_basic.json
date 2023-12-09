@@ -1,0 +1,20 @@
+{
+    "name": "train_gs_vanilla_basic",
+    "dataset_name": "nerf_blender",
+    "usage": "train",
+    "benchmarks": [
+        "psnr"
+    ],
+    "objects": [
+        "lego"
+    ],
+    "trainer_name": "basic",
+    "render_name": "vanilla",
+    "loss_name": "l1",
+    "train_params": {
+        "saving_iterations": [
+            700,
+            3000
+        ]
+    }
+}

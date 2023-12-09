@@ -1,0 +1,40 @@
+\setCJKfamilyfont{coverfont}{Noto Serif SC Bold}	% 设置书名字体
+\setCJKfamilyfont{cover-author-font}{Noto Sans CJK SC}	% 设置作者字体
+
+% \setCJKfamilyfont{coverfont}{FandolHei-Regular}	% 设置书名字体
+% \setCJKfamilyfont{cover-author-font}{FandolHei-Regular}	% 设置作者字体
+
+
+\colorlet{octa}{cyan!50!gray}	% Color for the octahedron
+
+\begin{titlepage}\begin{tikzpicture}[remember picture, overlay, pencildraw/.style={
+                    color=octa, thick,
+                    decorate,
+                    decoration={random steps, segment length=1pt, amplitude=0.7pt},
+                    align=center
+                }]
+
+        \node[anchor=center] (title-firstline) at ([xshift=25em, yshift=-10em] current page.north west)
+        { \fontsize{25}{25}\CJKfamily{coverfont}基于光滑粒子流体动力学\huge{(SPH)}\fontsize{25}{25}\CJKfamily{coverfont}的};
+        \node[anchor=west] (title-secondline) at ([yshift=-2em] title-firstline.south west)
+        { \fontsize{25}{25}\CJKfamily{coverfont}实时流体与布料耦合仿真求解器};
+
+        \node[anchor=west] (volume) at ([yshift=-4em] title-secondline.west) {\fontsize{15}{15}\CJKfamily{coverfont}第四届\huge{CSIG}\fontsize{15}{15}\CJKfamily{coverfont}比赛\huge{SPHere}\fontsize{15}{15}\CJKfamily{coverfont}队伍作品};
+
+        \node[anchor=west] (author) at ([yshift=-3em, xshift=3em] volume.south west) {\fontsize{12}{12}\CJKfamily{cover-author-font}卢子璇$\quad$陆昕瑜$\quad$罗旭锟$\quad$朱子航$\quad$黄可蒙};
+        \node[anchor=west] at ([xshift=2.4em] author.east) {\fontsize{12}{12}\CJKfamily{cover-author-font}合作完成};
+
+        \draw[line width=2pt, color=black!70!gray] ([xshift=-2.5em, yshift=1em] author.north west) -- ++(35em,0);
+        \shade[top color=gray, bottom color=black,] ([xshift=-1em, yshift=1em] title-firstline.north west) rectangle ++(-1em,-16em);
+
+        % The anchors for the pictures at lower-right corner.
+        \coordinate (pic) at ([xshift=-30em, yshift=22em] current page.south east);
+
+        \begin{scope}[shift = (pic), scale=1.5, opacity=0.55]
+            % TODO: SPH method
+            \node (img) at (0, 0) {\includegraphics*[width=50em,height=30em]{asset_cover_csig2023.png}};
+        \end{scope}
+    \end{tikzpicture}
+
+    \cleardoublepage
+\end{titlepage}

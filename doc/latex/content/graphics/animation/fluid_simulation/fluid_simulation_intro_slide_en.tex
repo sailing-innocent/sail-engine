@@ -1,0 +1,58 @@
+
+\begin{frame}
+    \frametitle{An Overview on Fluid Simulation}
+    \begin{itemize}
+        \item Navier Stokes Equation
+        \item Eulerian and Lagrangian
+        \item SPH and MPM
+        \item parallel computing with GPU
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Navier Stokes Equation}
+
+    \begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+        \begin{column}{0.45\textwidth} % Left column width
+            \begin{figure}
+                \includegraphics[width=0.5\linewidth]{fig_mpm_ssf_demo_wm20230407.png}
+                \caption[short]{Current Demo with MPM and SSF}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.5\textwidth} % Right column width
+            \begin{equation}
+                \begin{aligned}
+                    \frac{\partial \vec{u}}{\partial t} + \vec{u}\cdot \nabla \vec{u} + \frac{1}{\rho}\nabla p & = \nu \nabla^2 \vec{u} + \vec{g} \\
+                    \nabla \cdot \vec{u}                                                                       & = 0
+                \end{aligned}
+            \end{equation}
+        \end{column}
+    \end{columns}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Lagrangian and Eulerian }
+    \begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+        \begin{column}{0.48\textwidth} % Left column width
+            \begin{figure}
+                \includegraphics[width=\linewidth]{fig_lagrangian_wm20230407.png}
+                \caption{Lagrangian}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.48\textwidth} % Right column width
+            \begin{figure}
+                \includegraphics[width=\linewidth]{fig_eulerian_wm20230407.png}
+                \caption{Eulerian}
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{SPH \& MPM}
+    \begin{itemize}
+        \item SPH: Smoothed Particle Hydrodynamics (Origin\cite{priceSmoothedParticleHydrodynamics2012}, Tutorial\cite{koschierSmoothedParticleHydrodynamics2020})
+        \item MPM: Material Point Method (Origin\cite{stomakhinMaterialPointMethod2013}, SIGGRAPH2016 Course Note \cite{jiangMaterialPointMethod2016})
+    \end{itemize}
+\end{frame}

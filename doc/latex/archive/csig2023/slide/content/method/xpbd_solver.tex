@@ -1,0 +1,173 @@
+
+\newcommand\EqRef[1]{(\ref{#1})}
+\newcommand\SepLine{~\\}
+
+\begin{frame}{XPBD Solver}
+XPBD is a simple deformable simulation method, which is:
+\begin{itemize}
+    \item fast(matrix-free),
+    \item easy to implement,
+    \item constraint-based ,
+    \item stable.
+\end{itemize}
+can be used to simulate:
+\begin{itemize}
+    \item cloth : mass-spring, strain based ...
+    \item hair/rod: rod dynamics ...
+    \item soft body: strain based ...
+    \item rigid body: shape matching ...
+    \item fluid
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+XPBD starts with Newton's equation of motion given by:
+\begin{equation}
+    \mathbf{M} \ddot{\mathbf{x}}=-\nabla U\left(\mathbf{x}\right)^T + \mathbf{f}_{ext},\label{xpbd-newton}
+\end{equation}
+
+\begin{table}[]
+\begin{tabular}{ll}
+    $\mathbf{M}$ &  the lumped mass matrix \\
+    $\mathbf{x}$ & $\left({\mathbf{x}_0}^T,{\mathbf{x}_1}^T,{\mathbf{x}_2}^T,...\right)^T$  \\
+    $U$          & the elastic potential \\
+    $\mathbf{f}_{ext}$ & the stacked external force vector
+\end{tabular}
+\end{table}
+
+Apply the implicit Euler discretization to Eq. \ref{xpbd-newton}:
+\begin{equation}
+    \mathbf{M}\frac{\mathbf{x}-\hat{\mathbf{x}}}{\Delta t^2}=-\nabla U(\mathbf{x})^T, 
+    \label{ipg}
+\end{equation}
+where $\mathbf{x}:= \mathbf{x}(t + \Delta t)$ and $\hat{\mathbf{x}}= 
+2 \cdot \mathbf{x}(t)
+- \mathbf{x}(t - \Delta t)
++ \mathbf{M}^{-1} \cdot \mathbf{f}_{ext} \cdot {\Delta t}^2$.
+\end{frame}
+
+\begin{frame}
+
+
+All potentials in the XPBD framework are formulated as squared constraints:
+\begin{equation}
+    U\left(\mathbf{x}\right)=\frac{1}{2} \mathbf{C}\left(\mathbf{x}\right)^{T} \boldsymbol{\alpha}^{-1} \mathbf{C}\left(\mathbf{x}\right), \nonumber
+\end{equation}
+where $\alpha$ is the diagonal compliance matrix describing the inverse stiffness of all constraints. 
+
+\SepLine
+
+By taking the negative gradient of the potential term, we obtain the elastic force:
+
+\begin{equation}
+    \mathbf{f}_{\text {elastic}}=-\nabla U^T=-\nabla \mathbf{C}^T \boldsymbol{\alpha}^{-1} \mathbf{C} = \frac{1}{{\Delta t}^2} \nabla \mathbf{C}^T \boldsymbol{\lambda},  \nonumber
+\end{equation}
+
+where 
+$\boldsymbol{\lambda}=-\boldsymbol{\tilde{\alpha}}^{-1} \mathbf{C}\left(\mathbf{x}\right)$
+with $\boldsymbol{\tilde{\alpha}}=\frac{\boldsymbol{\alpha}}{\Delta t^2}$.
+
+\end{frame}
+
+\begin{frame}
+Thus, we obtain two equations available for iteration:
+\begin{align}
+    \mathbf{M}\left(\mathbf{x}-\tilde{\mathbf{x}}\right)-\nabla \mathbf{C}\left(\mathbf{x}\right)^T \boldsymbol{\lambda}&=\mathbf{0}, \label{g}\\
+    \mathbf{C}\left(\mathbf{x}\right)+\tilde{\boldsymbol{\alpha}} \boldsymbol{\lambda}&=\mathbf{0}.
+    \label{h}
+\end{align}
+We rewrite Eqs. \ref{g} and \ref{h} as
+$\mathbf{g}\left(\mathbf{x}, \boldsymbol{\lambda}\right) =\mathbf{0}$ and
+    $\mathbf{h}\left(\mathbf{x}, \boldsymbol{\lambda}\right) =\mathbf{0}$, respectively,  
+and obtain the following equation by linearizing Eqs. \ref{g} and \ref{h}:
+\begin{equation}
+    \left[\begin{array}{cc}
+        \mathbf{K} & -\nabla \mathbf{C}^T\left(\mathbf{x}^i\right) \\
+        \nabla \mathbf{C}\left(\mathbf{x}^i\right) & \tilde{\boldsymbol{\alpha}}
+        \end{array}\right]\left[\begin{array}{l}
+        \Delta \mathbf{x} \\
+        \Delta \boldsymbol{\lambda}
+        \end{array}\right]=-\left[\begin{array}{l}
+        \mathbf{g}\left(\mathbf{x}^i, \boldsymbol{\lambda}^i\right) \\
+        \mathbf{h}\left(\mathbf{x}^i, \boldsymbol{\lambda}^i\right)
+    \end{array}\right],
+    \label{linearization}
+\end{equation}
+where $\mathbf{x}^{i}$ denotes the result of the $i$-th iteration, and
+\begin{equation}
+    \mathbf{K}=\frac{\partial \mathbf{g}}{\partial \mathbf{x}} = \mathbf{M} - \frac{\partial^2 C^T}{\partial \mathbf{x}^2} \cdot \boldsymbol{\lambda},  \nonumber
+\end{equation}
+\end{frame}
+
+\begin{frame}
+By plugging the approximations of XPBD, 
+    $\mathbf{K} \approx \mathbf{M}$ and 
+    $\mathbf{g} \approx \mathbf{0}$,
+    into Eq. \ref{linearization}, we get the following equations to describe the iteration process of XPBD:
+\begin{equation}
+    \left[\nabla \mathbf{C}\left(\mathbf{x}^i\right) \mathbf{M}^{-1} \nabla \mathbf{C}\left(\mathbf{x}^i\right)^T+\tilde{\boldsymbol{\alpha}}\right] \Delta \boldsymbol{\lambda}=-\mathbf{C}\left(\mathbf{x}^i\right)-\tilde{\boldsymbol{\alpha}} \boldsymbol{\lambda}^i,
+    \label{iter_lambda}
+\end{equation}
+\begin{equation}
+    \Delta \mathbf{x}=\mathbf{M}^{-1} \nabla \mathbf{C}\left(\mathbf{x}^i\right)^T \Delta \boldsymbol{\lambda}.
+    \label{iter_x}
+\end{equation}
+
+\end{frame}
+
+
+\begin{frame}
+Since $\mathbf{M}$ and $\tilde{\boldsymbol{\alpha}}$ are diagonal matrices, Eqs. \ref{iter_lambda} and \ref{iter_x} can be expressed in a matrix-free style. Using $j$ to represent the $j$-th constraint, and $k$ to represent the index of the particle affected by the $j$-th constraint, we have
+\begin{align}
+    \Delta \lambda_j &=\frac{-C_j -\tilde{\alpha}_j \lambda^i_j}{\nabla C_j {\mathbf{M}_j}^{-1} \nabla C_j^T+\tilde{\alpha}_j}, \label{delta_lambda}\\
+    \Delta \mathbf{x}_k &= m_k^{-1} {\frac{\partial C_j}{\partial \mathbf{x}_k}}^T \Delta \lambda_j, k \in \mathcal{O}_j, \label{delta_x}
+\end{align}
+
+where $\mathcal{O}_j$ is a set containing the indices of all particles affected by the $j$-th constraint. $\mathbf{M}_j$ is the lumped mass matrix of all particles in $\mathcal{O}_j$. For instance, if the $j$-th length constraint expresses the length relationship between particle $m$ and particle $n$, then $\mathcal{O}_j=\{m, n\}$.
+\end{frame}
+
+\begin{frame}
+    \frametitle{XPBD Spring Example}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth,keepaspectratio]{fig_spring_csig2023.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Our Constraints}
+    \begin{itemize}
+        \item [$\circ$] Length Constraint $C(\mathbf{x}_0, \mathbf{x}_1) = \| \mathbf{x}_0 - \mathbf{x}_1\| - l_0 = 0$
+        \item [$\circ$] Triangle Strain Constraint $C\left(\mathbf{x}_{0}, \mathbf{x}_{1}, \mathbf{x}_{2}\right)=\operatorname{det}(\mathbf{F})-1=0$.
+        \item [$\circ$] External Collision Constraint $C\left(\mathbf{x}_{0}, \mathbf{x}_{1}, \mathbf{x}_{2}\right)=-\left(d\left(\mathbf{x}_{0}, \mathbf{x}_{1}, \mathbf{x}_{2}\right)-d_{\text{thickness}}\right) \leq 0$.
+        \item [$\circ$] Fluid Cloth Collision Constraint $C\left(\mathbf{x}_{\text{fluid}},\mathbf{x}_{0}, \mathbf{x}_{1}, \mathbf{x}_{2}\right)=-\left(d\left(\mathbf{x}_{\text{fluid}},\mathbf{x}_{0}, \mathbf{x}_{1}, \mathbf{x}_{2}\right)-d_{\text{thickness}}-r_{\text{fluid}}\right) \leq 0$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Solver Implementation}
+\begin{itemize}
+	\item \textbf{XPBD Solver}: Core Solver
+	      \begin{itemize}
+		      \item[$\circ$] Constraint Solver:Solve all kinds of constraints
+		      \item[$\circ$] Integrator:Integrate particles in time
+		      \item[$\circ$] Particle Manager:Manage particle attributes, manage the results of various constraint solutions and apply a specific normalization strategy
+		      \item[$\circ$] Topology Manager:Maintain the topology of particles, such as recording specific information on edges, triangles, and quadrilaterals.
+	      \end{itemize}
+	\item \textbf{Builder}: Tools for generating solvable objects from assets
+	      \begin{itemize}
+		      \item[$\circ$] ClothBuilder:Cloth asset generation, generate basic grid cloth (Grid), generate cloth from .obj file, etc.
+		      \item[$\circ$] ClothPatch:Representation of cloth patches, used to initialize cloth, download current cloth solution results from GPU, etc.
+		      \item[$\circ$] ClothMaterial Cloth material.
+	      \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Solver Implementation}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth,keepaspectratio]{fig_xpbd_solver_csig2023.png}
+        \caption{XPBD Solver}
+    \end{figure}
+\end{frame}

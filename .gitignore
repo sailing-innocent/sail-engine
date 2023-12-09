@@ -2,3 +2,8 @@ build
 bin
 build_files/xmake/_options.lua
 .xmake
+.cache
+__pycache__
+.pytest_cache
+output
+config.json

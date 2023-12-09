@@ -1,0 +1,31 @@
+{
+    "data": [
+        [
+            "35.78",
+            "35.83",
+            "26.15",
+            "34.87",
+            "37.72",
+            "30.00",
+            "35.36",
+            "30.80",
+            "33.32"
+        ]
+    ],
+    "cols": [
+        "Lego",
+        "Chair",
+        "Drums",
+        "Ficus",
+        "Hotdog",
+        "Materials",
+        "Mic",
+        "Ship",
+        "Average"
+    ],
+    "rows": [
+        "vanilla_3dgs_paper"
+    ],
+    "caption": "NeRF Blender PSNR",
+    "label": ""
+}

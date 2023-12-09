@@ -1,0 +1,51 @@
+\section{边界}
+\subsection{静态边界交互}
+SDF(signed distance field) 作为一种优秀的隐式模型表示，primitive可以向其快速地查询距离与法向。选取SDF模型作为场景中的静态障碍(obstacles)/边界(boundary)，由于primitive向其查询距离与法向的便捷性，碰撞生成过程十分简单。
+\subsection{原理}
+SDF边界约束分为两步：
+\begin{enumerate}
+	\item \textbf{碰撞生成}：primitive向SDF询问最近距离，若该距离指示碰撞（例如在SDF模型内侧或者距离小于threshold），则生成该碰撞。
+	      \begin{itemize}
+		      \item 对于primitive为粒子形式，粒子/顶点直接在SDF中查询距离与法向，使用三重线性插值格式。
+		      \item 对于primitive为三角网格形式，计算三角形到SDF的最近距离，生成最近点。（使用文献 \cite{macklin_local_2020} 中的Frank-Wolfe算法），具体来说，使用Frank-Wolfe方法求解以下非线性约束优化问题：
+		            \begin{equation}
+			            \mathbf x_i =	\arg\min_{\alpha,\beta,\gamma}\phi(\mathbf x_i),\\ \quad s.t.,\quad \mathbf x_i =\alpha \mathbf p_i + \beta\mathbf q_i + \gamma\mathbf r_i, \quad \alpha +\beta  + \gamma = 1.
+		            \end{equation}
+
+	      \end{itemize}
+	      \item\textbf{ 碰撞处理}：
+	      \begin{itemize}
+		      \item 对于粒子/顶点，若生成碰撞，则将该粒子/顶点沿着外法向方向移动，直到约束至SDF外侧 /threshold处，同时粒子速度按照法向/切向摩擦系数进行衰减。
+		      \item 对于三角网格，若生成碰撞，则生成XPBD外部碰撞约束，在Solver中统一求解。
+	      \end{itemize}
+\end{enumerate}
+上述的原理可由下图展示，同时这也是本仿真求解器的全流程。如下图所示，当与SPH Solver交互时，静态SDF边界模块作为一个较为独立的可视化前后处理模块，这种策略与直接投影法相似；对于带有拓扑结构的三角网格，直接约束顶点会造成著名的“shape feature missing” 问题，因此需要显示求解碰撞点，而后使用碰撞处理与动力耦合的策略在XPBD Solver中求解接触问题。
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth,keepaspectratio]{fig_sdf_csig2023.png}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\linewidth,keepaspectratio]{fig_overview_csig2023.png}
+\end{figure}
+
+\section{模块架构}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth,keepaspectratio]{fig_boundary_csig2023.png}
+\end{figure}
+
+上图展示了静态边界模块的架构。该模块采用三层次设计：
+\begin{itemize}
+	\item VolumeBoundary: 管理BoundaryConstraints子模块，拥有全局统一的约束容器，协调调度子模块的“约束”方法，最终提交约束。
+	\item BoundaryConstraints： 调度子模块SDF，可以使用SDF提供的距离查询函数来生成碰撞，并执行对粒子的碰撞约束过程。
+	\item SDF：SDF子模块，拥有SDF资产，管理SDF查询方法，拥有导入资产的接口。
+\end{itemize}
+下图展示了当流体与静态SDF边界模块交互，该模块以后处理的策略执行\hl{constrain()}的数据流与函数调用。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7 \linewidth,keepaspectratio]{fig_volume_boundary_package_csig2023.eps}
+\end{figure}

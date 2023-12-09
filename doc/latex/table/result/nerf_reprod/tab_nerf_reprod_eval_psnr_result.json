@@ -1,0 +1,40 @@
+{
+    "rows": [
+        "NeRF Reproduction",
+        "vanilla_nerf_paper"
+    ],
+    "cols": [
+        "lego",
+        "chair",
+        "ficus",
+        "ship",
+        "drums",
+        "mic",
+        "hotdog",
+        "average"
+    ],
+    "data": [
+        [
+            "28.37",
+            "29.80",
+            "27.86",
+            "26.48",
+            "23.89",
+            "28.93",
+            "32.85",
+            "28.31"
+        ],
+        [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            31.01
+        ]
+    ],
+    "caption": "NeRF Reproduction Results (PSNR)",
+    "label": "fig:nerf_reprod_psnr"
+}

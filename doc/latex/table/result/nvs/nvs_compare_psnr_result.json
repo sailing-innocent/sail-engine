@@ -1,0 +1,15 @@
+{
+    "rows": [
+        "vanilla_nerf_paper"
+    ],
+    "cols": [
+        "Average"
+    ],
+    "data": [
+        [
+            31.01
+        ]
+    ],
+    "caption": "Compare Novel View Synthesis PSNR",
+    "label": "fit:nvs_psnr"
+}

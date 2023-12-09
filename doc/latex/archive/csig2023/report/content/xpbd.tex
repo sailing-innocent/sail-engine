@@ -1,0 +1,199 @@
+\section{XPBD技术方案}
+
+\subsection{XPBD方法}
+XPBD方法\cite{xpbd2016}从牛顿质点动力学方程（Newton's equation of motion subject）出发：
+\begin{equation}
+	\mathbf{M} \ddot{\mathbf{x}}=-\nabla U\left(\mathbf{x}\right)^T + \mathbf{f}_{ext},
+	\label{xpbd}
+\end{equation}
+其中 $\mathbf{M}$ 是质量矩阵，$\mathbf{x}=\left({\mathbf{x}_0}^T,{\mathbf{x}_1}^T,{\mathbf{x}_2}^T,...\right)^T$ 表示所有粒子位移向量的堆叠，$\mathbf{x}_i=\left(x_i,y_i,z_i\right)^T $。$U$为系统势能，$\nabla U$为$U$的对粒子位移向量的偏导，$\mathbf{f}_{ext}$为系统所受外力。
+
+在本文中，对于时间积分：$\mathbf{x}^{[0]}$表示当前位置，$\mathbf{x}^{[1]}$表示要计算的下一帧的位置，$\mathbf{x}^{[-1]}$表示上一帧的位置。
+
+对于式\eqref{xpbd}，我们使用隐式欧拉积分离散化，并表达为Incremental Potential Gradient的形式，得到：
+\begin{equation}
+	\mathbf{M}\frac{\mathbf{x}^{[1]}-\hat{\mathbf{x}}}{\Delta t^2}=-\nabla U\left(\mathbf{x}^{[1]}\right)^T,
+\end{equation}
+其中，$\hat{\mathbf{x}}= 2 \cdot \mathbf{x}^{[0]}- \mathbf{x}^{[-1]} + \mathbf{M}^{-1} \cdot \mathbf{f}_{ext} \cdot {\Delta t}^2$。
+
+在XPBD算法中所有势能被近似表达为约束平方的形式，因此势能项可以写为：
+\begin{equation}
+	U\left(\mathbf{x}\right)=\frac{1}{2} \mathbf{C}\left(\mathbf{x}\right)^{T} \boldsymbol{\alpha}^{-1} \mathbf{C}\left(\mathbf{x}\right),
+\end{equation}
+其中，$\alpha$为对角阵，对角线上的元素表示每个对应约束的柔度。
+
+为了解决PBD约束强度受迭代次数的影响的问题，XPBD中引入了$\lambda$算子用于系统内力的迭代:
+\begin{equation}
+	\boldsymbol{\lambda}_{\text {elastic }}=-\boldsymbol{\tilde{\alpha}}^{-1} \mathbf{C}\left(\mathbf{x}\right),
+\end{equation}
+其中$\boldsymbol{\tilde{\alpha}}=\frac{\boldsymbol{\alpha}}{\Delta t^2}$。
+
+由此获得两个可供迭代的等式：
+\begin{align}
+	\mathbf{M}\left(\mathbf{x}^{n+1}-\tilde{\mathbf{x}}\right)-\nabla \mathbf{C}\left(\mathbf{x}^{n+1}\right)^T \boldsymbol{\lambda}^{n+1} & =\mathbf{0} \label{eq:one}  \\
+	\mathbf{C}\left(\mathbf{x}^{n+1}\right)+\tilde{\boldsymbol{\alpha}} \boldsymbol{\lambda}^{n+1}                                         & =\mathbf{0}. \label{eq:two}
+\end{align}
+记\eqref{eq:one}，\eqref{eq:two} 式分别为:
+\begin{align}
+	\mathbf{g}\left(\mathbf{x}, \boldsymbol{\lambda}\right) & =\mathbf{0} \label{eq:three} \\
+	\mathbf{h}\left(\mathbf{x}, \boldsymbol{\lambda}\right) & =\mathbf{0}.\label{eq:four}
+\end{align}
+在本文中，关于迭代求解的部分，$\mathbf{x}^{i}$表示第$i$次迭代的结果。
+
+对\eqref{eq:three}，\eqref{eq:four}做牛顿一阶展开后获得：
+\begin{equation}
+	\left[\begin{array}{cc}
+			\mathbf{K}                                 & -\nabla \mathbf{C}^T\left(\mathbf{x}^i\right) \\
+			\nabla \mathbf{C}\left(\mathbf{x}^i\right) & \tilde{\boldsymbol{\alpha}}
+		\end{array}\right]\left[\begin{array}{l}
+			\Delta \mathbf{x} \\
+			\Delta \boldsymbol{\lambda}
+		\end{array}\right]=-\left[\begin{array}{l}
+			\mathbf{g}\left(\mathbf{x}^i, \boldsymbol{\lambda}^i\right) \\
+			\mathbf{h}\left(\mathbf{x}^i, \boldsymbol{\lambda}^i\right)
+		\end{array}\right],
+\end{equation}
+其中，
+\begin{equation}
+	\mathbf{K}=\frac{\partial \mathbf{g}}{\partial \mathbf{x}} = \mathbf{M} - \frac{\partial^2 C^T}{\partial \mathbf{x}^2} \cdot \boldsymbol{\lambda}.
+\end{equation}
+XPBD的两个近似为：
+\begin{align}
+	\mathbf{K} & \approx \mathbf{M}  \\
+	\mathbf{g} & \approx \mathbf{0}.
+\end{align}
+近似后，XPBD的迭代过程便可用一下方程描述：
+\begin{align}
+	\left[\nabla \mathbf{C}\left(\mathbf{x}^i\right) \mathbf{M}^{-1} \nabla \mathbf{C}\left(\mathbf{x}^i\right)^T+\tilde{\boldsymbol{\alpha}}\right] \Delta \boldsymbol{\lambda}=-\mathbf{C}\left(\mathbf{x}^i\right)-\tilde{\boldsymbol{\alpha}} \boldsymbol{\lambda}^i \label{eq:five} \\
+	\Delta \mathbf{x}=\mathbf{M}^{-1} \nabla \mathbf{C}\left(\mathbf{x}^i\right)^T \Delta \boldsymbol{\lambda} \label{eq:six}.
+\end{align}
+由于$\mathbf{M}$与$\tilde{\alpha}$为对角阵，\eqref{eq:five}，\eqref{eq:six}式又可以表达为Matrix-Free的形式，下面的公式用$j$表示第$j$个约束，$k$表示受到第$j$个约束作用的质点的索引。
+
+\begin{align}
+	\Delta \lambda_j    & =\frac{-C_j\left(\mathbf{x}^i\right)-\tilde{\alpha}_j \lambda^i_j}{\nabla C_j {\mathbf{M}_j}^{-1} \nabla C_j^T+\tilde{\alpha}_j} \\
+	\Delta \mathbf{x}_k & = m_k^{-1} {\frac{\partial C_j}{\partial \mathbf{x}_k}}^T \Delta \lambda_j, k \in \mathcal{O}_j.
+\end{align}
+其中，$\mathcal{O}_j$为一个集合，包含第$j$个约束影响到的所有质点的索引。$\mathbf{M}_j$为受$\mathcal{O}_j$影响的所有质点的质量矩阵（lumped mass matrix）。例如，第$j$个长度约束，表达了质点$m$与质点$n$之间的长度关系，则$\mathcal{O}_j=\{m, n \}$，它所对应的$\mathbf{M}_j$:
+
+\begin{equation}
+	\mathbf{M}_j=
+	\begin{bmatrix}
+
+		m_m &     &     &     &     &     \\
+
+		    & m_m &     &     &     &     \\
+
+		    &     & m_m &     &     &     \\
+
+		    &     &     & m_n &     &     \\
+
+		    &     &     &     & m_n &     \\
+
+		    &     &     &     &     & m_n
+	\end{bmatrix}.
+\end{equation}
+
+\subsection{约束}
+本项目中实现了如下约束：
+\begin{itemize}
+	\item [$\circ$] 长度约束 $C(\mathbf{x}_0, \mathbf{x}_1) = \| \mathbf{x}_0 - \mathbf{x}_1\| - l_0 = 0$
+	\item [$\circ$] 三角应变约束 $C\left(\mathbf{x}_{0}, \mathbf{x}_{1}, \mathbf{x}_{2}\right)=\operatorname{det}(\mathbf{F})-1=0$.
+	\item [$\circ$] 外部碰撞约束 $C\left(\mathbf{x}_{0}, \mathbf{x}_{1}, \mathbf{x}_{2}\right)=-\left(d\left(\mathbf{x}_{0}, \mathbf{x}_{1}, \mathbf{x}_{2}\right)-d_{\text{thickness}}\right) \leq 0$.
+	\item [$\circ$] 流体布料碰撞约束 $C\left(\mathbf{x}_{\text{fluid}},\mathbf{x}_{0}, \mathbf{x}_{1}, \mathbf{x}_{2}\right)=-\left(d\left(\mathbf{x}_{\text{fluid}},\mathbf{x}_{0}, \mathbf{x}_{1}, \mathbf{x}_{2}\right)-d_{\text{thickness}}-r_{\text{fluid}}\right) \leq 0$.
+\end{itemize}
+
+\subsection{求解器实现}
+SPHere 的XPBD求解器分为以下几个子系统：
+\begin{itemize}
+	\item XPBD Solver：核心求解器
+	      \begin{itemize}
+		      \item[$\circ$] Constraint Solver：用于对各类约束进行求解
+		      \item[$\circ$] Integrator：用于对粒子进行时间积分
+		      \item[$\circ$] Particle Manager：管理粒子的属性，管理各约束求解结果并施以特定的归一化策略
+		      \item[$\circ$] Topology Manager：维护粒子的拓扑关系，例如记录边、三角面、四边面上的特定信息。
+	      \end{itemize}
+	\item Builder：从资产中生成可求解对象的工具类，用于从直观的布料对象生成抽象的可被核心求解器求解的粒子集合与约束集合
+	      \begin{itemize}
+		      \item[$\circ$] ClothBuilder：布料资产生成，生成基本图元布料（Grid）、从.obj文件中生成布料等
+		      \item[$\circ$] ClothPatch：布料面片的表示，用于初始化布料、从GPU下载当前布料求解结果等
+		      \item[$\circ$] ClothMaterial 布料材质。
+	      \end{itemize}
+\end{itemize}
+
+
+\subsection{数据组织}
+XPBD Solver本质是积分器和约束求解器的集合，对模拟对象无知的，他并不知道自己模拟的究竟是布料、软体还是别的什么，他只根据全局的约束以及全局的拓扑进行求解。仿真对象的构建由Builder完成，Builder将会根据用户几何输入和材料输入生成一个仿真对象，这个仿真对象中会包含粒子位置、粒子质量、所需的约束以及约束强度等等描述信息。Builder将这个对象Push到XPBD Solver，并从中获取仿真对象各描述在XPBD Solver全局的偏移量，记录在仿真对象中以供用户获取。
+
+具体来说，一张ClothPatch包含若干粒子的位置、质量以及粒子之间的长度约束、三角应变约束等等。ClothBuilder会完成从几何形体生成ClothPatch的工作（比如\hl{Grid+ClothMaterial=\textgreater ClothPatch}），并由ClothBuilder Push到对应的XPBD Solver中，ClothPatch是对一小块布料的局部拓扑、粒子、约束的描述，将他Push到XPBD Solver的时候，将会获得这些局部描述在XPBD Solver全局描述中的偏移量，并返回给ClothPatch。其中会被ClothPatch记录的偏移量可能有：ParticleOffset, EdgeOffset, TriangleOffset, LengthConstraintOffset, BendConstraintOffset... 这些Offset是当前ClothPatch在XPBD Solver全局Particle、Constraint、Topology中的起始位置。
+
+作为例子，如下图所示，两块布料面片Patch0与Patch1有Local Data表示（为了简洁性，图中只展示了Position与Triangle数据），当布料面片被加入到求解器中时，他们的局部信息将被转化为求解器全局信息。在数据访问时，布料面片将利用一个全局偏移来定位自身数据。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth,keepaspectratio]{fig_cloth_patch_csig2023.png}
+\end{figure}
+
+\subsubsection{求解器架构}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth,keepaspectratio]{fig_xpbd_solver_csig2023.png}
+\end{figure}
+
+如上图所示，本项目中的XPBD求解器分为Executor、Scheduler、Builder等部分。Builder部分已经在上小节中介绍过了，这里就不再赘述。
+
+其中，XPBD Solver本身仅为各Executor的调度器，负责在合适的时机创建Executor或调用Executor的特定生命周期函数。Executor之间以XPBD Solver为中继（Blackboard模式）进行彼此引用。Executor本身可能还会管理更为底层的子Executor，例如Constraint Manager中会管理Length Constraint Solver等各类约束子求解器。在这样的框架下各Executor的功能分别为：
+\begin{itemize}
+	\item Particle Manager：维护粒子信息，如位置、当前帧速度、上帧速度、位移、归一化信息等。
+	\item Topology Manager：维护粒子拓扑信息以便其他Executor以Edge、Triangle、Point等形式对各粒子进行访问。
+	\item Constraint Manager：管理各类约束，调度各类约束求解。
+	\item CCD/DCD Executor：根据Particle Manager中维护的位置信息于Topology Manager中维护的拓扑信息进行碰撞检测并生成碰撞对，以便后续动态约束的生成。
+	\item Integrator：根据外力对粒子运动进行积分，管理边界条件等。
+\end{itemize}
+求解器整体迭代过程详见下节。
+
+\section{流体布料耦合}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth,keepaspectratio]{fig_coupling_csig2023.png}
+\end{figure}
+
+上图展示了每个timestep中，两个求解器的求解内容。一个timestep中，两种求解器都需要若干次iteration（鹅黄色框内）。XPBD求解器需要利用外力和原有运动状态对位置进行预测，作为迭代的初始位置，这个阶段被称为\textbf{XPBD TimestepInitPredict}阶段，同样的，对于SPH而言，相应的阶段被称为\textbf{SPH TimestepInitPredict}阶段。
+
+开始迭代后，执行步骤如下:
+\begin{enumerate}
+	\item SPHPredict阶段通过速度和外力更新当前位置
+	\item XPBD Collision Detection阶段将要等待SPHPredict阶段完成
+	\item SPH流体位置速度第二次更新需要等待耦合约束的求解结果
+	\item 此后SPH和XPBD求解器可以完全无依赖地进行内部的求解工作，直到迭代结束。
+\end{enumerate}
+\subsection{光追碰撞检测}
+本节将简要概述本项目使用的光追碰撞检测算法，更多细节请参见文献 \cite{rtCollision2022}。
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.4\linewidth,keepaspectratio]{fig_ray_collision_csig2023.png}
+\end{figure}
+
+硬件光追的核心功能为BVH加速结构构建、Ray-AABB与Ray-Triangle检测。我们使用BVH加速结构构建与Ray-AABB部分来实现基于硬件光追的碰撞检测算法。
+\paragraph{加速结构构建}
+\begin{enumerate}
+	\item 对场景内所有图元求取各自包围球，并使用并行规约找出最大包围球半径，将所有图元用此包围球包裹。（对于图元$i$这个包围球记为$S_i$）。
+	\item 将这个最大包围球半径的4倍作为正方体AABB的边长，对图元$i$记这个正方体AABB为$Q_i$，利用$\{Q_i\}$构建加速结构。
+\end{enumerate}
+\paragraph{加速结构查询} 并行遍历所有图元$i$，设图元总数为$N$，步骤如下：
+\begin{enumerate}
+	\item 初始化光线$R_i$，长度为$\epsilon=10^{-5}$(任意较小值即可)，光线原点为$S_i$球心，光线方向任选（如\hl{dir=vec3(0,1,0)})。
+	\item 查询与光线相交的AABB Id。值得注意的是，对于图元$i$而言，$Q_i$一定与$R_i$相交，我们忽略这一对。
+	\item 查询过程可能长可能短，查询结束后，每个图元$i$将能够找到可能与之碰撞的其他若干图元$\{j\}$。
+\end{enumerate}
+\subsection{碰撞对建立}
+\paragraph{半稀疏格式} 我们可以对每一个图元$i$都认为给定一个最大邻居数，并且一次性创建整个邻居数组$index [N * max\_neighbor]$。这样，图元$i$在加速结构查询的过程中便可以直接向这个数组中加入对应的邻居索引，当查询得到的邻居数超过最大邻居数时，我们就终止图元$i$的查询。
+\paragraph{稀疏格式} 前面的方法可能导致漏检或者内存浪费的现象，我们可以转而使用二维稀疏结构对邻居进行存储。这个方法需要使用“Detect + Scan + Allocate + Fill”的形式。具体步骤如下：
+\begin{enumerate}
+	\item 第一次查询，我们记录各图元的邻居个数$count_i$。
+	\item 对所有图元的邻居个数进行并行前缀和获得，对应的全局偏移量$offset_i$和总邻居数$N_{total}$。
+	\item 根据$N_{total}$一次性分配内存。
+	\item 第二次查询，对于每个图元$i$我们从$offset_i$位置处开始写入$count_i$个邻居。
+\end{enumerate}
+完成以上四步，碰撞对列表便建立完成了。

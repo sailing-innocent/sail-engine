@@ -1,0 +1,34 @@
+\begin{frame}
+    \frametitle{Principal}
+    \begin{quote}
+        Two MLPs were trained using back-propogation as
+        \begin{itemize}
+            \item Generative Model G
+            \item Discriminative Model D
+        \end{itemize}
+
+        The Generative Model captures data distribution.
+        The Discriminative Model estimates the probability that a sample is from trained data or not.
+
+        \textbf{Ideal Result}:
+        \begin{itemize}
+            \item G could generate the data in trained set
+            \item D equal to $\frac{1}{2}$ ( so that it cannot determine whether the generated data is from trained set or not)
+        \end{itemize}
+    \end{quote}
+    \textbf{Loss}:
+    $$\min_G\max_DV(D,G) = E_{x\sim p_{data}(x)}[logD(x)] + E_{z\sim p_{z}(z)}[log(1 - D(G(z)))]$$
+\end{frame}
+
+\begin{frame}
+    \frametitle{Milestones}
+    \begin{itemize}
+        \item 2014: GAN\cite{goodfellowGenerativeAdversarialNetworks2014}
+        \item 2014: condition GAN \cite{mirzaConditionalGenerativeAdversarial2014}
+        \item 2017: Wasserstein GAN \cite{arjovskyWassersteinGAN2017}
+        \item 2018: pix2pix \cite{isolaImagetoImageTranslationConditional2018}
+        \item 2019: GauGAN \cite{parkSemanticImageSynthesis2019}
+        \item 2020: cycleGAN \cite{zhuUnpairedImagetoImageTranslation2020}
+        \item 2023: GigaGAN \cite{kangScalingGANsTexttoImage2023}
+    \end{itemize}
+\end{frame}

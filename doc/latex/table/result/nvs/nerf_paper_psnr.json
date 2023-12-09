@@ -1,0 +1,15 @@
+{
+    "data": [
+        [
+            31.01
+        ]
+    ],
+    "cols": [
+        "Average"
+    ],
+    "rows": [
+        "vanilla_nerf_paper"
+    ],
+    "caption": "NeRF Blender PSNR",
+    "label": ""
+}

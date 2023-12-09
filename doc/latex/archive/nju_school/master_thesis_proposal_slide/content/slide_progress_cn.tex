@@ -1,0 +1,23 @@
+
+\begin{frame}
+    \frametitle{全景图优化}
+    \begin{itemize}
+        \item 基本的代码实现已经完成
+        \item 需要一定的实验和指标来证明方法的有效性
+        \item 训练策略和参数需要进一步调整
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{初步实现}
+    \begin{figure}
+        \includegraphics[width=0.7\linewidth]{fig_with_gaussian_20231018.png}
+        \caption[short]{初步实现结果}
+    \end{figure}
+    \begin{quote}
+        我们通过白色背景的lego进行训练，在初步设定的超参数下可以观察到loss有收敛行为，
+        且背景图的下半部分从黑色逐渐优化到白色，符合预期
+        （因为相机都是朝下的，所以最终得到优化的都是纬度 $(-\frac{\pi}{2}, 0)$ 上），
+        说明我们的微分计算应该是正确的。
+    \end{quote}
+\end{frame}

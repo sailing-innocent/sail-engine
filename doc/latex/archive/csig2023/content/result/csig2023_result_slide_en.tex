@@ -1,0 +1,85 @@
+
+\subsection{Basic Result}
+\begin{frame}
+    \frametitle{Benchmark}
+    \begin{itemize}
+        \item \textbf{Cube}: the competition scene, one 0.5m x 0.5m x 0.5m cube of water falls into a 1m x 1m x 1m cube container, with 125,000 particles, 1000 static density, 30\% energy absorption rate, -0.7 reflection coefficient, 0.02 search radius.
+        \item \textbf{Sphere}: change the container to a sphere, two render our logo.
+        \item \textbf{Waterfall}: a waterfall scene, show the flexibility of our scene modification ablitity.
+        \item \textbf{Bunny}: a bunny with a cloak under the waterfall, show the coupling of fluid, cloth and static boundary.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Performance}
+    The Result Was Tested on RX7900 GRE
+    \input{tab_csig2023_basic_result_rx7900}
+    \begin{itemize}
+        \item \textbf{SP} means the scene is rendered by SpritePoint (a kind of points splatting method), the default visualization method.
+        \item \textbf{SSF} means the scene is rendered by ScreenSpaceFluid (a kind of screen space method).
+        \item \textbf{Volume} means the scene is rendered by Volumetric Rendering Method (with screen-space intermediate area reconstruction).
+    \end{itemize}
+\end{frame}
+
+\subsection{Profiling and Analysis}
+
+\begin{frame}
+    \frametitle{Performance}
+    \begin{quote}
+        Software Spatial Hash performs better than Hardware BVH?
+    \end{quote}
+    \input{tab_csig2023_spatial_hash_vs_bvh}
+    \begin{quote}
+        As shown in Figure \ref{fig:bvhvssh}, the performance of Spatial Hash is about ten times that of BVH. When SPH simulation, the particles are often very dense locally, which leads to the BVH nodes being traversed frequently (Ray AABB detection), which in turn leads to the performance degradation of BVH. It can be said that BVH is more suitable for culling than for neighborhood search.
+    \end{quote}
+\end{frame}
+
+\begin{frame}
+    \frametitle{BVH and Spatial Hash Profiling on RX7900}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth,keepaspectratio]{fig_bvh_vs_sh_csig2023.png}
+        \caption{Comparison of BVH and Spatial Hash on RX7900}
+        \label{fig:bvhvssh}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{BVH and Spatial Hash Profiling on RTX4090}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth,keepaspectratio]{fig_bvh_vs_sh_4090_csig2023.png}
+        \caption{Comparison of BVH and Spatial Hash on RTX4090}
+        \label{fig:bvhvssh}
+    \end{figure}
+\end{frame}
+
+
+\subsection{Other Experiment Results}
+
+\begin{frame}
+    \frametitle{SPHere Logo}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth,keepaspectratio]{fig_4090_sphere_bounding_csig2023.png}
+        \caption{SPHere Logo}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Waterfall}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth,keepaspectratio]{fig_4090_waterfall_csig2023.png}
+        \caption{Waterfall}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Bunny in Rain}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth,keepaspectratio]{fig_4090_bunny_in_rain_csig2023.png}
+        \caption{Bunny in Rain}
+    \end{figure}
+\end{frame}

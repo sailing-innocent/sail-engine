@@ -1,0 +1,184 @@
+\section{SPH技术方案}
+
+\subsection{物理仿真模型}
+SPH流体仿真模型是将模拟对象离散为粒子，使用光滑核函数来实现各粒子对邻域粒子的影响，其中涉及体积力，粘性、不可压缩性求解。WCSPH使用状态方程计算压强，计算开销小但只保证弱可压性，而PCISPH在其基础上增加了修正压强的迭代步骤，以维持不可压性。
+
+\subsection{SPH流体仿真模型}
+\subsubsection{SPH}
+SPH（Smoothed-particle hydrodynamics）是一种空间离散方式，主要通过周围采样点，估计空间中连续函数的值。比如位置x处的连续函数A(x)，其值由该位置领域内粒子的物理量，通过光滑核函数W进行插值计算得到。具体的核函数插值公式如下：
+\begin{equation}
+	A(x)=\sum_{j}m_j\frac{A_j}{\rho_j}W(x-x_j,h),
+\end{equation}
+其中，$m_j,\rho_j$分别表示粒子的质量与密度，h为光滑核（支持域）的半径长度。光滑核函数W用于扩散粒子物理量，其影响应随距离增加而减少，本项目中选择的核函数W为三次样条函数：
+\begin{equation}
+	W(q)=\sigma_d \begin{cases}
+		6(q^3-q^2)+1, & \rm{for\; 0\leq q< 0.5} \\
+		2(1-q)^3,     & \rm{for\; 0.5\leq q< 1} \\
+		0,            & \rm{for\; q\ge 1}       \\
+	\end{cases}
+\end{equation}
+
+\subsubsection{流体仿真}
+SPH流体模拟算法主要是通过SPH方法，计算简化后的Naiver-Stokes方程。其中，NS方程划分为动量方程和连续方程两部分：
+\begin{equation}
+	\frac{d\rho}{dt}=-\rho\nabla·\boldsymbol{v}\quad\text{（连续性方程）},
+\end{equation}
+
+\begin{equation}
+	\frac{d\boldsymbol{v}}{dt}=-\frac{1}{\rho}\nabla P + \mu\nabla ^2\boldsymbol{v}+ \boldsymbol{g} \quad\text{（动量方程）},
+\end{equation}
+连续方程要求保证密度守恒、速度无散度的条件；动量方程可以推导出每个粒子受力的组成：保证不可压缩性的流体压力项$-\frac{1}{\rho}\nabla P$、流体粘性力项$\mu\nabla^2\vec{v}$和体积力项$\vec{g}$。
+
+不同的SPH方法，通过各自的求解方式计算上述三项力，构建运动方程。本项目中具体实现了WCSPH 和PCISPH两种方法。
+
+
+\subsection{WCSPH}
+WCSPH（Weakly Compressibility SPH）是一种基于状态方程的SPH方法。该方法假设流体可以被轻微的压缩，通过压缩量来计算压强。
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.3\linewidth,keepaspectratio]{fig_wcsph_csig2023.png}
+\end{figure}
+
+\subsubsection{计算当前密度}
+$\rho(x)$表示$x$处的密度，也是通过光滑核对周围粒子进行加权计算得到，将密度函数代入：
+\begin{equation}
+	\rho(\boldsymbol{x})=\sum_{b}m_bW(\boldsymbol{x}-\boldsymbol{x_b},h),
+\end{equation}
+其中$m_j$表示粒子质量，所有粒子质量相等。而在初始状态（邻域内由具有初始间隔（$dx*2$）的粒子填满，不存在水空面和墙）下，对所有粒子进行采样，其密度等于水静密度（1000$km/m^3$），因此可以反推出质量。该过程被称为Perfect sampling，之后计算$K^{PCI}$时也会出现。
+\subsection{泰特方程计算压强}
+泰特状态方程是一种密度变化不大且计算效率高的方法，它将密度与压强联系起来：
+\begin{equation}
+	P(\boldsymbol{x})=B((\frac{\rho(\boldsymbol{x})}{\rho_0})^{\gamma}-1),
+\end{equation}
+其中$B$为缩放系数因子，$\gamma$为状态方程指数，$\rho_0$为水静密度。但是当$\rho(x)<\rho_0$时，该状态方程结果为负数，即负压强。会导致粒子被"吸"过去，产生聚集等不正常现象。因此针对会出现该现象的粒子（自由面和边界附近），当压强计算为负数时，我们将其赋值为零。
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.3\linewidth,keepaspectratio]{fig_particles_csig2023.png}
+\end{figure}
+
+\subsection{计算压强梯度}
+当流体粒子周围压强不一致时，该粒子会从高压强处流向低压强处，从而保持不可压缩性，其中压强梯度力项计算公式为：
+
+\begin{equation}
+	\nabla f_p(\boldsymbol{x}) =-\frac{\nabla P(\boldsymbol{x})}{\rho(\boldsymbol{x})}.
+\end{equation}
+
+由于直接使用核函数梯度公式，其误差较大，因此代入核函数梯度的对称形式，可得：
+\begin{equation}
+	\nabla f_p(\boldsymbol{x_a}) = -\sum_b m_b(\frac{P_a}{\rho_b^2}+\frac{P_b}{\rho_b^2})\nabla_{x} W(\boldsymbol{x_a}-\boldsymbol{x_b},h).
+\end{equation}
+\subsection{计算流体粘性力}
+流体的粘性力是其内部的一种阻力，会对流体运动产生明显影响。同时粘性力也可以提高流体仿真的稳定性，减弱粒子相互碰撞下导致的震荡。
+
+由于基于物理的粘性力项 $\mu\nabla^2\vec{v}$的计算开销较大，WCSPH使用了一种非物理的人工粘度，对速度场进行平滑化，其公式为：
+\begin{equation}
+	\nabla f_v(\boldsymbol{x_a})=-\sum_bm_b\Pi_{ab}\nabla_{x_a} W(\boldsymbol{x_a}-\boldsymbol{x_b},h),
+\end{equation}
+
+\begin{equation}
+	\Pi_{ab}=-\mu(\frac{\boldsymbol{v_{ab}}^T\boldsymbol{x_{ab}}}{|\boldsymbol{x_{ab}}|^2+\epsilon h^2}),
+\end{equation}
+这里参考\textit{SPlisHSPlasH}的做法，$\mu=2(d+2)*\alpha$，d为维数，$\epsilon=0.01$，$h$为支持域半径。$\alpha$为粘度常数，越大粘性越强。
+\subsection{更新状态}
+累加前面三项力，得到每个流体粒子的所受合力，代入显式欧拉方程，更新粒子速度和位置：
+\begin{equation}
+	\boldsymbol{v}_{t+1}=\boldsymbol{v_{t}}+h(\boldsymbol{g}+\nabla f_p(\boldsymbol{x_t})+\nabla f_v(\boldsymbol{x_t})),
+\end{equation}
+
+\begin{equation}
+	\boldsymbol{x_{t+1}}=\boldsymbol{x_{t}}+h\boldsymbol{v_{t+1}}.
+\end{equation}
+
+\subsection{PCISPH}
+PCISPH（Predictive-Corrective Incompressible SPH）基于WCSPH，对压强计算部分进行了修改，使用预测-修正的迭代策略，通过迭代的方式计算一个保证流体密度守恒的压强值。
+
+\textbf{预测步骤}：根据当前粒子的合力（体积力、粘性力、待修正压强梯度力）计算加速度，预测粒子位置和速度。
+
+\textbf{修正步骤}：计算粒子预测位置下的密度，从而得到密度差（当前密度-水静密度）。通过密度差计算出修正压强，希望修正压强后在压强梯度力作用下，粒子会产生移动来修正密度差。
+
+不断迭代上述过程，直到密度差小于预定值或迭代次数达到上限。随后将具有修正密度差效果的压强梯度力，作用于当前粒子上。文献 \cite{solenthaler2009predictive} 中对如何根据密度差计算所需的压强值有详细的推导，这里不做展开，只简单介绍与实现相关的部分。
+
+最终得到密度差与压强的公式如下：
+\begin{equation}
+	\widetilde{P}(x)=K^{PCI}(\rho^*(x)-\rho_0)
+\end{equation}
+\begin{equation}
+	K^{PCI}=\frac{-1}{\beta(-\sum_j\nabla W_ij\cdot\sum_j\nabla W_ij-\sum_j(\nabla W_ij \cdot \nabla W_ij))},
+\end{equation}
+其中$\rho^*(x)$为粒子预测位置下的密度，$\widetilde{P}(x)$为当前粒子需要修正的压强值，用于更新粒子的压强$P(x)+=\widetilde{P}(x)$。为了节省开销，$K^{PCI}$系数通过Perfect sampling提前计算出结果。
+PCSPH流程如下，目前迭代次数设定为2:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[keepaspectratio,width=0.4\linewidth]{fig_pcisph_csig2023.png}
+\end{figure}
+
+\subsection{邻域查找}
+邻域查找加速结构使用文献[3]的task-based通用实时粒子邻域搜索算法。该算法将粒子按照所属网格划分至长度为32的task中，保证每个task中粒子同属一个网格。因此，同一个task内各粒子进行邻域搜索时，其待遍历邻域粒子集合相同，可以将所需查找的领域粒子数据通过LDS进行共享。另一方面，每个粒子分配一个线程，同属一个task的线程运算量相近，实现了负载均衡。
+
+\subsubsection{网格构建}
+本项目使用Uniform Grid，设定单位网格长宽高均为支撑域半径，对粒子进行网格划分。可以通过粒子的空间坐标确定粒子所属网格。
+\begin{equation}
+	c=(i,j,k)=(\lfloor\frac{x}{h}\rfloor, \lfloor\frac{y}{h}\rfloor,\lfloor\frac{z}{h}\rfloor)
+\end{equation}
+\subsubsection{粒子划分}
+每个task内会分配32个线程进行邻域粒子获取以及所需物理量计算，所以当粒子分布较稀疏时，同一个task内粒子数量不足32时，会产生空闲线程（比如图中虚线线程）。因此针对稀疏粒子和稠密粒子需要采用不同的策略：
+\begin{enumerate}
+	\item 稀疏粒子不使用Task-based策略，每个粒子分配一个线程，获取其邻域数据，计算物理量。
+	\item 稠密粒子仍然使用Task-based策略，每个task内共享邻域数据。
+\end{enumerate}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\linewidth,keepaspectratio]{fig_task_csig2023.png}
+\end{figure}
+
+其中关于稀疏粒子与稠密粒子的定义，本项目中将不能组成task的粒子划分为稀疏粒子。
+\paragraph{Task划分步骤}
+主要是通过划分稠密粒子与稀疏粒子，获取每个task内粒子序号，其中涉及操作为通过前缀和操作将空间中粒子重新排列成序列，具体步骤如下：
+\begin{enumerate}
+	\item \textbf{获得粒子序号}：
+	      \begin{enumerate}
+		      \item 统计所有网格内粒子数量 $S_i$，同时利用原子加操作，获取每个粒子在网格内的序号 $n_j$ 。
+		      \item 通过 Scan 并行原语的前缀和操作，获取每个网格的起始序号 $C_i$，进而获得所有粒子的全局序号 $g_i$。
+	      \end{enumerate}
+	\item \textbf{获得task序号}：步骤同上，将网格内待统计量换为task数量。由于稀疏粒子被定义为无法组成task的粒子，因此每个网格内task数量为其粒子数量对32向下取整。此外，每个task需要获得以32为步长的粒子序列，即左右端点的粒子序号（id, id+32）。剩余不足组成32片段的粒子划分为稀疏粒子，不属于任何一个task。
+\end{enumerate}
+\subsubsection{遍历邻域数据}
+SPH步骤中如计算密度、计算粘性力等，均需要使用邻域数据更新物理量。这里针对之前划分的稀疏粒子和稠密粒子使用不同的策略获得邻域数据。
+
+\paragraph{稀疏粒子}
+每个粒子直接读取邻域数据，不与同网格其他粒子共享数据。使用空间连续性进行简单优化，将27个邻域网格划分为9排网格，其中每排网格内粒子序号连续，可以减少不连续访问。
+
+\paragraph{稠密粒子}
+每个task内有32个稠密粒子，也有32个线程，其中前27线程分别读取27个邻域网格中的1个粒子数据存放到LDS，剩余线程等待数据读取结束。随后32个线程通过LDS处理完至多27个邻域粒子数据，再去读取数据，不断重复下去直到所以邻域粒子数据处理完毕。
+
+\subsection{求解器实现}
+SPHere 的SPH求解器分为以下几个子系统：
+\begin{itemize}
+	\item SPH Solver：核心求解器
+	      \begin{itemize}
+		      \item[$\circ$] WCSPH/PCISPH Solver：两种SPH model求解
+		      \item[$\circ$] Neighbor Search：task-based邻域查找算法
+		      \item[$\circ$] Particle Manager：粒子属性
+		      \item[$\circ$] Bounding：限制水粒子的边界
+	      \end{itemize}
+	\item FluidBuilder：生成初始立方体状态的水粒子
+\end{itemize}
+\subsubsection{求解器架构}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.85\linewidth,keepaspectratio]{fig_sph_solver_csig2023.png}
+\end{figure}
+
+如上图所示，本项目中的SPH求解器分为Executor、Scheduler、Builder等部分。其中，Fluid Builder用于生成初始立方体状态的水粒子，可以设置粒子间距以及立方体位置。SPH Solver创建并调度各个Executor，Executor以SPH Solver为中继进行引用。在这样的框架下各Executor的功能分别为：
+
+\begin{itemize}
+	\item WCSPH/PCISPH：分别执行两种Sph model的迭代求解，维护中间信息，如密度、压强、预测位置、预测速度等。
+	\item Particle Manager：管理粒子信息，如位置、当前速度，id等。
+	\item Neighbor Executor：根据Particle Manager中维护的位置信息，利用Uniform Grid进行task划分，以便后续task-based邻域查找。
+	\item Bounding Executor：通过固定边界限制粒子运动范围，与固定边界进行碰撞，重设粒子位置等。
+\end{itemize}

@@ -1,0 +1,96 @@
+\begin{frame}
+    \begin{itemize}
+        \item 用自己的项目框架重写Gaussian Splatting \cite{kerbl3DGaussianSplatting2023} 并彻底掌握
+        \item 将颜色外部绑定输入进去，实现了一个python-cpp-cuda的综合开发测试框架
+        \item 成功渲染出来了有意义的椅子与自行车场景，虽然仍有artifacts，但是积累了很多实验素材
+    \end{itemize}
+    \end{frame}
+    
+    \begin{frame}
+        \frametitle{Add Transform and Color }
+        \begin{columns}[c]
+            \begin{column}{0.5\textwidth}
+                \begin{figure}
+                    \includegraphics[width=\textwidth]{fig_gaussian_with_transform_20231003.png}
+                    \caption{With Transform}
+                \end{figure}
+            \end{column}
+            \begin{column}{0.5\textwidth}
+                \begin{figure}
+                    \includegraphics[width=\textwidth]{fig_color_location_20231003.png}
+                    \caption{With Color Setted }
+                \end{figure}
+            \end{column}
+        \end{columns}
+    \end{frame}
+    
+    \begin{frame}
+        \frametitle{Render Existing PLY on 3060}
+        \begin{columns}[c]
+            \begin{column}{0.5\textwidth}
+                \begin{figure}
+                    \includegraphics[width=\textwidth]{fig_rgb_splat_20231003.png}
+                    \caption{Render RGB Splatting}
+                \end{figure}
+            \end{column}
+            \begin{column}{0.5\textwidth}
+                \begin{figure}
+                    \includegraphics[width=\textwidth]{fig_render_ply_on_3060_20231003.png}
+                    \caption{Get the Chair Sihouetto }
+                \end{figure}
+            \end{column}
+        \end{columns}
+    \end{frame}
+    
+    \begin{frame}
+        \frametitle{Render Chair}
+        \begin{columns}[c]
+            \begin{column}{0.5\textwidth}
+                \begin{figure}
+                    \includegraphics[width=\textwidth]{fig_low_res_chair_20231003.png}
+                    \caption{low resolution chair}
+                \end{figure}
+            \end{column}
+            \begin{column}{0.5\textwidth}
+                \begin{figure}
+                    \includegraphics[width=\textwidth]{fig_high_res_chair_20231003.png}
+                    \caption{high resolution chair}
+                \end{figure}
+            \end{column}
+        \end{columns}
+        \begin{quote}
+            Now There Exists Some Artifacts for unknown reasons
+        \end{quote}
+    \end{frame}
+    
+    \begin{frame}
+        \frametitle{High Res Bicycle on 4090}
+        \begin{columns}[c]
+            \begin{column}{0.5\textwidth}
+                \begin{figure}
+                    \includegraphics[width=\textwidth]{fig_high_res_bicycle_20231003.png}
+                    \caption{The High Resolution Bicycle PLY on 4090}
+                \end{figure}
+                \end{column}
+            \begin{column}{0.5\textwidth}
+                \begin{itemize}
+                    \item fail on 3060, run on 4090
+                    \item with 573w Gaussians, 50w Gaussian Chair is suitable for 3060
+                    \item Colmap Dataset use y as height, different from blender synthetic dataset 
+                    \item there still some artifacts for unknown reason 
+                    \item suitable camera pose from [-1,0,0.5] looking at [0,0,0]
+                \end{itemize}
+            \end{column}
+        \end{columns}
+    \end{frame}
+    
+    \begin{frame}
+        \frametitle{The Stable Diffusion WebUI on server}
+        \begin{figure}
+            \includegraphics[width=\textwidth]{fig_stable_diffusion_webui_20231003.png}
+            \caption{Install Stable Diffusion on Liandanlu}
+        \end{figure}
+    \end{frame}
+    
+    
+    

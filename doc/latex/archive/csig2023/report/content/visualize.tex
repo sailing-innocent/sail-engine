@@ -1,0 +1,144 @@
+\section{可视化}
+
+可视化与仿真引擎的共同纽带为粒子位置，可视化引擎会维护深度信息，必要的模型重建信息和光照等其他渲染信息。
+而模拟引擎则只会关心粒子本身的性质和约束。SPHere的可视化方案需要支持平时迭代的调试任务和最终的演示任务，
+同时对于流体模拟粒子的仿真渲染，尤其是基于GPU的并行渲染，在业界并没有一个成熟统一的方案，
+因此我们需要一个尽可能通用的架构来支持各种可能的可视化工具，方便持续实验和迭代。
+
+\subsection{可视化架构}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth,keepaspectratio]{fig_visualizer_framework_csig2023.png}
+\end{figure}
+
+如图所示，整体的可视化架构分为GUI, Visualizer和Painter三层：
+
+\begin{itemize}
+	\item GUI负责外部展示仿真画面，接受处理用户输入并转换为配置信息，控制整个更新流程。
+	\item Visualizer内部维护一个swapchain，将注册的Painter维护为一个painter list并在渲染更新过程中依次调用每个painter的paint方法在display buffer上渲染图像，并最终将display buffer同步到前台
+	\item Painter负责具体的可视化算法，从模拟引擎中获得粒子位置信息，从场景配置中获得光源等场景信息，并从GUI获得相机位置和方向的更新信息。
+\end{itemize}
+
+得益于Painter可拆卸的架构，我们可以从最简单的sprite particle方案逐步迭代到最终兼顾灯光，场景，美术效果的可视化方案上。
+这样就既可以支持模拟算法的同步开发与debug，也可以支持最终形成一个完整的演示。
+
+Visualizer只有两类，BaseVisualizer和SceneVisualizer，前者是一个简单的2D绘制框架，
+后者与前者的区别在于增加了相机信息，从而可以支持3D绘制方法。具体可以参考src/packages/visualizer/
+
+Painter则相对多样，主要是各种算法的实验。我们也希望模拟算法的开发者可以实现自己的painter。在最终的演示中，我们展示了三种可视化方案：
+
+\begin{itemize}
+	\item 光栅化方案 Raster
+	\item 屏幕空间流体 Screen Surface Fluid, SSF
+	\item 体渲染方案 Volume Rendering
+\end{itemize}
+
+\subsection{光栅化方案}
+
+我们按照SPHere项目的模式封装了LuisaCompute自带的Raster功能，使用Point模式来绘制流体位置，
+将流体的位置buffer和手动生成的index buffer一起注册为mesh对象每次drawcall同步。
+
+利用共用深度检测的方法来同时光栅化流体，布料，SDF等对象，并最终实现了如图所示的效果：
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth,keepaspectratio]{fig_raster_csig2023.png}
+\end{figure}
+
+不难发现，这种方法的优点在于可以同时光栅化支持多种对象，适合在开发过程中进行快速地展示预期效果，帮助调试。
+
+但是缺点在于重建流体表面的方法过于昂贵，无法实时更新大量流体的表面，因此无法拓展到更加复杂的光影渲染。
+
+\subsection{屏幕空间流体}
+
+基于屏幕空间的流体渲染方案(Screen Surface Fluid)主要流程如下
+
+\begin{itemize}
+	\item 通过相机位姿标定最终会投影到屏幕上的粒子，取最小值和最大值的方法得到流体的深度(depth)和厚度(thickness)
+	\item 将获得的深度和厚度值存储在一个和屏幕分辨率相同大小的G-buffer中，称为depth buffer和thickness buffer
+	\item 此时获得的深度噪声很严重，我们需要对其进行一个双边滤波(bilateral filter)来去除噪声
+	\item 最后根据滤波后的depth buffer来重建normal，具体来说，对于任意一个点，我们得到其周围的点，$\vec{n}=\vec{ddx} \times \vec{ddy}$
+	\item 通过normal我们可以指定反射和折射率，从而最终得到该像素的颜色
+\end{itemize}
+
+屏幕空间方法的优点在于计算快捷方便，能够快速得到结果，如图所示：
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth,keepaspectratio]{fig_ssf_method_csig2023.png}
+\end{figure}
+
+但是不难发现，这种方法只能处理凸包的流体，不能处理存在凹陷，重叠区域的流体，比如瀑布的粒子。
+
+同时因为经过NDC映射的depth buffer本身不是一个正交空间，在这个空间上进行双边滤波和法线重建的结果并非物理正确。
+
+\subsection{体渲染方案}
+
+体渲染方法可以认为是从传统基于物理的渲染方法(physically based rendering)中对于介质（Tranmittance）的处理单独抽出形成的算法。
+
+经典的体渲染策略比如光线步进(ray marching)方法主要流程如下：
+
+\begin{itemize}
+	\item 从相机中心向每个像素发射一条光线
+	\item 得到光线与介质的入射点和出射点
+	\item 从出射点向入射点，取某个很小的距离步，每一步计算出介质的透射率，累积得到最终的透射率
+	\item 在整个光线上对积累的样本做积分，得到最终的像素颜色
+\end{itemize}
+
+其中对于最终透射率的计算基于Beer Lambert's Law: $T=\exp(-d\sigma)$
+
+同时，为了积累光线的影响，在每个采样点，需要额外向光源发射一根射线，用同样的方法计算其从光源积累到该采样点的光源本身颜色。
+
+在具体的实现上，为了减少复杂度，我们同样参考屏幕空间方法，将整个渲染过程分为预渲染和渲染两步。
+
+预渲染过程中，我们分别从相机中心和光源位置发射光线，得到从相机中心与流体的入射点和出射点，从光源与流体的入射点与出射点。
+
+为了构建简单的焦散效果，我们在处理地面的时候，如果判断其在光源G-Buffer所覆盖的区域中，则会根据流体介质影响的程度来对背景着色。
+
+最终，进入渲染过程时，我们会重新从相机中心向每一个像素点发射光线，从depth buffer中得到入射点，从far depth buffer中得到出射点，而对于中间介质进行采样和积分。采样的过程会利用背景色和从光源重建的light depth buffer。
+
+最终的效果如下：
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth,keepaspectratio]{fig_volume_method_csig2023.png}
+\end{figure}
+
+\subsection{GUI方案}
+LuisaCompute内部虽然用glfw封装了一个简单的窗口用于展示，
+可是并没有可以支持各种控制信号的GUI实现。而因为后端并不固定，所以使用imgui也比较繁琐。
+因此经过调研和尝试，我们最终采取QT作为GUI窗口实现的方案。
+
+QT本身提供了类型反射，窗口绑定等功能。我们只需要将QT-widget自带的winId
+(一个unsigned long long句柄)，提供给LuisaCompute用来创建swapchain，
+就可以完全按照一般的模式来渲染场景，并且利用qt的信号机制来传递消息，
+侵入性降低到了最小。
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth,keepaspectratio]{fig_gui_csig2023.png}
+\end{figure}
+上图展示了我们的GUI设计，具体展示为：
+\begin{itemize}
+	\item MainWindowQT: 继承自QMainWindow对象，GUI的主要窗口
+	\item GUIWidget: 继承自QWidget，GUI的中心widget，有下面两个主要的子模块
+	      \begin{enumerate}
+		      \item Canvas: 用于展示仿真画面的可视化部分
+		      \item Control Panel: 用于控制参数，重复查看效果
+	      \end{enumerate}
+\end{itemize}
+同时我们实现了如下操控功能：
+\begin{itemize}
+	\item 仿真流程控制，利用空格暂停/继续，鼠标右键暂停/继续，pause按钮暂停/继续，r重置仿真，鼠标左键重置仿真，reset按钮重置仿真
+	\item 相机控制，使用WASD移动，QE上下，方向键上下左右转动视角
+	\item 控制sph仿真参数，如dx, dt, alpha, stiffB等
+	\item 切换边界约束和可视化：除了标准的题目场景外，我们还支持了多种不同的场景，比如瀑布场景，与布料的耦合，基于体渲染的可视化方案等，这些都可以通过GUI进行切换展示。
+\end{itemize}
+同时为了能够让多个方法进行同一个控制流的对比，我们还实现了对比视图：
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth,keepaspectratio]{fig_two_window_csig2023.png}
+\end{figure}
+如图上所示，左边展示的是原始的WCSPH，右侧是我们使用的PCISPH，两者共用一套参数和控制流，可以非常方便地对比。这个例子也展示了我们GUI方案良好的可扩展性。
+可视化模块的实现源码在src/utils/qgui中。

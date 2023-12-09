@@ -1,0 +1,123 @@
+\begin{frame}
+    \frametitle{Visualization Framework}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth,keepaspectratio]{fig_visualizer_framework_csig2023.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Visualization Framework}
+    \begin{itemize}
+        \item \textbf{GUI} is responsible for displaying the simulation screen externally, accepting and processing user input and converting it into configuration information, and controlling the entire update process.
+        \item The \textbf{Visualizer} internally maintains a swapchain, maintains the painter registered as a painter list, and calls the paint method of each painter in turn to render the image on the display buffer during the rendering update, and finally synchronizes the display buffer to the foreground.
+        \item The \textbf{Painter} is responsible for the specific visualization algorithm, obtains the particle position information from the simulation engine, obtains the scene information such as the light source from the scene configuration, and obtains the camera position and direction update information from the GUI.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Visualization Method}
+    \begin{itemize}
+        \item \textbf{Rasterization}: use point to draw fluid, use mesh for cloth, SDF, etc. 
+        \item \textbf{Screen Space Fluid}: use screen space depth and thickness buffer to reconstruct fluid surface
+        \item \textbf{Volume Rendering}: use ray marching to render fluid
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Rasterization}
+    \begin{columns}[c]
+        \begin{column}{0.58\textwidth} % Left column width
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\linewidth,keepaspectratio]{fig_raster_csig2023.png}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.4\textwidth} % Right column width
+            \begin{itemize}
+                \item Advantage: can support multiple object
+                \item Drawback: expensive to reconstruct fluid surface
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Screen Space Fluid}
+    \begin{columns}[c]
+        \begin{column}{0.58\textwidth} % Left column width
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\linewidth,keepaspectratio]{fig_ssf_method_csig2023.png}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.4\textwidth} % Right column width
+            \begin{itemize}
+                \item Advantage: fast, easy to get result
+                \item Drawback: cannot be extended to more complex geometry of fluid, light and shadow rendering, the reconstructed normal is not accurate.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Volume Rendering}
+    \begin{columns}[c]
+        \begin{column}{0.58\textwidth} % Left column width
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\linewidth,keepaspectratio]{fig_volume_method_csig2023.png}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.4\textwidth} % Right column width
+            \begin{itemize}
+                \item Advantage: accurate, can be extended to more complex geometry of fluid, light and shadow rendering
+                \item Drawback: expensive to render
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{GUI Method}
+    \begin{columns}[c]
+        \begin{column}{0.58\textwidth} % Left column width
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\linewidth,keepaspectratio]{fig_gui_csig2023.png}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.4\textwidth} % Right column width
+            \begin{itemize}
+                \item MainWindowQT: main window inherited from QMainWindow
+                \item Main widget inherited from QWidget
+                    \begin{enumerate}
+                        \item Canvas: visualization part
+                        \item Control Panel: control part
+                    \end{enumerate}
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Control Flow}
+    \begin{quote}
+        Based on QT's slot and signal, we can build our control flow on our simulation engine.
+    \end{quote}
+    \begin{itemize}
+        \item \textbf{Simulation Process Control}: start/pause/reset
+        \item \textbf{Camera Control}: rotate/zoom/pan/move
+        \item \textbf{Parameter Control}: change parameters like dx, dt, alpha, stiffB, etc.
+        \item \textbf{Scene Control}: change scene like waterfall, cloth, etc.
+        \item \textbf{Visualization Control}: change visualization method
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Comparison View}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth,keepaspectratio]{fig_two_window_csig2023.png}
+    \end{figure}
+\end{frame}

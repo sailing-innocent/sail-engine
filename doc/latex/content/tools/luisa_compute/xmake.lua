@@ -1,0 +1,10 @@
+add_content("luisa_compute_intro_doc_cn",
+{
+    "bib_tools",
+    "fig_diagram_lc"
+})
+add_content("luisa_compute_intro_slide_en",
+{
+    "bib_tools",
+    "fig_diagram_lc"
+})

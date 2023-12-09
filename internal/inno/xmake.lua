@@ -1,0 +1,6 @@
+SHARED_MODULE("SailInno", "SAIL_INNO", engine_version)
+    add_includedirs("include", {public = true})
+    add_files("src/**.cpp")
+    add_rules("sail.cuda", "lc.lcub")
+    add_deps("SailBase")
+    load_lc()

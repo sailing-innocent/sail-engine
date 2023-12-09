@@ -1,0 +1,60 @@
+\begin{frame}
+    \frametitle{SAM: Segment Anything Model}
+    \framesubtitle{by Meta 2023}
+    \begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+        \begin{column}{0.3\textwidth} % Left column width
+            \begin{figure}
+                \includegraphics[width=0.9\linewidth]{demo_sam_paper.png}
+                \caption{\href{https://arxiv.org/abs/2304.02643}{Segment Anything}}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.68\textwidth} % Right column width
+            \begin{enumerate}
+                \item Demo: \href{https://segment-anything.com/demo}{segment-anything.com}
+                \item Project: \href{https://github.com/facebookresearch/segment-anything}{Github Page}
+            \end{enumerate}
+            \begin{quote}
+                In this work, our goal is to build a foundation model for image segmentation. That is, we seek to develop a promptable model and pre-train
+                it on a broad dataset using a task that enables powerful generalization. some little change.
+            \end{quote}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Some Results on SAM}
+    \begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+        \begin{column}{0.48\textwidth} % Left column width
+            \begin{figure}
+                \includegraphics[width=\linewidth]{demo_sam_city_raw.png}
+                \caption{City}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.48\textwidth} % Right column width
+            \begin{figure}
+                \includegraphics[width=\linewidth]{demo_sam_city_result.png}
+                \caption{City With Segs}
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Some Results on SAM}
+    \begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+        \begin{column}{0.48\textwidth} % Left column width
+            \begin{figure}
+                \includegraphics[width=\linewidth]{demo_sam_jungle_raw.png}
+                \caption{Jungle}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.48\textwidth} % Right column width
+            \begin{figure}
+                \includegraphics[width=\linewidth]{demo_sam_jungle_result.png}
+                \caption{Jungle Result}
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
