@@ -1,0 +1,5 @@
+target("SailBase")
+    add_rules("sail.static_module", {api = "SKR_BASE"})
+    add_includedirs("include", { public = true })
+    add_files("src/build.*.c")
+target_end()
