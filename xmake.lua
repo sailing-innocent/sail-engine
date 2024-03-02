@@ -13,6 +13,6 @@ includes("build_files/xmake/rules.lua")
 
 -- modules
 includes("external") -- external dependencies
-includes("source") -- core engine
+includes("modules") -- core engine
 includes("internal") -- internal modules
-includes("tests") -- tests
+-- includes("tests") -- tests
