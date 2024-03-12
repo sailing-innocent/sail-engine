@@ -1,0 +1,1 @@
+void sail_make_guid() {}

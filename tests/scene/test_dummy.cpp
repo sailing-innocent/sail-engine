@@ -1,6 +1,8 @@
 #include "core/se_test_util.h"
 
+#include "SailDummy/one.h"
+
 TEST_CASE("test_test")
 {
-  CHECK(1 == 1);
+  CHECK(sail::one() == 1);
 }
