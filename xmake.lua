@@ -17,3 +17,7 @@ includes("xmake/rules.lua")
 includes("external") -- external dependencies
 includes("modules") -- core engine
 includes("tests") -- tests
+
+if get_config("enable_doc") then
+    includes("doc") -- documentation
+end

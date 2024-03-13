@@ -1,0 +1,10 @@
+target("use_arxiv")
+    add_rules("latex")
+    add_files("main.tex")
+    add_deps("arxiv", { order = true })
+    -- bib
+    add_deps("bib_sample", { order = true })
+    on_load(function (target)
+        target:set("latex_main", "main.tex")
+    end)
+target_end()

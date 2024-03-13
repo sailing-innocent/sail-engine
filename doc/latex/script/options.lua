@@ -1,0 +1,28 @@
+option("latex_out")
+set_default("output")
+set_showmenu(true)
+option_end()
+
+option("with_all")
+set_default(true)
+set_showmenu(true)
+set_description("with all targets")
+option_end()
+
+option("with_ext")
+set_default(true)
+set_showmenu(true)
+set_description("with external data or not")
+option_end()
+
+option("ex_data_path")
+set_default("D:/workspace/data")
+set_showmenu(true)
+set_description("the path of the external data")
+option_end()
+
+option("diary_assets_path")
+set_default("F:/archive/images/diary")
+set_showmenu(true)
+set_description("the path of the diary assets")
+option_end()
