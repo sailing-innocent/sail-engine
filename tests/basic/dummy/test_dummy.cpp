@@ -1,5 +1,5 @@
 #include "SailDummy/one.h"
-#include "se_test_util.h"
+#include "test_util.h"
 
 TEST_CASE("dummy")
 {

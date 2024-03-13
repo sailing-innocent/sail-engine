@@ -6,10 +6,10 @@
  */
 
 #include "SailInno/util/graphic/sh.h"
-#include "se_test_util.h"
+#include "test_util.h"
 #include <luisa/dsl/sugar.h>
 
-namespace se::inno::test {
+namespace sail::test {
 
 int test_sh()
 {
@@ -145,12 +145,12 @@ int test_sh()
   return 0;
 }
 
-}  // namespace se::inno::test
+}  // namespace sail::test
 
 TEST_SUITE("inno::util")
 {
   TEST_CASE("sh")
   {
-    REQUIRE(se::inno::test::test_sh() == 0);
+    REQUIRE(sail::test::test_sh() == 0);
   }
 }

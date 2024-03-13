@@ -5,8 +5,8 @@ local function sail_add_test(folder, name, deps)
         set_exceptions("cxx")
         add_deps("external_doctest")
         local match_str = path.join(name, "**.cpp")
-        add_includedirs("core")
-        add_files(path.join("core/se_test_util.cpp"), path.join(folder, match_str))
+        add_includedirs("framework")
+        add_files(path.join("framework/test_util.cpp"), path.join(folder, match_str))
         for _, dep in ipairs(deps) do
             add_deps(dep)
         end
@@ -14,4 +14,9 @@ local function sail_add_test(folder, name, deps)
 end
 
 sail_add_test("basic", "dummy", {"SailDummy"})
-sail_add_test("inno", "util", {"SailInno"})
+if get_config("enable_inno") then 
+    sail_add_test("inno", "util", {"SailInno"})
+end 
+if get_config("enable_ing") then 
+    sail_add_test("ing", "util", {"SailIng"})
+end 

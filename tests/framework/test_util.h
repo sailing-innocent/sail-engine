@@ -9,7 +9,7 @@
 
 #include <doctest.h>
 
-namespace se::test {
+namespace sail::test {
 [[nodiscard]] int argc() noexcept;
 [[nodiscard]] const char *const *argv() noexcept;
-}  // namespace se::test
+}  // namespace sail::test

@@ -9,7 +9,7 @@
 
 #include "luisa/dsl/sugar.h"
 
-namespace se::inno::util {
+namespace sail::inno::util {
 
 inline const float SH_C0 = 0.28209479177387814f;  // $\frac{1}{2}\sqrt{\frac{1}{\pi}}$
 inline const float SH_C1 =
@@ -176,4 +176,4 @@ void compute_color_from_sh_level_3_backward(Float3_T dL_dcolor,  // input
   // TODO dL_d_dir
 }
 
-}  // namespace se::inno::util
+}  // namespace sail::inno::util

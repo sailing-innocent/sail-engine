@@ -8,6 +8,12 @@ option("enable_inno")
     set_showmenu(true)
 option_end()
 
+-- ing 
+option("enable_ing")
+    set_default(true)
+    set_showmenu(true)
+option_end()
+
 -- doc
 option("enable_doc")
     set_default(true)
