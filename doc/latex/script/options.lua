@@ -1,5 +1,5 @@
 option("latex_out")
-set_default("output")
+set_default("D:/workspace/doc")
 set_showmenu(true)
 option_end()
 
