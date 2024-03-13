@@ -3,6 +3,6 @@
 
 namespace sail {
 
-SAIL_API int one();
+SAIL_DUMMY_API int one();
 
 }  // namespace sail

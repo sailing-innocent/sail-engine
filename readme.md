@@ -1,7 +1,3 @@
 # Sail Engine
 
-Sail Engine is a high-performance Engine for Rendering, Animation and Physics Simulation.
-
-## Progress
-
-- based on blender
+Sail Engine 是将我之前积攒下来代码的合并。
