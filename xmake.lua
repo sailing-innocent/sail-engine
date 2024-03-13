@@ -22,6 +22,7 @@ includes("modules") -- core engine
 includes("internal") -- internal independent extensions
 
 includes("tests") -- tests
+includes("targets")
 
 if get_config("enable_doc") then
     includes("doc") -- documentation

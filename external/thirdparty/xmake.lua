@@ -1,5 +1,2 @@
-target("external_doctest")
-    set_kind("headeronly")
-    add_headerfiles("doctest/doctest.h")
-    add_includedirs("doctest", {public = true})
-target_end()
+includes("doctest")
+includes("glad")

@@ -1,0 +1,5 @@
+target("external_glad")
+    set_kind("shared")
+    add_files("src/glad.c")
+    add_includedirs("include", {public = true})
+target_end()
