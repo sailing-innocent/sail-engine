@@ -1,1 +1,3 @@
-includes("use_arxiv")
+if (get_config("doc_all")) then 
+    includes("use_arxiv")
+end 
