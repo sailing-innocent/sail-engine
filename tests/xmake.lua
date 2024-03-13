@@ -19,5 +19,5 @@ if get_config("enable_inno") then
 end 
 if get_config("enable_ing") then 
     sail_add_test("ing", "util", {"SailIng"})
-    sail_add_test("ing", "learn_ogl", {"SailIng"})
+    sail_add_test("ing", "learn_ogl", {"SailIng", "shaders", "textures"})
 end 
