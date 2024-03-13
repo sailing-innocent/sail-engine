@@ -6,8 +6,8 @@
 #include <iostream>
 
 namespace sail::test {
-
-int test_ogl_learn_window() {
+using namespace sail::ing::test;
+int ogl_plain_window() {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -22,7 +22,7 @@ int test_ogl_learn_window() {
 	}
 
 	glfwMakeContextCurrent(window);
-	glfwSetFramebufferSizeCallback(window, ing::framebuffer_size_callback);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Failed to initialize GLAD" << std::endl;
@@ -34,7 +34,7 @@ int test_ogl_learn_window() {
 	while (!glfwWindowShouldClose(window)) {
 		// input
 		// -----
-		ing::processInput(window);
+		processInput(window);
 		// render
 		// ------
 		glClearColor(0.2f, 0.3f, 0.3f, 1.f);
@@ -55,6 +55,6 @@ int test_ogl_learn_window() {
 
 TEST_SUITE("ing::learn_ogl") {
 	TEST_CASE("plain_window") {
-		REQUIRE(sail::test::test_ogl_learn_window() == 0);
+		REQUIRE(sail::test::ogl_plain_window() == 0);
 	}
 }

@@ -16,7 +16,12 @@ includes("xmake/default_options.lua")
 -- rules 
 includes("xmake/rules.lua")
 
+-- assets 
+
+includes("assets") 
+
 -- modules
+
 includes("external") -- external dependencies
 includes("modules") -- core engine
 includes("internal") -- internal independent extensions
