@@ -1,0 +1,267 @@
+
+\usepackage[T1]{fontenc}
+
+\usepackage{fontawesome}
+\setlength{\parindent}{0cm}
+\usepackage{paracol}
+\usepackage{ifthen}
+
+\usepackage{tikz}
+\usepackage{smartdiagram}
+\usepackage{float}
+
+\usepackage{array}
+\usepackage{multirow}
+\usetikzlibrary{decorations.text}
+\usetikzlibrary{fadings}
+\usetikzlibrary{calc}
+
+\usetikzlibrary{shapes.misc,positioning}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{shadings}
+\usetikzlibrary{calendar}
+\usetikzlibrary{er}
+\usetikzlibrary{shapes}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{decorations}
+\usetikzlibrary{topaths}
+
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+% avoid line overflow
+\setlength{\emergencystretch}{2pt}
+%---------------------------------------------------------------------------------
+
+\usepackage{titlesec} % Allows creating custom \sections
+
+%-------------------------------------------------------------
+%                       HEADER
+%-------------------------------------------------------------
+% Usage: \header{1:name}{2:title}{3:summary}{4:portrait.jpg}
+% The header will be a TIKZ image. Therefore, it requires a size.
+\newlength{\headerheight}
+\setlength{\headerheight}{5cm}
+% Used to nicely spread the header text along the whole height of the portrait
+\newlength{\interline}
+\setlength{\interline}{0.08\headerheight} % Adjust this value if your portrait is NOT 4cm high
+\newcommand{\header}[4]{
+\tikz[remember picture,overlay] {%
+\node[rectangle, below=-1mm of current page.north, anchor=north, minimum width=\paperwidth, minimum height=\headerheight, fill=mediumcolor](header) at (current page.north){};%
+\node[right=\leftcolwidth of header.west, anchor=west, text width=0.95\rightcolwidth](name) at (header.west)
+{
+\color{white}\huge #1\\[\interline]
+\color{palecolor}\large #2\\[\interline]
+\color{white}\small #3\\
+};%
+\node[right=0.5\leftcolwidth of header.west, anchor=center, inner sep=0pt, line width=10pt, draw=white](picture) at (header.west) {\includegraphics[height=0.8\headerheight]{#4}};%
+}% \tikz
+}% \newcommand
+
+%-------------------------------------------------------------
+%                       CONTACT BAND
+%-------------------------------------------------------------
+% Usage: \contactband{1:background-color}2:{text-color}{3:email}{4:phone-number}{5:country-flag}{6:city}{7:linkedin-id}
+% The contact band will be a TIKZ image. Therefore, it requires a size.
+\newlength{\contactheight}
+\setlength{\contactheight}{7mm}
+\newlength{\contactspacing}
+\setlength{\contactspacing}{3mm}
+% --- Dark blue band with picture and name
+\newcommand{\contactband}[3]{
+\tikz[remember picture,overlay] {%
+\node[rectangle, below=-3mm of header.south, anchor=north, minimum width=\paperwidth, minimum height=\contactheight, fill=palecolor](contact){
+    \color{black} \small
+    \href{#1}{\faEnvelope \hspace{1mm} #1} 
+    \hspace{\contactspacing} 
+    \faMobile / \faWechat \hspace{1mm} #2
+    \hspace{\contactspacing}
+    \href{https://github.com/#3}{\faGithub \hspace{1mm} #3}
+
+};% \node
+
+}% \tikz
+}% \newcommand
+
+%-------------------------------------------------------------
+%                HEADINGS WITH BACKGROUND
+%-------------------------------------------------------------
+% Usage: \heading{1:icon}{2:text}
+\newcommand{\heading}[2]
+{
+    \colorbox{mediumcolor}{
+        \color{white}\Large\bfseries\MakeUppercase{#1\phantom{\faWrench}#2}
+        % AFAICT, \faWrench is the highest icon in the set of \fa icons.
+        % Using it as a space maker also ensures that all titles have the same (maximum) height
+    }
+    \vspace{4pt}
+    \newline
+}
+
+%-------------------------------------------------------------
+%                       GOALS
+%-------------------------------------------------------------
+% Usage: \goal{1:fa_icon}{2:text}
+\newcommand{\goal}[2]{
+\begin{tabular}[t]{C{0.7cm} | L{4.5cm}}
+\large#1 & #2\\
+\end{tabular}
+}
+
+%-------------------------------------------------------------
+%                       CV KEYWORDS
+%-------------------------------------------------------------
+% Usage: \cvkeyword{1:word}
+\newcommand{\cvkeyword}[1]{
+    \colorbox{lightcolor}{\strut\textcolor{white}{#1}}%
+}
+
+%-------------------------------------------------------------
+%                       CV TAGS
+%-------------------------------------------------------------
+% Inspired by alta-cv: https://www.overleaf.com/latex/templates/altacv-template/trgqjpwnmtgv
+% Usage: \cvtag{1:word}
+\newcommand{\cvtag}[1]{
+  \tikz[baseline]\node[draw=mediumcolor, fill=white, rounded corners, inner sep=0.3em, minimum height=1.8em]{\color{mediumcolor}#1};
+}
+
+
+%-------------------------------------------------------------
+%                       BUBBLE DIAGRAM
+%-------------------------------------------------------------
+% Inspired by https://github.com/Johayon/Data-Scientist-Resume-LaTeX
+% Usage: \bubblediagram{list of comma-separated text items}
+%   The first item will be written in the main bubble, at the center of the diagram
+%   All other items will be written in their own satellite bubble
+\newcommand{\bubblediagram}[1]{
+    \smartdiagram[bubble diagram]{#1}
+}
+
+\smartdiagramset{
+    bubble center node font = \footnotesize,
+    bubble node font = \footnotesize,
+    % specifies the minimum size of the bubble center node
+    bubble center node size = 0.5cm,
+    %  specifies the minimum size of the bubbles
+    bubble node size = 0.5cm,
+    % specifies which is the distance among the bubble center node and the other bubbles
+    distance center/other bubbles = 0.5cm,
+    % sets the distance from the text to the border of the bubble center node
+    distance text center bubble = 0.5cm,
+    % set center bubble color
+    bubble center node color = mediumcolor,
+    % define the list of colors usable in the diagram
+    set color list = {materialcyan, orange, green, materialorange, materialteal, materialamber, materialindigo, materialgreen, materiallime},
+    % sets the opacity at which the bubbles are shown
+    bubble fill opacity = 0.55,
+    % sets the opacity at which the bubble text is shown
+    bubble text opacity = 1,
+    border color = white
+}
+
+%-------------------------------------------------------------
+%                       DOT SCALES
+%-------------------------------------------------------------
+\newcommand{\icon}[1]{\phantom{x}{\scriptsize\color{#1}\faCircle}\phantom{x}}
+
+\newcommand{\pictofraction}[1]{%
+\pgfmathparse{#1}\foreach \n in {1,...,\pgfmathresult}{\icon{mediumcolor}}%
+\pgfmathparse{4-#1}\foreach \n in {0,...,\pgfmathresult}{\icon{palecolor}}%
+}
+
+%-------------------------------------------------------------
+%                        CV EVENTS
+%-------------------------------------------------------------
+% Usage: \cvevent{1:from}{2:to}{3:role}{4:organisation-name}{5:location}{6:organisation-logo}{7:text}
+\newlength{\leftcellwidth}
+\setlength{\leftcellwidth}{2cm}
+\newlength{\leftsubcellwidth}
+\setlength{\leftsubcellwidth}{1.0cm}
+\newlength{\rightcellwidth}
+\setlength{\rightcellwidth}{11.0cm}
+\newlength{\rightsubcellwidth}
+\setlength{\rightsubcellwidth}{9.0cm}
+\newcommand{\cvevent}[7]{
+\begin{tabular}[t]{C{\leftcellwidth}| L{\rightcellwidth}}
+    #2 & \textbf{#3} \\
+    #1 & \textsc{#4} $\cdot$ {#5 ~\faMapMarker}\\
+    \includegraphics[height=1cm]{#6} & {\color{black!70}\footnotesize{#7}}
+\end{tabular}
+}
+
+\newcommand{\subcvevent}[7]{
+% two cols
+\begin{tabular}[t]{C{\leftsubcellwidth}|C{\leftcellwidth}| L{\rightsubcellwidth}}
+    & #2 & \textbf{#3} \\
+    & #1 & \textsc{#4} $\cdot$ {#5 ~\faMapMarker}\\
+    & \includegraphics[height=1cm]{#6} & {\color{black!70}\footnotesize{#7}}
+\end{tabular}
+}
+
+\newcommand{\project}[4]{
+\begin{tabular}[t]{C{\leftcellwidth}| L{\rightcellwidth}}
+    #1 & \textbf{#2} \\
+    \includegraphics[height=1cm]{#3} & {\color{black!70}\footnotesize{#4}}
+\end{tabular}
+}
+
+
+%-------------------------------------------------------------
+%                        CV EVENT FACTS
+%-------------------------------------------------------------
+% Usage: \fact{1:text}
+\newcommand{\fact}[1]{#1\newline}%\vspace{3pt}}
+
+%-------------------------------------------------------------
+%                        ONLINE COURSE
+%-------------------------------------------------------------
+% Usage: \onlinecourse{1:date}{2:course title}{3:organisation-name}{4:organisation-logo}{5:text}{6:certificates/results}
+\newcommand{\onlinecourse}[6]{
+\begin{tabular}[t]{C{\leftcellwidth}| L{\rightcellwidth}}
+    #1 & \textbf{#2} \\
+    \multirow{3}{*}{\includegraphics[width=1.8cm]{#4}}   & \textsc{#3} ~\faLaptop\\
+    % Most online classes have descriptions spanning multiple lines of text.
+    % Therefore, we constrain the size of the logo based on its width.
+       & {\color{black!70}\footnotesize {#5}}\\
+       & {#6}\\
+\end{tabular}
+}
+
+%-------------------------------------------------------------
+%                        PUBLICATIONS
+%-------------------------------------------------------------
+% Usage: \publication{1:date}{2:title}{3:publisher}{4:publisher-logo}{5:text}
+\newcommand{\publication}[5]{
+    \begin{tabular}[t]{C{\leftcellwidth}| L{\rightcellwidth}}
+        #1 & \textbf{#2} \\
+           & \textsc{#3 ~\faFileTextO}\\
+        \includegraphics[height=1cm]{#4} & {\color{black!70}\footnotesize{#5}}
+    \end{tabular}
+}
+
+%-------------------------------------------------------------
+%                        SIMPLE QUOTES
+%-------------------------------------------------------------
+% Usage: \simplequote{1:text}{2:author}
+\newcommand{\simplequote}[2]{
+    {\color{palecolor}\faQuoteLeft} \textit{#1}\\
+    \phantom{|}\hspace{0.1\leftcolwidth}{\color{palecolor}\scriptsize -- #2}
+}
+
+%-------------------------------------------------------------
+%                        SIMPLE ROW
+%-------------------------------------------------------------
+% Usage: \simplerow{1:left-cell-text}{2:right-cell-text}
+\newcommand{\simplerow}[2]{
+\begin{tabular}[t]{R{\leftcellwidth}| L{\rightcellwidth}}
+    #1 & #2\\
+\end{tabular}
+}
+
+%-------------------------------------------------------------
+%                   "INFO" ICON WITH LINK
+%-------------------------------------------------------------
+% Usage: \info{1:uri}
+\newcommand{\info}[1]{
+\href{#1}{\faInfoCircle}
+}

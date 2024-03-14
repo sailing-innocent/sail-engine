@@ -1,3 +1,4 @@
+
 rule("sail.module")
     on_load(function (target, opt)
         if is_mode("debug") then

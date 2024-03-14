@@ -5,26 +5,23 @@ includes("table.rule.lua")
 rule("latex.template")
     set_extensions(".sty", ".tex", ".cls", ".bst", ".dtx", ".cfg", ".png", ".jpg", ".jpeg", ".pdf")
     on_load(function (target)
-        target:set("targetdir", path.join("build", "asset", target:name()))
-        os.mkdir(target:targetdir())
         target:set("kind", "object")
+        os.mkdir(target:autogendir({root = true}))
     end)
     on_build_file(function (target, sourcefile, opt)
-        os.cp(sourcefile, target:targetdir())
+        os.cp(sourcefile, target:autogendir({root = true}))
     end)
 rule_end()
-
 
 rule("latex.content")
     set_extensions(".tex", ".dat")
     on_load(function (target)
-        target:set("targetdir", path.join("build", "asset"))
-        os.mkdir(target:targetdir())
         target:set("kind", "object")
+        os.mkdir(target:autogendir({root = true}))
     end)
     on_build_file(function (target, sourcefile, opt)
-        os.cp(sourcefile, target:targetdir())
-    end) 
+        os.cp(sourcefile, target:autogendir({root = true}))
+    end)
 rule_end()
 
 function add_content(name, deps)
@@ -39,7 +36,7 @@ end
 
 function add_dat(name)
     target(name)
-        add_rules("latex-content")
+        add_rules("latex.content")
         add_files(name .. ".dat")
     target_end()
 end
@@ -70,18 +67,9 @@ rule("latex")
     end)
     
     before_link(function (target)
-        function check_is_asset_image(name) 
-            local img_ext_list = {".png", ".jpg", ".jpeg", ".pdf", ".eps"}
-            for _, ext in ipairs(img_ext_list) do
-                local asset_path = path.join("build", "asset", name .. ext)
-                if (os.isfile(asset_path)) then
-                    return asset_path
-                end
-            end
-            return nil
-        end
-
-
+        import("core.base.option")
+        import("core.project.project")
+        import("core.project.depend")
         bibs = {}
         local bibfile_path = path.join(target:targetdir(), "ref.bib")
         os.tryrm(bibfile_path)
@@ -108,29 +96,27 @@ rule("latex")
         function copy_asset_recursive(target, targetdir)
             local localbibs = {}
             for _, dep in ipairs(target:get("deps")) do
+                local dep_target = target:dep(dep)
+                local dep_gen_dir = dep_target:autogendir({root = true})
+
                 local itembibs = {}
-                -- print("dep: %s", dep)
-                local img_path = check_is_asset_image(dep)
-                if (img_path ~= nil) then
-                    os.cp(img_path, targetdir)
+                -- content
+                if (dep_target:rule("latex.content")) then 
+                    -- listdir -- todo 似乎不可行
+                    print(os.filedirs(dep_gen_dir))
                 end
-                -- tex content
-                if (os.isdir(path.join("build", "asset", dep))) then
-                    os.cp(path.join("build", "asset", dep), targetdir)
-                end
-                if (os.isfile(path.join("build", "asset", dep .. ".tex"))) then
-                    os.cp(path.join("build", "asset", dep .. ".tex"), targetdir)
-                end
-                if (os.isfile(path.join("build", "asset", dep .. ".dat"))) then
-                    os.cp(path.join("build", "asset", dep .. ".dat"), targetdir)
+                -- template
+                if (dep_target:rule("latex.template")) then 
+                    if (os.isdir(dep_gen_dir)) then 
+                        os.cp(dep_gen_dir, targetdir)
+                    end
                 end
                 -- bib content
                 if (os.isfile(path.join("build", "bibs", dep .. ".bib"))) then
                     local bib_content = io.readfile(path.join("build", "bibs", dep .. ".bib"))
                     itembibs = bib_content_to_table(bib_content)
                 end
-                -- recursive 
-                local dep_target = target:dep(dep)
+                -- recursive
                 local depsbibs = copy_asset_recursive(dep_target, targetdir)
                 -- merge bibs
                 for key, value in pairs(depsbibs) do

@@ -1,0 +1,14 @@
+\ProvidesFile{si_template/default_cover.tex}[2023/11/13]
+\setCJKfamilyfont{coverfont}{Noto Serif SC Bold}
+\setCJKfamilyfont{cover-author-font}{Noto Sans CJK SC}
+\colorlet{octa}{cyan!50!gray}	% Color for the octahedron
+\begin{titlepage}
+    \begin{tikzpicture}[remember picture, overlay, pencildraw/.style={
+        color=octa, thick,
+        decorate,
+        decoration={random steps, segment length=1pt, amplitude=0.7pt}
+    }]
+    \node[anchor=center,align=center] (title) at ([xshift=19em, yshift=-10em] current page.north west)
+    {\covertext};
+    \end{tikzpicture}
+\end{titlepage}

@@ -16,9 +16,7 @@ int test_cuda_dummy() {
 	sail::cu::cuda_inc(d_array, N);
 	cudaMemcpy(h_array, d_array, N * sizeof(int), cudaMemcpyDeviceToHost);
 	for (int i = 0; i < N; i++) {
-		if (h_array[i] != i + 1) {
-			return 1;
-		}
+		CHECK(h_array[i] == i + 1);
 	}
 	return 0;
 }
