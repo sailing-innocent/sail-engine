@@ -13,14 +13,18 @@ rule("sail.cuda")
             target:add("defines", "NOMINMAX", "UNICODE")
             target:add("syslinks", "Cfgmgr32", "Advapi32")
         end
-        target:add("links", "luisa-compute-cuda-ext-lcub", "luisa-compute-cuda-ext-dcub", {public = true})
     end)
-    add_includedirs(".", {public = true})
 
     after_build(function(target)
         local cuda_path = os.getenv("CUDA_PATH")
         if cuda_path then
             os.cp(path.join(cuda_path, "bin/*.dll"), target:targetdir())
         end
+    end)
+rule_end()
+
+rule("lc.lcub")
+    on_load(function(target)
+        target:add("links", "luisa-compute-cuda-ext-lcub", "luisa-compute-cuda-ext-dcub", {public = true})
     end)
 rule_end()

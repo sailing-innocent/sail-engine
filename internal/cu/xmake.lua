@@ -1,0 +1,5 @@
+SHARED_MODULE("SailCu", "SAIL_CU", engine_version)
+    add_includedirs("include", { public = true })
+    add_files("src/**.cu")
+    add_deps("SailBase")
+    add_rules("sail.cuda")

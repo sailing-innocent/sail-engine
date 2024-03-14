@@ -21,3 +21,6 @@ if get_config("enable_ing") then
     sail_add_test("ing", "util", {"SailIng"})
     sail_add_test("ing", "learn_ogl", {"SailIng", "shaders", "textures"})
 end 
+if get_config("enable_cuda") then 
+    sail_add_test("cu", "util", {"SailCu"})
+end 
