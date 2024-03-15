@@ -1,0 +1,25 @@
+{
+    "caption": "Sample Table From Json",
+    "label": "tab_json_sample",
+    "cols": [
+        "value1",
+        "value2",
+        "value3"
+    ],
+    "rows": [
+        "data01",
+        "data02"
+    ],
+    "data": [
+        [
+            1,
+            2,
+            3
+        ],
+        [
+            4,
+            5,
+            7
+        ]
+    ]
+}

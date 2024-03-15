@@ -1,0 +1,1 @@
+add_json_table("tab_3dgs_reimpl_psnr_result")

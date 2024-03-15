@@ -1,0 +1,93 @@
+\documentclass[master,oneside,winfonts]{njuthesis/njuthesis}
+\setstretch{1.375}%22磅
+\titlea{基于可微渲染的新视角生成方法}
+\titleb{研究生毕业论文}
+\author{朱子航}
+\email{522022150087@smail.nju.edu.cn}
+\studentnum{522022150087}
+\grade{2022}
+\supervisor{李华雄教授}
+\major{电子信息}
+\researchfield{控制工程}
+\department{工程管理学院}
+\institute{南京大学}
+
+\submitdate{2023年5月13日}
+\defenddate{2023年5月13日}
+\date{2023年5月13日}
+
+\englishtitle{Novel View Synthesis Method based on Differential Rendering}
+\englishauthor{Zhu Zihang}
+\englishsupervisor{Prof. Li Huaxiong}
+\englishmajor{Control Science and Engineering}
+\englishdepartment{School of Management \& Engineering}
+\englishinstitute{Nanjing University}
+\englishdate{May 13, 2023}
+\begin{document}
+\maketitle
+\makeenglishtitle
+\pagenumbering{Roman}
+\begin{spacing}{1.25}
+    \begin{abstract}
+        可微渲染作为计算机图形学中的新兴领域，在新视角生成任务中取得了广泛的应用和良好的效果。
+        \keywords{可微渲染，新视角生成，计算机图形学}
+    \end{abstract}
+\end{spacing}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 论文的英文摘要
+\begin{spacing}{1.15}
+    \begin{englishabstract}
+        As a promising filed of Computer Graphcis, Differential Rendering has a vast implementation
+        % 英文关键词。关键词之间用英文半角逗号隔开，末尾无符号。
+        \englishkeywords{Differential Rendering, Novel View Synthesis}
+    \end{englishabstract}
+\end{spacing}
+\begin{spacing}{1}
+    \renewcommand*\contentsname{目录}
+    \tableofcontents
+\end{spacing}
+
+\mainmatter
+% 学位论文的正文应以《绪论》作为第一章
+\pagenumbering{arabic}
+\chapter{绪论}\label{chapter_introduction}
+\section{研究背景与意义}
+新视角生成(Novel View Synthesis)是模式识别与智能感知领域下，三维重建任务中的重要子任务之一。主要目的是利用若干离散的相机拍摄图片和相机位姿，预测任意位姿下的图像。近年来，随着科研，生产和娱乐产业中信息化，智能化的发展需求，对于实际物体进行三维数字重建成为重要的信息存储和交流媒介。三维信息在影视游戏，机器人，虚拟现实/增强现实，建筑设计，智能生产，数字孪生等领域有广泛的应用。
+但与此同时，传统三维建模的方法需要设计者利用高精度扫描仪器进行扫描，利用设计软件手动调整数十万的三角面，微调真实感材质，设置光照，最终使用真实感渲染器进行渲染，才能得到近似于真实三维世界的效果。这个过程的代价十分昂贵。一方面高度依赖建模人员的经验，一方面渲染无法实时完成，应用范围受限。
+基于可微渲染的新视角生成方法可以使用手机拍摄等廉价手段拍摄若干照片，利用深度学习或者机器学习进行优化，进而直接进行三维信息重建并生成真实感图片。该方法解决了当前的迫切需求，对于低成本生成高质量三维数字模型具有重要意义。
+
+\section{基于可微渲染的新视角生成研究概述}
+在计算机图形学中，“渲染器”(Renderer)指的是能够将一个3维空间中的物体模型在指定的光照条件、相机位姿下计算出一张类似人眼所感知的2维图片的程序，是对人视觉感知过程的模拟。“可微渲染器”(Differential Renderer)指的是在一般渲染器的正向过程之外，还可以通过生成图片与目标图片的差值，反向估计输入参数微分的特殊渲染器。可微渲染器可以用来辅助优化3D模型的参数，也可以用来解决新视角生成问题。
+
+\subsection{基于可微体渲染的神经辐射场方法}
+\input{nerf_intro_doc_cn}
+
+\subsection{基于可微点云渲染的高斯溅射方法}
+\input{gaussian_intro_doc_cn}
+
+\backmatter 
+
+\begin{acknowledgement}
+    感谢所有的猫
+\end{acknowledgement}
+
+\begin{spacing}{0.2}
+    \bibliography{ref}
+\end{spacing}
+
+\begin{resume}
+    % 论文作者身份简介，一句话即可。
+    \begin{authorinfo}
+        \noindent 朱子航，男，汉族，1999年4月出生，安徽合肥人。
+    \end{authorinfo}
+    \begin{education}
+    \item[2007年9月 --- 2010年6月] 南京大学工程管理学院 \hfill 硕士
+    \item[2017年9月 --- 2022年3月] 浙江大学控制学院 \hfill 本科
+    \end{education}
+    \begin{publications}
+        \item XXXXX.
+        \item XXXXX.
+    \end{publications}
+\end{resume}
+\end{document}

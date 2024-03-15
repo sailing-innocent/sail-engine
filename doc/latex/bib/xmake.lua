@@ -9,3 +9,5 @@ end
 
 add_bib("sample")
 add_bib("tools")
+add_bib("RL")
+add_bib("Gaussian")

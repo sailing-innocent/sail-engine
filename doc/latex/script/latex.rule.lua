@@ -67,9 +67,44 @@ rule("latex.bib")
     end)
 rule_end()
 
+rule("latex.indirect_content")
+    add_deps("latex.content")
+    on_load(function (target)
+        target:set("kind", "object")
+        os.mkdir(target:autogendir({root=true}))
+    end)
+rule_end()
+
+rule("latex.json_table")
+    set_extensions(".json")
+    add_deps("latex.indirect_content")
+    on_load(function(target)
+        local ofile = path.join(target:autogendir({root=true}), target:name() .. ".tex")
+        target:set("values", "targetfile", ofile)
+    end)
+    on_build_file(function(target, sourcefile, opt)
+        import("lib.detect.find_tool")
+        import("core.project.depend")
+        import("utils.progress")
+        local ofile = path.join(target:autogendir({root=true}), target:name() .. ".tex")
+        local py = assert(find_tool("python", {check="--version"}), "python not found!")
+        os.vrunv(py.program, {"doc/latex/script/json2tex.py", "--json", sourcefile, "--target", ofile})
+        progress.show(opt.progress, "building json2tex %s to %s", sourcefile, ofile)
+    end)
+rule_end()
+
+function add_bib(name, deps)
+    target("bib_" .. name)
+        add_rules("latex.bib")
+        add_files(name .. ".bib")
+    target_end()
+end
+
+
 -- latex project entry
 rule("latex")
     set_extensions(".tex")
+
     on_load(function (target)
         -- generate .latexmkrc
         target:set("kind", "object")
@@ -86,9 +121,10 @@ rule("latex")
         file:close()
     end)
     on_config(function(target)
-        import("core.project.project")
         import("core.project.depend")
+        import("core.project.project")
         import("core.base.json")
+
         -- parse dependencies
         local subcontent = {}
         subcontent["main"] = target:sourcefiles()
@@ -109,6 +145,12 @@ rule("latex")
                     end
                     for _, file in ipairs(dep_target:sourcefiles()) do
                         table.insert(subcontent[group_name], file)
+                    end
+
+                    if (dep_target:rule("latex.indirect_content")) then 
+                        print("indirect content")
+                        local targetfile = path.absolute(dep_target:values("targetfile"))
+                        table.insert(subcontent[group_name], targetfile)
                     end
                 end
                 if (dep_target:rule("latex.bib")) then 
@@ -131,20 +173,8 @@ rule("latex")
 
         -- copy to gendir 
         local gendir = target:autogendir({root = true})
-        -- copy source files
-        for group_name, sourcefiles in pairs(subcontent) do
-            local group_dir = path.join(gendir, group_name)
-            if group_name == "main" then 
-                group_dir = gendir
-            end
-            if (not os.isdir(group_dir)) then
-                os.mkdir(group_dir) 
-            end 
-            
-            for _, file in ipairs(sourcefiles) do
-                os.cp(file, group_dir)
-            end
-        end
+        target:set("values", "succontent", json.encode(subcontent))
+
         -- gen ref.bib
         local bibfile_path = path.join(gendir, "ref.bib")
         os.tryrm(bibfile_path)
@@ -156,12 +186,29 @@ rule("latex")
         bibfile:write(bibcontent)
     end)
     on_build(function(target, opt)
-        import("lib.detect.find_tool")
-        import("core.project.depend")
         import("utils.progress")
+        import("lib.detect.find_tool")
+        import("core.base.json")
+
+        local gendir = target:autogendir({root = true})
+        local subcontent = json.decode(target:values("succontent"))
+
+        -- copy source files
+        for group_name, sourcefiles in pairs(subcontent) do
+            local group_dir = path.join(gendir, group_name)
+            if group_name == "main" then 
+                group_dir = gendir
+            end
+            if (not os.isdir(group_dir)) then
+                os.mkdir(group_dir) 
+            end 
+            for _, file in ipairs(sourcefiles) do
+                os.cp(file, group_dir)
+            end
+        end
+
         os.cd(target:autogendir({root=true})) -- enter project dir
         local latexmk = assert(find_tool("latexmk"), "latexmk not found!")
-        
         local latex_compiler = target:extraconf("rules", "latex", "latex_compiler")
         
         if latex_compiler == nil then 
@@ -171,6 +218,7 @@ rule("latex")
         os.vrunv(latexmk.program, {"-pdf", "-" .. latex_compiler})
         os.cd("$(projectdir)") -- back to project root
     end)
+
     after_build(function (target, opt)
         import("utils.progress")
         progress.show(opt.progress, "build %s.pdf done", target:name())
@@ -186,15 +234,6 @@ rule("latex")
     end)
 rule_end()
 
-function add_bib(name, deps)
-    function to_lower(str)
-        return str:gsub("%u", function(c) return "_" .. c:lower() end)
-    end
-    target("bib_" .. to_lower(name))
-        add_rules("latex.bib")
-        add_files(name .. ".bib")
-    target_end()
-end
 
 function add_latex(name, deps, main, compiler)
     if (main == nil) then 
@@ -207,6 +246,13 @@ function add_latex(name, deps, main, compiler)
     target(name)
         add_files("**.tex")
         add_rules("latex", {latex_main = main .. ".tex", latex_compiler = compiler})
-        add_deps(deps)
+        add_deps(deps, { order = true})
     target_end()
 end
+
+function add_json_table(name) 
+    target(name)
+        add_rules("latex.json_table")
+        add_files(name .. ".json")
+    target_end()
+end 

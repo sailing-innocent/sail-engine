@@ -1,0 +1,106 @@
+\begin{frame}
+    \begin{quote}
+        我在自己的代码框架下复现了Gaussian Splatting的工程，并得到结果如下
+    \end{quote}
+    \begin{columns}[c]
+        \begin{column}{0.48\textwidth}
+            \begin{figure}
+                \includegraphics[width=\textwidth]{fig_impl_20231018.png}
+                \caption{源码结果}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{figure}
+                \includegraphics[width=\textwidth]{fig_reimpl_20231018.png}
+                \caption{复现结果}
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Gaussian Splatting复现细节}
+    \begin{itemize}
+        \item pytorch + cuda 混合编程，利用GPU并行计算加速
+        \item 使用cuda内部共享内存(shared memory)进行并行算法优化
+        \item 使用cub基数排序(radix sort)，并行规约(reduce)等算法，
+            以及 id chunk等优化方法对于代码效率进行极致的优化
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{使用pytorch C++/CUDA扩展}
+    使用torch autograd和torch cpp extension 功能可以将一个用C++/CUDA实现的
+    高性能并行模块封装为一个torch模块
+    \begin{figure}
+        \includegraphics[width=0.6\linewidth]{fig_diff_render_20231018.png}
+        \caption[short]{可微渲染器优化过程}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{idea: 引入全景照片实现前后景分离}
+    全景图是一种分辨率为$(2w,w)$的高分辨率图片，其中横轴表示经度$(0,2\pi)$，
+    纵轴表示纬度 $(-\frac{\pi}{2},\frac{\pi}{2})$
+    \begin{figure}
+        \includegraphics[width=0.8\linewidth]{fig_panorama_20231018.png}
+        \caption[short]{全景图}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{接口: Background}
+    \begin{quote}
+        在Gaussian Splatting原始的实现中，积累的$T_{final}$最终
+        会和背景颜色混合 $C_i=C_{i,gaussian} + T_{final}C_{background}$
+        如果我们设计一个可微的全景照片采样器S,
+        让每一个像素用相机的姿态都从全景图中进行采样$C_{i,background}=S(i,P_{pano})$
+        并将对全景图的微分$T$反向传播到全景图中，就可以优化得到远景。
+    \end{quote}
+\end{frame}
+
+\begin{frame}
+    \frametitle{实现一个可微的全景图片采样器}
+    \begin{quote}
+        \textbf{双线性插值}
+        对于每一个确定的相机位姿，我们都可以得到从相机中心$\vec{c}$向像素点射出的一条射线（方向为归一化坐标$\vec{d}$）可以计算此时该像素在全景图上的采样点$\theta \in (0,2\pi)$和$\phi\in(-\frac{\pi}{2},\frac{\pi}{2})$
+        对于该采样点，可以得到其临近的四个全景图像素点 $ceil(\frac{\theta}{2\pi} * w)$, $floor(\frac{\theta}{2\pi} * w)$, $ceil(\frac{\phi}{\pi} * h)$, $floor(\frac{\phi}{\pi} * h)$
+        进行双线性插值即可，整个过程是可微的，也就是在反向的过程中我们同样可以将相机平面像素颜色的微分$\frac{dL}{dc_{background}}$反向传播到全景图的每个像素点上 $\frac{dL}{dc_{para}}$
+    \end{quote}
+\end{frame}
+
+\begin{frame}
+    \frametitle{其他想法1：结合SAM进行点的标记和实例分割}
+    \framesubtitle{SAM: Segment Anything}
+    \begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+        \begin{column}{0.3\textwidth} % Left column width
+            \begin{figure}
+                \includegraphics[width=0.9\linewidth]{paper_segment_anything.png}
+                \caption{\href{https://arxiv.org/abs/2304.02643}{Segment Anything}}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.68\textwidth} % Right column width
+            \begin{enumerate}
+                \item Demo: \href{https://segment-anything.com/demo}{segment-anything.com}
+                \item Project: \href{https://github.com/facebookresearch/segment-anything}{Github Page}
+            \end{enumerate}
+            \begin{quote}
+                SAM是一个无监督场景分割的大模型，可以通过输入的prompt直接分割场景中可能存在的物体。
+                通过将SAM分割的结果定义为一种颜色通道，我们可以通过类似着色的方法来反向训练得到拥有标记的点云，从而实现一个被实例分割的点云。
+            \end{quote}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{其他想法2：结合物理模拟先验让高斯点动起来}
+    \begin{figure}
+        \includegraphics[width=0.8\linewidth]{fig_csig2023_app_demo.png}
+        \caption[short]{Fluid Simulation Framework}
+    \end{figure}
+    \begin{quote}
+        前期已经实现了使用LuisaCompute \cite{zhengLuisaRenderHighPerformanceRendering2022} 开发了一个高性能的并行流体模拟框架，
+        实现了SPH\cite{priceSmoothedParticleHydrodynamics2012}流体模拟方法和加速方法\cite{huangGeneralNovelParallel2019}，
+        该项目参加了中国图像图形学会CSIG2023流体模拟赛道并取得全国亚军。
+    \end{quote}
+\end{frame}

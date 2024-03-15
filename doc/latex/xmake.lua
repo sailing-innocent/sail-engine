@@ -9,6 +9,7 @@ includes("bib")
 includes("template")
 includes("sample")
 includes("figure")
+includes("table")
 includes("content")
 includes("note")
 

@@ -1,0 +1,268 @@
+\documentclass{njupre/njupre}
+
+\title[title]{ Continuous Coordination As a Realistic Scenario for Lifelong Learning}
+
+\subtitle{Final Presentation for Deep Reinforcement Learning Course}
+
+\author[Zhu Zihang]{\texorpdfstring{Zhu Zihang \\ \smallskip \textit{522022150087@smail.nju.edu.cn}}{}}
+
+\date[2023-06-10]{\textit{2023-06-10}}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}
+    \frametitle{TOC}
+    \tableofcontents
+\end{frame}
+
+\begin{frame}
+    \frametitle{Continuous Coordination As a Realistic Scenario for Lifelong Learning \cite{nekoeiContinuousCoordinationRealistic2021}}
+    \begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+        \begin{column}{0.3\textwidth} % Left column width
+            \begin{figure}
+                \includegraphics[width=0.8\linewidth]{fig_paper_drl_final.png}
+                \caption{\href{https://arxiv.org/pdf/2103.03216.pdf}{From Arxiv}}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.68\textwidth} % Right column width
+            \begin{itemize}
+                \item Recept by ICML 2021
+                \item By Hadi Nekoei, Akilesh Badrinaaraayanan, Aaron Courville, Sarath Chandar
+                \item \href{https://github.com/chandar-lab/Lifelong-Hanabi}{Repo from Github}
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\section{Background}
+
+\begin{frame}
+    \frametitle{Deep Reinforcement Learning}
+    \begin{figure}
+        \includegraphics[width=0.9\linewidth]{fig_diagram_drl.png}
+        \caption[short]{Deep Reinforcement Learning}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Lifelong Learning}
+    \begin{quote}
+        The ablity of AI system to effectively update new information over time is known as lifelong learning (LLL) or continuous learning
+    \end{quote}
+    \begin{enumerate}
+        \item Naive: without any episodic memory or regularization
+        \item Experience Replay (ER): Chaudhry et al 2019
+        \item Averaged Gradient Episodic Memory (A-GEM): Chaudhry et al 2018b
+        \item Elastic Weight Consolidation (EWC): regularized based technique proposed to alleviate catastrophic forgetting, Kirkpatrick et al 2017, Schwarz et al 2018
+        \item Stable naive/ER/A-GEM/EWC: Mirzadih et al 2020
+        \item Multi-Task Learning (MTL)
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{MARL as Lifelong Learning Benchmark}
+    \begin{quote}
+        Multi-agent RL can be seen as a natural scenario of life-long learning, for its non-stationarity, since agents' policies change over time
+    \end{quote}
+    \begin{enumerate}
+        \item Self-Play(SP): Centralized Training, Decentralized Execution, Sunehag et al 2017
+        \item VDN: Value Decomposition Network, Sunehag et al 2017
+        \item BAD: Bayesian Action Decoder, Foerster et al 2019
+        \item SAD: Simplied BAD, Hu \& Foerster et al 2019
+        \item IQL: Independent Q-Learning, Tan 1993
+        \item OP: Other Play (Hu et al 2020) training self-play agents in shuffled environment
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Theory of Mind}
+
+    \begin{quote}
+        reasoning of others of agents with their own mental states,
+        such as perspectives, beliefs, and intentions,
+        to explain and to predict their behaviour.
+    \end{quote}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Hanabi Game}
+    \begin{figure}
+        \includegraphics[width=0.9\linewidth]{fig_hanabi_online_drl_final.png}
+        \caption[short]{The Hanabi Game on-line \href{https://en.boardgamearena.com/gamepanel?game=hanabi}{website}}
+    \end{figure}
+
+\end{frame}
+
+\section{Introduction}
+\begin{frame}
+    \frametitle{The Limitation of Previous Lifelong-Learning Benchmarks}
+    \begin{enumerate}
+        \item Previous Benchmarks: MNIST, CIFAR.. lake of resulting task complexity
+        \item the relation between tasks cannot be quantified easily
+    \end{enumerate}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Habini Game Rule}
+
+    \begin{figure}
+        \includegraphics[width=0.9\linewidth]{fig_habini_game_drl_final.png}
+        \caption[short]{An Example of Four Player Habini Game \cite{bardHanabiChallengeNew2020}}
+    \end{figure}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Habini Game Rule}
+
+    \begin{enumerate}
+        \item each player holds a hand  of four cards (or five when 2 or 3 players)
+        \item each card depicts a rank (1 to 5) and a color (red, green, yello, white)
+        \item the deck (set of cards) is composed of a total of 50 cards, 10 of each color, three 1s, two 2s, 3s and 4s, and finally a single 5.
+        \item the goal of the game is to play cards so as to form five consecutively ordered stacks, one of each color, beginning with a card of rank 1 and ending with a color of rank 5
+        \item players can only see their partner's hand, and not their own
+        \item player take turns doing one of three actions: hint, discard, play
+    \end{enumerate}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Hint}
+
+    \begin{enumerate}
+        \item chooseing a rank or color
+        \item only ranks and colors taht are present in the ahnd of the player can be hinted for
+        \item hint are limited supply, owning 8 information tokens, if no infromation tokens remain, hints cannot be given
+    \end{enumerate}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Discard}
+
+    \begin{enumerate}
+        \item place face up with unsuccessfuly played cards, visible to all players
+        \item draws a new card form the deck
+        \item an information token is recovered
+    \end{enumerate}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Play}
+
+    \begin{enumerate}
+        \item pick a card (known or unknown) and attempt to play it
+        \item if the card is the next in the sequence of its color to be played
+        \item he player can play card without knowning anything, but if unsuccessful, the card will be discarded with no information token
+        \item the group has successfully played cards to complete 5 stacks, scores one point for each card in each stack
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Habini Game Highlights}
+    \begin{enumerate}
+        \item different from adversarial two-player zero-sum games, such as chess, checkers, go, that agents typically compute an equilibrium policy, the value of an agent's policy depends critically on the policy used by its teammates.
+        \item inperfect information with communication protocol.
+        \item cooperative nature
+    \end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Lifelong Hanabi Setup}
+
+    \begin{figure}
+        \includegraphics[width=0.9\linewidth]{fig_lifelong_habini_setup_drl_final.png}
+        \caption[short]{The Setup}
+    \end{figure}
+    \begin{enumerate}
+        \item Our agent (learner) is trained sequantially with a set of partners (tasks)
+        \item the learner and its partners are sampled from large pool consists of pre-trained agents ($\le 100$)
+        \item the pre-trained pool consists of agents trained with different MARL methods
+    \end{enumerate}
+\end{frame}
+
+\section{Experiment}
+
+\begin{frame}
+    \frametitle{Metrics}
+
+    \begin{enumerate}
+        \item average score ($A\in[0,1]$): , let $a_{ij}$ be the score of learner versus jth partner, after training it with $i^{th}$ partner in sequential training $A_t=\frac{1}{t}\sum\limits_{i=1}\limits^{t}a_{t,j}$
+        \item forgetting ($F\in [-1,1]$): Let $f_j^t$ represents the forgetting on task j after learner is trained on task t: $f_j^t=max_{l\in[1,2,\dots,t-1]}a_{l,j}-a_{t,j}$, F is the average
+        \item forward transfer (FT) : $FT_{t}=\frac{1}{T-t}\sum_{j=t+1}^Ta_{t,j}$
+        \item measuring OOD generalization in our setup called generalization improvement scores (GIS), Zhang et al 2018: let $a_{0,k}$ and $a_{N,k}$ be the score of learner versus kth random agent sampled from the pool,$GIS = \frac{1}{K}\Sigma_{k=1}^K(a_{T,k}-a_{0,k})$
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Zero and Few Shot Performance}
+    \begin{figure}
+        \includegraphics[width=0.9\linewidth]{fig_zero_and_few_shot_performance_drl_final.png}
+        \caption[short]{performance}
+    \end{figure}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Table 1}
+    \begin{figure}
+        \includegraphics[width=0.9\linewidth]{fig_table1_drl_final.png}
+        \caption[short]{Table 1}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Memory Performance}
+    \begin{figure}
+        \includegraphics[width=0.9\linewidth]{fig_memory_performance_drl_final.png}
+        \caption[short]{memory performance}
+    \end{figure}
+
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Table 2}
+    \begin{figure}
+        \includegraphics[width=0.9\linewidth]{fig_table2_drl_final.png}
+        \caption[short]{Table 2}
+    \end{figure}
+    \begin{enumerate}
+        \item intra-CP: cross-play evaluation within methods
+        \item inter-CP: across different methods
+        \item C: centraized training
+        \item GA: agent shared their greedy action along with their standard action
+        \item SYM: symmetries of game needed upfront
+        \item P: require access of some pretrained agents
+    \end{enumerate}
+\end{frame}
+
+\section{Discussion}
+
+\begin{frame}
+    \frametitle{Later Works Using Habini as Benchmark}
+    \begin{figure}
+        \includegraphics[width=0.6\linewidth]{fig_habini_usage_drl_final.png}
+        \caption[short]{The Usage of Habini Environment from \href{https://paperswithcode.com/task/hanabi}{Papers with Code}}
+    \end{figure}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Reference}
+    \bibliography{ref}
+    \bibliographystyle{plain}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Thank You}
+    Thanks for watching
+\end{frame}
+
+\end{document}

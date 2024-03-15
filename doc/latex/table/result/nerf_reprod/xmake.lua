@@ -1,0 +1,1 @@
+add_json_table("tab_nerf_reprod_eval_psnr_result")
