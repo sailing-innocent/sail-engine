@@ -1,0 +1,128 @@
+\begin{frame}
+    \frametitle{SPH Method}
+    \begin{quote}
+    SPH(Smoothed-particle hydrodynamics) is a space discrete method, which mainly estimates the value of continuous function in space by sampling points around it. For example, the value of continuous function A(x) at position x is calculated by the physical quantity of particles in the neighborhood of the position, and the interpolation is calculated by the smooth kernel function W. The specific kernel function interpolation formula is as follows:
+    \end{quote}
+    \begin{equation}
+        A(x)=\sum_{j}m_j\frac{A_j}{\rho_j}W(x-x_j,h),
+    \end{equation}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{SPH Method}
+    \begin{equation}
+        A(x)=\sum_{j}m_j\frac{A_j}{\rho_j}W(x-x_j,h) \nonumber
+    \end{equation}
+    \begin{enumerate}
+        \item $m_j$ is the mass of the particle.
+        \item $\rho_j$ is the density of the particle.
+        \item h is the radius of the smooth kernel (support domain).
+        \item W is the smooth kernel function, whose influence should decrease with the increase of distance. The kernel function W selected in this project is cubic spline function.
+    \end{enumerate}
+    \begin{equation}
+        W(q)=\sigma_d \begin{cases}
+            6(q^3-q^2)+1, & \rm{for\; 0\leq q< 0.5} \\
+            2(1-q)^3,     & \rm{for\; 0.5\leq q< 1} \\
+            0,            & \rm{for\; q\ge 1}       \\
+        \end{cases}
+    \end{equation}
+\end{frame}
+
+\begin{frame}
+    \frametitle{N-S Equation}
+    \begin{quote} using SPH method to calculate the simplified Naiver-Stokes equation. Among them, the NS equation is divided into momentum equation and continuity equation: \end{quote}
+    \begin{equation}
+        \begin{aligned}
+        &\frac{d\rho}{dt}=-\rho\nabla·\boldsymbol{v}\quad\text{(continuity equation)} \\
+        &\frac{d\boldsymbol{v}}{dt}=-\frac{1}{\rho}\nabla P + \mu\nabla ^2\boldsymbol{v}+ \boldsymbol{g} \quad\text{(momentum equation)}
+        \end{aligned}
+    \end{equation}
+\end{frame}
+
+\begin{frame}
+    \frametitle{SPH Method to Solve NS Equation}
+    \begin{enumerate}
+        \item \textbf{WCSPH} (Weakly Compressibility SPH) is a SPH method based on state equation. This method assumes that the fluid can be slightly compressed and calculates the pressure by the compression amount.
+        \item \textbf{PCISPH} (Predictive-Corrective Incompressible SPH) is a SPH method based on iterative correction. This method assumes that the fluid is incompressible and iteratively corrects the pressure to maintain incompressibility.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{WCSPH}
+    \begin{columns}[c]
+        \begin{column}{0.38\textwidth} % Left column width
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.9\linewidth,keepaspectratio]{fig_wcsph_csig2023.png}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.6\textwidth} % Right column width
+            \begin{enumerate}
+                \item assume that the fluid can be slightly compressed, calculate the pressure by the compression amount.
+                \item calculate current density $\rho(\boldsymbol{x})=\sum_{b}m_bW(\boldsymbol{x}-\boldsymbol{x_b},h)$
+                \item calculate pressure using Tait Equation: $P(\boldsymbol{x})=B((\frac{\rho(\boldsymbol{x})}{\rho_0})^{\gamma}-1)$
+                \item when neighborhood pressure is inconsistent, particles will be pushed away or pulled together. $	\nabla f_p(\boldsymbol{x}) =-\frac{\nabla P(\boldsymbol{x})}{\rho(\boldsymbol{x})}.$
+                \item calculate the viscosity force, using artificial viscosity as \textit{SPlisHSPlasH}
+            \end{enumerate}
+        \end{column}
+    \end{columns}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{PCISPH}
+    \begin{columns}[c]
+        \begin{column}{0.38\textwidth} % Left column width
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.9\linewidth,keepaspectratio]{fig_pcisph_csig2023.png}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.6\textwidth} % Right column width
+            PCISPH is based on WCSPH, with some slight changes:
+            \begin{enumerate}
+                \item \textbf{Prediction Step} predicte the position and velocity of the particle.
+                \item \textbf{Correction Step} calcuate the difference of predictive density and static density, and correct the pressure.
+                \item recursively correct the pressure until the density error is less than a certain threshold\cite{solenthaler2009predictive} 
+            \end{enumerate}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Neighbor Search}
+    \begin{quote}
+        We implement the task-based neighborhood search method \cite{huangSPH2019}
+    \end{quote}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\linewidth,keepaspectratio]{fig_task_csig2023.png}
+    \end{figure}
+    \begin{enumerate}
+        \item split the space into a uniform grid, which width, length and height are all support radius.
+        \item assign each particle to the grid cell it belongs to.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\linewidth,keepaspectratio]{fig_task_csig2023.png}
+    \end{figure}
+    \begin{enumerate}
+        \item assign particles in grid cell to the task of length 32, maintaining all the particles in the same task are in the same grid cell.
+        \item assign each task to 32 thread, when the distribution of particles are sparse, the number of threads will be less than 32.
+        \item for sparse case: each particle is assigned to a thread, and the neighborhood data is obtained and the physical quantity is calculated.
+        \item for dense case: each task shares the neighborhood data.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{SPH Solver Design}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.85\linewidth,keepaspectratio]{fig_sph_solver_csig2023.png}
+    \end{figure}
+\end{frame}
+

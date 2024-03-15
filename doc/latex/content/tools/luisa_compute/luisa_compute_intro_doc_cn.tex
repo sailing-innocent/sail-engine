@@ -1,0 +1,49 @@
+高性能计算框架\textbf{Luisa Compute} \cite{zhengLuisaRenderHighPerformanceRendering2022}
+具有非常多的特性，
+本节主要概述LC框架的部分概念以及本项目中使用到的特性。
+
+如图\ref{fig:lc_arch}所示，LC框架在前端提供了C++的Embedded DSL（Domain Specific
+Language），用户可以在C++中直接编写Kernel，LC框架通过DSL生成AST（Abstract Syntax Tree），并在运行时将其编译为对应后端的Shader，这个方式通常被称为JIT（Just In Time）。
+
+此外LC框架抽象了不同后端的差异，提供了一套统一的运行时API，用户可以使用同样的API对不同的后端进行操作，例如资源申请，内存拷贝。除了基础的运行时，LC还提供了光追加速结构的支持，用户可以在LC中使用统一的API进行光追加速结构的构建与使用，本项目的光追碰撞检测算法部分将会使用到这一特性。
+
+得力于JIT，LC的运行时与Kernel编写能够产生“1+1>2”的耦合效果，这种耦合效果是通过\textbf{变量捕获}和\textbf{资源捕获}产生的。例如，用户可以在C++中定义一个变量，然后在DSL编写的Kernel中直接使用这个变量。这个变量随后将会被捕获并转化为Kernel中的一个常量。Kernel同样可以捕获Buffer、Image、BindlessArray，用户无需在调用对应Shader$^1$时手动传递资源的Handle，但二者机制有所差异。后面的小节中将会更深入的介绍\textbf{捕获}的内容。
+
+LC框架提供了多个后端（例如DirectX、Vulkan、Metal等），用户可以将相同的Kernel运行在不同的后端上。在本项目中，我们使用了DirectX后端。
+\begin{figure}[H]
+	\centering
+	\includegraphics[keepaspectratio,width=\linewidth]{fig_diagram_lc.jpg}
+	\caption{\href{https://github.com/LuisaGroup/LuisaCompute/tree/next}{LC架构示意图}}
+	\label{fig:lc_arch}
+\end{figure}
+
+注$^1$：本报告中Shader一般指编译完成的后端代码，Kernel一般指LC中的由用户直接编写的Kernel函数，此外还有Callable，指LC中的由用户编写的非内联展开的设备端函数。
+\section{LC的函数}
+LC中有三种函数：
+\begin{enumerate}
+	\item \textbf{Kernel}：用于编译成后端Shader的函数，是设备端的入口函数。
+	\item \textbf{Callable}：可被Kernel调用的非内联展开函数。
+	\item \textbf{Inline Function}：可被Kernel调用的内联展开函数，在形式上等价于C++原生函数，但在LC C++ DSL的意义下是将设备端代码段在Kernel对应位置展开。
+\end{enumerate}
+
+\section{捕获}
+\textbf{变量捕获}：在Kernel内使用Host端的运行时对象，这个对象的\textbf{值}将会被捕获。对于基本类型（整型、浮点、向量、矩阵），捕获值为其运行时的值。LC在AST生成阶段将其作为Kernel中的常量。
+
+\textbf{资源捕获}：在Kernel内使用Host端的Buffer、Image、BindlessArray等资源对象，捕获值为其\textbf{Handle}。LC将会在对应Shader调用时隐式传递这些资源的Handle，用户无需手动传递。
+
+\section{多阶段代码生成}
+多阶段代码生成是LC的重要特性，LC中Shader代码生成阶段主要有：
+\begin{enumerate}
+	\item C++ 预处理器宏展开阶段
+	\item C++ 编译期模板元实例化阶段
+	\item C++ 运行时AST生成阶段
+	\item AST到Device端代码生成阶段
+\end{enumerate}
+其中第1、2阶段为常见的C++编程代码生成阶段，借助LC的C++ Embedded Domain Specific Language（DSL），我们可以利用第1、2阶段对Shader代码进行初期的代码生成工作，例如使用C++模板对不同的数据类型生成对应的函数。在第3阶段，由于运行时编译的特点，我们可以将Bindless Array以\textbf{资源捕获}的方式编译到对应的函数或者Shader中，通过LC的隐式资源Handle传递来完成代码封装。本项目中，\textbf{SPHerePackage}利用了此特性，用于提高代码的模块化程度。第4阶段，用户一般无法直接干预后端代码的生成。
+
+\section{即时编译}
+LC中各后端（例如DirectX）使用的Shader均为运行时编译（或从文件cache读取）。JIT方式能够大幅提高Shader的灵活性，从根本上解决“变体”问题。此外JIT方式能够充分利用程序运行时信息，减少不必要分支、优化寄存器分配等。本项目在XPBD求解器的约束求解结果归一化阶段充分利用了此特性，在保证代码高复用性的同时减少了Memory Barrier。
+
+\section{命令重排}
+LC运行时能够根据Stream中Command（例如Copy Command、Shader）对内存资源（例如Buffer、Image）的读写情况进行命令重排以减少Kernel之间的同步。本项目中所有API均遵循“Stream无知”的原则，将命令的发出权完全交还给用户以最大化命令重排的效果。
+

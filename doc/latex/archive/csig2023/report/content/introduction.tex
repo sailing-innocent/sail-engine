@@ -1,0 +1,46 @@
+\section{项目简介}
+本项目为基于高性能计算框架\textbf{Luisa Compute}\cite{Zheng2022LuisaRender}实时物理求解器\textbf{SPHere}。
+目前为止本项目实现的求解器组件有：
+\begin{itemize}
+	\item SPH （Smooth Particle Hydrodynamics）流体仿真求解器：支持弱可压缩、不可压缩流体仿真
+	\item XPBD （Extended Position Based Dynamics） 布料仿真求解器：支持基于弹簧质点系统与基于应变的布料模型。
+	\item XPBD-SPH耦合器：支持流体与布料的耦合作用，如碰撞
+	\item 边界后处理器：支持离散SDF（Signed Distance Field）、解析有向SDF等。
+\end{itemize}
+
+其中流体布料碰撞宽检测使用硬件光追进行加速，使用的算法来自文献\cite{rtCollision2022}；SPH邻域搜索使用空间哈希以便充分利用LDS(Local Data Share)进行加速，使用的算法来自文献\cite{huangSPH2019}。
+
+在\textbf{SPHere}的整体设计中，我们充分发挥\textbf{Luisa Compute}框架（以下简称LC）的优势，设计并实现了一套适用于实时编译Compute Shader（JIT-Compute-Shader）的模块化包管理系统\textbf{SPHerePackage}。本项目的所有求解器组件及所需的基础设施（如并行原语库等）均建立在\textbf{SPHerePackage}之上。
+
+\section{团队成员与项目名称}
+团队成员：
+\begin{itemize}
+	\item 卢子璇~中国科学院大学
+	\item 陆昕瑜~哈尔滨工业大学
+	\item 罗旭锟~中国科学院大学
+	\item 朱子航~南京大学
+	\item 黄可蒙~香港大学
+\end{itemize}
+
+SPHere = SPH（光滑粒子动力学）+ Here（这里）， 同时还兼有球形（Sphere）的含义。这个提议来自团队成员朱子航。
+
+\section{功能清单}
+本项目包含以下功能特性（features）
+\begin{itemize}
+	\item \textbf{模块化设计}： 模块化与包管理系统\textbf{SPHerePackage}
+	\item \textbf{物理仿真}：
+	      \begin{itemize}
+		      \item[$\circ$]SPH（PCISPH、WCSPH模型）
+		      \item[$\circ$]task-based通用实时粒子邻域搜索算法
+		      \item[$\circ$]通用硬件光追碰撞宽检测
+		      \item[$\circ$]XPBD布料仿真
+		      \item[$\circ$]XPBD布料-SPH水体弱耦合
+		      \item[$\circ$]SDF静态边界交互
+	      \end{itemize}
+	\item \textbf{渲染与可视化}：实时相机、实时流体布料渲染
+	\item \textbf{并行原语}： Reduce/Scan
+	\item \textbf{文件IO}： abc/obj/sdf/smesh
+	\item \textbf{资产生成}： cloth builder/fluid builder
+	\item \textbf{用户界面}： QT-GUI
+	\item \textbf{构建系统}： Xmake
+\end{itemize}

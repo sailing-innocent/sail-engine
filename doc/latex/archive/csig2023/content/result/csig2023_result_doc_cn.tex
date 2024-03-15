@@ -1,0 +1,62 @@
+\paragraph{基准测试}
+\textbf{赛题重述}：长宽高各1米的立方水池，水流粒子贴水池顶部内表面中央落下。水体的初始化形状为长宽高各0.5的立方体，粒子均匀分布，粒子数为125,000，水的静密度为1000，水池底和内壁平面能量吸收率均为30\%，反射系数-0.7，粒子搜索半径为0.02。以上单位采用国际单位制（下同）。
+\textbf{空间哈希SPH模拟效果展示}：
+如图\ref{fig:main4090cubebounding}所示，我们基于空间哈希邻域搜索进行SPH模拟，在粒子数125,000下FPS达到600左右。
+\textbf{光追硬件SPH模拟效果展示}：
+如图\ref{fig:bvh}所示，本实验使用光追硬件BVH进行领域搜索，可以发现与空间哈希方法相比，该方法性能较差，FPS只有空间哈希的三分之一左右。
+
+以下结果测试于： RX7900 GRE
+\begin{table}[h!]
+    \begin{center}
+        \input{tab_csig2023_basic_result_rx7900}
+    \end{center}
+    \caption{基准测试结果}
+    \label{table:main7900result}
+\end{table}
+
+如表\ref{table:main7900result}为所有场景的平均帧数结果。所有结果均设定粒子数为125,000、时间步长为0.004s。其中Cube场景为固定赛题，分别使用了SpritePoint(SP)、ScreenSurfaceFluid(SSF)、Volume三种渲染方法进行帧数测试。其余场景分别表示使用Bvh进行领域搜索场景、球形容器场景、瀑布场景和瀑布修炼的兔子场景，均默认使用SpritePoint方法渲染。
+
+\paragraph{性能测试}
+
+我们对邻域搜索的部分进行了Profile。如图\ref{fig:bvhvssh}所示，横坐标为粒子数，纵坐标为检测耗时，可以发现邻域搜索部分空间哈希方法的性能是光追硬件方法的十倍左右。通过分析，我们发现导致这种性能差异的主要原因是：SPH模拟中，粒子在局部上往往是非常的稠密的，这导致末端的BVH节点被高频地遍历（进行Ray AABB检测），进而导致BVH的性能下降。可以说，BVH更适合于剔除，而不适合进行领域搜索。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth,keepaspectratio]{fig_main_4090_cube_bounding_csig2023.png}
+	\caption{空间哈希SPH模拟效果}
+	\label{fig:main4090cubebounding}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth,keepaspectratio]{fig_main_4090_bvh_csig2023.png}
+	\caption{光追硬件SPH模拟效果}
+	\label{fig:bvh}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth,keepaspectratio]{fig_bvh_vs_sh_csig2023.png}
+	\caption{BVH与空间哈希对比}
+	\label{fig:bvhvssh}
+\end{figure}
+
+此外我们还进行了其他测试：
+
+\paragraph{SPHere Logo} 本实验模拟流体落入球形容器中的效果。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth,keepaspectratio]{fig_4090_sphere_bounding_csig2023.png}
+	\caption{SPHere Logo}
+\end{figure}
+\paragraph{瀑布场景} 本实验模拟了瀑布的效果。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth,keepaspectratio]{fig_4090_waterfall_csig2023.png}
+	\caption{瀑布场景}
+\end{figure}
+\paragraph{瀑布修炼的兔子} 本实验模拟了一个带着披风在瀑布修炼的兔子，兔子的披风是由布料模拟得到的。展示了流体、布料、静态边界的耦合效果。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth,keepaspectratio]{fig_4090_bunny_in_rain_csig2023.png}
+	\caption{瀑布修炼的兔子}
+\end{figure}

@@ -7,7 +7,10 @@ rule("latex.content")
     end)
 rule_end()
 
-function add_content(name, srclist, deps)
+function add_content(name,deps, srclist)
+    if srclist == nil then 
+        srclist = name .. ".tex"
+    end
     target(name)
         add_rules("latex.content")
         add_files(srclist)

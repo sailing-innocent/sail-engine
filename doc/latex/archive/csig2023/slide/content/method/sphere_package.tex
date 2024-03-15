@@ -1,0 +1,79 @@
+\begin{frame}
+    \frametitle{Package Environment}
+    \begin{itemize}
+        \item \textbf{PackageGlobal} a thread local static class, is the package environment context of the current thread.
+        \item \textbf{PackageEnvScope} a Guard class, whose construction and destruction determine a specific package environment. When constructed, push the current environment to PackageGlobal, and when destructed, restore the original environment of PackageGlobal. If PackageEnvScope is not used, it will always be in the default environment.
+        \item \textbf{Package} base class, used to standardize behavior encapsulation and provide auxiliary code. All package developments inherit from this base class.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Package Type}
+    \begin{enumerate}
+        \item \textbf{Method Package}: Provide Callable for users. It does not need to be compiled and only has AST Gen stage.
+        \item \textbf{Routine Package}: Provide Kernel for users. Users provide input data that meets the requirements and call the package to get the result (such as the parallel primitive library implemented in this project). This kind of package needs to be compiled before it can be used.
+        \item \textbf{Module Package}: Provide Kernel/Callable for users. Different from 1/2, this kind of package maintains a private data structure (occupying device resources). Users interact with the algorithm of this package through the interface provided by this package. Typical Module Packages in SPHere are: BVHCollisionDetection (Kernel with resources), SDF (Callable with resources).
+        \item \textbf{Inline Package}: Provide inline code segment for users. Users directly call the corresponding C++ function, and the corresponding code is expanded in Callable or Kernel, used for helper functions.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Package Norm}
+    \begin{itemize}
+        \item \textbf{config}: Each package must have a config stage, which is used to determine the capture behavior of the package code in the AST Gen stage.
+        \item \textbf{astgen}: Callable, Kernel can generally be completed by lazy generation.
+        \item \textbf{compile}: For Routine Package and Module Package, there is a compile stage, which can be compiled by lazy compilation (compile when the user calls a specific interface).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Package Management}
+    \begin{itemize}
+        \item Callable Package, Routine Package can be managed and reused, Module Package cannot be reused, because the latter has specific resources.
+        \item The package management of \textbf{SPHerePackage} maintains a Description, Package. Any package needs to be uniquely described by Description. The package that meets the description will be returned to the user when PackageManager::require(Description) is called. If there is no package that meets the description, the corresponding package will be created and returned to the user.
+        \item Packages can depend on each other, and this dependency is also implemented through require
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Callable Package}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[keepaspectratio,width=0.4\linewidth]{fig_callable_package_csig2023.png}
+        \caption{Callable Package}
+        \label{fig:CallablePackage}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Callable Package}
+    \begin{itemize}
+        \item Callable Package can be divided into two categories:
+        \begin{enumerate}
+            \item \textbf{Module} with resources, that is, this kind of package needs to apply for resources such as Buffer, Image from device, and use it as the data structure inside the package. Users can access the data inside the package through the interface provided by the package. Corresponding to Package A in Figure \ref{fig:CallablePackage}.
+            \item \textbf{Method} without resources, that is, this kind of package does not need to apply for any resources from device. All functions provided by this package operate on the resources provided by the user, or are just helper functions. Corresponding to Package B in Figure \ref{fig:CallablePackage}.
+        \end{enumerate}
+        \item For Callable Package, users will first configure and astgen the package, and then use it in their Kernel. As shown in Figure \ref{fig:CallablePackage}:
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Kernel Package}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[keepaspectratio,width=0.4\linewidth]{fig_module_package_csig2023.png}
+        \caption{Module Package}
+        \label{fig:ModulePackage}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Kernel Package}
+
+    Kernel Package can be divided into two categories:
+    \begin{enumerate}
+        \item \textbf{Module} with resources, that is, this kind of package needs to apply for resources such as Buffer, Image from device, and use it as the data structure inside the package. Corresponding to Input Buffer$\rightarrow$Viewer path in Figure \ref{fig:ModulePackage}.
+        \item \textbf{Routine} without resources, that is, this kind of package does not need to apply for any resources from device. All resources are applied and provided by the user. Corresponding to Input Buffer$\rightarrow$Output Buffer path in Figure \ref{fig:ModulePackage}.
+    \end{enumerate}
+\end{frame}

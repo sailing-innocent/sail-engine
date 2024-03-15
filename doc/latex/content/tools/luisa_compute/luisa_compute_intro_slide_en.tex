@@ -1,0 +1,72 @@
+\begin{frame}
+    \frametitle{LuisaCompute}
+    \begin{figure}
+        \includegraphics[width=0.9\linewidth]{fig_diagram_lc.jpg}
+        \caption[short]{LuisaCompute Architecture} \cite{zhengLuisaRenderHighPerformanceRendering2022}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Functions in LC}
+    \begin{enumerate}
+        \item \textbf{Kernel}: The entry function of device.
+        \item \textbf{Callable}: The function that can be called by Kernel.
+        \item \textbf{Inline Function}: The function that can be called by Kernel, but will be inlined in Kernel.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Capture}
+    \begin{itemize}
+        \item  \textbf{Variable Capture}: Capture the value of host variable. For basic types, the value is the runtime value of the variable. For complex types, the value is the runtime value of the pointer.
+        \item  \textbf{Resource Capture}: Capture the handle of host resource. LC will pass the handle of the resource to device implicitly.
+    \end{itemize}
+
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Multi-stage Code Generation}
+    \begin{enumerate}
+        \item C++ Preprocessor
+        \item C++ Template
+        \item C++ Runtime AST Generation
+        \item AST to Device Code Generation
+    \end{enumerate}
+    \begin{quote}
+        Stage 1 and 2 are common C++ code generation stages. Stage 3 and 4 are unique to LC. With LC's \textbf{C++ embedded DSL} (C++ Embedded Domain Specific Language), SPHerePackage could increse its ability of code reuse and modularity.
+    \end{quote}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Just In Time Compilation}
+    \begin{enumerate}
+        \item Runtime Compilation
+        \item Cut-off Branches
+        \item Optimize Register Allocation
+        \item Reduce Memory Barrier without decrease code reuse
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Command Reordering}
+    \begin{enumerate}
+        \item Stream Agnostic
+        \item Reduce Synchronization
+        \item Let User Decide When to Execute
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{LC helps the optimize your code on the backend}
+    These principles are quoted from \textit{https://gpuopen.com/learn/rdna-performance-guide/}
+    \begin{enumerate}
+        \item assure the number of allocators greator than the thread recoding
+        \item try to reuse the same allocator
+        \item minimize the Amount of Command Buffer Submission to GPU
+        \item use pipeline cache to reuse PSO 
+        \item create static large memory heaps and sub-allocated from the heap
+        \item ...
+    \end{enumerate}
+
+\end{frame}

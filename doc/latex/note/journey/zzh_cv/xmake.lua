@@ -18,7 +18,6 @@ add_latex(
         -- ext/archive/d5
         "fig_d6_render",
         -- ext/archive/csig2023
-        "fig_award_csig2023",
         "fig_csig2023_app_demo",
         -- ext/archive/master
         "fig_pano_gaussian_20231018"

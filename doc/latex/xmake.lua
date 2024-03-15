@@ -11,3 +11,5 @@ includes("sample")
 includes("figure")
 includes("content")
 includes("note")
+
+includes("archive")

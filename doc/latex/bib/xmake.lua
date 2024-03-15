@@ -7,4 +7,5 @@ if (get_config("doc_all")) then
 
 end 
 
-add_bib("sample", {})
+add_bib("sample")
+add_bib("tools")

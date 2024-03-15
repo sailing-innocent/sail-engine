@@ -1,0 +1,41 @@
+\documentclass[
+    coverpage = coverpage.tex,
+    fontsetup = font-setup.tex,
+    titlesetup = titles-setup.tex
+]{si_template/cn_note}
+
+\usepackage{tikz-cd}  % 使用 TikZ 绘图
+\usetikzlibrary{positioning, patterns, calc, matrix, shapes.arrows, shapes.symbols}
+\usepackage{listings} % for code
+\usepackage{booktabs}
+\begin{document}
+\frontmatter	% 制作封面和目录.
+
+\mainmatter
+
+\chapter{简介}
+\input{introduction}
+
+\chapter{技术背景：Luisa Compute}
+\input{luisa_compute_intro_doc_cn}
+
+\chapter{方案说明}
+
+\input{module.tex}
+\input{sph.tex}
+\input{xpbd.tex}
+\input{boundary.tex}
+\input{visualize.tex}
+\input{utils.tex}
+
+\chapter{结果}
+\input{csig2023_result_doc_cn}
+
+\chapter{致谢}
+本项目受到以下支持与帮助： 郑少锟解答了关于LC的诸多疑问； Maxwell帮助重构了基于Xmake的构建系统，并完善了子模块维护脚本；郭煜中帮忙渲染了封面图片。
+
+\bibliographystyle{si_template/IEEEtran}
+\bibliography{ref}
+\backmatter
+
+\end{document}

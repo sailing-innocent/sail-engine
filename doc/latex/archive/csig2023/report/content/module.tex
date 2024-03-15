@@ -1,0 +1,69 @@
+
+\section{模块化}
+\subsection{SPHerePackage}
+Luisa Compute的Device端代码编译非常灵活（Multi Stage），但对于大型协作项目而言我们仍需要特定的规则来规范封装，提高代码可读性、复用性和接口统一性。
+目前为止\textbf{SPHerePackage}包含以下内容:
+\paragraph{包环境}
+\begin{itemize}
+	\item PackageGlobal，一个thread\_local静态类，是当前线程的包环境上下文。
+	\item PackageEnvScope，一个Guard类，他的构造与析构确定了一个特定的包环境。构造时，向PackageGlobal push当前环境，析构时，恢复PackageGlobal原有环境，若不使用PackageEnvScope 则始终处于默认的环境。
+	\item Package基类，用于规范行为封装和提供辅助代码，所有的包开发均继承自此基类。
+\end{itemize}
+
+\paragraph{包类型}
+\begin{enumerate}
+	\item Method Package：为用户提供Callable的包，本身无需Compile，只有AST Gen阶段。
+	\item Routine Package：为用户提供Kernel的包，用户提供符合要求的输入数据并调用此类包提供的Kernel以获取结果（如本项目实现的并行原语库），此类包需要进行Compile才可使用。
+	\item Module Package：为用户提供Kernel/Callable的包，与1/2中不同的是，此类包自己维护一份私有的数据结构（占有Device端资源），用户通过此包提供的接口来与此包的算法进行交互，SPHere中典型的Module Package有：BVHCollisionDetection (带资源的Kernel)、SDF(带资源的Callable)。
+	\item Inline Package: 为用户提供内联展开代码段的包，用户直接调用对应的C++函数，在Callable、Kernel中展开对应代码，SPHere中典型的Inline Package有：并行语义库ParallelSemantic$^2$，此类包本身无需Compile 和AST Gen，他的AST Gen阶段与调用他的Callable、Kernel的AST Gen时机一致。
+\end{enumerate}
+注$^2$：其中grid\_stride\_loop就为典型的内联展开代码段，他所在的Package并没有完全遵循SPHere Package实现，没有继承自Package基类，但行为和上述设计吻合。为了书写便利，我们将他实现为一个全局的Inline包。
+
+\paragraph{包规范}
+\begin{itemize}
+	\item \textbf{config}：每个包必须有config阶段，用于决定包内代码在AST Gen阶段的捕获行为。
+	\item \textbf{astgen}：Callable，Kernel一般可以通过懒生成的方式来完成AST Gen，Package基类提供的对应函数为\hl{lazy\_astgen()}和\hl{lazy\_call()}
+	      \item\textbf{ compile}：对于Routine Package与Module Package，存在compile阶段，可以使用懒编译（当用户调用特定接口时再进行编译），Package基类提供的对应函数为\hl{lazy\_compile()}。一般而言，Routine Package与含有Callable的Module Package可以将astgen和compile阶段同时进行，直接生成最终Shader。
+\end{itemize}
+值得注意的是，所有可能导致捕获值改变的行为都通过config来实现，例如，要求用户使用如下接口来改变捕获行为:
+\begin{lstlisting}[language=C++]
+	Option option{
+		...
+	};
+	package.config(option);
+\end{lstlisting}
+\paragraph{包管理}
+为了提高包在系统中的复用率，需要部分包能够交叉引用，而不是树状引用。
+\begin{itemize}
+	\item Callable Package、Routine Package可以被管理和复用，Module Package不可以被复用，因为后者带有特定资源。
+	\item \textbf{SPHerePackage}的包管理维护了一个\hl{hash\_map\textless Description, Package\textgreater}。 任意一个包需要能被Description唯一描述，符合描述的包将在\hl{PackageManager::require(Description)}时返回给用户，若没有满足描述的包则创建对应的包，并返回给用户。
+	\item 包之间可以相互依赖，这种依赖也通过\hl{require}实现，调用\hl{require}的时机为\textbf{config}阶段。
+\end{itemize}
+
+\subsection{调用形式}
+\paragraph{Callable Package}可以分为两类：
+\begin{enumerate}
+	\item 【Module】带资源的，即此类包需要向device申请如Buffer、Image等资源，并将他作为包内部的数据结构，允许用户通过包给出的接口对包内部数据进行访问。对应图\ref{fig:CallablePackage}中的Package A。
+	\item 【Method】不带资源的，即此类包不需要向device申请任何资源，此包提供的所有函数均在用户提供的资源上进行操作，或仅为工具函数。对应图\ref{fig:CallablePackage}中的Package B。
+\end{enumerate}
+对于Callable Package，用户会首先对包进行config和astgen，随后在他的Kernel中使用。如图\ref{fig:CallablePackage}所示:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[keepaspectratio,width=0.4\linewidth]{fig_callable_package_csig2023.png}
+	\caption{Callable Package}
+	\label{fig:CallablePackage}
+\end{figure}
+
+\paragraph{Kernel Package} 可以分为两类：
+\begin{enumerate}
+	\item 【Module】带资源的，即此类包需要向device申请如Buffer、Image等资源，并将他作为包内部的数据结构。对应下图中，Input Buffer$\rightarrow$Viewer路径。
+	\item 【Routine】不带资源的，即此类包不需要向device申请任何资源，所有资源由用户申请并提供给此包。对应下图中，Input Buffer$\rightarrow$Output Buffer路径。
+\end{enumerate}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[keepaspectratio,width=0.4\linewidth]{fig_module_package_csig2023.png}
+	\caption{Module Package}
+	\label{fig:Module Package}
+\end{figure}

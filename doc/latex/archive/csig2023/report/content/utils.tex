@@ -1,0 +1,20 @@
+\section{并行原语}
+为了支持LC中不同后端（例如DirectX）的Reduce/Scan并行原语，本项目Scan部分实现了文献 \cite{harris2007parallel} 中的\textit{A Work-Efficient Parallel Sca}n算法，同时Reduce部分也基于该算法实现。
+
+\subsection{Scan}
+算法主要是按Block划分序列元素，在同一个Block采用传统的Up Sweep/Down Sweep操作，将当前层的每个Block求和结果作为下一层的元素。每层元素数量个数将不断递减，直到只剩至多一个Block元素个数。
+
+处理完最后一个Block后，目前每个block内元素均为其内部前缀和结果，因此还需要加上该block左端点之前的前缀和值，而该值实际上就是下一层的前一个元素（前一步已经计算完毕）。如图中蓝箭头所示，其起始端点0格子内值应当累加至其终端点该block所有格子值。
+
+同时其中会产生辅助数组，用于存放除第一层外的其他层的所有元素，长度为$\frac{n}{256}+\frac{n}{256^2}+...\approx\frac{n}{255}$，其中256为BlockSize。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth,keepaspectratio]{fig_parallel_scan_csig2023.png}
+\end{figure}
+另外为了避免存取LDS发生Bank Conflict，采用memory padding的方法，即扩宽LDS，避免在同一个Block里操作同一个Bank。编号转换如下，其中额外LDS长度为$BlockSize / BankSize$.
+\begin{lstlisting}[language=C++]
+index = index + (index) >> LOG_NUM_BANKS;
+\end{lstlisting}
+
+\subsection{Reduce}
+Reduce实际上可以理解为去掉Down Sweep操作的Scan，因此本项目参考上面Scan算法，去掉Down Sweep操作后，实现了支持求和、取最小值、取最大值的Reduce算法。
