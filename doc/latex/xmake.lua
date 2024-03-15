@@ -1,4 +1,6 @@
 includes("script/latex.rule.lua")
+includes("script/table.rule.lua")
+includes("script/figure.rule.lua")
 
 if (get_config("doc_all")) then 
 end
