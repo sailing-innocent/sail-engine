@@ -1,0 +1,40 @@
+\input{cvpr/_constants}
+\def\paperID{0000}
+\def\confName{CVPR}
+\def\confYear{2024}
+
+\def\paperTitle{Paper Title}
+
+\def\authorBlock{
+    Author 1\thanks{Equal contribution} \qquad
+    Author 2\footnotemark[1] \qquad
+    Author 3 \\
+    Institute \\
+    {\tt\small \{email, addresses\}@inst.edu}
+}
+\arxiv % \review OR \arxiv OR \cameraready
+
+\pdfoutput=1
+\documentclass[10pt,twocolumn,letterpaper]{article}
+\input{cvpr/cvpr_header}
+
+\begin{document}
+%% TITLE
+\title{\paperTitle}
+\author{\authorBlock}
+\maketitle
+
+\input{abstract}
+\input{intro}
+\input{related}
+\input{method}
+\input{conclusion}
+
+{\small
+% \bibliographystyle{cvpr/ieeenat_fullname}
+% \bibliography{ref}
+}
+
+\ifarxiv \clearpage \appendix \input{appendix} \fi
+
+\end{document}

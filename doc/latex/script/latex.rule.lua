@@ -1,152 +1,149 @@
-includes("bib.rule.lua")
-includes("figure.rule.lua")
-includes("table.rule.lua")
-
-rule("latex.template")
-    set_extensions(".sty", ".tex", ".cls", ".bst", ".dtx", ".cfg", ".png", ".jpg", ".jpeg", ".pdf")
-    on_load(function (target)
-        target:set("kind", "object")
-        os.mkdir(target:autogendir({root = true}))
-    end)
-    on_build_file(function (target, sourcefile, opt)
-        os.cp(sourcefile, target:autogendir({root = true}))
-    end)
-rule_end()
-
+-- general latex content
 rule("latex.content")
-    set_extensions(".tex", ".dat")
+    set_extensions(".sty", ".tex", ".cls", ".bst", ".dtx", ".cfg", ".png", ".jpg", ".jpeg", ".pdf", ".dat")
     on_load(function (target)
         target:set("kind", "object")
-        os.mkdir(target:autogendir({root = true}))
+        target:set("values", "group", "main")
     end)
-    on_build_file(function (target, sourcefile, opt)
-        os.cp(sourcefile, target:autogendir({root = true}))
+rule_end()
+-- content with group name 
+rule("latex.template")
+    add_deps("latex.content")
+    on_load(function (target) 
+        target:set("values", "group", target:name())
     end)
 rule_end()
 
-function add_content(name, deps)
-    target(name)
-        add_rules("latex.content")
-        add_files(name .. ".tex")
-        if (deps ~= nil) then 
-            add_deps(deps)
-        end
-    target_end()
-end
+rule("latex.figure")
+    add_deps("latex.content")
+    on_load(function (target) 
+        target:set("values", "group", "figure")
+    end)
+rule_end()
 
-function add_dat(name)
-    target(name)
-        add_rules("latex.content")
-        add_files(name .. ".dat")
-    target_end()
-end
+rule("latex.figure")
+    add_deps("latex.content")
+    on_load(function (target) 
+        target:set("values", "group", "table")
+    end)
+rule_end()
 
-rule("latex")
-    set_extensions(".tex")
+rule("latex.bib")
+    set_extensions(".bib")
     on_load(function (target)
-        target:set("targetdir", path.join("build", "doc", target:name()))
-        os.mkdir(target:targetdir())
-    end)
-
-    after_load(function (target)
-        -- generate .latexmkrc
-        local latexmkrc = path.join(target:targetdir(), ".latexmkrc")
-        -- clear if exist
-        os.tryrm(latexmkrc)
-        local file = io.open(latexmkrc, "w")
-        local latex_main = target:get("latex_main")
-        if latex_main == nil then 
-            latex_main = 'main.tex'
-        end 
-        file:print("@default_files = ('".. latex_main .. "');")
-        file:close()
-    end)
-
-    on_build_file(function (target, sourcefile, opt)
-        os.cp(sourcefile, target:targetdir())
-    end)
-    
-    before_link(function (target)
-        import("core.base.option")
-        import("core.project.project")
-        import("core.project.depend")
-        bibs = {}
-        local bibfile_path = path.join(target:targetdir(), "ref.bib")
-        os.tryrm(bibfile_path)
-        local bibfile = io.open(bibfile_path, "a")
-
-        local bibcontent = ""
-        local common_bib_file = io.open(path.join("build", "bibs", "common.bib"))
-        if (common_bib_file ~= nil) then
-            local common_bib_content = common_bib_file:read("*a")
-            bibcontent = bibcontent .. common_bib_content .. "\n"
-        end
-
-        function bib_content_to_table(content)
-            local bibs = {}
+        target:set("kind", "object")
+        import("core.base.json")
+        local bibs = {}
+        for _, sourcefile in ipairs(target:sourcefiles()) do
+            local content = io.readfile(sourcefile)
             for item in string.gmatch(content, "@%w+%s*%b{}") do
                 local key = string.match(item, "{%s*([^,]+)")
                 if (key ~= nil) then
                     bibs[key] = item
                 end
             end
-            return bibs
         end
+        target:set("values", "bibs", json.encode(bibs))
+    end)
+rule_end()
 
-        function copy_asset_recursive(target, targetdir)
-            local localbibs = {}
+-- latex project entry
+rule("latex")
+    set_extensions(".tex")
+    on_load(function (target)
+        -- generate .latexmkrc
+        target:set("kind", "object")
+        local proj_dir = target:autogendir({root=true})
+        os.mkdir(proj_dir)
+        local latexmkrc = path.join(proj_dir, ".latexmkrc")
+        os.tryrm(latexmkrc)
+        local file = io.open(latexmkrc, "w")
+        local latex_main = target:extraconf("rules", "latex", "latex_main")
+        if latex_main == nil then 
+            latex_main = 'main.tex'
+        end 
+        file:print("@default_files = ('".. latex_main .. "');")
+        file:close()
+    end)
+    on_config(function(target)
+        import("core.project.project")
+        import("core.project.depend")
+        import("core.base.json")
+        -- parse dependencies
+        local subcontent = {}
+        subcontent["main"] = target:sourcefiles()
+        local bibs = {}
+        local bib_deps = {}
+
+        function gen_recursive(target, subcontent, bib_deps) 
             for _, dep in ipairs(target:get("deps")) do
                 local dep_target = target:dep(dep)
-                local dep_gen_dir = dep_target:autogendir({root = true})
-
-                local itembibs = {}
                 -- content
                 if (dep_target:rule("latex.content")) then 
-                    -- listdir -- todo 似乎不可行
-                    print(os.filedirs(dep_gen_dir))
-                end
-                -- template
-                if (dep_target:rule("latex.template")) then 
-                    if (os.isdir(dep_gen_dir)) then 
-                        os.cp(dep_gen_dir, targetdir)
+                    local group_name = dep_target:values("group")
+                    if (group_name == nil) then 
+                        group_name = "main"
+                    end
+                    if (subcontent[group_name] == nil) then 
+                        subcontent[group_name] = {}
+                    end
+                    for _, file in ipairs(dep_target:sourcefiles()) do
+                        table.insert(subcontent[group_name], file)
                     end
                 end
-                -- bib content
-                if (os.isfile(path.join("build", "bibs", dep .. ".bib"))) then
-                    local bib_content = io.readfile(path.join("build", "bibs", dep .. ".bib"))
-                    itembibs = bib_content_to_table(bib_content)
+                if (dep_target:rule("latex.bib")) then 
+                    table.insert(bib_deps, dep)
                 end
                 -- recursive
-                local depsbibs = copy_asset_recursive(dep_target, targetdir)
-                -- merge bibs
-                for key, value in pairs(depsbibs) do
-                    localbibs[key] = value
-                end
-                for key, value in pairs(itembibs) do
-                    localbibs[key] = value
-                end
-                ::no_recursive::
+                gen_recursive(dep_target, subcontent, bib_deps)
             end
-            return localbibs
         end
-        bibs = copy_asset_recursive(target, target:targetdir())
-        -- merge bibcontent
+        gen_recursive(target, subcontent, bib_deps)
+
+        for _, bib_dep in ipairs(bib_deps) do
+            local bib_target = project.target(bib_dep)
+            local item_bibs_json = bib_target:values("bibs")
+            local item_bibs = json.decode(item_bibs_json)
+            for key, value in pairs(item_bibs) do
+                bibs[key] = value
+            end
+        end
+
+        -- copy to gendir 
+        local gendir = target:autogendir({root = true})
+        -- copy source files
+        for group_name, sourcefiles in pairs(subcontent) do
+            local group_dir = path.join(gendir, group_name)
+            if group_name == "main" then 
+                group_dir = gendir
+            end
+            if (not os.isdir(group_dir)) then
+                os.mkdir(group_dir) 
+            end 
+            
+            for _, file in ipairs(sourcefiles) do
+                os.cp(file, group_dir)
+            end
+        end
+        -- gen ref.bib
+        local bibfile_path = path.join(gendir, "ref.bib")
+        os.tryrm(bibfile_path)
+        local bibfile = io.open(bibfile_path, "a")
+        local bibcontent = ""
         for key, value in pairs(bibs) do
             bibcontent = bibcontent .. value .. "\n"
         end
         bibfile:write(bibcontent)
-        bibfile:close()
     end)
-
-    on_link(function (target, opt)
+    on_build(function(target, opt)
         import("lib.detect.find_tool")
         import("core.project.depend")
         import("utils.progress")
-        os.cd(target:targetdir()) -- enter build file
-
-
+        os.cd(target:autogendir({root=true})) -- enter project dir
         local latexmk = assert(find_tool("latexmk"), "latexmk not found!")
-        local latex_compiler = target:get("latex_compiler")
+        
+        local latex_compiler = target:extraconf("rules", "latex", "latex_compiler")
+        
         if latex_compiler == nil then 
             latex_compiler = 'xelatex'
         end
@@ -154,31 +151,42 @@ rule("latex")
         os.vrunv(latexmk.program, {"-pdf", "-" .. latex_compiler})
         os.cd("$(projectdir)") -- back to project root
     end)
-    after_link(function (target, opt)
+    after_build(function (target, opt)
         import("utils.progress")
         progress.show(opt.progress, "build %s.pdf done", target:name())
         local latex_out = get_config("latex_out")
-        local latex_main = target:get("latex_main")
+        local latex_main = target:extraconf("rules", "latex", "latex_main")
         if latex_main == nil then 
             latex_main = 'main.tex'
         end 
-
         if (latex_out ~= nil) then 
             progress.show(opt.progress, "copy %s.pdf to %s", target:name(), latex_out)
-            os.cp(path.join(target:targetdir(), path.basename(latex_main) .. ".pdf"), path.join(latex_out, target:name() .. ".pdf"))
+            os.cp(path.join(target:autogendir({root=true}), path.basename(latex_main) .. ".pdf"), path.join(latex_out, target:name() .. ".pdf"))
         end 
     end)
-    on_clean(function (target)
-        os.tryrm(path.join(target:targetdir(), "*.aux"))
-        os.tryrm(path.join(target:targetdir(), "*.bbl"))
-        os.tryrm(path.join(target:targetdir(), "*.blg"))
-        os.tryrm(path.join(target:targetdir(), "*.fdb_latexmk"))
-        os.tryrm(path.join(target:targetdir(), "*.fls"))
-        os.tryrm(path.join(target:targetdir(), "*.log"))
-        os.tryrm(path.join(target:targetdir(), "*.out"))
-        os.tryrm(path.join(target:targetdir(), "*.xdv"))
-        os.tryrm(path.join(target:targetdir(), "*.nav"))
-        os.tryrm(path.join(target:targetdir(), "*.snm"))
-        os.tryrm(path.join(target:targetdir(), "*.toc"))
-    end)
 rule_end()
+
+function add_bib(name, deps)
+    function to_lower(str)
+        return str:gsub("%u", function(c) return "_" .. c:lower() end)
+    end
+    target("bib_" .. to_lower(name))
+        add_rules("latex.bib")
+        add_files(name .. ".bib")
+    target_end()
+end
+
+function add_latex(name, deps, main, compiler)
+    if (main == nil) then 
+        main = "main"
+    end
+    if (compiler == nil) then 
+        compiler = "xelatex"
+    end
+    -- print(compiler)
+    target(name)
+        add_files("**.tex")
+        add_rules("latex", {latex_main = main .. ".tex", latex_compiler = compiler})
+        add_deps(deps)
+    target_end()
+end

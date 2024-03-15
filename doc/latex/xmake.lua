@@ -9,5 +9,5 @@ includes("bib")
 includes("template")
 includes("sample")
 
-includes("content")
-includes("note")
+-- includes("content")
+-- includes("note")
