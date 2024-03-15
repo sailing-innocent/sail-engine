@@ -5,3 +5,7 @@ end
 includes("si_template")
 includes("njupre")
 includes("njuthesis")
+includes("acmart")
+includes("eccv")
+includes("ajbook")
+includes("acmart")

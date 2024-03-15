@@ -1,0 +1,1 @@
+add_latex("use_acmart", {"acmart"})

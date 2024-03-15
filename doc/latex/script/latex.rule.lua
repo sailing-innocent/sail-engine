@@ -1,11 +1,28 @@
 -- general latex content
 rule("latex.content")
-    set_extensions(".sty", ".tex", ".cls", ".bst", ".dtx", ".cfg", ".png", ".jpg", ".jpeg", ".pdf", ".dat")
+    set_extensions(".sty", ".tex", ".cls", ".bst", ".dtx", ".cfg", ".png", ".jpg", ".jpeg", ".pdf", ".dat", ".eps")
     on_load(function (target)
         target:set("kind", "object")
         target:set("values", "group", "main")
     end)
 rule_end()
+
+function add_content(name, srclist, deps)
+    target(name)
+        add_rules("latex.content")
+        add_files(srclist)
+        add_deps(deps)
+    target_end()
+end
+
+function add_img(name, ext)
+    ext = ext or "png"
+    target(name)
+        add_rules("latex.content")
+        add_files(name.."."..ext)
+    target_end()
+end
+
 -- content with group name 
 rule("latex.template")
     add_deps("latex.content")

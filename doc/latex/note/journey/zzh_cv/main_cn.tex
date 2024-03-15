@@ -1,0 +1,55 @@
+\documentclass[blueish]{si_template/cn_cv_short}
+% Read cv_einstein.cls to look at all available options
+\usepackage[utf8]{inputenc}
+\usepackage[default]{raleway}
+\usepackage{xcolor}
+% Caution: pargin=0cm means the CV won't print well.
+% Using this template means that you accept it.
+\usepackage[a4paper, portrait, margin=0cm]{geometry}
+\usepackage{fontawesome}
+\usepackage{array} % For better tabl formatting. See: https://tex.stackexchange.com/questions/12703/how-to-create-fixed-width-table-columns-with-text-raggedright-centered-raggedlef
+\usepackage{enumitem} % See https://tex.stackexchange.com/a/199073/304372
+\usepackage[pdfauthor={sailing-innocent}, pdftitle={sailing-innocet public cv}, pdfsubject={CV of sailing-innocent},pdfkeywords={CV, Computer Graphics}]
+{hyperref}
+
+\begin{document}
+%------------------------------------------------------------------ Variables
+% The left column contains the goals, summary, skills, etc.
+% We define its width w.r.t. the width of the whole page
+\newcommand{\lratio}{0.31}
+\newlength{\leftcolwidth}
+\setlength{\leftcolwidth}{\lratio\textwidth}
+% The right column contains the main content, i.e. work experience, education, etc.
+\newcommand{\rratio}{0.7}
+\newlength{\rightcolwidth}
+\setlength{\rightcolwidth}{\rratio\textwidth}
+% Space to leave below a section, above the title of the following section
+\newlength{\sectionspace}
+\setlength{\sectionspace}{1cm}
+% Space to leave below an item, above the following item
+\newlength{\itemspace}
+\setlength{\itemspace}{10pt}
+% fbox stuff. You won't need to adjust these. You can safely ignore.
+\setlength{\fboxrule}{0pt}
+\setlength{\fboxsep}{4pt}
+% Shortcuts to have table columns with fixed width AND positionning: [L]eft, [C]enter, [R]ight
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+% Removes the (ugly) box around html links
+\hypersetup{hidelinks}
+%------------------------------------------------------------------
+\title{朱子航}
+\author{\LaTeX{} 朱子航}
+\date{1999}
+
+%header
+\input{header_cn}
+\setlength{\columnsep}{0pt}
+\columnratio{\lratio}
+\begin{paracol}{2}
+    \paracolbackgroundoptions
+    % body part
+    \input{body_cn}
+\end{paracol}
+\end{document}

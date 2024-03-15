@@ -1,1 +1,1 @@
-add_content("learn_ogl_doc_en", {})
+add_content("learn_ogl_doc_en")

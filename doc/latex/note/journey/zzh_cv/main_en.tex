@@ -1,0 +1,355 @@
+\documentclass[theme]{si_template/en_cv}
+% Read cv_einstein.cls to look at all available options
+\usepackage[utf8]{inputenc}
+\usepackage[default]{raleway}
+\usepackage{xcolor}
+% Caution: pargin=0cm means the CV won't print well.
+% Using this template means that you accept it.
+\usepackage[a4paper, portrait, margin=0cm]{geometry}
+\usepackage{fontawesome}
+\usepackage{array} % For better tabl formatting. See: https://tex.stackexchange.com/questions/12703/how-to-create-fixed-width-table-columns-with-text-raggedright-centered-raggedlef
+\usepackage{enumitem} % See https://tex.stackexchange.com/a/199073/304372
+\usepackage[pdfauthor={Albert Einstein}, pdftitle={Albert Einstein, Public CV}, pdfsubject={CV of Albert Einstein},
+pdfkeywords={Physics, Science, Applied Research, Fundamental Research}]
+{hyperref}
+
+
+\begin{document}
+%------------------------------------------------------------------ Variables
+% The left column contains the goals, summary, skills, etc.
+% We define its width w.r.t. the width of the whole page
+\newcommand{\lratio}{0.31}
+\newlength{\leftcolwidth}
+\setlength{\leftcolwidth}{\lratio\textwidth}
+% The right column contains the main content, i.e. work experience, education, etc.
+\newcommand{\rratio}{0.7}
+\newlength{\rightcolwidth}
+\setlength{\rightcolwidth}{\rratio\textwidth}
+% Space to leave below a section, above the title of the following section
+\newlength{\sectionspace}
+\setlength{\sectionspace}{1cm}
+% Space to leave below an item, above the following item
+\newlength{\itemspace}
+\setlength{\itemspace}{10pt}
+% fbox stuff. You won't need to adjust these. You can safely ignore.
+\setlength{\fboxrule}{0pt}
+\setlength{\fboxsep}{4pt}
+% Shortcuts to have table columns with fixed width AND positionning: [L]eft, [C]enter, [R]ight
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+% Removes the (ugly) box around html links
+\hypersetup{hidelinks}
+
+%------------------------------------------------------------------
+\title{Albert Einstein}
+\author{\LaTeX{} Albert Einstein}
+\date{1955}
+
+    %-------------------------------------------------------------
+    %-------------------------------------------------------------
+    %-------------------------------------------------------------
+    %                       UPPER PART
+    %-------------------------------------------------------------
+    %-------------------------------------------------------------
+    %-------------------------------------------------------------
+
+    %-------------------------------------------------------------
+    %                       HEADER
+    %-------------------------------------------------------------
+    % Usage: \header{background-color}{name-color}{name}{title-color}{title}{summary-color}{summary}{portrait.jpg}{email@example.com}{phone}{country-flag.png}{city}{linkedin-id}
+    \header
+    {Albert Einstein}
+    {Research Physicist $\cdot$ Professor $\cdot$ Patent Clerk}
+    {
+        When I am not reviewing patents, I carry out thought experiments.\\
+        My interests span from pollen grains to synchronizing clocks on moving trains.\\
+        I wrote a small number of articles that attracted a decent amount of attention.\\
+        I also designed large unifying theories and models that turned out to be\\
+        surprisingly powerful and robust.% Do NOT end with a newline
+    }
+    {asset_zzh_logo.png}
+
+    %-------------------------------------------------------------
+    %                       CONTACT BAND
+    %-------------------------------------------------------------
+    % Usage: \contactband{background-color}{text-color}{email}{phone-number}{country-flag}{city}{linkedin-id}
+    \contactband{aeinstein@ethz.ch}{+41.23.456.78.90}{asset_zzh_logo.png}{Bern}{albert\_einstein}{albert\_einstein}
+
+    \vspace{\headerheight} % The header is only a TIKZ image. We must give it space to appear and not be hidden by what comes next.
+    \setlength{\columnsep}{0pt}
+    \columnratio{\lratio}
+    \begin{paracol}{2}
+        \paracolbackgroundoptions
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        %                       LEFT COLUMN
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        \begin{leftcolumn*} \noindent \footnotesize
+            {\color{white}
+            %-------------------------------------------------------------
+            %                       GOALS
+            %-------------------------------------------------------------
+            \heading{\faCompass}{Goals}
+            \begin{minipage}[r]{\leftcolwidth}
+                \goal{\faFlask}{I am looking for opportunities to experiment, in labs or in thoughts, to deeply understand the laws of physics and how clocks work.}
+                \vspace{\itemspace}\\
+                \goal{\faExchange}{I am subject-agnostic. I often think at very large scales, like the whole universe, and equally often wonder about atomic particles and their sub-elements.}
+                \vspace{\itemspace}\\
+                \goal{\faLink}{I enjoy connecting seemingly unrelated ideas, e.g. temperature and pollen grains, elevators and space curvature.}
+                \vspace{\itemspace}\\
+                \goal{\faHourglassHalf}{I like having time to think my ideas through carefully, challenging common sense as well as my own assumptions.}
+            \end{minipage}
+
+            %-------------------------------------------------------------
+            %                       SKILLS
+            %-------------------------------------------------------------
+            \vspace{1.75\sectionspace}
+            \heading{\faPuzzlePiece}{Skills}
+            \begin{minipage}[c]{\leftcolwidth}
+                \begin{tabular}{c}
+                    \hspace{-3pt}\bubblediagram{
+                    % Usage: \bubblediagram{list of comma-separated text items}
+                    % The first item will be written in the main bubble, at the center of the diagram
+                    % All other items will be written in their own satellite bubble
+                        % Main bubble
+                        {\textbf{Applied} \\ \textbf{\&} \\ \textbf{Theoretical}  \\ \textbf{Physics}},
+                        % Satellites
+                        Teaching,
+                        Engineering,
+                        Research,
+                        Slow\\walking,
+                        Speed\\napping,
+                        Experiments}
+                \end{tabular}
+            \end{minipage}
+        }
+        \end{leftcolumn*}
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        %                       RIGHT COLUMN
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        \begin{rightcolumn}\noindent \small
+            %-------------------------------------------------------------
+            %                       WORK EXPERIENCE
+            %-------------------------------------------------------------
+            \hspace{-2.4pt}\heading{\faSuitcase}{Work Experience}
+            % PRINCETON
+            \cvevent{Oct 1933}{Apr 1955}{Research Fellow}{Institute for Advanced Study}{Princeton, NJ, USA}{asset_zzh_logo.png}
+            {\textbf{Nulla malesuada} porttitor diam. Donec felis erat, congue non, volutpat at, tincidunt tristique, libero. Vivamus viverra fermentum felis. Donec nonummy pellentesque ante.\newline
+            Phasellus adipiscing \textbf{semper elit}. Proin fermentum massa ac quam. Sed diam turpis, molestie vitae, placerat a, molestie nec, leo.}
+            \vspace{\itemspace}\\
+            % HUMBOLDT
+            \cvevent{Jul 1913}{Oct 1933}{Multiple teaching positions}{Multiple institutions}{Here and There}{asset_zzh_logo.png}
+            {Nulla malesuada porttitor diam. Donec felis erat, congue non, volutpat at, tincidunt tristique, libero. Vivamus viverra fermentum felis. Donec nonummy pellentesque ante. Phasellus adipiscing semper elit. Proin fermentum massa ac quam. Sed diam turpis, molestie vitae, placerat a, molestie nec, leo.}
+            \vspace{\itemspace}\\
+            % ETHZ
+            \cvevent{Jul 1912}{Jul 1913}{Professor, Chair in theoretical physics}{ETH}{Zürich, Switzerland}{asset_zzh_logo.png}
+            {Nulla malesuada porttitor diam. Donec felis erat, congue non, volutpat at, tincidunt tristique, libero. Vivamus viverra fermentum felis. Donec nonummy pellentesque ante. Phasellus adipiscing semper elit. Proin fermentum massa ac quam. Sed diam turpis, molestie vitae, placerat a, molestie nec, leo.}
+            \vspace{\itemspace}\\
+            % UNIVERSITY OF ZÜRICH
+            \cvevent{Feb 1909}{Apr 1911}{Associate Professor}{University of Zürich}{Zürich, Switzerland}{asset_zzh_logo.png}
+            {Nulla malesuada porttitor diam. Donec felis erat, congue non, volutpat at, tincidunt tristique, libero. Vivamus viverra fermentum felis. Donec nonummy pellentesque ante. Phasellus adipiscing semper elit. Proin fermentum massa ac quam. Sed diam turpis, molestie vitae, placerat a, molestie nec, leo.}
+            \vspace{\itemspace}\\
+            % UNIVERSITY OF BERM
+            \cvevent{Apr 1908}{Feb 1909}{Junior Professor}{University of Bern}{Bern, Switzerland}{asset_zzh_logo.png}
+            {Nulla malesuada porttitor diam. Donec felis erat, congue non, volutpat at, tincidunt tristique, libero. Vivamus viverra fermentum felis. Donec nonummy pellentesque ante. Phasellus adipiscing semper elit. Proin fermentum massa ac quam. Sed diam turpis, molestie vitae, placerat a, molestie nec, leo.}
+            \vspace{\itemspace}\\
+            % FEDERAL PATENT OFFICE
+            \cvevent{Jan 1902}{Apr 1908}{Technical Assistant}{Federal Patent Office}{Bern, Switzerland}{asset_zzh_logo.png}
+            {Nulla malesuada porttitor diam. Donec felis erat, congue non, volutpat at, tincidunt tristique, libero. Vivamus viverra fermentum felis. Donec nonummy pellentesque ante. Phasellus adipiscing semper elit. Proin fermentum massa ac quam. Sed diam turpis, molestie vitae, placerat a, molestie nec, leo.}
+            \vspace{0.1cm}\\
+            \fbox{
+                Work experience prior to 1902 is visible on \href{https://www.linkedin.com/in/albert\_einstein}{\faLinkedinSquare \ \textbf{LinkedIn}}.
+            }%\fbox
+            \vspace{0.2cm}\\
+        \end{rightcolumn}
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        %                       LEFT COLUMN
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        \begin{leftcolumn*}\noindent \footnotesize
+        {\color{white}
+            %-------------------------------------------------------------
+            %                       TECH
+            %-------------------------------------------------------------
+            \heading{\faWrench}{Tech}
+            \begin{minipage}[c]{\leftcolwidth}
+                \begin{tabular}{r|l}
+                    Brain & \pictofraction{4}\\[0.3em]
+                    Blackboard & \pictofraction{3}\\[0.3em]
+                    Pen \& Paper & \pictofraction{3}\\[0.3em]
+                    Typewriter & \pictofraction{2}\\[0.3em]
+                    Linux & \pictofraction{2}\\[0.3em]
+                    Matlab & \pictofraction{1}\\[0.3em]
+                    MS Word & \pictofraction{1}
+                \end{tabular}
+            \end{minipage}
+        }
+        \end{leftcolumn*}
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        %                       RIGHT COLUMN
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        \begin{rightcolumn}\noindent \small
+            %-------------------------------------------------------------
+            %                       STRENGTHS
+            %-------------------------------------------------------------
+            \hspace{-2.4pt}\heading{\faHeartbeat}{Interests \& Expertise}
+            \fbox{
+                \begin{minipage}[r]{0.84\rightcolwidth}
+                    \cvkeyword{Special Relativity}
+                    \cvkeyword{General Relativity}
+                    \cvkeyword{Nuclear physics}
+                    \cvkeyword{Quantum physics}
+                    \cvkeyword{Brownian motion}
+                    \cvkeyword{Pinball}
+                    \cvkeyword{Laws of Optics}
+                    \cvkeyword{Laser Tag}
+                    \cvkeyword{Crosswords}
+                    \cvkeyword{Coffee}
+                \end{minipage}
+            }%\fbox
+        \end{rightcolumn}
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        %                       PAGE 2
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        \newpage
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        %                       LEFT COLUMN
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        \begin{leftcolumn*} \noindent \footnotesize
+        {\color{white}
+            %-------------------------------------------------------------
+            %                       LANGUAGES
+            %-------------------------------------------------------------
+            \phantom{} \\ % To leave a margin with the top of the page
+            \heading{\faGlobe}{Languages}
+            \begin{minipage}[r]{\leftcolwidth}
+                \begin{tabular}{r|l}
+                    English & Working knowledge\\[0.3em]
+                    German & Mother tongue\\[0.3em]
+                    French & Notions
+                \end{tabular}
+            \end{minipage}
+            \vspace{\sectionspace}
+        }
+        \end{leftcolumn*}
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        %                       RIGHT COLUMN
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        \begin{rightcolumn}\noindent \small
+            %-------------------------------------------------------------
+            %                     FORMAL-EDUCATION
+            %-------------------------------------------------------------
+            \phantom{} \\ % To leave a margin with the top of the page
+            \heading{\faGraduationCap}{Formal Education}
+            % UNIVERSITY OF ZURICH
+            \cvevent{}{1905}{PhD}{University of Zürich}{Zürich, Switzerland}{asset_zzh_logo.png}
+            {University of Zürich is one of the world's best universities, ranked $N^{th}$ globally \href{http://example.com}{\textbf{by the NY Times}}.
+            Nulla malesuada porttitor diam. Donec felis erat, congue non, volutpat at, tincidunt tristique, libero. Vivamus viverra fermentum felis. Donec nonummy pellentesque ante. Phasellus adipiscing semper elit. Proin fermentum massa ac quam.}
+            \vspace{\itemspace}\\
+            % ETHZ
+            \cvevent{1896}{1900}{Master of Science}{ETH}{Zürich, Switzerland}{asset_zzh_logo.png}
+            {ETHZ is malesuada porttitor diam. Donec felis erat, congue non, volutpat at, tincidunt tristique, libero. Vivamus viverra fermentum felis. Donec nonummy pellentesque ante. Phasellus adipiscing semper elit. Proin fermentum massa ac quam. Sed diam turpis, molestie vitae, placerat a, molestie nec, leo.}
+        \vspace{\sectionspace}
+        \end{rightcolumn}
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        %                       LEFT COLUMN
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        \begin{leftcolumn*}\noindent \footnotesize
+        {\color{white}
+            %-------------------------------------------------------------
+            %                       PHILOSOPHY
+            %-------------------------------------------------------------
+            \heading{\faQuoteLeft}{Philosophy}
+            \fbox{
+                \begin{minipage}[l]{0.9\leftcolwidth}
+                    Here are some thoughts that guide my\\
+                    actions as a professor and as a scientist.\\[1em]
+                    \simplequote{Success is a few simple disciplines, practiced every day; while failure is simply a few errors in judgment, repeated every day.}{Jim Rohn}
+                    \vspace{\itemspace}\\
+                    \simplequote{With most subjects, it is more important to really understand the basic material than have exposure to more advanced concepts.}{S. S. Skiena}
+                    \vspace{\itemspace}\\
+                    \simplequote{Besides the noble art of getting things done, there is the noble art of leaving things undone. The wisdom of life consists in the elimination of non-essentials.}{Lin Yutang}
+                    \vspace{\itemspace}\\
+                    \simplequote{The people that really create the things that change this industry are both the thinker and doer in one person. [...] It’s very easy to say "I thought of this three years ago". But usually when you dig a little deeper, you find that the people that really did it were also the people that really worked through the hard intellectual problems as well.}{Steve Jobs}
+                    \vspace{\itemspace}\\
+                    \simplequote{It is not that I'm so smart. But I stay with the questions much longer.}{Me (ha ha)}
+                \end{minipage}
+            }%\fbox
+        } % \color{white}
+        \end{leftcolumn*}
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        %                       RIGHT COLUMN
+        %-------------------------------------------------------------
+        %-------------------------------------------------------------
+        \begin{rightcolumn}\noindent \small
+            %-------------------------------------------------------------
+            %                       SELF-EDUCATION
+            %-------------------------------------------------------------
+            \hspace{-2.4pt}\heading{\faTv}{Self-Education}
+            % NUCLEAR PHYSICS
+            % Usage: \onlinecourse{1:date}{2:course title}{3:organisation-name}{4:organisation-logo}{5:text}{6:certificates/results}
+            \onlinecourse{Oct 1945}{Growing Mushrooms in the Sky}{Princeton via Coursera}{asset_zzh_logo.png}
+            {Nulla malesuada porttitor diam. Donec felis erat, congue non, volutpat at, tincidunt tristique, libero. Vivamus viverra fermentum felis. Donec nonummy pellentesque ante. Phasellus adipiscing semper elit. Proin fermentum massa ac quam.}
+            {Results: \href{http://example.com}{\textbf{Statement of Accomplishment}}.
+            }\\
+            \vspace{\itemspace}\\
+            % QUANTUM COMPUTING
+            % Usage: \onlinecourse{1:date}{2:course title}{3:organisation-name}{4:organisation-logo}{5:text}{6:certificates/results}
+            \onlinecourse{Oct 2013}{CS191x: Quantum Mechanics and Quantum Computation}{Berkeley via edX}{asset_zzh_logo.png}
+            {This online class was taught by Pr. Umesh Vazirani. It covered theoretical concepts of quantum physics (e.g. superposition of states, entanglement of particles) as well as practical implementations of quantum algorithms such as Shor's algorithm to factor large numbers.}
+            {Results: \href{http://example.com}{\textbf{Statement of Accomplishment}}.}
+
+            %-------------------------------------------------------------
+            %                       PUBLICATIONS
+            %-------------------------------------------------------------
+            \vspace{\sectionspace}
+            \heading{\faBook}{Publications}
+            % Usage: \publication{1:date}{2:title}{3:publisher}{4:publisher-logo}{5:text}
+            \publication{Nov 1905}{Does the Inertia of a Body Depend Upon Its Energy Content?}{Annalen der Physik}{asset_zzh_logo.png}
+            {Nulla malesuada porttitor diam. Donec felis erat, congue non, volutpat at, tincidunt tristique, libero. Vivamus viverra fermentum felis. Donec nonummy pellentesque ante. Phasellus adipiscing semper elit. Proin fermentum massa ac quam.}
+            \vspace{\itemspace}\\
+            % Usage: \publication{1:date}{2:title}{3:publisher}{4:publisher-logo}{5:text}
+            \publication{Sep 1905}{On the Electrodynamics of Moving Bodies}{Annalen der Physik}{asset_zzh_logo.png}
+            {Nulla malesuada porttitor diam. Donec felis erat, congue non, volutpat at, tincidunt tristique, libero. Vivamus viverra fermentum felis. Donec nonummy pellentesque ante. Phasellus adipiscing semper elit. Proin fermentum massa ac quam.}
+            \vspace{\itemspace}\\
+            % Usage: \publication{1:date}{2:title}{3:publisher}{4:publisher-logo}{5:text}
+            \publication{Jul 1905}{On the Motion of Small Particles Suspended in a Stationary Liquid}{Annalen der Physik}{asset_zzh_logo.png}
+            {Nulla malesuada porttitor diam. Donec felis erat, congue non, volutpat at, tincidunt tristique, libero. Vivamus viverra fermentum felis. Donec nonummy pellentesque ante. Phasellus adipiscing semper elit. Proin fermentum massa ac quam.}
+            \vspace{\itemspace}\\
+            % Usage: \publication{1:date}{2:title}{3:publisher}{4:publisher-logo}{5:text}
+            \publication{Jun 1905}{On a Heuristic Viewpoint Concerning the Production and Transformation of Light}{Annalen der Physik}{asset_zzh_logo.png}
+            {Nulla malesuada porttitor diam. Donec felis erat, congue non, volutpat at, tincidunt tristique, libero. Vivamus viverra fermentum felis. Donec nonummy pellentesque ante. Phasellus adipiscing semper elit. Proin fermentum massa ac quam.}
+
+            %-------------------------------------------------------------
+            %                       REFERENCES
+            %-------------------------------------------------------------
+            \vspace{\sectionspace}
+            \heading{\faVolumeControlPhone}{References}
+            \begin{minipage}[r]{\rightcolwidth}
+                \fbox{My references are available upon request. Among others, they include:}\\
+                \simplerow{Managers}{Some Nobel Prize laureates}
+                \vspace{4pt}\\
+                \simplerow{Reports}{More Nobel Prize laureates}
+            \end{minipage}
+        \end{rightcolumn}
+        \vspace{20em}
+    \end{paracol}
+\end{document}

@@ -1,0 +1,52 @@
+\documentclass[sigconf]{acmart/acmart}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning, shapes.geometric}
+\usepackage{lipsum}
+
+\AtBeginDocument{%
+    \providecommand\BibTeX{{%
+                Bib\TeX}}}
+
+\begin{document}
+\title{The Sample for ACM Article}
+\author{Zhu Zihang}
+\authornote{updated Oct 29th. 2023}
+\email{522022150087@smail.nju.edu.cn}
+
+
+\affiliation{%
+    \institution{Nanjing University}
+    \streetaddress{18 Jinyin Street, Gulou Nanjing}
+    \city{Nanjing}
+    \state{Jiangsu Province}
+    \country{China}
+    \postcode{210023}
+}
+\begin{abstract}
+    \lipsum[3]
+\end{abstract}
+
+\keywords{AIGC, Geometric Deep Learning, Terrain Generation, 3D Reconstruction, Multi-view Synthesis}
+%% A "teaser" image appears between the author and affiliation
+%% information and the body of the document, and typically spans the
+%% page.
+\begin{teaserfigure}
+    \fbox{\rule[-.5cm]{4cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
+    \caption{My Current Pipeline for Terrain }
+    \Description{My Current Pipeline for Terrain}
+    \label{fig:teaser}
+\end{teaserfigure}
+
+\maketitle
+
+\paragraph{Machine Learning:}
+\lipsum[11]
+
+%%
+%% The next two lines define the bibliography style to be used, and
+%% the bibliography file.
+\bibliographystyle{acmart/ACM-Reference-Format}
+
+\end{document}
+\endinput
