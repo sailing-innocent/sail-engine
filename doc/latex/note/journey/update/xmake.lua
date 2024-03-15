@@ -7,7 +7,7 @@ add_latex("update_archived",
     "bib_20231003"
 }, "archived")
 
--- add_latex("update_latest", 
--- {
-
--- }, "latest")
+add_latex("update_latest", 
+{
+    "njupre"
+}, "latest")
