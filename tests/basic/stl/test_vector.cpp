@@ -41,5 +41,6 @@ TEST_SUITE("basic::containers") {
 		v.push_back(p);
 		v.emplace_back(20);
 		v.emplace_back(std::move(p));
+		// v.push_back(std::move(p));
 	}
 }
