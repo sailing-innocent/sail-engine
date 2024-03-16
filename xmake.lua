@@ -9,8 +9,6 @@ else
     set_targetdir("bin/release")
 end
 
--- todo: set local repo
-add_repositories("sail-xrepo xrepo", {rootdir = path.join(os.scriptdir(), "external")})
 -- default options
 includes("xmake/default_options.lua")
 -- rules 
@@ -23,6 +21,9 @@ includes("assets")
 -- modules
 
 includes("external") -- external dependencies
+
+add_requires("eastl")
+
 includes("modules") -- core engine
 includes("internal") -- internal independent extensions
 
