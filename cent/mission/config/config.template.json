@@ -1,0 +1,9 @@
+{
+    "env_name": "pc",
+    "dataset_root": "D:/dataset/",
+    "default_device": "cuda",
+    "log_path": "D:/log/",
+    "result_path": "D:/workspace/data/result/",
+    "pretrained_path": "D:/pretrained/",
+    "blender_root": "D:/workspace/blender/"
+}

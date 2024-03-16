@@ -6,3 +6,4 @@ build_files/xmake/_options.lua
 __pycache__
 .pytest_cache
 output
+config.json
