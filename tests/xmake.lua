@@ -24,6 +24,7 @@ if get_config("enable_ing") then
     if get_config("enable_dx") then 
         sail_add_test("ing", "dx", {"SailIng"})
     end
+    sail_add_test("ing", "ray_tracing_one_weekend")
 end 
 if get_config("enable_cuda") then 
     sail_add_test("cu", "util", {"SailCu"})
