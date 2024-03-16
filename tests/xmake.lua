@@ -21,6 +21,9 @@ if get_config("enable_inno") then
 end 
 if get_config("enable_ing") then 
     sail_add_test("ing", "util", {"SailIng"})
+    if get_config("enable_dx") then 
+        sail_add_test("ing", "dx", {"SailIng"})
+    end
 end 
 if get_config("enable_cuda") then 
     sail_add_test("cu", "util", {"SailCu"})

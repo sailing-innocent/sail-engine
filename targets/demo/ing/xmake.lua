@@ -33,4 +33,6 @@ end
 
 if get_config("enable_dx") then
     add_win_app("demo_ing_dx_pure_win", { "SailIng" })
+    add_win_app("demo_ing_dx_pure_app", { "SailIng" })
+    add_win_app("demo_ing_dx_triangle_app", { "SailIng" })
 end
