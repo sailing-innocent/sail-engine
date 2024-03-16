@@ -18,6 +18,7 @@ sail_add_test("basic", "dummy", {"SailDummy"})
 
 if get_config("enable_inno") then 
     sail_add_test("inno", "util", {"SailInno"})
+    sail_add_test("inno", "helper", {"SailInno"})
 end 
 if get_config("enable_ing") then 
     sail_add_test("ing", "util", {"SailIng"})

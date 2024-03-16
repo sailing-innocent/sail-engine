@@ -15,7 +15,7 @@
 
 namespace sail::inno {
 
-class BufferFiller {
+class SAIL_INNO_API BufferFiller {
 	template<typename T>
 	using Buffer = luisa::compute::Buffer<T>;
 	template<typename T>

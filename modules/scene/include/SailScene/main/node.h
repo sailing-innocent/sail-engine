@@ -8,8 +8,6 @@
 
 namespace sail {
 
-class Node {
-	struct Data {};
-};
+class Node {};
 
 }// namespace sail

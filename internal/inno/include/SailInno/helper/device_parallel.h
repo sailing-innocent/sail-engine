@@ -12,7 +12,7 @@
 
 namespace sail::inno {
 
-class DeviceParallel {
+class SAIL_INNO_API DeviceParallel {
 	using IntType = int;	// 4 byte
 	using FloatType = float;// 4 byte
 	template<typename T>
