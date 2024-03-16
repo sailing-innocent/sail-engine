@@ -1,0 +1,1 @@
+add_content("gan_intro_slide_en", { "bib_gan" })

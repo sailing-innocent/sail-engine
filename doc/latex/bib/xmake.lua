@@ -9,5 +9,8 @@ end
 
 add_bib("sample")
 add_bib("tools")
-add_bib("RL")
-add_bib("Gaussian")
+add_bib("reinforcement_learning")
+add_bib("gaussian")
+add_bib("diffusion_model")
+add_bib("gan")
+add_bib("fluid_simulation")

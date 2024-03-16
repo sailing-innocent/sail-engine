@@ -1,0 +1,30 @@
+\paragraph{Segment Anything (SAM)}
+    is a fundamental model for image segmentation trained on a specially large daataset. 
+    Like popular generative big models, SAM is "promptable".
+
+Here is some result demo for SAM. City Scene is a relatively simple scene, because its blocks and lines 
+are clear to detect.
+
+\begin{figure}[h!]
+    \caption{SAM on City scene}
+    \begin{subfigure}{0.48\linewidth}
+        \includegraphics[width=\linewidth]{demo_sam_city_raw.png}
+    \end{subfigure}
+    \begin{subfigure}{0.48\linewidth}
+        \includegraphics[width=\linewidth]{demo_sam_city_result.png}
+    \end{subfigure}
+\end{figure}
+
+In contrast, jungle scene is a bit difficult, because 
+there are some much near occusion and the sihouetto of 
+objects are subtle to determine.
+
+\begin{figure}[h!]
+    \caption{SAM on Jungle scene}
+    \begin{subfigure}{0.48\linewidth}
+        \includegraphics[width=\linewidth]{demo_sam_jungle_raw.png}
+    \end{subfigure}
+    \begin{subfigure}{0.48\linewidth}
+        \includegraphics[width=\linewidth]{demo_sam_jungle_result.png}
+    \end{subfigure}
+\end{figure}
