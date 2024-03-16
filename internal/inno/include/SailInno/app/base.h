@@ -14,7 +14,7 @@
 
 namespace sail::inno::app {
 
-class BaseApp {
+class SAIL_INNO_API BaseApp {
 public:
 	BaseApp() = default;
 	virtual ~BaseApp() = default;

@@ -12,7 +12,7 @@
 
 namespace sail::inno::app {
 
-class DummyRenderApp : public BaseApp {
+class SAIL_INNO_API DummyRenderApp : public BaseApp {
 public:
 	DummyRenderApp() = default;
 	virtual ~DummyRenderApp() = default;
