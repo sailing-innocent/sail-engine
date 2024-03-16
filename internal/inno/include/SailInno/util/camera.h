@@ -5,6 +5,7 @@
  * @date 2023-12-27
  * @brief Luisa Compute Based Camera
  */
+
 #include "SailBase/config.h"
 #include <luisa/runtime/buffer.h>
 #include <luisa/dsl/sugar.h>

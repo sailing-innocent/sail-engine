@@ -8,6 +8,7 @@
 #include <luisa/dsl/sugar.h>
 
 namespace sail::inno {
+
 using namespace luisa;
 using namespace luisa::compute;
 
