@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "SailIng/util/mesh.h"
 
 namespace sail::ing {
 

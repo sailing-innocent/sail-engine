@@ -10,7 +10,7 @@ else
 end
 
 -- todo: set local repo
--- add_repositories("sail-xrepo xrepo", {rootdir = path.join(os.scriptdir(), "external")})
+add_repositories("sail-xrepo xrepo", {rootdir = path.join(os.scriptdir(), "external")})
 -- default options
 includes("xmake/default_options.lua")
 -- rules 
