@@ -12,8 +12,9 @@ local function sail_add_test(folder, name, deps)
         end
     target_end()
 end
-
+sail_add_test("basic", "stl", {})
 sail_add_test("basic", "dummy", {"SailDummy"})
+
 if get_config("enable_inno") then 
     sail_add_test("inno", "util", {"SailInno"})
 end 
