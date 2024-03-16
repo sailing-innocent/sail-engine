@@ -3,11 +3,10 @@
 #include "SailInno/app/dummy_render_app.h"
 #include "SailInno/app/dummy_diff_render_app.h"
 
+#include "SailInno/app/reprod_gs_app.h"
 // #include "app/render/point_render_app.h"
-// #include "app/diff_render/gs/reprod_gs_app.h"
 // #include "app/diff_render/gs/zzh_gs_app.h"
 // #include "app/diff_render/gs/split_gs_app.h"
-
 // #include "app/diff_render/light_gs_app.h"
 
 namespace sail::inno::py {
@@ -26,11 +25,11 @@ void export_render_app(pybind11::module& m) {
 }
 
 void export_diff_render_app(pybind11::module& m) {
-	// pybind11::class_<app::ReprodGSApp>(m, "ReprodGSApp")
-	// 	.def(pybind11::init<>())
-	// 	.def("create", &app::ReprodGSApp::create)
-	// 	.def("forward", &app::ReprodGSApp::forward)
-	// 	.def("backward", &app::ReprodGSApp::backward);
+	pybind11::class_<app::ReprodGSApp>(m, "ReprodGSApp")
+		.def(pybind11::init<>())
+		.def("create", &app::ReprodGSApp::create)
+		.def("forward", &app::ReprodGSApp::forward)
+		.def("backward", &app::ReprodGSApp::backward);
 
 	// pybind11::class_<app::SplitGSApp>(m, "SplitGSApp")
 	// 	.def(pybind11::init<>())
