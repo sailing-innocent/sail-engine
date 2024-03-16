@@ -4,4 +4,6 @@ target("shaders")
     add_rules("sail.asset")
 target_end()
 
-includes("vulkan")
+if get_config("enable_vk") then 
+    includes("vulkan")
+end

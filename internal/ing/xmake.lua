@@ -1,7 +1,12 @@
+add_requires("imgui", {configs = {glfw_opengl3 = true, vulkan = true}})
 if get_config("enable_gl") then 
     add_requires("glfw")
     add_requires("glm")
-    add_requires("imgui", {configs = {glfw_opengl3 = true, vulkan = true}})
+end 
+
+if get_config("enable_vk") then 
+    add_requires("glfw")
+    add_requires("vulkansdk", {optional = true})
 end 
 
 SHARED_MODULE("SailIng", "SAIL_ING", engine_version)
@@ -12,4 +17,7 @@ SHARED_MODULE("SailIng", "SAIL_ING", engine_version)
         add_packages("glm", "glfw", "imgui", {public = true})
         add_deps("external_glad", {public = true})
     end 
+    if get_config("enable_vk") then 
+        add_packages("glfw", "imgui", "vulkansdk", {public = true})
+    end
     add_deps("external_stb_util", {public = true})

@@ -5,7 +5,7 @@
  * @date 2023-09-29
  * @author sailing-innocent
  */
-#include "SailBase/config/key_words.h"
+#include "SailBase/config.h"
 #include <glm/ext.hpp>// perspective, translate, rotate, scale
 #include <glm/glm.hpp>// vec2
 
