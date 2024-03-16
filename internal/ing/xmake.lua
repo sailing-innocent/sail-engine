@@ -20,4 +20,7 @@ SHARED_MODULE("SailIng", "SAIL_ING", engine_version)
     if get_config("enable_vk") then 
         add_packages("glfw", "imgui", "vulkansdk", {public = true})
     end
+    if (has_config("enable_dx")) then
+        add_links("d3d12", "dxgi", "D3DCompiler", {public = true})
+    end
     add_deps("external_stb_util", {public = true})
