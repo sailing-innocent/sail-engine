@@ -8,3 +8,4 @@ function add_demo(name, deps)
 end 
 
 includes("demo")
+includes("binding")

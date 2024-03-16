@@ -53,11 +53,12 @@ rule_end()
 
 function SHARED_MODULE(name, api, version, opt) 
     target(name)
-        set_group("01.modules/"..name)
-        add_rules("sail.dynamic_module", {api=api, version=version})
         set_kind("shared")
         set_languages("clatest", "c++20")
         set_exceptions("cxx")
+        set_group("01.modules/"..name)
+        add_rules("sail.dynamic_module", {api=api, version=version})
+
 end
 
 
