@@ -1,10 +1,9 @@
 from ...base import ProjectConfigBase, ProjectBase
-from module.model.vanilla_gaussian.model import GaussianModel 
+from module.model.gaussian.vanilla import GaussianModel 
 
 # renderer
-
 # from app.renderer.gaussian_rasterizer.reprod import create_gaussian_renderer as create_reprod_renderer 
-# from app.renderer.gaussian_rasterizer.vanilla import create_gaussian_renderer as create_vanilla_renderer 
+from app.diff_renderer.gaussian_rasterizer.vanilla import create_gaussian_renderer as create_vanilla_renderer 
 # from app.renderer.gaussian_rasterizer.vanilla_ing import create_gaussian_renderer as create_vanilla_ing_renderer
 from app.diff_renderer.gaussian_rasterizer.inno_reprod import create_gaussian_renderer as create_inno_reprod_renderer
 # from app.renderer.gaussian_rasterizer.inno_zzh import create_gaussian_renderer as 
@@ -46,7 +45,7 @@ class EvalGaussianProject(ProjectBase):
             # 'reprod': create_reprod_renderer,
             "inno_reprod": create_inno_reprod_renderer,
             # "inno_zzh": create_inno_zzh_renderer
-            # 'vanilla': create_vanilla_renderer
+            'vanilla': create_vanilla_renderer
         }
 
     def run(self, params: EvalGaussianProjectParams):

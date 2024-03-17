@@ -22,12 +22,9 @@ class GaussianModel:
         
         self.scaling_activation = torch.exp
         self.scaling_inverse_activation = torch.log
-
         self.covariance_activation = build_covariance_from_scaling_rotation
-
         self.opacity_activation = torch.sigmoid
         self.inverse_opacity_activation = inverse_sigmoid
-
         self.rotation_activation = torch.nn.functional.normalize
 
 
@@ -346,6 +343,7 @@ class GaussianModel:
         means =torch.zeros((stds.size(0), 3),device="cuda")
         samples = torch.normal(mean=means, std=stds)
         rots = build_rotation(self._rotation[selected_pts_mask]).repeat(N,1,1)
+        
         new_xyz = torch.bmm(rots, samples.unsqueeze(-1)).squeeze(-1) + self.get_xyz[selected_pts_mask].repeat(N, 1)
         new_scaling = self.scaling_inverse_activation(self.get_scaling[selected_pts_mask].repeat(N,1) / (0.8*N))
         new_rotation = self._rotation[selected_pts_mask].repeat(N,1)
