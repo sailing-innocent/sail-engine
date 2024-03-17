@@ -3,8 +3,10 @@ from torch import nn
 import numpy as np 
 from plyfile import PlyData, PlyElement
 from module.data.point_cloud import BasicPointCloud
+import os 
 
 from module.utils.torch.math import qvec_R, inverse_sigmoid, strip_symmetric
+from module.utils.core.system import mkdir_p
 
 class GaussianModel:
     def setup_functions(self):
@@ -71,6 +73,24 @@ class GaussianModel:
 
     def create_from_pcd(self, pcd: BasicPointCloud, scale=1.0):
         pass 
+    def save_ply(self, path):
+        mkdir_p(os.path.dirname(path))
+
+        xyz = self._xyz.detach().cpu().numpy()
+        normals = np.zeros_like(xyz)
+        f_dc = self._features_dc.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
+        f_rest = self._features_rest.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
+        opacities = self._opacity.detach().cpu().numpy()
+        scale = self._scaling.detach().cpu().numpy()
+        rotation = self._rotation.detach().cpu().numpy()
+
+        dtype_full = [(attribute, 'f4') for attribute in self.construct_list_of_attributes()]
+
+        elements = np.empty(xyz.shape[0], dtype=dtype_full)
+        attributes = np.concatenate((xyz, normals, f_dc, f_rest, opacities, scale, rotation), axis=1)
+        elements[:] = list(map(tuple, attributes))
+        el = PlyElement.describe(elements, 'vertex')
+        PlyData([el]).write(path)
 
     def load_ply(self, path):
         plydata = PlyData.read(path)
