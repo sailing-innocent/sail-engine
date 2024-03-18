@@ -15,10 +15,6 @@ using namespace luisa::compute;
 namespace sail::inno::gaussian {
 
 void DiffGaussianTileSampler::compile(Device& device) noexcept {
-	mp_ndc2pix = luisa::make_unique<Callable<float(float, uint)>>([](Float v, UInt S) {
-		return ((v + 1.0f) * S - 1.0f) * 0.5f;
-	});
-
 	mp_get_rect = luisa::make_unique<Callable<void(luisa::compute::float2, int, luisa::compute::uint2&, luisa::compute::uint2&, luisa::compute::uint2, luisa::compute::uint2)>>([](Float2 p, Int max_radius, UInt2& rect_min, UInt2& rect_max, UInt2 blocks, UInt2 grids) {
 		// clamp
 		rect_min = make_uint2(
@@ -50,42 +46,38 @@ void DiffGaussianTileSampler::compile(Device& device) noexcept {
 		// invert covariance
 		// det(M) = M[0][0] * M[1][1] - M[0][1] * M[1][0]
 
-		// Linear Transformation for Gaussian
+		// Linear Transformation for 2D Gaussian
 		Float3 cov_2d = make_float3(
 			covs_2d.read(3 * idx + 0) * resolution.x * resolution.x * 0.25f,
 			covs_2d.read(3 * idx + 1) * resolution.x * resolution.y * 0.25f,
 			covs_2d.read(3 * idx + 2) * resolution.y * resolution.y * 0.25f);
 
-		Float det = cov_2d.x * cov_2d.z - cov_2d.y * cov_2d.y;
-		Float inv_det = 1.0f / det;
-		Float3 conic = inv_det * make_float3(cov_2d.z, -cov_2d.y, cov_2d.x);// inv: [0][0] [0][1] transpose [1][1] inverse
-
-		Float mid = 0.5f * (cov_2d.x + cov_2d.z);
-		Float lambda1 = mid + sqrt(max(0.1f, mid * mid - det));
-		Float lambda2 = mid - sqrt(max(0.1f, mid * mid - det));
-
-		// 3 \sigma as affected zone
-		Int my_radius = ceil(3.0f * sqrt(max(lambda1, lambda2)));
-
-		UInt2 rect_min, rect_max;
-
 		auto point_image_ndc = make_float2(means_2d.read(2 * idx + 0), means_2d.read(2 * idx + 1));
 		auto point_image = make_float2(util::ndc2pix<Float>(point_image_ndc.x, resolution.x), util::ndc2pix<Float>(point_image_ndc.y, resolution.y));
 
+		// get radius = 3 \sigma
+		Float det = cov_2d.x * cov_2d.z - cov_2d.y * cov_2d.y;
+		Float inv_det = 1.0f / det;
+		Float3 conic = inv_det * make_float3(cov_2d.z, -cov_2d.y, cov_2d.x);// inv: [0][0] [0][1] transpose [1][1] inverse
+		Float mid = 0.5f * (cov_2d.x + cov_2d.z);
+		Float lambda1 = mid + sqrt(max(0.1f, mid * mid - det));
+		Float lambda2 = mid - sqrt(max(0.1f, mid * mid - det));
+		Int my_radius = ceil(3.0f * sqrt(max(lambda1, lambda2)));
+
+		// get rect
+		UInt2 rect_min, rect_max;
 		(*mp_get_rect)(point_image, my_radius, rect_min, rect_max, m_blocks, grids);
-		// write means_2d
+
+		// write radius
 		radii.write(idx, my_radius);
 		tiles_touched.write(idx, (rect_max.x - rect_min.x) * (rect_max.y - rect_min.y));
 		// write conic
 		conics.write(3 * idx + 0, conic.x);
 		conics.write(3 * idx + 1, conic.y);
 		conics.write(3 * idx + 2, conic.z);
-
 		// update means2d res
 		means_2d_res.write(2 * idx + 0, point_image.x);
 		means_2d_res.write(2 * idx + 1, point_image.y);
-		//  means_2d_res.write(2 * idx + 0, point_image_ndc.x);
-		//  means_2d_res.write(2 * idx + 1, point_image_ndc.y);
 	});
 
 	lazy_compile(device, m_copy_with_keys_shader,
@@ -177,9 +169,9 @@ void DiffGaussianTileSampler::compile(Device& device) noexcept {
 		// background color
 		Float3 color = make_float3(1.0f, 1.0f, 1.0f);
 		// debug grid
-		$if((tile_xy.x + tile_xy.y) % 2 == 0) {
-			color = make_float3(0.0f, 0.0f, 0.0f);
-		};
+		// $if((tile_xy.x + tile_xy.y) % 2 == 0) {
+		// 	color = make_float3(0.0f, 0.0f, 0.0f);
+		// };
 
 		// make rounds
 		// round step = shared_mem_size = block_size = block_x * block_y

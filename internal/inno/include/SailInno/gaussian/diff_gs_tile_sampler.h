@@ -96,8 +96,6 @@ protected:
 
 protected:
 	// callable
-	UCallable<float(float, uint)>
-		mp_ndc2pix;
 	UCallable<void(float2, int, uint2&, uint2&, uint2, uint2)> mp_get_rect;
 
 protected:
