@@ -11,6 +11,8 @@ from module.utils.torch.sh import RGB2SH
 from module.utils.np.func import discrete_exp_func
 from module.utils.core.system import mkdir_p
 
+from lib.reimpl.vanilla_diff_gaussian.simple_knn import distCUDA2
+
 class GaussianModel:
     def setup_functions(self):
         def build_covariance_from_scaling_rotation(scaling, scaling_modifier, rotation):
@@ -123,7 +125,8 @@ class GaussianModel:
 
         N = fused_point_cloud.shape[0]
         
-        dist2 = torch.ones(N).float().cuda() * 0.1
+        # dist2 = torch.ones(N).float().cuda() * 0.1
+        dist2 = torch.clamp_min(distCUDA2(torch.from_numpy(np.asarray(pcd.points)).float().cuda()), 0.0000001)
 
         scales = torch.log(torch.sqrt(dist2))[...,None].repeat(1, 3)
         rots = torch.zeros((fused_point_cloud.shape[0], 4), device="cuda")
