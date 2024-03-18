@@ -11,7 +11,7 @@ from app.diff_renderer.gaussian_rasterizer.inno_reprod import create_gaussian_re
 
 from module.utils.camera.basic import Camera
 from module.utils.video.av import write_mp4
-# from app.pipeline.novel_view_synthesis.gaussian.eval import GaussianEvalPipelineConfig, GaussianEvalPipeline 
+from app.pipeline.nvs.eval import NVSEvalPipelineConfig, NVSEvalPipeline 
 
 from loguru import logger 
 import os 
@@ -70,20 +70,18 @@ class EvalGaussianProject(ProjectBase):
         return result
 
     def eval(self, dataset_name = "nerf_blender", obj_name ="lego", render_name="vanilla", benchmarks = ["psnr"]):
-        pass
-        # pipeline_config = GaussianEvalPipelineConfig(self.config.env_config)
-        # # configure pipeline 
-        # pipeline_config.proj_name = self.config.name
-        # pipeline_config.name = "gaussian_eval_pipeline" + "_" + dataset_name + "_" + obj_name
-        # pipeline_config.dataset_name = dataset_name 
-        # pipeline_config.obj_name = obj_name 
-        # pipeline_config.metric_types = benchmarks
-        # # create and run pipeline
-        # pipeline = GaussianEvalPipeline(pipeline_config)
-
-        # renderer = self.create_renderer[render_name](self.config.env_config)
-        # result = pipeline.run(self.model, renderer)
-        # return result
+        pipeline_config = NVSEvalPipelineConfig(self.config.env_config)
+        # configure pipeline 
+        pipeline_config.proj_name = self.config.name
+        pipeline_config.name = "nvs_eval_pipeline" + "_" + dataset_name + "_" + obj_name
+        pipeline_config.dataset_name = dataset_name 
+        pipeline_config.obj_name = obj_name 
+        pipeline_config.metric_types = benchmarks
+        # create and run pipeline
+        pipeline = NVSEvalPipeline(pipeline_config)
+        renderer = self.create_renderer[render_name](self.config.env_config)
+        result = pipeline.run(self.model, renderer)
+        return result
 
 
     def render(self, output_name, dataset_name="nerf_blender", render_name='vanilla'):

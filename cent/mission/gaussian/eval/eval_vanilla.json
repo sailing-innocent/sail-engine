@@ -1,0 +1,13 @@
+{
+    "name": "gaussian_eval_vanilla",
+    "render_name": "vanilla",
+    "usage": "eval",
+    "checkpoints": [
+        {
+            "dataset": "nerf_blender",
+            "obj_name": "lego",
+            "path": "gaussian",
+            "iter": 30000
+        }
+    ]
+}

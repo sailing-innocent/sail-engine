@@ -3,9 +3,8 @@ from .mission import Mission
 
 @pytest.mark.current 
 def test_gaussian_reprod_render():
-    # cfg = "render_reprod"
     # cfg = "render_vanilla"
-    cfg = "render_inno_reprod"
+    # cfg = "render_inno_reprod"
     # cfg = "render_inno_zzh"
     # cfg = "render_inno_split"
     # json_file_path = "render_inno_light.json"
@@ -22,7 +21,7 @@ def test_gaussian_reprod_render():
     # json_file_path = "demo_ing.json"
 
     # cfg = "eval_reprod"
-    # cfg = "eval_vanilla"
+    cfg = "eval_vanilla"
     # json_file_path = "eval_local.json"
 
     mission = Mission(cfg + ".json")

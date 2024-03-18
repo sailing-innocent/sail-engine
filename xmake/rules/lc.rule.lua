@@ -39,14 +39,26 @@ after_build(function(target)
         "DirectML", "dstorage", "dstoragecore", "dxcompiler", "dxil", 
         "lc-ast", "lc-backend-dx", "lc-core", "lc-ir",
         "lc-ext-eastl", "lc-ext-imgui", "lc-gui", "lc-runtime", "lc-validation-layer",
+    }
+    local cuda_background_bin_table = {
         -- luisa ext lcub
         "lc-vulkan-swapchain", "lc-backend-cuda",
         "luisa-compute-cuda-ext-dcub", "luisa-compute-cuda-ext-lcub"
     }
     local copy_src_dir = path.join(lc_path, bin_dir)
+
     for i, v in ipairs(bin_table) do
         os.trycp(path.join(copy_src_dir, v .. ".dll"), bin_dir)
     end
+
+    if get_config("enable_cuda") then
+        for i, v in ipairs(cuda_background_bin_table) do
+            os.trycp(path.join(copy_src_dir, v .. ".dll"), bin_dir)
+        end
+        -- for ptx linking
+        os.trycp(path.join(copy_src_dir, "cudadevrt.lib"), bin_dir)
+    end
+
     if not is_mode("release") then
         os.cp(path.join(copy_src_dir, "*.pdb"), bin_dir)
     end
