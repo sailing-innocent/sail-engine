@@ -17,7 +17,7 @@ class Mip360DatasetConfig(ColmapDatasetConfig):
         self.llffhold = 8
 
     def dataset_root(self):
-        return os.path.join(self.env_config.dataset_root(), "360_v2", self.obj_name)
+        return os.path.join(self.env_config.dataset_root, "360_v2", self.obj_name)
 
 class Mip360Dataset(ColmapDataset):
     def __init__(self, config: Mip360DatasetConfig):

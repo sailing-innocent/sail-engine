@@ -19,11 +19,6 @@ class MultiViewBlenderVisualizerConfig(VisualizerConfigBase):
     def mainfile_path(self):
         return os.path.join(self.env_config.blender_root, self.target_path, self.mainfile_name + ".blend")
 
-class MultiViewBlenderVisualizeResult(VisualizeResultBase):
-    def __init__(self, target_file_path: str = "output"):
-        super().__init__()
-        self.target_file_path = target_file_path
-
 class MultiViewBlenderVisualizer(VisualizerBase):
     """
         self.config
@@ -31,15 +26,13 @@ class MultiViewBlenderVisualizer(VisualizerBase):
     def __init__(self, config: MultiViewBlenderVisualizerConfig):
         super().__init__(config)
 
-    def visualize(self, dataset) -> MultiViewBlenderVisualizeResult:
+    def visualize(self, dataset):
         mainfile_path = self.config.mainfile_path
-    
         bopen(mainfile_path)
         # use image and camera pairs
         assert dataset.use_rays == False 
 
         for idx, (cam_info, img_info) in enumerate(dataset):
-
             img_src = img_info.data
             # if the img is too large, resize it to 400 and keep aspect
             if img_src.shape[0] > 400:
@@ -49,6 +42,3 @@ class MultiViewBlenderVisualizer(VisualizerBase):
             c2w[:3, 3] = cam_info.T
             vis_view(img_src, c2w, "img_{}".format(idx))
         bclose(mainfile_path)
-
-        result = MultiViewBlenderVisualizeResult(mainfile_path)
-        return result

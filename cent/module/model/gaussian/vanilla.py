@@ -5,13 +5,14 @@ from plyfile import PlyData, PlyElement
 from module.data.point_cloud import BasicPointCloud
 import os 
 
-from module.utils.torch.math import qvec_R, inverse_sigmoid, strip_symmetric
+from module.utils.torch.math import inverse_sigmoid, strip_symmetric
+from module.utils.torch.transform import qvec2R
 from module.utils.core.system import mkdir_p
 
 class GaussianModel:
     def setup_functions(self):
         def build_covariance_from_scaling_rotation(scaling, scaling_modifier, rotation):
-            R = qvec_R(rotation)
+            R = qvec2R(rotation)
             s = scaling_modifier * scaling
             S = torch.zeros((s.shape[0], 3, 3), dtype=torch.float, device="cuda")
             S[:,0,0] = s[:, 0]

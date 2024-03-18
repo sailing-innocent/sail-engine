@@ -1,7 +1,7 @@
 import numpy as np 
 import collections 
 import struct 
-from module.utils.math.np.transform import qvec2rotmat, rotmat2qvec
+from module.utils.np.transform import qvec2R
 
 
 CameraModel = collections.namedtuple(
@@ -32,7 +32,7 @@ CAMERA_MODEL_NAMES = dict([(camera_model.model_name, camera_model)
 
 class Image(BaseImage):
     def qvec2rotmat(self):
-        return qvec2rotmat(self.qvec)
+        return qvec2R(self.qvec)
 
 def read_next_bytes(fid, num_bytes, format_char_sequence, endian_character="<"):
     """Read and unpack the next bytes from a binary file.

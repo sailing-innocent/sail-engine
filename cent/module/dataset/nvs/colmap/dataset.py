@@ -1,20 +1,20 @@
-from module.utils.math.np.transform import qvec2rotmat, rotmat2qvec
+
 from ..base import NVSDatasetConfig, NVSDataset 
-from module.config.env import BaseEnvConfig
 from ..base import CameraImagePair, RayColorPair
 from module.utils.image.basic import Image
-from module.data.image.info import ImageInfo
-from module.data.camera.info import CameraInfo
+from module.data.image_info import ImageInfo
+from module.data.camera_info import CameraInfo
 
 import sys 
 import os 
 import numpy as np 
 from loguru import logger  
-from module.utils.graphics.math import focal2fov, fov2focal
+from module.utils.np.graphics import focal2fov
+from module.utils.np.transform import qvec2R
 from .util import read_extrinsics_text, read_intrinsics_text, read_extrinsics_binary, read_intrinsics_binary
 from .util import read_points3D_binary, read_points3D_text
 # utilities
-from module.utils.point_cloud.ply import storePly, fetchPly
+from module.utils.pointcloud.io import fetchPly
 
 class ColmapDatasetConfig(NVSDatasetConfig):
     """
@@ -23,7 +23,7 @@ class ColmapDatasetConfig(NVSDatasetConfig):
         - batch_size = 64
         - usage = "train"
     """
-    def __init__(self, env_config: BaseEnvConfig):
+    def __init__(self, env_config):
         super().__init__(env_config)
         self.name = "colmap"
         self.obj_name = "dummy"
@@ -32,7 +32,7 @@ class ColmapDatasetConfig(NVSDatasetConfig):
         self.llffhold = 8
 
     def dataset_root(self):
-        return os.path.join(self.env_config.dataset_root(), "colmap", self.obj_name)
+        return os.path.join(self.env_config.dataset_root, "colmap", self.obj_name)
 
 class ColmapDataset(NVSDataset):
     """
@@ -83,7 +83,7 @@ class ColmapDataset(NVSDataset):
             width = intr.width
 
             uid = intr.id
-            R = qvec2rotmat(extr.qvec)
+            R = qvec2R(extr.qvec)
             T = np.array(extr.tvec)
             # world to view translation need to be inverted
             T = -np.matmul(R.T, T)
