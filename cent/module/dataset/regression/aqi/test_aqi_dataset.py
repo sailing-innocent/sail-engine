@@ -1,11 +1,11 @@
 import pytest 
 
-from module.dataset.regression.aqi.dataset import AQIDataset, AQIDatasetConfig
-from mission.config.env import get_env_config
+from .dataset import AQIDataset, AQIDatasetConfig
+from module.config.env import get_env_config_by_name
 
 @pytest.mark.current 
 def test_aqi_dataset():
-    env_config = get_env_config()
+    env_config = get_env_config_by_name("pc")
     dataset_config = AQIDatasetConfig(env_config)
     dataset = AQIDataset(dataset_config)
     # print(dataset_config.csv_file_path)

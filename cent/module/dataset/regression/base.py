@@ -1,5 +1,6 @@
 from module.dataset.base import BaseDataset, BaseDatasetConfig 
 from abc import ABC, abstractmethod 
+from module.config.env import BaseEnvConfig 
 
 import random
 import torch 
@@ -14,7 +15,7 @@ def data_iter(batch_size, features, labels):
         yield features[batch_indices], labels[batch_indices]
 
 class RegressionDatasetConfig(BaseDatasetConfig):
-    def __init__(self, env_config):
+    def __init__(self, env_config: BaseEnvConfig):
         super().__init__(env_config)
         self.input_dim = 2
         self.output_dim = 1

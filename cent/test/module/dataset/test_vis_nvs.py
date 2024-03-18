@@ -1,0 +1,20 @@
+import pytest 
+
+
+from module.dataset.nvs.blender.dataset import NeRFBlenderDatasetConfig, NeRFBlenderDataset
+from app.visualizer.multi_view.blender import MultiViewBlenderVisualizerConfig, MultiViewBlenderVisualizer
+from mission.config.env import get_env_config
+
+@pytest.mark.vis
+def test_vis_nerf_blender():
+    env_config = get_env_config()
+    dataset_config = NeRFBlenderDatasetConfig(env_config)
+    vis_config = MultiViewBlenderVisualizerConfig(env_config)
+    for obj_name in dataset_config.obj_list:
+        dataset_config.obj_name = obj_name
+        vis_config.mainfile_name = obj_name
+        dataset = NeRFBlenderDataset(dataset_config)
+        visualizer = MultiViewBlenderVisualizer(vis_config)
+        visualizer.visualize(dataset)
+        break
+    assert True
