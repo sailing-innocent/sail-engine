@@ -43,7 +43,7 @@ def test_tile_sampler_color():
     target_img.requires_grad = False
 
     # change covs
-    covs_2d = 10.0 * covs_2d
+    covs_2d = 100.0 * covs_2d
 
     covs_2d.requires_grad = True
     color_features.requires_grad = True
