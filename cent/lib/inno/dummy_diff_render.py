@@ -1,7 +1,4 @@
 import sys 
-import os 
-cwd = os.path.join(os.getcwd(), "../bin/release")
-sys.path.append(cwd)
 from innopy import DummyDiffRenderApp
 
 import torch 
@@ -36,7 +33,7 @@ class DummyDiffRender(nn.Module):
     def __init__(self):
         super(DummyDiffRender, self).__init__()
         self.app = DummyDiffRenderApp()
-        self.app.create(cwd, "cuda")
+        self.app.create(sys.path[-1], "cuda")
 
     def forward(self, source_img, height, width):
         return _DummyDiffRender.apply(source_img, height, width, self.app)

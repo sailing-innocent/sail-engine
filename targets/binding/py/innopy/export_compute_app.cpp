@@ -2,9 +2,9 @@
 
 // #include "app/compute/parallel_primitive_app.h"
 // #include "app/gaussian/diff_gs_projector_app.h"
-// #include "app/gaussian/diff_gs_tile_sampler_app.h"
+#include "SailInno/app/diff_gs_tile_sampler_app.h"
 
-namespace inno::py {
+namespace sail::inno::py {
 
 void export_parallel_app(pybind11::module& m) {
 	// pybind11::class_<app::ParallelPrimitiveApp>(m, "ParallelPrimitiveApp")
@@ -21,11 +21,11 @@ void export_gaussian_app(pybind11::module& m) {
 	// 	.def("forward", &app::DiffGSProjectorApp::forward)
 	// 	.def("backward", &app::DiffGSProjectorApp::backward);
 
-	// pybind11::class_<app::DiffGSTileSamplerApp>(m, "DiffGSTileSamplerApp")
-	// 	.def(pybind11::init<>())
-	// 	.def("create", &app::DiffGSTileSamplerApp::create)
-	// 	.def("forward", &app::DiffGSTileSamplerApp::forward)
-	// 	.def("backward", &app::DiffGSTileSamplerApp::backward);
+	pybind11::class_<app::DiffGSTileSamplerApp>(m, "DiffGSTileSamplerApp")
+		.def(pybind11::init<>())
+		.def("create", &app::DiffGSTileSamplerApp::create)
+		.def("forward", &app::DiffGSTileSamplerApp::forward)
+		.def("backward", &app::DiffGSTileSamplerApp::backward);
 }
 
-}// namespace inno::py
+}// namespace sail::inno::py

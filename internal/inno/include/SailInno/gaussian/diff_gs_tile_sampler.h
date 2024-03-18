@@ -11,7 +11,7 @@
 
 namespace sail::inno::gaussian {
 
-class DiffGaussianTileSampler : public LuisaModule {
+class SAIL_INNO_API DiffGaussianTileSampler : public LuisaModule {
 public:
 	DiffGaussianTileSampler() = default;
 	~DiffGaussianTileSampler() = default;
@@ -24,7 +24,7 @@ public:
 		Stream& stream,
 		// params
 		int num_gaussians,
-		int width, int height,
+		int height, int width,
 		// input
 		BufferView<float> means_2d,
 		BufferView<float> covs_2d,

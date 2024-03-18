@@ -15,6 +15,6 @@ PYBIND11_MODULE(innopy, m) {
 	m.def("add", &inno::py::add, "A function which adds two numbers");
 	sail::inno::py::export_render_app(m);
 	sail::inno::py::export_diff_render_app(m);
-	inno::py::export_parallel_app(m);
-	inno::py::export_gaussian_app(m);
+	sail::inno::py::export_parallel_app(m);
+	sail::inno::py::export_gaussian_app(m);
 }

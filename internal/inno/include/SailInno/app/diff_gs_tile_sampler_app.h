@@ -12,14 +12,14 @@
 
 namespace sail::inno::app {
 
-class DiffGSTileSamplerApp : public BaseApp {
+class SAIL_INNO_API DiffGSTileSamplerApp : public BaseApp {
 public:
 	DiffGSTileSamplerApp() = default;
 	virtual ~DiffGSTileSamplerApp() = default;
-	virtual void create(luisa::string& cwd, luisa::string& device_name) override;
+	void create(luisa::string& cwd, luisa::string& device_name) override;
 
 	void forward(// params
-		int num_gaussians, int width, int height,
+		int num_gaussians, int height, int width,
 		// input
 		int64_t means_2d, int64_t covs_2d, int64_t depth_features, int64_t color_features,
 		// output

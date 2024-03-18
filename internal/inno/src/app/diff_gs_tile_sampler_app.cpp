@@ -25,7 +25,7 @@ void DiffGSTileSamplerApp::create(luisa::string& cwd, luisa::string& device_name
 
 void DiffGSTileSamplerApp::forward(
 	// params
-	int num_gaussians, int width, int height,
+	int num_gaussians, int height, int width,
 	// input
 	int64_t means_2d, int64_t covs_2d, int64_t depth_features, int64_t color_features,
 	// output
@@ -42,7 +42,7 @@ void DiffGSTileSamplerApp::forward(
 
 	mp_sampler->forward_impl(
 		*mp_device, *mp_stream,
-		num_gaussians, width, height,
+		num_gaussians, height, width,
 		means_2d_buf, covs_2d_buf, depth_features_buf, color_features_buf,
 		target_img_buf);
 }

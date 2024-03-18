@@ -22,7 +22,7 @@ void DiffGaussianTileSampler::forward_impl(
 	Stream& stream,
 	// params
 	int num_gaussians,
-	int width, int height,
+	int height, int width,
 	// input
 	BufferView<float> means_2d,
 	BufferView<float> covs_2d,
