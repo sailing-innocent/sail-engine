@@ -71,7 +71,7 @@ void DiffGaussianTileSampler::forward_impl(
 	cmdlist << geom_state->point_offsets.view(num_gaussians - 1, 1).copy_to(&num_rendered);
 	stream << cmdlist.commit() << synchronize();
 
-	LUISA_INFO("num_rendered: {}", num_rendered);
+	// LUISA_INFO("num_rendered: {}", num_rendered);
 	if (num_rendered <= 0) { return; }
 	tile_state->allocate(device, static_cast<size_t>(num_rendered));
 	tile_state->clear(device, cmdlist, *mp_buffer_filler);

@@ -39,8 +39,12 @@ void DiffGaussianTileSampler::GeometryState::allocate(Device& device, size_t siz
 	radii = device.create_buffer<int>(size);
 	color_features = device.create_buffer<float>(size * 4);
 	conic = device.create_buffer<float>(size * 3);
+
 	tiles_touched = device.create_buffer<uint>(size);
 	point_offsets = device.create_buffer<uint>(size);
+
+	dL_d_conic = device.create_buffer<float>(size * 3);
+	dL_d_means_2d = device.create_buffer<float>(size * 4);
 	// allocate scan temp storage
 	luisa::compute::cuda::lcub::DeviceScan::InclusiveSum(scan_temp_storage_size, tiles_touched, point_offsets, size);
 	scan_temp_storage = device.create_buffer<int>(scan_temp_storage_size);
@@ -51,6 +55,8 @@ void DiffGaussianTileSampler::GeometryState::clear(Device& device, CommandList& 
 	cmdlist << filler.fill(device, color_features, 0.0f);
 	cmdlist << filler.fill(device, tiles_touched, 0u);
 	cmdlist << filler.fill(device, point_offsets, 0u);
+	cmdlist << filler.fill(device, dL_d_conic, 0.0f);
+	cmdlist << filler.fill(device, dL_d_means_2d, 0.0f);
 }
 
 void DiffGaussianTileSampler::TileState::allocate(Device& device, size_t size) {

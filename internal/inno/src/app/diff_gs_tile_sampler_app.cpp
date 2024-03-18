@@ -30,7 +30,7 @@ void DiffGSTileSamplerApp::forward(
 	int64_t means_2d, int64_t covs_2d, int64_t depth_features, int64_t color_features,
 	// output
 	int64_t target_img_buffer) {
-	LUISA_INFO("DiffGSTileSamplerApp::forward");
+	// LUISA_INFO("DiffGSTileSamplerApp::forward");
 	// input
 	Buffer<float> means_2d_buf = mp_device->import_external_buffer<float>((void*)means_2d, num_gaussians * 2);
 	Buffer<float> covs_2d_buf = mp_device->import_external_buffer<float>((void*)covs_2d, num_gaussians * 3);
@@ -57,8 +57,7 @@ void DiffGSTileSamplerApp::backward(
 	int64_t dL_dpix,
 	// output
 	int64_t dL_d_means_2d, int64_t dL_d_covs_2d, int64_t dL_d_color_features) {
-	LUISA_INFO("DiffGSTileSamplerApp::backward with {}, {}, {}", m_num_gaussians, m_height, m_width);
-
+	// LUISA_INFO("DiffGSTileSamplerApp::backward with {}, {}, {}", m_num_gaussians, m_height, m_width);
 	// input
 	Buffer<float> dL_dpix_buf = mp_device->import_external_buffer<float>((void*)dL_dpix, m_height * m_width * 3);
 	// output

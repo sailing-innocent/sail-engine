@@ -37,10 +37,8 @@ public:
 	GaussiansScene(const int num_gaussians = 0) noexcept;
 	virtual ~GaussiansScene() = default;
 	// life cycle
-	virtual void create(Device& device) noexcept override;
-	virtual void init(CommandList& cmdlist) noexcept override;
-
-public:
+	void create(Device& device) noexcept override;
+	void init(CommandList& cmdlist) noexcept override;
 	// getter
 	int num_gaussians() const noexcept { return m_data.num_gaussians; }
 	BufferView<float> xyz() noexcept { return m_data.xyz_buf.view(); }

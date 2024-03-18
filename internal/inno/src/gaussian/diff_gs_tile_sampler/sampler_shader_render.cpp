@@ -130,6 +130,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 			n_contrib.write(pix_id, last_contributor);
 		};
 	});
+
 	lazy_compile(device, m_backward_render_shader,
 				 [&](
 					 UInt2 resolution,
@@ -145,6 +146,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 					 BufferVar<uint> n_contrib,
 					 BufferVar<float> accum_alpha,
 					 // output
+					 BufferVar<float> dL_d_means2d,
 					 BufferVar<float> dL_d_conic,
 					 BufferVar<float> dL_d_color_features) {
 		set_block_size(m_blocks);
@@ -243,6 +245,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 				$if(power > 0.0f) { $continue; };
 
 				Float G = exp(power);
+
 				Float alpha = min(0.99f, con_o.w * G);
 				$if(alpha < 1.0f / 255.0f) { $continue; };
 
@@ -252,6 +255,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 				//  Float d_ch_d_color = 1.0f;
 				Float dL_dalpha = 0.0f;
 				UInt global_id = collected_ids->read(j);
+
 				$for(ch, 3) {
 					Float c = collected_color->read(3 * j + ch);
 
@@ -260,6 +264,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 					//  Float dL_d_ch = 1.0f;
 					Float dL_d_ch = dLdpix[ch];
 					dL_dalpha += (c - accum_rec[ch]) * dL_d_ch;
+
 					// atomic add to dL_dcolor
 					Float dL_d_color_feat = d_ch_d_color * dL_d_ch;
 
@@ -268,6 +273,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 				};
 
 				dL_dalpha = dL_dalpha * T;
+
 				last_alpha = alpha;
 
 				Float bg_dot_pixel = 0;
@@ -275,6 +281,8 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 					bg_dot_pixel += bg_color[k] * dLdpix[k];
 				};
 				dL_dalpha += (-T_final / (1.0f - alpha)) * bg_dot_pixel;
+				// backward for opacity
+				dL_d_color_features.atomic(4 * global_id + 3).fetch_add(G * dL_dalpha);
 
 				Float dL_dG = dL_dalpha * con_o.w;
 				Float gdx = G * d.x;
@@ -284,8 +292,8 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 				dL_d_conic.atomic(global_id * 3 + 0).fetch_add(-0.5f * gdx * d.x * dL_dG);
 				dL_d_conic.atomic(global_id * 3 + 1).fetch_add(-0.5f * gdx * d.y * dL_dG);
 				dL_d_conic.atomic(global_id * 3 + 2).fetch_add(gdy * d.y * dL_dG);
-				// backward for opacity
-				dL_d_color_features.atomic(4 * global_id + 3).fetch_add(G * dL_dalpha);
+
+				// TODO: dL_d_means2d
 			};
 
 			todo = todo - round_step;

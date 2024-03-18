@@ -52,8 +52,12 @@ public:
 		Buffer<int> radii;			 // P
 		Buffer<float> color_features;// 4 * P
 		Buffer<float> conic;		 // 3 * P
-		Buffer<uint> tiles_touched;	 // P
-		Buffer<uint> point_offsets;	 // P
+		// saved for backward
+		Buffer<uint> tiles_touched;// P
+		Buffer<uint> point_offsets;// P
+		// alloc for backward
+		Buffer<float> dL_d_conic;	// 3 * P
+		Buffer<float> dL_d_means_2d;// 4 * P
 
 		// method
 		void allocate(Device& device, size_t size);
@@ -121,6 +125,18 @@ protected:
 			 >>
 		m_forward_tile_split_shader;
 
+	U<Shader<1, int,// num_gaussians
+			 // input
+			 Buffer<float>,// dL_d_conic
+
+			 // params
+			 uint2,		   // resolution
+			 Buffer<float>,// conics
+			 // output
+			 Buffer<float>// dL_d_cov_2d
+			 >>
+		m_backward_tile_split_shader;
+
 	U<Shader<1, int,	   // P
 			 Buffer<float>,// points_xy
 			 Buffer<uint>, // offsets
@@ -165,6 +181,7 @@ protected:
 			 Buffer<uint>, // last_contributors
 			 Buffer<float>,// final_Ts
 			 // output
+			 Buffer<float>,// dL_d_means2d
 			 Buffer<float>,// dL_d_conic
 			 Buffer<float> // dL_d_color_feature
 			 >>
