@@ -40,18 +40,20 @@ class _DiffGSTileSampler(torch.autograd.Function):
     @staticmethod
     def backward(ctx, dL_dtpix):
         P = ctx.num_gaussians
-        print(f"P: {P}")
-        print(f"dL_dtpix: {dL_dtpix.shape}")
+        # print(f"P: {P}")
+        # print(f"dL_dtpix: {dL_dtpix.shape}")
 
         dL_dmeans_2d = torch.zeros((P, 2), dtype=torch.float32).cuda()
         dL_dcovs_2d = torch.zeros((P, 3), dtype=torch.float32).cuda()
         dL_dcolor_features = torch.zeros((P, 4), dtype=torch.float32).cuda()
-        
+
         ctx.app.backward(dL_dtpix.contiguous().data_ptr(), 
                         dL_dmeans_2d.contiguous().data_ptr(), 
                         dL_dcovs_2d.contiguous().data_ptr(), 
-                        dL_dcolor_features.data_ptr())
-
+                        dL_dcolor_features.contiguous().data_ptr())
+        
+        # print(dL_dcolor_features)
+        print(dL_dcovs_2d)
         return dL_dmeans_2d, dL_dcovs_2d, None, dL_dcolor_features, None, None, None
 
 class DiffGSTileSampler(nn.Module):

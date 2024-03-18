@@ -4,7 +4,7 @@ from lib.inno.diff_gs_tile_sampler import DiffGSTileSampler
 import torch 
 import matplotlib.pyplot as plt
 
-@pytest.mark.app
+@pytest.mark.current 
 def test_tile_sampler_color():
     
     sampler = DiffGSTileSampler()
@@ -13,13 +13,13 @@ def test_tile_sampler_color():
     width = 512
 
     means_2d = torch.zeros((N, 2), dtype=torch.float32).cuda()
-    means_2d[0, 0] = 0.5
-    means_2d[0, 1] = 0.5
+    # means_2d[0, 0] = 0.5
+    # means_2d[0, 1] = 0.5
     means_2d.requires_grad = True 
 
-    covs_2d = 0.25 * torch.ones((N, 3), dtype=torch.float32).cuda()
+    covs_2d = 0.001 * torch.ones((N, 3), dtype=torch.float32).cuda()
     covs_2d[:, 1] = 0
-    covs_2d.requires_grad = True
+
 
     depth_features = torch.ones((N, 1), dtype=torch.float32).cuda()
     depth_features[0, 0] = 0
@@ -38,21 +38,19 @@ def test_tile_sampler_color():
 
     target_img = sampler.forward(means_2d, covs_2d, depth_features, color_features, height, width)
     target_img = target_img.detach()
+    target_img_np = target_img.cpu().detach().numpy().transpose(1, 2, 0).clip(0, 1)
+    
     target_img.requires_grad = False
 
-    # change color
-    # set blue
-    blue = torch.zeros((N, 4), dtype=torch.float32).cuda()
-    blue[:, 2] = 1
-    blue[:, 3] = 1
-    color_features = blue
-    # set the first opacity to 0.1
-    color_features[0, 3] = 0.1
+    # change covs
+    covs_2d = 10.0 * covs_2d
+
+    covs_2d.requires_grad = True
     color_features.requires_grad = True
 
-    optim = torch.optim.SGD([color_features], lr=0.1)
-    N_ROUND = 210
-    N_SHOW = 50
+    optim = torch.optim.SGD([covs_2d], lr=0.1)
+    N_ROUND = 21
+    N_SHOW = 5
 
     for i in range(N_ROUND):
         optim.zero_grad()
@@ -71,6 +69,11 @@ def test_tile_sampler_color():
                 result_img_np = result_img_np.transpose(1, 2, 0)
                 # flip y
                 result_img_np = result_img_np[::-1, :, :]
+                # compare show
+                print(covs_2d.detach().cpu().numpy())
+                plt.subplot(1, 2, 1)
+                plt.imshow(target_img_np)
+                plt.subplot(1, 2, 2)
                 plt.imshow(result_img_np)
                 plt.show()
             
