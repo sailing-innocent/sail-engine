@@ -1,0 +1,33 @@
+#pragma once
+
+/**
+ * @file app/GS/diff_gs_tile_sampler_app.h
+ * @author sailing-innocent
+ * @date 2024-03-08
+ * @brief The Diff GS Tile Sampler
+ */
+
+#include "SailInno/app/base.h"
+#include "SailInno/gaussian/diff_gs_tile_sampler.h"
+
+namespace sail::inno::app {
+
+class DiffGSTileSamplerApp : public BaseApp {
+public:
+	DiffGSTileSamplerApp() = default;
+	virtual ~DiffGSTileSamplerApp() = default;
+	virtual void create(luisa::string& cwd, luisa::string& device_name) override;
+
+	void forward(// params
+		int num_gaussians, int width, int height,
+		// input
+		int64_t means_2d, int64_t covs_2d, int64_t depth_features, int64_t color_features,
+		// output
+		int64_t target_img_buffer);
+	void backward();
+
+protected:
+	U<gaussian::DiffGaussianTileSampler> mp_sampler;
+};
+
+}// namespace sail::inno::app
