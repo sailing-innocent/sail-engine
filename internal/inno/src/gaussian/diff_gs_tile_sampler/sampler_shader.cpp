@@ -6,6 +6,7 @@
  */
 
 #include "SailInno/gaussian/diff_gs_tile_sampler.h"
+#include "SailInno/util/graphic/image.h"
 #include <luisa/dsl/sugar.h>
 
 using namespace luisa;
@@ -48,19 +49,28 @@ void DiffGaussianTileSampler::compile(Device& device) noexcept {
 		// -----------------------------
 		// invert covariance
 		// det(M) = M[0][0] * M[1][1] - M[0][1] * M[1][0]
-		Float3 cov_2d = make_float3(covs_2d.read(3 * idx + 0), covs_2d.read(3 * idx + 1), covs_2d.read(3 * idx + 2));
+
+		// Linear Transformation for Gaussian
+		Float3 cov_2d = make_float3(
+			covs_2d.read(3 * idx + 0) * resolution.x * resolution.x * 0.25f,
+			covs_2d.read(3 * idx + 1) * resolution.x * resolution.y * 0.25f,
+			covs_2d.read(3 * idx + 2) * resolution.y * resolution.y * 0.25f);
+
 		Float det = cov_2d.x * cov_2d.z - cov_2d.y * cov_2d.y;
-		Float inv_det = 1.0f / det / resolution.y;
+		Float inv_det = 1.0f / det;
 		Float3 conic = inv_det * make_float3(cov_2d.z, -cov_2d.y, cov_2d.x);// inv: [0][0] [0][1] transpose [1][1] inverse
 
 		Float mid = 0.5f * (cov_2d.x + cov_2d.z);
 		Float lambda1 = mid + sqrt(max(0.1f, mid * mid - det));
 		Float lambda2 = mid - sqrt(max(0.1f, mid * mid - det));
+
+		// 3 \sigma as affected zone
 		Int my_radius = ceil(3.0f * sqrt(max(lambda1, lambda2)));
+
 		UInt2 rect_min, rect_max;
 
 		auto point_image_ndc = make_float2(means_2d.read(2 * idx + 0), means_2d.read(2 * idx + 1));
-		auto point_image = make_float2((*mp_ndc2pix)(point_image_ndc.x, resolution.x), (*mp_ndc2pix)(point_image_ndc.y, resolution.y));
+		auto point_image = make_float2(util::ndc2pix<Float>(point_image_ndc.x, resolution.x), util::ndc2pix<Float>(point_image_ndc.y, resolution.y));
 
 		(*mp_get_rect)(point_image, my_radius, rect_min, rect_max, m_blocks, grids);
 		// write means_2d
@@ -167,10 +177,9 @@ void DiffGaussianTileSampler::compile(Device& device) noexcept {
 		// background color
 		Float3 color = make_float3(1.0f, 1.0f, 1.0f);
 		// debug grid
-		//  $if((tile_xy.x + tile_xy.y) % 2 == 0)
-		//  {
-		//      color = make_float3(0.0f, 0.0f, 0.0f);
-		//  };
+		$if((tile_xy.x + tile_xy.y) % 2 == 0) {
+			color = make_float3(0.0f, 0.0f, 0.0f);
+		};
 
 		// make rounds
 		// round step = shared_mem_size = block_size = block_x * block_y

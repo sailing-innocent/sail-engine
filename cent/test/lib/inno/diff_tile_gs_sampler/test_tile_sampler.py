@@ -7,12 +7,12 @@ import matplotlib.pyplot as plt
 @pytest.mark.current 
 def test_tile_sampler():
     sampler = DiffGSTileSampler()
-    N = 10
+    N = 1
     height = 512
     width = 512
 
     means_2d = torch.zeros((N, 2), dtype=torch.float32).cuda()
-    covs_2d = 40 * torch.ones((N, 3), dtype=torch.float32).cuda()
+    covs_2d = 0.3 * torch.ones((N, 3), dtype=torch.float32).cuda()
     covs_2d[:, 1] = 0
     depth_features = torch.rand((N, 1), dtype=torch.float32).cuda()
     # color_features = torch.stack([black, red], dim=0).cuda()
