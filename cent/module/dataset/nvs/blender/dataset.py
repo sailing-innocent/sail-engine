@@ -82,7 +82,7 @@ class NeRFBlenderDataset(NVSDataset):
         self.N = len(self._cam_img_pairs)
 
     def get_point_cloud(self):
-        ply_file_path = os.path.join(self.config.env_config.dataset_root(), "nerf_blender_init.ply")
+        ply_file_path = os.path.join(self.config.env_config.dataset_root, "nerf_blender_init.ply")
         pcd = fetchPly(ply_file_path)
         return pcd
     

@@ -6,7 +6,7 @@ from random import randint
 import os 
 from loguru import logger 
 
-from .plain import GaussianTrainerParams
+from .basic import GaussianTrainerParams
 
 class GaussianTrainerConfig(TrainerConfigBase):
     def __init__(self, env_config):
