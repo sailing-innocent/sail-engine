@@ -21,7 +21,7 @@ class _DiffGSTileSampler(torch.autograd.Function):
     def forward(ctx, 
                 means_2d, covs_2d, depth_features, color_features, 
                 height, width, app):
-        result_img = torch.zeros((height, width, 3), dtype=torch.float32).cuda()
+        result_img = torch.zeros((3, height, width), dtype=torch.float32).cuda()
         P = means_2d.shape[0]
         app.forward(P, height, width, 
                     means_2d.contiguous().data_ptr(), 
@@ -31,6 +31,8 @@ class _DiffGSTileSampler(torch.autograd.Function):
                     result_img.contiguous().data_ptr())
         
         ctx.app = app # save for backward
+
+        return result_img
 
     @staticmethod
     def backward(ctx, dL_dtpix):
