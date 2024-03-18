@@ -59,6 +59,9 @@ void DiffGaussianTileSampler::forward_impl(
 				   geom_state->radii)
 				   .dispatch(num_gaussians);
 
+	// copy color_features
+	cmdlist << geom_state->color_features.copy_from(color_features);
+
 	cmdlist << luisa::compute::cuda::lcub::DeviceScan::InclusiveSum(
 		geom_state->scan_temp_storage,
 		geom_state->tiles_touched,
@@ -107,7 +110,7 @@ void DiffGaussianTileSampler::forward_impl(
 				   img_state->ranges,
 				   tile_state->point_list,
 				   geom_state->means_2d_res,
-				   color_features,
+				   geom_state->color_features,
 				   geom_state->conic,
 				   // save for backward
 				   img_state->n_contrib,

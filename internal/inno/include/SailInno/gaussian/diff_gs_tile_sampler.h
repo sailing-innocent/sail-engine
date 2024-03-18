@@ -40,20 +40,20 @@ public:
 		// input
 		BufferView<float> dL_dpix,
 		// output
-		BufferView<float> dL_dmeans_2d,
-		BufferView<float> dL_dcovs_2d,
-		BufferView<float> dL_dcolor_features);
+		BufferView<float> dL_d_means_2d,
+		BufferView<float> dL_d_covs_2d,
+		BufferView<float> dL_d_color_features);
 
 	// component
 	struct GeometryState {
 		size_t scan_temp_storage_size;
 		Buffer<int> scan_temp_storage;
-		Buffer<float> means_2d_res;// 2 * P means 2d in resolution
-		Buffer<int> radii;		   // P
-		Buffer<float> covs_2d;	   // 3 * P
-		Buffer<float> conic;	   // 3 * P
-		Buffer<uint> tiles_touched;// P
-		Buffer<uint> point_offsets;// P
+		Buffer<float> means_2d_res;	 // 2 * P means 2d in resolution
+		Buffer<int> radii;			 // P
+		Buffer<float> color_features;// 4 * P
+		Buffer<float> conic;		 // 3 * P
+		Buffer<uint> tiles_touched;	 // P
+		Buffer<uint> point_offsets;	 // P
 
 		// method
 		void allocate(Device& device, size_t size);
@@ -165,7 +165,6 @@ protected:
 			 Buffer<uint>, // last_contributors
 			 Buffer<float>,// final_Ts
 			 // output
-			 Buffer<float>,// dL_d_opacity
 			 Buffer<float>,// dL_d_conic
 			 Buffer<float> // dL_d_color_feature
 			 >>

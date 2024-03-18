@@ -40,6 +40,11 @@ void DiffGSTileSamplerApp::forward(
 	// output
 	Buffer<float> target_img_buf = mp_device->import_external_buffer<float>((void*)target_img_buffer, width * height * 3);
 
+	// save for background
+	m_num_gaussians = num_gaussians;
+	m_height = height;
+	m_width = width;
+
 	mp_sampler->forward_impl(
 		*mp_device, *mp_stream,
 		num_gaussians, height, width,
@@ -47,9 +52,26 @@ void DiffGSTileSamplerApp::forward(
 		target_img_buf);
 }
 
-void DiffGSTileSamplerApp::backward() {
+void DiffGSTileSamplerApp::backward(
+	// input
+	int64_t dL_dpix,
+	// output
+	int64_t dL_d_means_2d, int64_t dL_d_covs_2d, int64_t dL_d_color_features) {
 	LUISA_INFO("DiffGSTileSamplerApp::backward");
-	// mp_sampler->backward_impl(*mp_device, *mp_stream);
+
+	// input
+	Buffer<float> dL_dpix_buf = mp_device->import_external_buffer<float>((void*)dL_dpix, m_height * m_width * 3);
+	// output
+	Buffer<float> dL_d_means_2d_buf = mp_device->import_external_buffer<float>((void*)dL_d_means_2d, m_num_gaussians * 2);
+	Buffer<float> dL_d_covs_2d_buf = mp_device->import_external_buffer<float>((void*)dL_d_covs_2d, m_num_gaussians * 3);
+	Buffer<float> dL_d_color_features_buf = mp_device->import_external_buffer<float>((void*)dL_d_color_features, m_num_gaussians * 4);
+
+	CommandList cmdlist;
+	mp_sampler->backward_impl(
+		*mp_device, cmdlist,
+		dL_dpix_buf,
+		dL_d_means_2d_buf, dL_d_covs_2d_buf, dL_d_color_features_buf);
+	(*mp_stream) << cmdlist.commit() << synchronize();
 }
 
 }// namespace sail::inno::app
