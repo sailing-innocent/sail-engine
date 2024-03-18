@@ -2,16 +2,16 @@ from ..base import NVSDatasetConfig, NVSDataset
 from ..base import CameraImagePair, RayColorPair
 
 from module.utils.image.basic import Image
-from module.data.image.info import ImageInfo
-from module.data.camera.info import CameraInfo
+from module.data.image_info import ImageInfo
+from module.data.camera_info import CameraInfo
 
 import os 
 from tqdm import tqdm 
 import numpy as np  
 from loguru import logger 
 
+from module.utils.pointcloud.io import fetchPly, storePly
 
-from module.utils.point_cloud.ply import fetchPly
 
 class NSVFDatasetConfig(NVSDatasetConfig):
     """
@@ -25,7 +25,7 @@ class NSVFDatasetConfig(NVSDatasetConfig):
         self.name = "nsvf"
 
     def dataset_root(self):
-        return os.path.join(self.env_config.dataset_root(), "nsvf", self.obj_name)
+        return os.path.join(self.env_config.dataset_root, "nsvf", self.obj_name)
 
 class NSVFDataset(NVSDataset):
     """

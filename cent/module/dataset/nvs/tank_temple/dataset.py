@@ -18,7 +18,7 @@ class TankTempleDatasetConfig(NSVFDatasetConfig):
         self.llffhold = 8
 
     def dataset_root(self):
-        return os.path.join(self.env_config.dataset_root(), "TanksAndTempleBG", self.obj_name)
+        return os.path.join(self.env_config.dataset_root, "TanksAndTempleBG", self.obj_name)
 
 class TankTempleDataset(NSVFDataset):
     def __init__(self, config: TankTempleDatasetConfig):
