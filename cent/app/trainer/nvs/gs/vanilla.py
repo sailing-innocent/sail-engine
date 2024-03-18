@@ -24,7 +24,7 @@ class GaussianTrainerProcessLog(TrainProcessLogBase):
     def save(self):
         pass 
 
-class VanillaTrainerParams(GaussianTrainerParams):
+class GaussianVanillaTrainerParams(GaussianTrainerParams):
     def __init__(self):
         super().__init__()
         self.name = "vanilla_params"
@@ -46,7 +46,7 @@ class GaussianTrainer(TrainerBase):
         config: GaussianTrainerConfig):
         super().__init__(config)
 
-    def train(self, gaussians, dataset, renderer, loss_fn, params: VanillaTrainerParams):
+    def train(self, gaussians, dataset, renderer, loss_fn, params: GaussianVanillaTrainerParams):
         process_log = GaussianTrainerProcessLog()
         iterations = params.max_iterations
         first_iter = 0

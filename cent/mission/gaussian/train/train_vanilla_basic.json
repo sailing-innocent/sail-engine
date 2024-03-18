@@ -1,5 +1,5 @@
 {
-    "name": "train_vanilla_basic",
+    "name": "train_gs_vanilla_basic",
     "dataset_name": "nerf_blender",
     "usage": "train",
     "benchmarks": [

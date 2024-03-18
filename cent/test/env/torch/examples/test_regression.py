@@ -4,11 +4,6 @@ from itertools import count
 import torch
 import torch.nn.functional as F
 
-
-
-
-
-
 @pytest.mark.current 
 def test_regression():
     POLY_DEGREE = 4

@@ -1,7 +1,9 @@
 from mission.base import BaseMission
 import itertools 
 from app.project.nvs.gs.train import TrainGaussianProjectConfig, TrainGaussianProjectParams, TrainGaussianProject
+
 from app.trainer.nvs.gs.basic import GaussianTrainerParams
+from app.trainer.nvs.gs.vanilla import GaussianVanillaTrainerParams
 
 class Mission(BaseMission):
     def __init__(self, config_json_file):
@@ -16,6 +18,10 @@ class Mission(BaseMission):
         self.objects = self.config_json["objects"]
         self.benchmarks = self.config_json["benchmarks"]
         self.usage = self.config_json["usage"]
+        self.create_trainer_params = {
+            "vanilla": GaussianVanillaTrainerParams,
+            "basic": GaussianTrainerParams
+        }
 
     def exec(self):
         proj_config = TrainGaussianProjectConfig(self.env_config)
@@ -25,7 +31,9 @@ class Mission(BaseMission):
         proj_config.sh_deg = 0
         
         project = TrainGaussianProject(proj_config)
-        train_params = GaussianTrainerParams()
+        
+        train_params = self.create_trainer_params[self.trainer_name]()
+
         for key in self.train_params:
             setattr(train_params, key, self.train_params[key])
         train_params.max_iterations = max(train_params.saving_iterations)
