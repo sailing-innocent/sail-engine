@@ -34,9 +34,16 @@ public:
 		BufferView<float> target_img_buffer);
 
 	void backward_impl(
-		Device& device);
+		Device& device,
+		CommandList& cmdlist,
+		// params all saved
+		// input
+		BufferView<float> dL_dpix,
+		// output
+		BufferView<float> dL_dmeans_2d,
+		BufferView<float> dL_dcovs_2d,
+		BufferView<float> dL_dcolor_features);
 
-public:
 	// component
 	struct GeometryState {
 		size_t scan_temp_storage_size;
@@ -84,8 +91,11 @@ public:
 	U<ImageState> img_state;
 
 protected:
-	void
-	compile(Device& device) noexcept;
+	void compile(Device& device) noexcept;
+
+	void compile_tile_split_shader(Device& device) noexcept;
+	void compile_render_shader(Device& device) noexcept;
+
 	// components
 	uint2 m_blocks = {16u, 16u};
 	uint2 m_grids = {1u, 1u};
@@ -94,11 +104,8 @@ protected:
 	S<BufferFiller> mp_buffer_filler;
 	int m_num_gaussians;
 
-protected:
 	// callable
 	UCallable<void(float2, int, uint2&, uint2&, uint2, uint2)> mp_get_rect;
-
-protected:
 	// shaders
 	U<Shader<1, int,// num_gaussians
 			 uint2, // resolution
@@ -130,6 +137,7 @@ protected:
 			 Buffer<uint>  // ranges
 			 >>
 		m_get_ranges_shader;
+
 	U<Shader<2, uint2,	   // resolution
 			 Buffer<float>,// target img
 			 uint2,		   // grids
@@ -143,6 +151,25 @@ protected:
 			 Buffer<float>// final_Ts
 			 >>
 		m_forward_render_shader;
+
+	U<Shader<2, uint2,// resolution
+			 // input
+			 Buffer<float>,// dL_dpix,
+			 // params
+			 uint2,		   // grids
+			 Buffer<uint>, // ranges
+			 Buffer<uint>, // point_list
+			 Buffer<float>,// means_2d_res
+			 Buffer<float>,// features
+			 Buffer<float>,// conic
+			 Buffer<uint>, // last_contributors
+			 Buffer<float>,// final_Ts
+			 // output
+			 Buffer<float>,// dL_d_opacity
+			 Buffer<float>,// dL_d_conic
+			 Buffer<float> // dL_d_color_feature
+			 >>
+		m_backward_render_shader;
 };
 
 }// namespace sail::inno::gaussian

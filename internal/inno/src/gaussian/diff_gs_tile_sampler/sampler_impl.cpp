@@ -33,14 +33,6 @@ void DiffGaussianTileSampler::create(Device& device, S<BufferFiller> buffer_fill
 	compile(device);
 }
 
-void DiffGaussianTileSampler::backward_impl(Device& device) {}
-
-}// namespace sail::inno::gaussian
-
-// state
-
-namespace sail::inno::gaussian {
-
 void DiffGaussianTileSampler::GeometryState::allocate(Device& device, size_t size) {
 	if (size == 0) { return; }
 	means_2d_res = device.create_buffer<float>(size * 2);
