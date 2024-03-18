@@ -14,7 +14,7 @@ from module.utils.np.transform import qvec2R
 from .util import read_extrinsics_text, read_intrinsics_text, read_extrinsics_binary, read_intrinsics_binary
 from .util import read_points3D_binary, read_points3D_text
 # utilities
-from module.utils.pointcloud.io import fetchPly
+from module.utils.pointcloud.io import fetchPly, storePly
 
 class ColmapDatasetConfig(NVSDatasetConfig):
     """
@@ -87,6 +87,7 @@ class ColmapDataset(NVSDataset):
             T = np.array(extr.tvec)
             # world to view translation need to be inverted
             T = -np.matmul(R.T, T)
+
             R = np.transpose(R)
 
             if intr.model=="SIMPLE_PINHOLE":
@@ -106,7 +107,6 @@ class ColmapDataset(NVSDataset):
             img.load_from_file(image_path)
             img.to_float32()
             img.flip_y()
-
             cam_info = CameraInfo(
                 FovY = FovY,
                 R = R,

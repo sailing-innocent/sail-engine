@@ -6,3 +6,4 @@ class ImageInfo:
     W: int
     H: int
     C: int 
+    ydown: bool = True

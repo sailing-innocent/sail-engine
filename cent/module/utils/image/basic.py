@@ -72,6 +72,7 @@ class Image:
 
     def flip_y(self):
         np.flip(self.info.data, axis=0)
+        self.info.ydown = not self.info.ydown
 
     def show(self, immediate = False):
         plt.imshow(self.info.data)

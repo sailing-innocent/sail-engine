@@ -1,6 +1,6 @@
 import pytest 
 from .dataset import Mip360DatasetConfig, Mip360Dataset
-from module.config.env import get_env_config
+from mission.config.env import get_env_config
 import matplotlib.pyplot as plt
 
 @pytest.mark.current

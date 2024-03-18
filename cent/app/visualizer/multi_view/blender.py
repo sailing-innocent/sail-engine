@@ -1,4 +1,4 @@
-from ..base import VisualizerConfigBase, VisualizeResultBase, VisualizerBase
+from ..base import VisualizerConfigBase, VisualizerBase
 from module.blender.util.wm import bopen, bclose
 from module.blender.vis.view import vis_view
 import numpy as np 
@@ -34,6 +34,8 @@ class MultiViewBlenderVisualizer(VisualizerBase):
 
         for idx, (cam_info, img_info) in enumerate(dataset):
             img_src = img_info.data
+            if img_info.ydown:
+                img_src = img_src[::-1, :, :]
             # if the img is too large, resize it to 400 and keep aspect
             if img_src.shape[0] > 400:
                 img_src = cv.resize(img_src, (400, int(400 * img_src.shape[0] / img_src.shape[1])))

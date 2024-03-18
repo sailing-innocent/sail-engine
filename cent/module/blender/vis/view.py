@@ -11,8 +11,7 @@ def vis_view(img_src: np.array, c2w: np.array = np.eye(4), name="img"):
     height, width, n_channels = img_src.shape
     if n_channels == 3:
         img_src = np.concatenate([img_src, np.ones((height, width, 1))], axis=2)
-    # flip_y
-    img_src = np.flip(img_src, 0)
+    
     # HWC->WHC
     img_src = img_src.flatten().astype(np.float32)
     assert img_src.shape[0] == width * height * 4
