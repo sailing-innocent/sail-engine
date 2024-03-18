@@ -36,12 +36,12 @@ void DiffGaussianTileSampler::forward_impl(
 
 	if (m_num_gaussians != num_gaussians) {
 		// if num_gaussians changed, reallocate buffer
-		geom_state->allocate(device, static_cast<size_t>(num_gaussians));
+		geom_state->allocate(device, num_gaussians);
 		m_num_gaussians = num_gaussians;
 	}
 	if ((m_resolution.x != width) || (m_resolution.y != height)) {
 		// resolution changed, reallocate image buffer
-		img_state->allocate(device, static_cast<size_t>(width * height));
+		img_state->allocate(device, width * height);
 		m_resolution = luisa::make_uint2(width, height);
 	}
 	CommandList cmdlist;

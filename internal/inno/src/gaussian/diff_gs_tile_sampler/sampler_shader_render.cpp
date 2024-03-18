@@ -200,6 +200,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 		Float3 last_color = make_float3(0.0f);
 
 		// Traverse all Gaussians
+
 		$for(i, rounds) {
 			sync_block();
 			Int progress = i * round_step + thread_idx;
@@ -253,6 +254,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 				UInt global_id = collected_ids->read(j);
 				$for(ch, 3) {
 					Float c = collected_color->read(3 * j + ch);
+
 					accum_rec[ch] = last_alpha * last_color[ch] + (1.0f - last_alpha) * accum_rec[ch];
 					last_color[ch] = c;
 					//  Float dL_d_ch = 1.0f;
@@ -260,6 +262,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 					dL_dalpha += (c - accum_rec[ch]) * dL_d_ch;
 					// atomic add to dL_dcolor
 					Float dL_d_color_feat = d_ch_d_color * dL_d_ch;
+
 					dL_d_color_features.atomic(4 * global_id + ch)
 						.fetch_add(dL_d_color_feat);
 				};

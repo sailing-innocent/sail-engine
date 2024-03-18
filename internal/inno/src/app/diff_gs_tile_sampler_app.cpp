@@ -57,7 +57,7 @@ void DiffGSTileSamplerApp::backward(
 	int64_t dL_dpix,
 	// output
 	int64_t dL_d_means_2d, int64_t dL_d_covs_2d, int64_t dL_d_color_features) {
-	LUISA_INFO("DiffGSTileSamplerApp::backward");
+	LUISA_INFO("DiffGSTileSamplerApp::backward with {}, {}, {}", m_num_gaussians, m_height, m_width);
 
 	// input
 	Buffer<float> dL_dpix_buf = mp_device->import_external_buffer<float>((void*)dL_dpix, m_height * m_width * 3);
@@ -71,6 +71,7 @@ void DiffGSTileSamplerApp::backward(
 		*mp_device, cmdlist,
 		dL_dpix_buf,
 		dL_d_means_2d_buf, dL_d_covs_2d_buf, dL_d_color_features_buf);
+
 	(*mp_stream) << cmdlist.commit() << synchronize();
 }
 
