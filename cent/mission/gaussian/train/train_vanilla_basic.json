@@ -5,6 +5,13 @@
     "benchmarks": [
         "psnr"
     ],
+    "init_scene": {
+        "type": "ckpt",
+        "dataset_name": "nerf_blender",
+        "obj_name": "dummy",
+        "ckpt_path": "gaussian_init",
+        "postfix": "random"
+    },
     "objects": [
         "lego"
     ],

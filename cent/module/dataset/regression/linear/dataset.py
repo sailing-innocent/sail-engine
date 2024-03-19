@@ -1,6 +1,5 @@
 # from http://zh.d2l.ai/chapter_linear-networks/linear-regression-scratch.html
 from ..base import RegressionDataset, RegressionDatasetConfig, data_iter
-from module.config.env import BaseEnvConfig 
 import matplotlib.pyplot as plt
 import torch 
 
@@ -14,7 +13,7 @@ class LinearDatasetConfig(RegressionDatasetConfig):
     """
     This class implements the configuration for the linear dataset.
     """
-    def __init__(self, env_config: BaseEnvConfig):
+    def __init__(self, env_config):
         super().__init__(env_config)
         self.batch_size = 10
         self.input_dim = 2

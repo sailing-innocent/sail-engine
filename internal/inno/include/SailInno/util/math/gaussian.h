@@ -6,7 +6,6 @@
  */
 
 #include <luisa/dsl/sugar.h>
-
 #include "transform.h"
 
 namespace sail::inno::math {
@@ -58,6 +57,7 @@ Float3x3_T calc_J(Float4_T camera_primitive, Float4_T p_view) {
 
 	t.x = clamp(txtz, -limx, limx) * t.z;
 	t.y = clamp(tytz, -limy, limy) * t.z;
+
 	Float3x3_T J = make_float3x3(
 		focal_x / t.z, 0.0f, -(focal_x * t.x) / (t.z * t.z),
 		0.0f, focal_y / t.z, -(focal_y * t.y) / (t.z * t.z),
@@ -66,20 +66,30 @@ Float3x3_T calc_J(Float4_T camera_primitive, Float4_T p_view) {
 	return J;
 }
 
-template<typename Float3_T, typename Float4_T, typename Float3x3_T, typename Float4x4_T>
-Float3_T proj_cov3d_to_cov2d_01(Float4_T p_view, Float4_T camera_primitive, Float3x3_T cov3d, Float4x4_T view_matrix) {
-	Float3x3_T J = calc_J<Float4_T, Float3x3_T>(camera_primitive, p_view);
+// Jacobian for view-space -> ray-space
+template<typename Float3_T, typename Float3x3_T>
+Float3x3_T J_view2ray(Float3_T u) {
+	auto s = sqrt(u.x * u.x + u.y * u.y + u.z * u.z);
+	Float3x3_T J = make_float3x3(
+		1.0f / u.z, 0.0f, u.x / s,					   // col 1
+		0.0f, 1.0f / u.z, u.y / s,					   // col 2
+		-u.x / (u.z * u.z), -u.y / (u.z * u.z), u.z / s// col 3
+	);
+	return J;
+}
 
+template<typename Float3_T, typename Float3x3_T, typename Float4x4_T>
+Float3_T proj_cov3d_to_cov2d_01(Float3_T p_view, Float3x3_T cov3d, Float4x4_T view_matrix) {
+	Float3x3_T J = J_view2ray<Float3_T, Float3x3_T>(p_view);
 	Float3x3_T W = make_float3x3(
 		view_matrix[0].xyz(),
 		view_matrix[1].xyz(),
 		view_matrix[2].xyz());
 	Float3x3_T T = J * W;
-	Float3x3_T cov = T * cov3d * transpose(T);
+	Float3x3_T cov = transpose(T) * cov3d * T;
 	// low pass filter
-	auto focal = camera_primitive.y;
-	cov[0][0] += 0.005f * focal;
-	cov[1][1] += 0.005f * focal;
+	cov[0][0] += 1e-5f;
+	cov[1][1] += 1e-5f;
 	return make_float3(cov[0][0], cov[0][1], cov[1][1]);
 }
 

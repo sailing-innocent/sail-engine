@@ -44,6 +44,17 @@ option("enable_doc")
     set_showmenu(true)
 option_end()
 
+-- llvm
+option("enable_llvm")
+    set_default(true)
+    set_showmenu(true)
+option_end()
+
+option("llvm_path")
+    set_default("D:/env/llvm/release")
+    set_showmenu(true)
+option_end()
+
 option("latex_out")
 set_default("D:/workspace/doc")
 set_showmenu(true)

@@ -1,0 +1,94 @@
+\include{ray_march_slide_cn}
+
+\begin{frame}
+    \frametitle{用神经网络估计$c(t)$和$\sigma(t)$}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\linewidth,keepaspectratio]{fig_nerf_principle.jpg}
+        \caption{神经辐射场原理}
+        \label{fig:nerf_principle}
+    \end{figure}
+    $c(t),\sigma(t)=MLP(\mathbf{x}(t),\mathbf{d}(t))$
+    \begin{itemize}
+        \item 通过引入MLP，将整个渲染过程变成了一种可微的过程，从而实现了一个可微的体渲染器
+        \item 与通常的神经网络不同，此处MLP的角色更类似点云，网格等存储格式
+        \item 最终预测效果达到大幅度的提升，在集成数据集800x800的图片上PSNR达到了30+
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{新视角生成问题数据集}
+    \begin{figure}[H]
+        \includegraphics[width=0.9\linewidth]{demo_nerf_dataset.png}
+        \caption[short]{渲染得到不同视角图片}
+    \end{figure}
+
+\end{frame}
+
+
+
+\begin{frame}
+    \frametitle{NeRF之后的开放问题}
+    \begin{itemize}
+        \item 更高的精度
+        \item 更快的训练与推理速度
+        \item 支持特殊场景（动态，反射，暗光，大场景）
+        \item 支持编辑（材质，光照，前后景分割等）与泛化
+        \item 拓展任务（与Diffusion, SAM等结合）与应用
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{近三年NeRF的发展 -- 更高的精度}
+    \begin{itemize}
+        \item MipNeRF \cite{barronMipNeRFMultiscaleRepresentation2021} 降低模糊
+        \item 2022 CVPR Mip NeRF 360 \cite{barronMipNeRF360Unbounded2022} 降低模糊并支持360度全景
+        \item 2023 CVPR Zip NeRF \cite{barronZipNeRFAntiAliasedGridBased2023} 进一步引入了NGP的hash encoding
+        \item 2023 CVPR NeRFLix \cite{zhouNeRFLiXHighQualityNeural2023} 高清NeRF
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{近三年NeRF的发展 -- 更快的速度}
+    \begin{itemize}
+        \item 2022 CVPR: PointNeRF\cite{xuPointNeRFPointbasedNeurala} 将NeRF变换为特征点云
+        \item 2022 CVPR: Direct Voxel Grid Optimization Super Fast Convergence for Radiance  Fields Reconstruction \cite{sunDirectVoxelGrid2022} 使用体素混合MLP
+        \item 2022 CVPR: Plenoxels \cite{yuPlenoxelsRadianceFields2021} 完全使用稀疏体素而放弃MLP进行新视角识别
+        \item 2022 SIGGRAPH: Instant NGP \cite{mullerInstantNeuralGraphics2022} 使用多精度空间哈希编码将大网络转化为小网络，从而将速度优化到了实时
+        \item 2023 MeRF\cite{reiserMERFMemoryEfficientRadiance2023} 减少内存占用
+        \item 2023 SIGGRAPH: 3D Gaussian Splatting \cite{kerbl3DGaussianSplatting2023} 使用3D高斯，放弃MLP进行机器学习优化，获得了当前SOTA的精度和效率
+    \end{itemize}
+    \begin{quote}
+        绝大部分的加速措施都需要修改原本的网络，将其中神经网络的部分尽可能地减少甚至消除
+    \end{quote}
+\end{frame}
+
+\begin{frame}
+    \frametitle{近三年NeRF的发展 -- 特殊的场景}
+    \begin{itemize}
+        \item 2021 CVPR NeRF in the wild \cite{martin-bruallaNeRFWildNeural2021} 不受限制的室外场景
+        \item 2023 CVPR Deblur NeRF \cite{leeDPNeRFDeblurredNeural2023} 去镜头模糊
+        \item 2023 CVPR Large Urban Scene \cite{xuGridguidedNeuralRadiance2023} 大规模城市场景（复现困难？）
+        \item 2022 CVPR D-NeRF \cite{pumarolaDNeRFNeuralRadiance2021} 基于基准场景和变换的动态场景
+        \item 2023 CVPR k-planes \cite{KPlanesExplicitRadiance2023} 使用正交投影来支持4D动态场景
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{近三年NeRF的发展 -- 编辑与泛化}
+    \begin{itemize}
+        \item 2023 CVPR Nope NeRF \cite{bianNoPeNeRFOptimisingNeural2023} 不需要相机位姿的NeRF
+        \item 四面体网格 tetrahedra\cite{kulhanekTetraNeRFRepresentingNeural2023} 方便后续编辑
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{近三年NeRF的发展 -- 拓展与应用}
+    \begin{itemize}
+        \item 2022 CVPR CLIP NeRF\cite{wangCLIPNeRFTextandImageDriven2022} 尝试了使用文本到场景的转换
+        \item 2021 CVPR GIRAFFE \cite{niemeyerGIRAFFERepresentingScenes2021} 使用NeRF作为GAN的后处理生成场景
+        \item 2022 CVPR GIRAFFE HD \cite{xueGIRAFFEHDHighResolution2022} 更高清的GIRAFFE
+        \item 2023 CVPR Lift3D \cite{liLift3DSynthesize3D2023} 使用3D GAN进行后续生成
+        \item Dream Fusion \cite{pooleDreamFusionTextto3DUsing2022} 将 Diffusion Model和NeRF结合，利用SDS loss实现文本控制3D模型生成
+    \end{itemize}
+\end{frame}

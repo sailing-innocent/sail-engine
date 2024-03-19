@@ -6,7 +6,6 @@
  */
 
 #include "SailInno/gaussian/diff_gs_tile_sampler.h"
-#include "SailInno/util/graphic/image.h"
 #include <luisa/dsl/sugar.h>
 
 using namespace luisa;
@@ -48,6 +47,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 		Int range_end = (Int)ranges.read(2 * (tile_xy.x + tile_xy.y * grids.x) + 1u);
 
 		// background color
+		// Float3 color = make_float3(1.0f, 1.0f, 1.0f);
 		Float3 color = make_float3(0.0f, 0.0f, 0.0f);
 		// debug grid
 		// $if((tile_xy.x + tile_xy.y) % 2 == 0) {
@@ -125,7 +125,6 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 
 		$if(inside) {
 			color = color * T + C;
-			// todo: collect final T and last contributor
 			$for(i, 0, 3) {
 				target_img.write(pix_id + i * h * w, min(1.0f, color[i]));
 			};
@@ -144,16 +143,17 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 					 BufferVar<uint> ranges,
 					 BufferVar<uint> point_list,
 					 BufferVar<float> means_2d_res,
-					 BufferVar<float> opacity_features,
-					 BufferVar<float> color_features,// 3 * features
+					 BufferVar<float> opacity_features,// P
+					 BufferVar<float> color_features,  // 3 * P
 					 BufferVar<float> conic,
 					 BufferVar<uint> n_contrib,
 					 BufferVar<float> accum_alpha,
 					 // output
-					 BufferVar<float> dL_d_means2d,
-					 BufferVar<float> dL_d_conic,
-					 BufferVar<float> dL_d_opacity_features,
-					 BufferVar<float> dL_d_color_features) {
+					 BufferVar<float> dL_d_means2d,			// 2 * P
+					 BufferVar<float> dL_d_conic,			// 3 * P
+					 BufferVar<float> dL_d_opacity_features,// P
+					 BufferVar<float> dL_d_color_features	// 3 * P
+				 ) {
 		set_block_size(m_blocks);
 		auto xy = dispatch_id().xy();
 		auto w = resolution.x;
@@ -175,7 +175,8 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 		Int range_end = (Int)ranges.read(2 * (tile_xy.x + tile_xy.y * grids.x) + 1u);
 
 		// background color
-		Float3 bg_color = make_float3(0.0f, 0.0f, 0.0f);
+		// Float3 bg_color = make_float3(1.0f, 1.0f, 1.0f);
+		Float3 bg_color = make_float3(0.0f, .0f, .0f);
 
 		const Int round_step = Int(m_shared_mem_size);
 
@@ -310,7 +311,6 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 				// atomicAdd(&dL_dmean2D[global_id].y, dL_dG * dG_ddely * ddely_dy);
 				dL_d_means2d.atomic(global_id * 2 + 0).fetch_add(dL_dG * dG_ddelx * ddelx_dx);
 				dL_d_means2d.atomic(global_id * 2 + 1).fetch_add(dL_dG * dG_ddely * ddely_dy);
-				// TODO: dL_d_means2d
 			};
 
 			todo = todo - round_step;

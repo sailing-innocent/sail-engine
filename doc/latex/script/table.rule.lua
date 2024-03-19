@@ -1,5 +1,6 @@
 includes("latex.rule.lua")
 
+
 rule("latex.table")
     add_deps("latex.content")
     on_load(function (target) 
@@ -25,13 +26,24 @@ rule("latex.json_table")
         local ofile = path.join(target:autogendir({root=true}), target:name() .. ".tex")
         target:set("values", "targetfile", ofile)
     end)
+
     on_build_file(function(target, sourcefile, opt)
         import("lib.detect.find_tool")
         import("core.project.depend")
         import("utils.progress")
         local ofile = path.join(target:autogendir({root=true}), target:name() .. ".tex")
-        local py = assert(find_tool("python", {check="--version"}), "python not found!")
-        os.vrunv(py.program, {"doc/latex/script/json2tex.py", "--json", sourcefile, "--target", ofile})
-        progress.show(opt.progress, "building json2tex %s to %s", sourcefile, ofile)
+        depend.on_changed(function()
+            local py = assert(find_tool("python", {check="--version"}), "python not found!")
+            os.vrunv(py.program, {"doc/latex/script/json2tex.py", "--json", sourcefile, "--target", ofile})
+            progress.show(opt.progress, "building json2tex %s to %s", sourcefile, ofile)
+        end, { files = {sourcefile, ofile} })
     end)
 rule_end()
+
+
+function add_json_table(name) 
+    target(name)
+        add_rules("latex.json_table")
+        add_files(name .. ".json")
+    target_end()
+end 

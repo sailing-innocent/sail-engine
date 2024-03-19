@@ -5,7 +5,10 @@ rule("sail.asset")
         ".hlsl",
         ".png",
         ".jpg",
-        ".obj"
+        ".obj",
+        ".ply",
+        ".gltf",
+        ".bin"
     )
     on_build_file(function(target, sourcefile, opt) 
         -- if not exist directory, create it
@@ -30,9 +33,11 @@ rule("sail.glsl")
         import("lib.detect.find_tool")
         import("core.project.depend")
         import("utils.progress")
-        local glslc = assert(find_tool("glslc"), "glslc not found!")
-        -- progress.show(opt.progress, "building glsl %s", sourcefile)
-        -- if update
-        os.vrunv(glslc.program, {sourcefile, "-o", path.join(targetdir, path.filename(sourcefile) .. ".spv")})
+        local ofile = path.join(targetdir, path.filename(sourcefile) .. ".spv")
+        depend.on_changed(function()
+            local glslc = assert(find_tool("glslc"), "glslc not found!")
+            progress.show(opt.progress, "building glsl %s", sourcefile)
+            os.vrunv(glslc.program, {sourcefile, "-o", ofile})
+        end, { files = {sourcefile, ofile}})
     end)
 rule_end()

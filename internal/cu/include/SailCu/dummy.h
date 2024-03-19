@@ -5,7 +5,7 @@
  * @date 2023-10-04
  * @author sailing-innocent
 */
-#include "SailBase/config/key_words.h"
+#include "SailBase/config.h"
 
 namespace sail::cu {
 

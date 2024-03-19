@@ -1,1 +1,5 @@
-{"caption": "Vanilla Gaussian Eval", "label": "tab:psnr_result", "rows": ["nerf_blender chair", "nerf_blender drums", "nerf_blender ficus", "nerf_blender lego", "nerf_blender hotdog", "nerf_blender materials", "nerf_blender mic", "nerf_blender ship", "mip360 bicycle", "mip360 garden", "mip360 counter", "mip360 kitchen", "mip360 room", "mip360 stump", "mip360 bonsai"], "cols": ["PSNR(3dgs)", "PSNR(3dgs)"], "data": [["35.83", "35.83"], ["24.46", "24.46"], ["29.31", "29.31"], ["27.40", "27.40"], ["28.58", "28.58"], ["28.63", "28.63"], ["32.47", "32.47"], ["25.01", "25.01"], ["19.09", "19.09"], ["21.51", "21.51"], ["25.34", "25.34"], ["23.62", "23.62"], ["22.54", "22.54"], ["18.45", "18.45"], ["21.34", "21.34"]]}
+{
+    files = {
+        [[doc\latex\table\result\tab_gaussian.json]]
+    }
+}

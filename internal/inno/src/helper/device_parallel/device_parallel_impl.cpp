@@ -107,8 +107,6 @@ void DeviceParallel::get_temp_size(size_t& temp_storage_size, size_t num_items) 
 		}
 		num_elements = num_blocks;
 	} while (num_elements > 1);
-
-	num_elements = max_num_elements;
 	temp_storage_size += 1;
 }
 

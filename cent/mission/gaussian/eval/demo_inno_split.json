@@ -1,0 +1,14 @@
+{
+    "name": "gaussian_eval_inno_split",
+    "render_name": "inno_split",
+    "usage": "demo",
+    "scenes": [
+        {
+            "type": "ckpt",
+            "dataset_name": "nerf_blender",
+            "obj_name": "lego",
+            "ckpt_path": "gaussians",
+            "iter": 4
+        }
+    ]
+}

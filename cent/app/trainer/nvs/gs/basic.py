@@ -6,6 +6,7 @@ from tqdm import tqdm
 from random import randint
 import os 
 from loguru import logger 
+import matplotlib.pyplot as plt 
 
 from dataclasses import dataclass
 
@@ -15,16 +16,6 @@ class GaussianTrainerConfig(TrainerConfigBase):
         self.optimzer: str = "adamw"
         self.model_name: str = "vanilla_gaussian"
         self.target_path = ""
-
-class GaussianTrainerProcessLog(TrainProcessLogBase):
-    def __init__(self):
-        super().__init__()
-
-    def load(self):
-        pass 
-
-    def save(self):
-        pass 
 
 @dataclass
 class GaussianTrainerParams:
@@ -41,20 +32,12 @@ class GaussianTrainerParams:
     saving_iterations = [7000, 30000]
     max_iterations = 30000
 
-class GaussianTrainer(TrainerBase):
-    """
-    inherited
-        - config
-        - eval_results
-        - train_process_logs
-        - weights
-    """
+class GaussianTrainer:
     def __init__(self,
         config: GaussianTrainerConfig):
-        super().__init__(config)
+        self.config = config
 
     def train(self, gaussians, dataset, renderer, loss_fn, params: GaussianTrainerParams):
-        process_log = GaussianTrainerProcessLog()
         iterations = params.max_iterations 
         first_iter = 0
         progress_bar = tqdm(range(first_iter, iterations), desc="Training Progress")
@@ -88,9 +71,21 @@ class GaussianTrainer(TrainerBase):
                 if iteration % 10 == 0:
                     progress_bar.set_postfix({"Loss": f"{loss.item():.{7}f}"})
                     progress_bar.update(10)
+                
                 if iteration == iterations:
                     progress_bar.close()
 
+                # if iteration % 100 == 0:
+                #     image_np = image.detach().cpu().numpy().transpose(1, 2, 0)
+                #     gt_image_np = gt_image.detach().cpu().numpy().transpose(1, 2, 0)
+                #     # compare show
+                #     plt.figure()
+                #     plt.subplot(1, 2, 1)
+                #     plt.imshow(image_np)
+                #     plt.subplot(1, 2, 2)
+                #     plt.imshow(gt_image_np)
+                #     plt.show()
+                
                 # save
                 if (iteration in params.saving_iterations):
                     logger.info(f"\n[ITER {iteration}] Saving Gaussians")
@@ -104,8 +99,6 @@ class GaussianTrainer(TrainerBase):
                 if iteration < iterations:
                     gaussians.optimizer.step()
                     gaussians.optimizer.zero_grad(set_to_none=True)
-
-        return process_log
 
 def create_trainer(env_config, target_path):
     trainer_config = GaussianTrainerConfig(env_config)

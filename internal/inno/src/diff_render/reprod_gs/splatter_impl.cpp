@@ -36,8 +36,8 @@ void ReprodGS::GeometryState::allocate(Device& device, size_t size) {
 	means_2d = device.create_buffer<float>(size * 2);
 	means_2d_res = device.create_buffer<float>(size * 2);
 	depth_features = device.create_buffer<float>(size);
-	color_features = device.create_buffer<float>(4 * size);
-	radii = device.create_buffer<int>(size);
+	opacity_features = device.create_buffer<float>(size);
+	color_features = device.create_buffer<float>(3 * size);
 	covs_2d = device.create_buffer<float>(size * 3);
 	conic = device.create_buffer<float>(size * 3);
 
@@ -53,7 +53,6 @@ void ReprodGS::GeometryState::clear(Device& device, CommandList& cmdlist, Buffer
 	cmdlist << filler.fill(device, means_2d, 0.0f);
 	cmdlist << filler.fill(device, depth_features, 0.0f);
 	cmdlist << filler.fill(device, color_features, 0.0f);
-	cmdlist << filler.fill(device, radii, 0);
 	cmdlist << filler.fill(device, covs_2d, 0.0f);
 	cmdlist << filler.fill(device, tiles_touched, 0u);
 	cmdlist << filler.fill(device, point_offsets, 0u);

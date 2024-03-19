@@ -9,6 +9,8 @@ class EnvConfig:
     default_device: str = "cuda"
     log_path: str = "D:/logs/"
     result_path: str = "D:/workspace/data/result"
+    doc_fig_result_path: str = "../doc/latex/figure/result"
+    doc_tab_result_path: str = "../doc/latex/table/result"
     pretrained_path: str = "D:/pretrained/"
     blender_root: str = "D:/workspace/blender/"
 

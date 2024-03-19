@@ -16,13 +16,13 @@ namespace sail::inno::sph {
 struct NeighborState {
 	int middle;
 	int bt_offset;
-	int num_tasks;
-	int num_threads;
+	int num_task;
+	int num_thread_up;
 };
 
 }// namespace sail::inno::sph
 
-LUISA_STRUCT(sail::inno::sph::NeighborState, middle, bt_offset, num_tasks, num_threads){};
+LUISA_STRUCT(sail::inno::sph::NeighborState, middle, bt_offset, num_task, num_thread_up){};
 
 namespace sail::inno::sph {
 
@@ -39,16 +39,47 @@ public:
 	// ctor & dtor
 	class TaskState {
 		friend class Neighbor;
+
+	public:
+		Buffer<int> particle_offset;// offset in cell
+		Buffer<int> particle_count;
+		Buffer<int> cell_index;
+
+	private:
+		void allocate(Device& device, size_t size);
 	};
 	class CellState {
 		friend class Neighbor;
+
+	public:
+		Buffer<int> particle_offset;
+		Buffer<int> particle_count;
+		Buffer<int> particle_offset_hash;// size << 1
+		Buffer<int> particle_count_hash; // size << 1
+		Buffer<int> task_count;
+		Buffer<int> task_offset;
+
+	private:
+		void allocate(Device& device, size_t size);
 	};
+	// temp scan storage
+	Buffer<int> m_temp_storage;// for scan
 
 	Neighbor(SPHSolver& solver) noexcept;
+	NeighborState& state() noexcept { return m_state; }
 	TaskState& task_state() noexcept { return *mp_task_state; }
 	CellState& cell_state() noexcept { return *mp_cell_state; }
 
-public:
+	// resources
+	Buffer<int> m_hash;
+	Buffer<int> m_cell_index;
+	Buffer<int> m_index;
+	Buffer<int> m_thread_index;
+	Buffer<int> m_thread_to_data_index;
+	Buffer<int> tmp_id;
+	Buffer<float3> tmp_pos;
+	Buffer<float3> tmp_vel;
+
 	// parameters
 	size_t m_num_grids = 0;
 	size_t m_num_cells = 0;
@@ -57,7 +88,6 @@ public:
 	float m_cell_size = 0.f;
 	int m_threads_upper_limit = 0;
 
-public:
 	size_t size() const noexcept { return m_size; }
 	void solve(CommandList& cmdlist) noexcept;
 
@@ -68,21 +98,19 @@ private:
 	void compile(Device& device) noexcept;
 	void reset() noexcept;
 	void allocate(Device& device, size_t size) noexcept;
-	void after_solve() noexcept;
 
-private:
+	// util
+	int get_thread_up(int x) noexcept;
+
 	// state
-	NeighborState m_state;
+	NeighborState m_state;// for both side
 	U<TaskState> mp_task_state;
 	U<CellState> mp_cell_state;
 
-	size_t m_size;
-	size_t m_max_size;
+	// params
+	size_t m_size = 0;	  // particle size
+	size_t m_capacity = 0;// influence the tasks allocated
 
-private:
-	// resources
-
-private:
 	// shaders
 	U<Shader<1, int, Buffer<int>>> ms_clear_cell;
 	U<Shader<1, int, int, float, Buffer<float3>>> ms_count_sort_cell_sum;

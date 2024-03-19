@@ -8,18 +8,18 @@
     "benchmarks": [
         "psnr"
     ],
+    "init_scene": {
+        "type": "ckpt",
+        "dataset_name": "nerf_blender",
+        "obj_name": "dummy",
+        "ckpt_path": "gaussian_init",
+        "postfix": "random"
+    },
     "trainer_name": "vanilla",
     "render_name": "vanilla",
     "loss_name": "l1+ssim",
     "train_params": {
         "saving_iterations": [
-            100,
-            400,
-            500,
-            600,
-            700,
-            800,
-            1000,
             3000,
             7000,
             30000

@@ -16,14 +16,30 @@ from innopy import DiffGSTileSamplerApp
 import torch 
 import torch.nn as nn 
 
+from typing import NamedTuple
+
+class DiffGSTileSamplerSettings(NamedTuple):
+    width: int
+    height: int
+    fov_rad: float
+
 class _DiffGSTileSampler(torch.autograd.Function):
     @staticmethod
     def forward(ctx, 
                 means_2d, covs_2d, depth_features, opacity_features, color_features, 
-                height, width, app):
+                settings, app):
+        width = settings.width
+        height = settings.height
+        fov_rad = settings.fov_rad
         result_img = torch.zeros((3, height, width), dtype=torch.float32).cuda()
         P = means_2d.shape[0]
-        app.forward(P, height, width, 
+        # print(means_2d)
+        # print(covs_2d)
+        # print(P)
+        # print(width)
+        # print(height)
+        # print(fov_rad)
+        app.forward(P, height, width, fov_rad,
                     means_2d.contiguous().data_ptr(), 
                     covs_2d.contiguous().data_ptr(), 
                     depth_features.contiguous().data_ptr(), 
@@ -60,19 +76,18 @@ class _DiffGSTileSampler(torch.autograd.Function):
                          dL_d_opacity_features.contiguous().data_ptr(),
                          dL_d_color_features.contiguous().data_ptr())
         
-        # print(dL_dcolor_features)
+        # print(dL_d_color_features)
         # print(dL_dcovs_2d)
         # print(dL_d_opacity_features)
-        print(dL_dmeans_2d)
+        # print(dL_dmeans_2d)
         grads = (
             dL_dmeans_2d,
             dL_dcovs_2d,
-            None,
+            None, # not for depth
             dL_d_opacity_features,
             dL_d_color_features,
-            None,
-            None,
-            None
+            None, # settings
+            None # app
         )
         return grads
 
@@ -82,5 +97,5 @@ class DiffGSTileSampler(nn.Module):
         self.app = DiffGSTileSamplerApp()
         self.app.create(sys.path[-1], "cuda")
 
-    def forward(self, means_2d, covs_2d, depth_features, opacity_features, color_features, height, width):
-        return _DiffGSTileSampler.apply(means_2d, covs_2d, depth_features, opacity_features, color_features, height, width, self.app)
+    def forward(self, means_2d, covs_2d, depth_features, opacity_features, color_features, settings):
+        return _DiffGSTileSampler.apply(means_2d, covs_2d, depth_features, opacity_features, color_features, settings, self.app)

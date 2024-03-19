@@ -22,10 +22,11 @@ void ReprodGS::backward_impl(
 	BufferView<float> dL_d_pix,
 	// output
 	BufferView<float> dL_d_xyz,
-	BufferView<float> dL_d_feature,
+	BufferView<float> dL_d_feature,// (feat_dim + 1) * (feat_dim + 1) * 3
 	BufferView<float> dL_d_opacity,
 	BufferView<float> dL_d_scale,
 	BufferView<float> dL_d_rotq,
+	BufferView<float> dL_d_means_2d,
 	// params
 	BufferView<float> target_img_buffer,// hwc
 	BufferView<float> xyz_buffer,
@@ -37,62 +38,60 @@ void ReprodGS::backward_impl(
 
 	CommandList cmdlist;
 
-	auto dL_d_color_feature = device.create_buffer<float>(m_num_gaussians * 4);
+	auto dL_d_color_feature = device.create_buffer<float>(m_num_gaussians * 3);
 	auto dL_d_conic = device.create_buffer<float>(m_num_gaussians * 3);
-	auto dL_d_means_2d = device.create_buffer<float>(m_num_gaussians * 2);
 	// clear grad
 	cmdlist << mp_buffer_filler->fill(device, dL_d_color_feature, 0.0f);
 	cmdlist << mp_buffer_filler->fill(device, dL_d_conic, 0.0f);
-	cmdlist << mp_buffer_filler->fill(device, dL_d_opacity, 0.0f);
-	cmdlist << mp_buffer_filler->fill(device, dL_d_means_2d, 0.0f);
-	cmdlist << mp_buffer_filler->fill(device, dL_d_scale, 0.0f);
-	cmdlist << mp_buffer_filler->fill(device, dL_d_rotq, 0.0f);
 
-	// cmdlist << (*m_backward_render_shader)(
-	//            // input
-	//            dL_d_pix,
-	//            // output
-	//            dL_d_means_2d,
-	//            dL_d_conic,
-	//            dL_d_color_feature,
-	//            dL_d_opacity,
-	//            // params
-	//            m_resolution,
-	//            m_grids,
-	//            target_img_buffer,
-	//            geom_state->means_2d,
-	//            img_state->ranges,
-	//            tile_state->point_list,
-	//            geom_state->color_features,
-	//            geom_state->conic_opacity,
-	//            img_state->n_contrib,
-	//            img_state->accum_alpha)
-	//            .dispatch(m_resolution.x, m_resolution.y);
+	cmdlist << (*m_backward_render_shader)(
+				   // input
+				   dL_d_pix,
+				   // output
+				   dL_d_means_2d,
+				   dL_d_conic,
+				   dL_d_color_feature,
+				   dL_d_opacity,
+				   // params
+				   m_resolution,
+				   m_grids,
+				   target_img_buffer,
+				   img_state->ranges,
+				   tile_state->point_list,
+				   geom_state->means_2d_res,
+				   geom_state->conic,
+				   geom_state->opacity_features,
+				   geom_state->color_features,
+				   img_state->n_contrib,
+				   img_state->accum_alpha)
+				   .dispatch(m_resolution);
 
 	// LUISA_INFO("backward preprocess with {} ", m_num_gaussians);
-	// cmdlist << (*m_backward_preprocess_shader)(
-	//            // input
-	//            dL_d_means_2d,
-	//            dL_d_conic,
-	//            dL_d_color_feature,
-	//            // output
-	//            dL_d_xyz,
-	//            dL_d_feature,
-	//            dL_d_scale,
-	//            dL_d_rotq,
-	//            // params
-	//            m_num_gaussians, m_sh_deg, m_max_sh_deg,
-	//            m_resolution, m_grids,
-	//            xyz_buffer,
-	//            feature_buffer,
-	//            scale_buffer,
-	//            rotq_buffer,
-	//            geom_state->color_features,
-	//            geom_state->conic_opacity,
-	//            mp_camera->pos(),
-	//            mp_camera->camera_primitive(m_resolution.x, m_resolution.y),
-	//            mp_camera->view_matrix())
-	//            .dispatch(m_num_gaussians);
+	cmdlist << (*m_backward_preprocess_shader)(
+				   // input
+				   dL_d_means_2d,
+				   dL_d_conic,
+				   dL_d_color_feature,
+				   // output
+				   dL_d_xyz,
+				   dL_d_feature,
+				   dL_d_scale,
+				   dL_d_rotq,
+				   // params
+				   m_num_gaussians, m_sh_deg, m_max_sh_deg,
+				   m_resolution, m_grids,
+				   xyz_buffer,
+				   feature_buffer,
+				   scale_buffer,
+				   rotq_buffer,
+				   geom_state->opacity_features,
+				   geom_state->color_features,
+				   geom_state->conic,
+				   // camera
+				   mp_camera->pos(),
+				   mp_camera->camera_primitive(m_resolution.x, m_resolution.y),
+				   mp_camera->view_matrix())
+				   .dispatch(m_num_gaussians);
 
 	stream << cmdlist.commit() << synchronize();
 }

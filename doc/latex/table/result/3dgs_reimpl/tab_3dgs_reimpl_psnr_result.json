@@ -1,1 +1,5 @@
-{"rows": ["3dgs Reimplement", "vanilla_3dgs_paper"], "cols": ["lego", "average", "", "", "", "", "", "", ""], "data": [["24.09", "24.09", "", "", "", "", "", "", ""], ["35.78", "35.83", "26.15", "34.87", "37.72", "30.00", "35.36", "30.80", "33.32"]], "caption": "3DGS Reimplement Results (psnr)", "label": "fig:3dgs_reimpl_psnr"}
+{
+    files = {
+        [[doc\latex\table\result\3dgs_reimpl\tab_3dgs_reimpl_psnr_result.json]]
+    }
+}

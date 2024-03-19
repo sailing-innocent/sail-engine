@@ -1,0 +1,88 @@
+\documentclass{njupre/njupre}
+\title[组会报告]{ 组会报告 }
+\author[朱子航]{\texorpdfstring{朱子航 \\ \smallskip \textit{522022150087@smail.nju.edu.cn}}{}}
+\date[\today]{\texorpdfstring{2023-03-20}{}}
+\begin{document}
+\begin{frame}
+    \titlepage
+\end{frame}
+\begin{frame}
+    \frametitle{目录}
+    \tableofcontents
+\end{frame}
+
+\begin{frame}
+    \frametitle{Gaussian Splatting = EM + Optim}
+    正向：渲染过程
+    \begin{itemize}
+        \item 从3D高斯场景描述转为相机平面上的2D高斯分布，本质是一个投影变换$y=Mx$
+        \item 从2D高斯分布分块光栅叠合成图片过程的本质是一个加权平均$pix=\sum\limits_{i=1}\limits^{N} \alpha_i w_in_i$
+    \end{itemize}  
+    逆向：估计过程
+    \begin{itemize}
+        \item 加权平均$pix=\sum\limits_{i=1}\limits^{N} \alpha_i w_in_i, \alpha_i=o_i e^{(x_i-\mu)^T\Sigma_i^{-1}(x_i-\mu)}$ 的反向：从目标像素样本估计2D高斯混合模型分布（EM）
+        \item $y=Mx$的反向：从某个未知3D高斯的若干2D投影样本估计原本的3D高斯分布，本质是给定若干$M_1,M_2,\dots,M_k$和$y_1,y_2,\dots,y_k$，求解最优化问题$\arg\min_X \sum\limits_{i=1}\limits^{k} (M_iX-y_i)^2$（最小二乘法）
+    \end{itemize}   
+\end{frame}
+
+\begin{frame}
+    \frametitle{2D Tile Based Gaussian Sampler Color}
+    \input{fig_tile_gs_sampler_color}
+
+    \begin{itemize}
+        \item 正向 $pix=\sum\limits_{i=1}\limits^{N} \alpha_i w_in_i, \alpha_i=o_i e^{(x_i-\mu)^T\Sigma_i^{-1}(x_i-\mu)}$ 
+        \item 反向 $\frac{\partial L }{\partial n_i } = \sum\limits_{i=1}\limits^{N} \alpha_iw_i \frac{\partial L }{\partial pix}$
+        \item 反向 $\frac{\partial L }{\partial \alpha_i } = \sum\limits_{i=1}\limits^{N} n_iw_i \frac{\partial L }{\partial pix}$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{2D Tile Based Gaussian Sampler Opacity}
+    \input{fig_tile_gs_sampler_opacity}
+    \begin{itemize}
+        \item 正向 $\alpha_i=o_i e^{(x_i-\mu)^T\Sigma_i^{-1}(x_i-\mu)} = o_iG_i$ 
+        \item 反向 $\frac{\partial L }{\partial o_i } = e^{(x_i-\mu)^T\Sigma_i^{-1}(x_i-\mu)} \frac{\partial L }{\partial \alpha_i} $
+        \item 反向 $\frac{\partial L }{\partial G_i } = \frac{\partial L }{\partial \alpha_i}o_i$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{2D Tile Based Gaussian Sampler XY}
+    \input{fig_tile_gs_sampler_xy}
+    \begin{itemize}
+        \item 正向 $G_i = e^{(x_i-\mu)^T\Sigma_i^{-1}(x_i-\mu)}$
+        \item 反向 $\frac{\partial L }{\partial x_i } = 2G_i\Sigma_i^{-1} (x-\mu) \frac{\partial L }{\partial G_i}$
+        \item 反向 $\frac{\partial L }{\partial \Sigma_i^{-1}}=2G_i\frac{\partial L }{\partial G_i }(x_i-\mu)^T(x_i-\mu)$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{2D Tile Based Gaussian Sampler Cov}
+    \input{fig_tile_gs_sampler_cov}
+    \begin{itemize}
+        \item 正向 $\Sigma_i^{-1}$
+        \item 反向 $\frac{\partial L }{\partial \Sigma_i}=\frac{\partial L }{\partial \Sigma_i^{-1}}\frac{\partial \Sigma_i^{-1}}{\partial \Sigma_i}$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{2D Tile Based Gaussian Sampler}
+    \input{fig_tile_gs_sampler_image}
+    \begin{itemize}
+        \item image size: (1024, 1024)
+        \item gaussian: 1000 gaussians x 5 layers
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Next Step}
+    \begin{quote}
+        $y=Mx$的反向：从某个未知3D高斯的若干2D投影样本估计原本的3D高斯分布，本质是给定若干$M_1,M_2,\dots,M_k$和$y_1,y_2,\dots,y_k$，求解最优化问题$\arg\min_X \sum\limits_{i=1}\limits^{k} (M_iX-y_i)^2$（最小二乘法）
+    \end{quote}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Reference}
+    \bibliography{ref}
+    \bibliographystyle{plain}
+\end{frame}
+\end{document}

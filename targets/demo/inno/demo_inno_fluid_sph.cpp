@@ -47,12 +47,10 @@ int test_fluid_sph(Device& device) {
 
 	builder.place_particles(fluid_data);
 
-	solver.create(device);
-
 	CommandList cmdlist;
-
 	solver.compile(device);
 	solver.init_upload(device, cmdlist);
+
 	stream << cmdlist.commit() << synchronize();
 
 	constexpr uint w = 1024u;

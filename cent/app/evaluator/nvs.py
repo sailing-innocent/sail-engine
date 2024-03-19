@@ -10,6 +10,7 @@ import torch
 import numpy as np 
 import os 
 from loguru import logger 
+import gc 
 
 from torchmetrics.image import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
@@ -41,7 +42,10 @@ class NVSEvaluator:
         res_path = params.save_dir + "/res_" + dataset.obj_name
         os.makedirs(res_path, exist_ok=True)
         tot_eval = len(dataset)
+
         for idx, (cam_info, img_info) in enumerate(dataset):
+            torch.cuda.empty_cache()
+            gc.collect()
             # print(img_info.data.shape)
             if (dataset.name == "nerf_blender" or dataset.name == "tank_temple"):
                 camera = Camera() # info is FlipZ
@@ -60,14 +64,13 @@ class NVSEvaluator:
                 img = Image()
                 img.load_from_info(img_info)
                 img.save(os.path.join(gt_path, "{}.png".format(idx)))
-                
                 img_np = pred.numpy().transpose(1, 2, 0).clip(0, 1)
                 img.load_from_data(img_np)
                 img.save(os.path.join(res_path, "{}.png".format(idx)))
 
             pred = pred.unsqueeze(0)
             gt = gt.unsqueeze(0)
-    
+            gc.collect()
             for metric_type in params.metric_types:
                 value = self.metrics[metric_type](pred, gt)
                 result[metric_type] += value.item()

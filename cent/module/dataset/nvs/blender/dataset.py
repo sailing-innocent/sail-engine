@@ -15,7 +15,7 @@ from module.utils.pointcloud.io import fetchPly
 class NeRFBlenderDatasetConfig(NVSDatasetConfig):
     def __init__(self, env_config):
         super().__init__(env_config)
-        self.white_bkgd = True 
+        self.white_bkgd = True
         self.use_point_list = False 
         self.obj_name = "lego"
         self.obj_list = ["chair", "drums", "ficus", "hotdog", "lego", "materials", "mic", "ship"]

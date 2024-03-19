@@ -1,0 +1,66 @@
+\paragraph{2024年03月26日}
+
+重启了一个简单的使用MLP进行图像分类的实验，结果如下
+
+\input{exp_profile_img_classify_mlp_doc_cn}
+
+重启了对不同参数组合的3DGS训练效果的实验
+
+\input{profile_3dgs_result}
+
+\begin{figure}
+    \begin{subfigure}{0.18\linewidth}
+        \includegraphics[width=\textwidth]{"fig_sparse_gs_train_0.png"}
+    \end{subfigure}
+    \begin{subfigure}{0.18\linewidth}
+        \includegraphics[width=\textwidth]{"fig_sparse_gs_train_1.png"}
+    \end{subfigure}
+    \begin{subfigure}{0.18\linewidth}
+        \includegraphics[width=\textwidth]{"fig_sparse_gs_train_2.png"}
+    \end{subfigure}
+    \begin{subfigure}{0.18\linewidth}
+        \includegraphics[width=\textwidth]{"fig_sparse_gs_train_3.png"}
+    \end{subfigure}
+    \begin{subfigure}{0.18\linewidth}
+        \includegraphics[width=\textwidth]{"fig_sparse_gs_train_4.png"}
+    \end{subfigure}
+    \caption{Gaussian Splatting on Sparse Image dataset}
+\end{figure}
+
+
+训练之后的结果如图
+
+\begin{figure}
+    \begin{subfigure}{0.48\linewidth}
+        \includegraphics[width=\textwidth]{"fig_sparse_gs_train_result_0.png"}
+    \end{subfigure}
+    \begin{subfigure}{0.48\linewidth}
+        \includegraphics[width=\textwidth]{"fig_sparse_gs_train_result_1.png"}
+    \end{subfigure}
+    \caption{Gaussian Splatting Train Result}
+\end{figure}
+
+
+\begin{figure}
+    \begin{subfigure}{0.8\linewidth}
+        \includegraphics[width=0.48\textwidth]{"fig_0_01_20240328.png"}
+        \includegraphics[width=0.48\textwidth]{"fig_0_02_20240328.png"}
+        \caption{Iter 1}
+    \end{subfigure}
+    \begin{subfigure}{0.8\linewidth}
+        \includegraphics[width=0.48\textwidth]{"fig_4_01_20240328.png"}
+        \includegraphics[width=0.48\textwidth]{"fig_4_02_20240328.png"}
+        \caption{Iter 1}
+    \end{subfigure}
+    \begin{subfigure}{0.8\linewidth}
+        \includegraphics[width=0.48\textwidth]{"fig_8_01_20240328.png"}
+        \includegraphics[width=0.48\textwidth]{"fig_8_02_20240328.png"}
+        \caption{Iter 1}
+    \end{subfigure}
+    \caption{Projector可以反解位置，但是因为权重问题不收敛}
+\end{figure}
+
+\begin{figure}
+    \includegraphics[width=0.8\textwidth]{"fig_fig_torch_gs_20240328.png"}
+    \caption{实现torch的projector，方便后续调试}
+\end{figure}

@@ -36,6 +36,8 @@ class Camera:
             raise NotImplementedError
         
         x = np.cross(self.up, z)
+        # if self.category == "FlipY":
+        #     x = -x
         y = np.cross(z, x)
         # noramalize
         x = x / np.linalg.norm(x)

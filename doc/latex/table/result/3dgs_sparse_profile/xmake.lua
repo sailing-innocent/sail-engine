@@ -1,0 +1,1 @@
+add_json_table("tab_3dgs_profile_diff_init_psnr_result_nerf_blender")

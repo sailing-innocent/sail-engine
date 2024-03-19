@@ -6,7 +6,7 @@
  * @date 2023-06-25
  */
 
-#include "SailBase/config.h"
+#include "SailInno/sail_inno.h"
 #include <luisa/dsl/func.h>
 #include <luisa/runtime/device.h>
 #include <luisa/core/logging.h>

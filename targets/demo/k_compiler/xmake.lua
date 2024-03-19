@@ -1,0 +1,6 @@
+target("demo_k_compiler")
+    set_kind("binary")
+    set_languages("cxx20")
+    add_files("**.cpp")
+    add_deps("SailLLVM")
+target_end()

@@ -14,7 +14,6 @@ import numpy as np
 from ..utils.general_utils import inverse_sigmoid, get_expon_lr_func, build_rotation
 from torch import nn
 import os
-from ..utils.system_utils import mkdir_p
 from plyfile import PlyData, PlyElement
 from ..utils.sh_utils import RGB2SH
 from ..simple_knn import distCUDA2
@@ -189,8 +188,7 @@ class GaussianModel:
         return l
 
     def save_ply(self, path):
-        mkdir_p(os.path.dirname(path))
-
+        os.makedirs(os.path.dirname(path), exist_ok=True)
         xyz = self._xyz.detach().cpu().numpy()
         normals = np.zeros_like(xyz)
         f_dc = self._features_dc.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()

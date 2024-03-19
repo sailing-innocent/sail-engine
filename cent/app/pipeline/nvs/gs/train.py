@@ -59,6 +59,6 @@ class GaussianTrainPipeline(NVSPipeline):
         loss_fn = self.create_loss[self.config.loss_name]
         trainer = self.create_trainer[self.config.trainer_name](self.config.env_config, self.target_path)
         # init model
-        init_pcd = dataset.get_point_cloud()
-        model.create_from_pcd(init_pcd, 1.0) 
+        # init_pcd = dataset.get_point_cloud()
+        # model.create_from_pcd(init_pcd, 1.0) 
         trainer.train(model, dataset, renderer, loss_fn, train_params)

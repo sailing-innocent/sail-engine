@@ -1,0 +1,27 @@
+{
+    "rows": [
+        "3dgs ____trained",
+        "3dgs ____random",
+        "3dgs ____preprocess"
+    ],
+    "cols": [
+        "lego",
+        "average"
+    ],
+    "data": [
+        [
+            "28.60",
+            "28.60"
+        ],
+        [
+            "19.04",
+            "19.04"
+        ],
+        [
+            "20.28",
+            "20.28"
+        ]
+    ],
+    "caption": "3DGS Profile Results (psnr)",
+    "label": ""
+}

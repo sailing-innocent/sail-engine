@@ -12,11 +12,20 @@ end
 SHARED_MODULE("SailIng", "SAIL_ING", engine_version)
     add_includedirs("include", {public=true})
     add_files("src/**.cpp")
+    
     add_deps("SailBase")
+
+    if get_config("enable_cuda") then
+        add_deps("SailCu")
+        add_defines("SAIL_ING_CUDA", {public=true})
+    end
+
     if get_config("enable_gl") then 
         add_packages("glm", "glfw", "imgui", {public = true})
         add_deps("external_glad", {public = true})
+        add_defines("SAIL_ING_GL", {public=true})
     end 
+
     if get_config("enable_vk") then 
         add_packages("glfw", "imgui", "vulkansdk", {public = true})
     end

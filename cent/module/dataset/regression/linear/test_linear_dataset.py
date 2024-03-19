@@ -1,15 +1,17 @@
 import pytest 
 from .dataset import LinearDataset, LinearDatasetConfig
-from module.config.env import get_env_config_by_name  
+from mission.config.env import get_env_config
 
 @pytest.mark.current
 def test_linear_dataset():
-    env_config = get_env_config_by_name("pc")
+    env_config = get_env_config()
+    N = 100
     config = LinearDatasetConfig(env_config)
+    config.sample_size = N
     dataset = LinearDataset(config)
 
     assert str(dataset) == "linear"
-    assert len(dataset) == 1000
+    assert len(dataset) == N
     assert config.batch_size == 10
     # dataset.visualize()
     for sample, label in dataset:
@@ -25,7 +27,6 @@ def test_linear_dataset():
     features = dataset.features()
     labels = dataset.labels()
 
-    assert features.shape == (1000, 2)
-    assert labels.shape == (1000, 1)
-    
+    assert features.shape == (N, 2)
+    assert labels.shape == (N, 1)
     dataset.visualize()

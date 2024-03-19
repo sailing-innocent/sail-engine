@@ -24,8 +24,8 @@ public:
 	PointPainter() = default;
 	int m_stride = 3;
 	virtual ~PointPainter() = default;
-	virtual void create(Device& device) noexcept override;
-	virtual void paint(CommandList& cmdlist, ImageView<float> out_img, int w, int h) noexcept override;
+	void create(Device& device) noexcept override;
+	void paint(CommandList& cmdlist, ImageView<float> out_img, int w, int h) noexcept override;
 	void update_point(int point_num, BufferView<float> point_xyz, BufferView<float> point_color) noexcept;
 
 protected:

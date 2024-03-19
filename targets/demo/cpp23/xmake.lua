@@ -1,0 +1,7 @@
+target("demo_cpp23")
+    set_kind("binary")
+    add_files("main.cpp")
+    set_languages("cxx23")
+    set_toolchains("msvc")
+    set_policy("build.c++.modules", true)
+target_end()

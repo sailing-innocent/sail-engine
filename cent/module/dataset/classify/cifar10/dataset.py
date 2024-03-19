@@ -1,6 +1,5 @@
 from ..base import ImageClassifyDataset, ClassifyDatasetConfig
 import os 
-
 from torch.utils.data import DataLoader
 from torchvision import datasets
 import torchvision.transforms as transforms 
@@ -17,7 +16,7 @@ class CIFAR10Config(ClassifyDatasetConfig):
     def dataset_root(self):
         subfolder = "cifar10"
         return os.path.join(
-            self.env_config.dataset_root(), subfolder)
+            self.env_config.dataset_root, subfolder)
 
 class CIFAR10(ImageClassifyDataset):
     def __init__(self, config: CIFAR10Config):
@@ -54,7 +53,7 @@ class CIFAR10(ImageClassifyDataset):
     def __getitem__(self, index: int):
         return self._dataset[index]
 
-def create_cifar10(env_config, usage, batch_size=32):
+def create_dataset(env_config, usage, batch_size=32):
     config = CIFAR10Config(env_config)
     config.usage = usage 
     config.batch_size = batch_size

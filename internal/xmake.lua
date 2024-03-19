@@ -10,3 +10,11 @@ end
 if has_config("enable_cuda") then 
     includes("cu")
 end
+
+if has_config("enable_gl") then 
+    -- includes("gl")
+end
+
+if has_config("enable_llvm") then 
+    includes("llvm")
+end

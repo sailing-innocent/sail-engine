@@ -1,6 +1,6 @@
 import pytest 
-from .dataset import FMNIST, FMNISTConfig 
-from module.config.env import get_env_config
+from module.dataset.classify.fmnist.dataset import FMNIST, FMNISTConfig 
+from mission.config.env import get_env_config
 
 @pytest.mark.current 
 def test_fmnist_train():

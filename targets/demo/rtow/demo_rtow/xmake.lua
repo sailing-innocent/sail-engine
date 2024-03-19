@@ -1,0 +1,5 @@
+target("demo_rtow")
+    set_kind("static")
+    add_languages("c++20")
+    add_files("*.cpp")
+target_end()

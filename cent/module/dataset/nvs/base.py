@@ -39,6 +39,7 @@ class NVSDataset(BaseDataset):
         # Ray - Color pairs
         self._ray_color_pairs = []
         self.use_rays = False
+        self.indices = None
 
     def enable_rays(self):
         return self.config.enable_rays
@@ -59,8 +60,17 @@ class NVSDataset(BaseDataset):
     def __len__(self):
         return self.N
     
-    def pairs(self):
-        return self._cam_img_pairs.copy()
+    def pairs(self, limit = -1, shuffle=False):
+        if (limit < 0):
+            limit = self.N
+        if self.indices is None:
+            # init indices for first time
+            self.indices = list(range(self.N))
+            if shuffle:
+                import random
+                random.shuffle(self.indices)
+        _pairs = self._cam_img_pairs.copy()
+        return [_pairs[i] for i in self.indices[:limit]]
     
     def _load_dataset(self):
         raise NotImplementedError("Not implemented")

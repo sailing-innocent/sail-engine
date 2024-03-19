@@ -23,22 +23,20 @@ void ReprodGS::gaussian_proj_impl(
 	CommandList& cmdlist,
 	int num_gaussians, int sh_deg, int max_sh_deg,
 	float scale_modifier,
+	// input
 	BufferView<float> xyz_buffer,
 	BufferView<float> feature_buffer,// for color
-	BufferView<float> opacity_buffer,
 	BufferView<float> scale_buffer,
 	BufferView<float> rotq_buffer,
 	Camera& cam) {
 	// clear geometry state
 	geom_state->clear(device, cmdlist, *mp_buffer_filler);
 	// calculate camera primitive
-
 	cmdlist << (*m_forward_preprocess_shader)(
 				   num_gaussians, sh_deg, max_sh_deg,
 				   // input
 				   xyz_buffer,
 				   feature_buffer,
-				   opacity_buffer,
 				   scale_buffer,
 				   rotq_buffer,
 				   // params
@@ -54,36 +52,20 @@ void ReprodGS::gaussian_proj_impl(
 				   mp_camera->view_matrix(),
 				   mp_camera->proj_matrix())
 				   .dispatch(num_gaussians);
-
-	cmdlist << (*m_forward_tile_split_shader)(
-				   num_gaussians,
-				   m_resolution,
-				   m_grids,
-				   // input
-				   geom_state->means_2d,
-				   geom_state->covs_2d,
-				   // output
-				   geom_state->conic,
-				   geom_state->means_2d_res,
-				   geom_state->tiles_touched,
-				   geom_state->radii)
-				   .dispatch(num_gaussians);
-
-	// device scan
-	cmdlist << luisa::compute::cuda::lcub::DeviceScan::InclusiveSum(
-		geom_state->scan_temp_storage,
-		geom_state->tiles_touched,
-		geom_state->point_offsets, num_gaussians);
 }
 
 void ReprodGS::forward_impl(
 	Device& device,
 	Stream& stream,
 	int height, int width,
+	// output
 	BufferView<float> target_img_buffer,// hwc // output
+	BufferView<int> radii,
+	// params
 	int num_gaussians,
 	int sh_deg,
 	int max_sh_deg,
+	// input
 	BufferView<float> xyz_buffer,
 	BufferView<float> feature_buffer,// for color
 	BufferView<float> opacity_buffer,
@@ -106,21 +88,44 @@ void ReprodGS::forward_impl(
 	}
 	if ((m_resolution.x != width) || (m_resolution.y != height)) {
 		// resolution changed, reallocate image buffer
-		img_state->allocate(device, static_cast<size_t>(width * height));
+		img_state->allocate(device, width * height);
 		m_resolution = luisa::make_uint2(width, height);
 	}
+
 	CommandList cmdlist;
 
 	gaussian_proj_impl(
 		device, cmdlist,
 		num_gaussians, sh_deg, max_sh_deg,
 		scale_modifier,
-		xyz_buffer, feature_buffer, opacity_buffer,
+		xyz_buffer, feature_buffer,
 		scale_buffer, rotq_buffer, cam);
+
+	cmdlist << geom_state->opacity_features.copy_from(opacity_buffer);
+	cmdlist << (*m_forward_tile_split_shader)(
+				   num_gaussians,
+				   m_resolution,
+				   m_grids,
+				   // input
+				   geom_state->means_2d,
+				   geom_state->covs_2d,
+				   // output
+				   geom_state->conic,
+				   geom_state->means_2d_res,
+				   geom_state->tiles_touched,
+				   radii)
+				   .dispatch(num_gaussians);
+
+	// device scan
+	cmdlist << luisa::compute::cuda::lcub::DeviceScan::InclusiveSum(
+		geom_state->scan_temp_storage,
+		geom_state->tiles_touched,
+		geom_state->point_offsets, num_gaussians);
 
 	int num_rendered;
 	cmdlist << geom_state->point_offsets.view(num_gaussians - 1, 1).copy_to(&num_rendered);
 	stream << cmdlist.commit() << synchronize();
+
 	if (num_rendered <= 0) { return; }
 	tile_state->allocate(device, static_cast<size_t>(num_rendered));
 	tile_state->clear(device, cmdlist, *mp_buffer_filler);
@@ -129,7 +134,7 @@ void ReprodGS::forward_impl(
 				   num_gaussians,
 				   geom_state->means_2d_res,
 				   geom_state->point_offsets,
-				   geom_state->radii,
+				   radii,
 				   geom_state->depth_features,
 				   tile_state->point_list_keys_unsorted,
 				   tile_state->point_list_unsorted,
@@ -159,16 +164,15 @@ void ReprodGS::forward_impl(
 				   img_state->ranges,
 				   tile_state->point_list,
 				   geom_state->means_2d_res,
-				   geom_state->color_features,
 				   geom_state->conic,
+				   geom_state->opacity_features,
+				   geom_state->color_features,
 				   // save for backward
 				   img_state->n_contrib,
 				   img_state->accum_alpha)
 				   .dispatch(m_resolution);
-	stream << cmdlist.commit() << synchronize();
 
-	// cmdlist << (*ms_debug_render)(target_img_buffer, width, height, num_gaussians, xyz_buffer, feature_buffer, view_matrix, proj_matrix).dispatch(num_gaussians);
-	// stream << cmdlist.commit() << synchronize();
+	stream << cmdlist.commit() << synchronize();
 }
 
 }// namespace sail::inno::render

@@ -3,13 +3,16 @@ from diff_gaussian_rasterization import GaussianRasterizationSettings, GaussianR
 import numpy as np
 import torch 
 
-def create_gaussian_renderer(env_config):
+def create_gaussian_renderer(env_config, config_settings: dict = {}):
     config = GaussianRendererConfig(env_config)
+    for key, value in config_settings.items():
+        setattr(config, key, value)
     return GaussianRenderer(config)
 
 class GaussianRendererConfig:
     def __init__(self, env_config):
         self._env_config = env_config
+        self.white_bkgd = True 
 
     @property
     def env_config(self):
@@ -30,7 +33,11 @@ class GaussianRenderer:
         tanfovx = np.tan(0.5 * fovx)
         tanfovy = np.tan(0.5 * fovy)
         campos = torch.from_numpy(camera.info.T).float().cuda()
-        bg_color = torch.tensor([1, 1, 1], dtype=torch.float32, device="cuda")
+        
+        if self.config.white_bkgd:
+            bg_color = torch.tensor([1, 1, 1], dtype=torch.float32, device="cuda")
+        else:
+            bg_color = torch.tensor([0, 0, 0], dtype=torch.float32, device="cuda")
 
         raster_settings = GaussianRasterizationSettings(
             image_height = int(height),
@@ -63,6 +70,7 @@ class GaussianRenderer:
         rotations = gaussians.get_rotation
 
         shs = gaussians.get_features
+        # print(shs.shape)
 
         colors_precomp = None
         

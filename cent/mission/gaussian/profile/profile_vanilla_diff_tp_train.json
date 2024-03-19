@@ -1,0 +1,69 @@
+{
+    "name": "profile_gaussian_diff_tp",
+    "dataset_name": "nerf_blender",
+    "usage": "train",
+    "objects": [
+        "lego",
+        "chair",
+        "drums",
+        "ficus",
+        "hotdog",
+        "materials",
+        "mic",
+        "ship"
+    ],
+    "init_scenes": [
+        {
+            "type": "ckpt",
+            "ckpt_path": "gaussian_init",
+            "postfix": "random"
+        }
+    ],
+    "benchmarks": [
+        {
+            "name": "psnr",
+            "use_template": true
+        }
+    ],
+    "render_names": [
+        "vanilla"
+    ],
+    "trainer_names": [
+        "vanilla"
+    ],
+    "train_params_list": [
+        {
+            "name": "no_xyz",
+            "position_lr_init": 0.0,
+            "position_lr_final": 0.0,
+            "saving_iterations": [
+                30000
+            ]
+        },
+        {
+            "name": "only_trick",
+            "position_lr_init": 0.0,
+            "position_lr_final": 0.0,
+            "scaling_lr": 0.0,
+            "rotation_lr": 0.0,
+            "saving_iterations": [
+                30000
+            ]
+        },
+        {
+            "name": "default",
+            "saving_iterations": [
+                30000
+            ]
+        }
+    ],
+    "loss_names": [
+        "l1+ssim"
+    ],
+    "result_template": {
+        "name": "tab_3dgs_profile_{benchmark}_result",
+        "type": "tab_json",
+        "template": "3dgs_paper_{benchmark}",
+        "path": "../doc/latex/table/result/3dgs_profile/"
+    }
+}

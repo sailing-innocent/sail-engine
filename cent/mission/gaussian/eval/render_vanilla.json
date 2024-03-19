@@ -1,13 +1,19 @@
 {
-    "name": "gaussian_render_vanilla",
+    "name": "gaussian_eval_vanilla",
     "render_name": "vanilla",
     "usage": "render",
-    "checkpoints": [
+    "scenes": [
         {
-            "dataset": "nerf_blender",
+            "type": "ckpt",
+            "dataset_name": "nerf_blender",
             "obj_name": "lego",
-            "path": "gaussian",
+            "ckpt_path": "gaussian",
             "iter": 30000
+        },
+        {
+            "type": "sphere",
+            "r": 1.0,
+            "N": 1000
         }
     ]
 }

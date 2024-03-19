@@ -1,0 +1,168 @@
+整理于2023年11月17日
+
+\paragraph{写入ppm}
+
+ppm是一种用纯文本来描述图片的格式，没有经过压缩，所以一般不方便用来储存和转移，但是比较适合用来作为测试和教学的工具。首先我们尝试写入一个256x256的ppm文件：
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{"fig_demo_rtow_01_write_image.png"}
+    \caption{image.ppm}
+\end{figure}
+
+\paragraph{定义向量和光线}
+
+之后我们定义vector和ray的类，得到每一个像素对应的光线方向，并按照归一化后光线方向的y坐标插值，最终得到如图所示的图片。这样我们就将最终图片的每一个像素点都看做若干光线采样的组合。
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{"fig_demo_rtow_02_simple_ray.png"}
+    \caption{ray color}
+\end{figure}
+
+
+\paragraph{光线与物体相交}
+
+通过数学推导，我们可以写出一条射线和一个球是否相交的判别式，并将相交的射线颜色置为红色
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{"fig_demo_rtow_03_hit_sphere.png"}
+    \caption{Hit Sphere}
+\end{figure}
+
+\paragraph{法向量}
+
+% 我们可以通过判别式得到最近点的t，进而根据球的几何描述得到对应交点的坐标和表面法向量，并将其可视化如图。
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{"fig_demo_rtow_05_sphere_normal.png"}
+    \caption{Sphere Normal}
+\end{figure}
+
+\paragraph{碰撞类抽象}
+
+我们可以使用碰撞记录和可碰撞物体对于场景进行抽象，此处我们只有两个实例球和可碰撞列表，之后可以添加更多的实例。
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{"fig_demo_rtow_06_hittable_world.png"}
+    \caption{Multiple Spheres}
+\end{figure}
+
+\paragraph{消除锯齿}
+
+这里我们对于每一个pixel，都通过随机数任意在周围选取若干射线，并将最终结果累加平均，通过多次采样(Multiple Sampling)来抗锯齿。此处使用spp为10。
+
+\begin{figure}[H]
+    \centering
+        \begin{subfigure}{0.48\linewidth}
+            \includegraphics[width=\textwidth,trim={150 100 250 130},clip]{"fig_demo_rtow_06_hittable_world.png"}
+            \caption{Not Antialiased}
+        \end{subfigure}
+        \begin{subfigure}{0.48\linewidth}
+            \includegraphics[width=\textwidth,trim={150 100 250 130},clip]{"fig_demo_rtow_04_antialiasing.png"}
+            \caption{Antialiased}
+        \end{subfigure}
+\end{figure}
+
+\paragraph{不同反射深度}
+
+之后我们可以选择在表面的半球进行随机采样下一根线条，并且按照2的幂次等比下降重要性进行加权求和。
+
+
+
+\begin{figure}[H]
+    \centering
+        \begin{subfigure}{0.33\linewidth}
+            \includegraphics[width=\textwidth]{"fig_demo_rtow_07_matte_1.png"}
+            \caption{Max Depth = 1}
+        \end{subfigure}
+        \begin{subfigure}{0.33\linewidth}
+            \includegraphics[width=\textwidth]{"fig_demo_rtow_07_matte_10.png"}
+            \caption{Max Depth = 10}
+        \end{subfigure}
+        \begin{subfigure}{0.33\linewidth}
+            \includegraphics[width=\textwidth]{"fig_demo_rtow_07_matte_50.png"}
+            \caption{Max Depth = 50}
+        \end{subfigure}
+\end{figure}
+
+\paragraph{Lambertian}
+
+使用Lambertian材质
+
+
+
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.25\linewidth}
+        \includegraphics[width=\textwidth]{"fig_demo_rtow_08_lambertian_10_10.png"}
+        \caption{depth=10,spp=10}
+    \end{subfigure}
+    \begin{subfigure}{0.25\linewidth}
+        \includegraphics[width=\textwidth]{"fig_demo_rtow_08_lambertian_10_100.png"}
+        \caption{depth=10,spp=100}
+    \end{subfigure}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.25\linewidth}
+        \includegraphics[width=\textwidth]{"fig_demo_rtow_08_lambertian_50_10.png"}
+        \caption{depth=50,spp=10}
+    \end{subfigure}
+    \begin{subfigure}{0.25\linewidth}
+        \includegraphics[width=\textwidth]{"fig_demo_rtow_08_lambertian_50_100.png"}
+        \caption{depth=50,spp=100}
+    \end{subfigure}
+\end{figure}
+
+这里我们比较Lambertian和Matte材质：Lambertian的阴影会更细腻一点，当然这里因为场景过于简单，差距不会太明显。
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.48\linewidth}
+        \includegraphics[width=\textwidth]{"fig_demo_rtow_07_matte_50.png"}
+        \caption{Matte}
+    \end{subfigure}
+    \begin{subfigure}{0.48\linewidth}
+        \includegraphics[width=\textwidth]{"fig_demo_rtow_08_lambertian_50_10.png"}
+        \caption{Lambertian}
+    \end{subfigure}
+\end{figure}
+
+\paragraph{其他材质}
+
+金属材质
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{"fig_demo_rtow_09_materials_50_100.png"}
+    \caption{Metal Materials}
+\end{figure}
+
+
+% 玻璃材质
+
+
+% \begin{figure}[H]
+%     \includegraphics[width=\textwidth]{"fig_dielectric_rtow_50_100.png"}
+%     \caption{Glass Material}
+% \end{figure}
+
+% \paragraph{高级相机}
+
+% \begin{figure}[H]
+%     \centering
+%     \begin{subfigure}{0.48\linewidth}
+%         \includegraphics[width=\textwidth]{"fig_advanced_camera_rtow_20.png"}
+%         \caption{vfov=20}
+%     \end{subfigure}
+%     \begin{subfigure}{0.48\linewidth}
+%         \includegraphics[width=\textwidth]{"fig_advanced_camera_rtow_90.png"}
+%         \caption{vfov=90}
+%     \end{subfigure}
+% \end{figure}
+
+% \paragraph{最终渲染效果}
+
+% \begin{figure}[H]
+%     \includegraphics[width=\textwidth]{"fig_final_rtow.png"}
+%     \caption{Final Ray Tracer}
+% \end{figure}

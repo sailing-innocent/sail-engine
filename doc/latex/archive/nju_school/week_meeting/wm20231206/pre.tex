@@ -1,0 +1,78 @@
+\documentclass{njupre/njupre}
+\title[组会]{组会报告}
+\subtitle{研究进展\today}
+\author[朱子航]{\texorpdfstring{朱子航 \\ \smallskip \textit{522022150087@smail.nju.edu.cn}}{}}
+\date[2023-12-06]{\texorpdfstring{2023-12-06 组会}{}}
+\begin{document}
+\begin{frame}
+    \titlepage
+\end{frame}
+\begin{frame}
+    \frametitle{目录}
+    \tableofcontents
+\end{frame}
+
+\section{近期进展}
+
+\begin{frame}
+    \frametitle{实验平台搭建}
+    \begin{figure}
+        \includegraphics[width=\textwidth]{fig_recent_code_wm20231206.png}
+        \caption{图为从九月以来的代码提交}
+    \end{figure}
+    \begin{quote}
+        支持从数据集，训练，测试和论文/slide排版一体的脚本系统，托管在e.coding.net
+    \end{quote}
+\end{frame}
+
+\begin{frame}
+    \frametitle{上次问题debug}
+    \begin{columns}[c]
+        \begin{column}{0.5\textwidth}
+            \begin{figure}
+                \includegraphics[width=0.7\textwidth]{fig_last_problem_wm20231206.png}
+                \caption{问题情况}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{figure}
+                \includegraphics[width=0.7\textwidth]{fig_last_problem_fix_wm20231206.png}
+                \caption{正常情况}
+            \end{figure}
+        \end{column}
+    \end{columns}
+    \begin{quote}
+        如图，主要的原因是红色通道数值越界超过了1，所以在转换到8位无符号整数的时候会超出255变成一个小整数，导致原本的黄色呈现绿色。11111111 + 1 = 00000000
+    \end{quote}
+\end{frame}
+
+\begin{frame}
+    \frametitle{本地训练测试对比}
+    \begin{table}
+        \tiny 
+        \input{tab_nerf_reprod_eval_psnr_result}
+    \end{table}
+    \begin{table}
+        \tiny
+        \input{tab_3dgs_reprod_eval_psnr_result}
+    \end{table} 
+    \begin{quote}
+        可以发现普遍本地训练结果不如论文报告的精度，可能是参数或者实现上的问题
+    \end{quote}
+\end{frame}
+
+\begin{frame}
+    \frametitle{trick消融实验复现（未完成）}
+\end{frame}
+
+\section{Gaussian Splatting算法的一种深入理解: EM框架}
+\input{gaussian_em_slide_cn}
+
+\section{Gaussian Splatting文献整理}
+\input{gaussian_update_slide_cn}
+
+\begin{frame}[allowframebreaks]{Reference}
+    \bibliography{ref}
+    \bibliographystyle{plain}
+\end{frame}
+\end{document}

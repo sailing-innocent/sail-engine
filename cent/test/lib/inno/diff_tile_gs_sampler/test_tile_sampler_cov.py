@@ -1,10 +1,11 @@
 import pytest 
 
-from lib.inno.diff_gs_tile_sampler import DiffGSTileSampler
+from lib.inno.diff_gs_tile_sampler import DiffGSTileSampler, DiffGSTileSamplerSettings
 import torch 
 import matplotlib.pyplot as plt
 
-from module.utils.torch.transform import T2Sigma
+import os
+
 
 @pytest.mark.app
 def test_tile_sampler_cov():
@@ -12,6 +13,8 @@ def test_tile_sampler_cov():
     N = 2
     height = 512
     width = 512
+    save_dir = "D:/workspace/data/result/tile_gs_sampler_cov"
+    # os.mkdir(save_dir)
 
     means_2d = torch.zeros((N, 2), dtype=torch.float32).cuda()
     means_2d[0, 0] = 0.5
@@ -41,11 +44,16 @@ def test_tile_sampler_cov():
 
     opacity_features = torch.ones((N, 1), dtype=torch.float32).cuda()
 
+    fov = 60 / 180 * 3.1415926
+    settings = DiffGSTileSamplerSettings(
+        width, height, fov)
+    
     target_img = sampler.forward(
         means_2d, covs_2d, depth_features,             
         opacity_features, color_features, 
-        height, width)
+        settings)
     target_img_np = target_img.detach().cpu().detach().numpy().transpose(1, 2, 0).clip(0, 1)[::-1, :, :]
+    plt.imsave(f'{save_dir}/target.png', target_img_np)
     target_img.requires_grad = False
 
     # change cov2d
@@ -73,7 +81,7 @@ def test_tile_sampler_cov():
             depth_features, 
             opacity_features, 
             color_features, 
-            height, width)
+            settings)
         # clamp
         # result_img = torch.clamp(result_img, 0, 1)
 
@@ -95,6 +103,7 @@ def test_tile_sampler_cov():
                 plt.subplot(1, 2, 2)
                 plt.imshow(result_img_np)
                 plt.show()
+                plt.imsave(f'{save_dir}/result_{i}.png', result_img_np)
             optim.step()
             optim.zero_grad(set_to_none=True)
 

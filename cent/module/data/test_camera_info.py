@@ -12,3 +12,5 @@ def test_camera_info():
     assert np.equal(info_a.FovX, 60 / 180 * np.pi)
     assert info_a.ResW == 400
     assert info_a.ResW == 400
+
+    print(info_a.to_dict())

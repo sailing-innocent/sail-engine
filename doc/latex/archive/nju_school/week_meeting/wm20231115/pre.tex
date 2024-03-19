@@ -1,0 +1,86 @@
+\documentclass{njupre/njupre}
+\title[组会]{组会报告}
+\subtitle{研究进展\today}
+\author[朱子航]{\texorpdfstring{朱子航 \\ \smallskip \textit{522022150087@smail.nju.edu.cn}}{}}
+\date[2023-11-15]{\texorpdfstring{2023-11-15 组会}{}}
+\begin{document}
+\begin{frame}
+    \titlepage
+\end{frame}
+\begin{frame}
+    \frametitle{目录}
+    \tableofcontents
+\end{frame}
+\section{Gaussian Splatting实验部分}
+\sectionframe{Gaussian Splatting 实验部分}
+\subsection{NeRF Blender Synthetic 数据集}
+\input{nerf_blender_dataset_intro_slide_cn}
+\subsection{Mip360 数据集}
+\input{mip360_dataset_intro_slide_cn}
+\subsection{Benchmark}
+\begin{frame}
+\frametitle{PSNR: Peak Signal Noise Ratio}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}{0.25\linewidth}
+        \includegraphics[width=\textwidth]{"fig_gs_nerf_gt.png"}
+        \caption{Ground Truth}
+    \end{subfigure}
+    \begin{subfigure}{0.25\linewidth}
+        \includegraphics[width=\textwidth]{"fig_gs_nerf_res.png"}
+        \caption{Result}
+    \end{subfigure}
+\end{figure}
+
+\begin{quote}
+    PSNR衡量了一张带有噪声的图片K和一张干净图片I之间的差异，单位是分贝(dB)
+    $$MSE = \frac{1}{mn}\Sigma_{i=0}^{m-1}\Sigma_{j=0}^{n-1}[I(i,j) - K(i,j)]^2$$
+    $$PSNR = 10 log_{10}(\frac{MAX_I^2}{MSE})$$ 
+\end{quote}
+\end{frame}
+
+\begin{frame}
+\frametitle{Gaussian复现结果}
+\begin{table}
+    \input{tab_gaussian_nerf}
+\end{table}
+\end{frame}
+
+\section{其他进展}
+\sectionframe{其他进展}
+\subsection{与流体结合的动态场景}
+\begin{frame}
+\frametitle{与流体模拟相结合}
+\begin{itemize}
+    \item 流体模拟本身是基于拉格朗日视角的，所以自带有流体位置坐标
+    \item 将每个流体位置作为Gaussian中心点，赋予Gaussian的协方差，透明度，颜色等参数就可以用Gaussian Splatting作为流体的实时后续渲染方法
+    \item 整个过程是可微的
+    \item 使用LuisaCompute框架重新实现了Gaussian Splatting，与之前的流体模拟框架结合
+    \item demo见视频演示
+\end{itemize}
+\end{frame}
+
+\subsection{添加光照效果的尝试}
+\begin{frame}
+\frametitle{增添光照效果}
+\begin{itemize}
+    \item 光源类型一般可以分为点光源，面光源，方向光源
+    \item 光照和物体表面的交互过程一般被称为shading 
+    \item 通常的shading方法需要考虑漫反射，镜面反射等因素，需要用辐射度量学来推导渲染公式，在反射点向各个方向的光源做积分
+    \item Phong, Blin-Phone, Physically Based Rendering ..
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{光照效果原型实现}
+\begin{itemize}
+    \item 因为光照和相机的对偶特性，我们可以先将所有的Gaussian点投影到面光源的表面上，得到每个高斯点在面光源表面上的权重
+    \item 类似于通过权重来进行反向传播，把光源处的信息乘到Gaussian的固有色上
+    \item 通过预计算改变Gaussian颜色之后，再接上原本的正向过程得到相机处渲染图片。
+    \item 原型见视频，使用了一个40x40x40的立方体点云作为场景，让光源沿着物体周围做圆周运动并且照向物体
+\end{itemize}
+\end{frame}
+
+
+\end{document}

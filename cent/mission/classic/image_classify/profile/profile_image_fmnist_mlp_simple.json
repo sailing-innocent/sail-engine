@@ -1,0 +1,21 @@
+{
+    "name": "profile_img_classify_fmnist_mlp_simple",
+    "dataset_name": "fmnist",
+    "dataset_type": "image",
+    "usage": "train_eval",
+    "trainer_name": "plain",
+    "loss_name": "cross_entropy",
+    "batch_size_list": [
+        32,
+        64
+    ],
+    "epochs": [
+        5,
+        10
+    ],
+    "result": {
+        "type": "fig",
+        "output_path": "image_classify/profile",
+        "title": "Profile Img Classify MLP BS EP"
+    }
+}

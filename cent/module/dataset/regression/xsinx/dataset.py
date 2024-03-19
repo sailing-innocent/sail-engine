@@ -1,10 +1,9 @@
 from ..base import RegressionDataset, RegressionDatasetConfig, data_iter
-from module.config.env import BaseEnvConfig 
 
 import torch 
 
 class XSNIXDataset1DConfig(RegressionDatasetConfig):
-    def __init__(self, env_config: BaseEnvConfig):
+    def __init__(self, env_config):
         super().__init__(env_config)
         self.sample_size = 1000
         self.input_dim = 1

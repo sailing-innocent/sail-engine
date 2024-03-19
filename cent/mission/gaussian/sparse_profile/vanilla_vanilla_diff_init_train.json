@@ -1,0 +1,56 @@
+{
+    "name": "profile_sparse_gaussian_di_vv",
+    "dataset_name": "nerf_blender",
+    "usage": "train",
+    "objects": [
+        "lego"
+    ],
+    "init_scenes": [
+        {
+            "type": "ckpt",
+            "ckpt_path": "gaussian_init",
+            "postfix": "trained"
+        },
+        {
+            "type": "ckpt",
+            "ckpt_path": "gaussian_init",
+            "postfix": "random"
+        },
+        {
+            "type": "ckpt",
+            "ckpt_path": "gaussian_init",
+            "postfix": "preprocess"
+        }
+    ],
+    "benchmarks": [
+        {
+            "name": "psnr",
+            "use_template": false
+        }
+    ],
+    "render_names": [
+        "vanilla"
+    ],
+    "trainer_names": [
+        "vanilla"
+    ],
+    "train_params_list": [
+        {
+            "name": "order_10",
+            "data_limit": 10,
+            "data_shuffle": false,
+            "saving_iterations": [
+                30000
+            ]
+        }
+    ],
+    "loss_names": [
+        "l1+ssim"
+    ],
+    "result_template": {
+        "name": "tab_3dgs_profile_vanilla_diff_init_{benchmark}_result",
+        "type": "tab_json",
+        "template": "3dgs_paper_{benchmark}",
+        "path": "../doc/latex/table/result/3dgs_sparse_profile/"
+    }
+}

@@ -10,7 +10,10 @@
 #include "SailInno/core/runtime.h"
 #include "luisa/runtime/device.h"
 
+// helpers
 #include "SailInno/helper/buffer_filler.h"
+#include "SailInno/helper/device_parallel.h"
+// components
 #include "neighbor.h"
 
 namespace sail::inno::sph {
@@ -87,20 +90,25 @@ public:
 	void step(CommandList& cmdlist) noexcept;
 
 	// component getter
+
 	SPHFluidParticles& particles() noexcept { return *mp_particles; }
 	BufferFiller& filler() noexcept { return *mp_buffer_filler; }
+	DeviceParallel& device_parallel() noexcept { return *mp_device_parallel; }
 	Neighbor& neighbor() noexcept { return *mp_neighbor; }
 
 private:
-	// component
 	friend class FluidBuilder;
 	SPHSolverConfig m_config;
 	SPHSolverParam m_param;
+	// component
 	U<SPHFluidParticles> mp_particles;
-	U<BufferFiller> mp_buffer_filler;
 	U<BaseSPH> mp_sph_model;
 	U<Neighbor> mp_neighbor;
 	U<Bounding> mp_bounding;
+
+	// helpers
+	U<BufferFiller> mp_buffer_filler;
+	U<DeviceParallel> mp_device_parallel;
 };
 
 }// namespace sail::inno::sph

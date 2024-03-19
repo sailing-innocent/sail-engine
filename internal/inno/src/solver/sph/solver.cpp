@@ -21,6 +21,7 @@ namespace sail::inno::sph {
 SPHSolver::SPHSolver() noexcept {
 	mp_particles = luisa::make_unique<SPHFluidParticles>(*this);
 	mp_buffer_filler = luisa::make_unique<BufferFiller>();
+	mp_device_parallel = luisa::make_unique<DeviceParallel>();
 }
 
 SPHSolver::~SPHSolver() noexcept {
@@ -41,6 +42,7 @@ void SPHSolver::config(const SPHSolverConfig& config) noexcept {
 void SPHSolver::create(Device& device) noexcept {
 	mp_particles->create(device);
 	mp_sph_model->create(device);
+	mp_device_parallel->create(device);
 }
 
 void SPHSolver::compile(Device& device) noexcept {

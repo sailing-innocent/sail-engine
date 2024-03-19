@@ -12,3 +12,12 @@ class CameraInfo:
     @property 
     def FovX(self):
         return 2 * np.arctan(np.tan(0.5 * self.FovY) * self.ResW / self.ResH)   
+    
+    def to_dict(self):
+        return {
+            "R": self.R.flatten().tolist(),
+            "T": self.T.flatten().tolist(),
+            "FovY": self.FovY,
+            "ResW": self.ResW,
+            "ResH": self.ResH
+        }

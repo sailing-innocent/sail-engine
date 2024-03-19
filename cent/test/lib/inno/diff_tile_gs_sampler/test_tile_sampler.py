@@ -1,15 +1,18 @@
 import pytest 
 
-from lib.inno.diff_gs_tile_sampler import DiffGSTileSampler
+from lib.inno.diff_gs_tile_sampler import DiffGSTileSampler, DiffGSTileSamplerSettings
 import torch 
 import matplotlib.pyplot as plt
 
-@pytest.mark.app
+@pytest.mark.todo
 def test_tile_sampler():
     sampler = DiffGSTileSampler()
     N = 2
     height = 512
-    width = 512
+    width = 1024
+    fov = 60 / 180 * 3.1415926
+    settings = DiffGSTileSamplerSettings(
+        width, height, fov)
 
     means_2d = torch.zeros((N, 2), dtype=torch.float32).cuda()
     
@@ -33,7 +36,7 @@ def test_tile_sampler():
 
     # color_features = torch.rand((N, 4), dtype=torch.float32).cuda()
 
-    result_img = sampler.forward(means_2d, covs_2d, depth_features, opacity_features, color_features, height, width)
+    result_img = sampler.forward(means_2d, covs_2d, depth_features, opacity_features, color_features, settings)
     
     result_img_np = result_img.cpu().detach().numpy()
     # CHW -> HWC

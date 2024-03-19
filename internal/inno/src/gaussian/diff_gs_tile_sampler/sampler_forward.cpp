@@ -22,7 +22,7 @@ void DiffGaussianTileSampler::forward_impl(
 	Stream& stream,
 	// params
 	int num_gaussians,
-	int height, int width,
+	int height, int width, float fov_rad,
 	// input
 	BufferView<float> means_2d,		   // P * 2
 	BufferView<float> covs_2d,		   // P * 3
@@ -31,17 +31,20 @@ void DiffGaussianTileSampler::forward_impl(
 	BufferView<float> color_features,  // P * 3
 	// output
 	BufferView<float> target_img_buffer) {
+	m_fov_rad = fov_rad;
 	m_grids = luisa::make_uint2(
 		(unsigned int)((width + m_blocks.x - 1u) / m_blocks.x),
 		(unsigned int)((height + m_blocks.y - 1u) / m_blocks.y));
 
 	if (m_num_gaussians != num_gaussians) {
+		// LUISA_INFO("num_gaussians changed from {} to {}", m_num_gaussians, num_gaussians);
 		// if num_gaussians changed, reallocate buffer
 		geom_state->allocate(device, num_gaussians);
 		m_num_gaussians = num_gaussians;
 	}
 	if ((m_resolution.x != width) || (m_resolution.y != height)) {
 		// resolution changed, reallocate image buffer
+		// LUISA_INFO("resolution changed from {}x{} to {}x{}", m_resolution.x, m_resolution.y, width, height);
 		img_state->allocate(device, width * height);
 		m_resolution = luisa::make_uint2(width, height);
 	}
@@ -53,6 +56,7 @@ void DiffGaussianTileSampler::forward_impl(
 				   num_gaussians,
 				   m_resolution,
 				   m_grids,
+				   fov_rad,
 				   // input
 				   means_2d,
 				   covs_2d,
@@ -77,8 +81,9 @@ void DiffGaussianTileSampler::forward_impl(
 	cmdlist << geom_state->point_offsets.view(num_gaussians - 1, 1).copy_to(&num_rendered);
 	stream << cmdlist.commit() << synchronize();
 
-	// LUISA_INFO("num_rendered: {}", num_rendered);
+	// LUISA_INFO("num_rendered: {}; num_gaussians: {}", num_rendered, num_gaussians);
 	if (num_rendered <= 0) { return; }
+
 	tile_state->allocate(device, static_cast<size_t>(num_rendered));
 	tile_state->clear(device, cmdlist, *mp_buffer_filler);
 	// duplicate keys

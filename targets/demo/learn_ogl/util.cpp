@@ -6,7 +6,7 @@
 #include <string>
 #include <sstream>
 
-namespace sail::ing::test {
+namespace sail::demo {
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
@@ -125,4 +125,4 @@ void GLShader::set_mat4(const std::string& name, float* value_ptr) {
 	glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, value_ptr);
 }
 
-}// namespace sail::ing::test
+}// namespace sail::demo

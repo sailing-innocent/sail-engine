@@ -30,6 +30,7 @@ class _RasterizeGaussians(torch.autograd.Function):
     def forward(
         ctx,
         means_3d,
+        means_2d,
         features,
         opacities,
         scales,
@@ -46,17 +47,22 @@ class _RasterizeGaussians(torch.autograd.Function):
             P *= means_3d.shape[i]
 
         rendered_image = torch.zeros((3, h, w), dtype=torch.float32).cuda()
+        radii = torch.zeros(P, dtype=torch.float32).cuda()
+
         view_matrix_arr = raster_settings.viewmatrix
         proj_matrix_arr = raster_settings.projmatrix
         campos_arr = raster_settings.campos
         scale_modifier = raster_settings.scale_modifier
         sh_deg = raster_settings.sh_degree
         max_sh_deg = raster_settings.max_sh_degree
+        # print("sh_deg: ", sh_deg, "max_sh_deg: ", max_sh_deg)
+
         fov_rad = raster_settings.fov_rad
 
         app.forward(
             h, w,
             rendered_image.contiguous().data_ptr(),
+            radii.contiguous().data_ptr(),
             P, sh_deg, max_sh_deg,
             means_3d.contiguous().data_ptr(),
             features.contiguous().data_ptr(),
@@ -68,7 +74,7 @@ class _RasterizeGaussians(torch.autograd.Function):
             fov_rad,
             view_matrix_arr,
             proj_matrix_arr)
-        radii = 1
+        
         ctx.app = app
         ctx.save_for_backward(
             means_3d,
@@ -77,26 +83,33 @@ class _RasterizeGaussians(torch.autograd.Function):
             scales,
             rotations,
             rendered_image)
+
         return rendered_image, radii 
 
     @staticmethod 
     def backward(ctx, grad_out_color, _):
         means_3d, features, opacities, scales, rotations, rendered_image = ctx.saved_tensors
-
         grad_means_3d = torch.zeros(means_3d.shape, dtype=torch.float32, device="cuda")
+        P = means_3d.shape[0]
+        grad_means_2d = torch.zeros((P, 2), dtype=torch.float32, device="cuda")
         grad_features = torch.zeros(features.shape, dtype=torch.float32, device="cuda")
-        # print(grad_features.stride())
+        
+        # print(grad_features.shape)
         grad_opacities = torch.zeros(opacities.shape, dtype=torch.float32, device="cuda")
         grad_scales = torch.zeros(scales.shape, dtype=torch.float32, device="cuda")
         grad_rotations = torch.zeros(rotations.shape, dtype=torch.float32, device="cuda")
 
         ctx.app.backward(
+            # input
             grad_out_color.contiguous().data_ptr(),
+            # output
             grad_means_3d.contiguous().data_ptr(),
             grad_features.contiguous().data_ptr(),
             grad_opacities.contiguous().data_ptr(),
             grad_scales.contiguous().data_ptr(),
             grad_rotations.contiguous().data_ptr(),
+            grad_means_2d.contiguous().data_ptr(),
+            # params
             rendered_image.contiguous().data_ptr(),
             means_3d.contiguous().data_ptr(),
             features.contiguous().data_ptr(),
@@ -109,9 +122,14 @@ class _RasterizeGaussians(torch.autograd.Function):
         #     for j in range(grad_out_color.shape[2]):
         #         print(grad_out_color[:, i, j])
         # print(grad_features)
+        # print(grad_opacities)
+        # print(grad_means_2d)
+        # print(grad_means_3d)
+        # print(grad_scales)
 
         grads = (
             grad_means_3d,
+            grad_means_2d,
             grad_features,
             grad_opacities,
             grad_scales,
@@ -130,6 +148,7 @@ class GaussianRasterizer(nn.Module):
 
     def forward(self,
         means_3d,
+        means_2d,
         features,
         opacities,
         scales,
@@ -138,6 +157,7 @@ class GaussianRasterizer(nn.Module):
         bg_color = torch.tensor([1, 1, 1], dtype=torch.float32, device="cuda")
         rendered_image, radii = _RasterizeGaussians.apply(
             means_3d,
+            means_2d,
             features,
             opacities,
             scales,

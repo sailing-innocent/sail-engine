@@ -1,1 +1,5 @@
-{"rows": ["3dgs Reproduction", "vanilla_3dgs_paper"], "cols": ["lego", "chair", "drums", "ficus", "hotdog", "materials", "mic", "ship", "average"], "data": [["26.82", "35.12", "23.75", "29.58", "29.34", "28.29", "32.54", "25.58", "28.88"], ["35.78", "35.83", "26.15", "34.87", "37.72", "30.00", "35.36", "30.80", "33.32"]], "caption": "3DGS Reproduction Results (psnr)", "label": "fig:3dgs_reprod_psnr"}
+{
+    files = {
+        [[doc\latex\table\result\3dgs_reprod\tab_3dgs_reprod_eval_psnr_result.json]]
+    }
+}

@@ -6,6 +6,7 @@
 */
 
 #include "SailInno/vis/vis.h"
+#include "luisa/runtime/rhi/resource.h"
 
 using namespace luisa;
 using namespace luisa::compute;
@@ -14,11 +15,12 @@ namespace sail::inno {
 
 void Visualizer::create(Device& device, Stream& stream) noexcept {
 	mp_window = luisa::make_unique<Window>(name, resolution);
+	SwapchainOption option{
+		.window = mp_window->native_handle(),
+		.display = mp_window->native_display(),
+		.size = resolution};
 	mp_swapchain = luisa::make_unique<Swapchain>(device.create_swapchain(
-		mp_window->native_handle(),
-		stream,
-		resolution,
-		false, false, 2));
+		stream, option));
 	m_display_img = device.create_image<float>(mp_swapchain->backend_storage(), resolution.x, resolution.y);
 }
 

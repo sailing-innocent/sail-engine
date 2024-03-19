@@ -30,7 +30,6 @@ public:
 	void vis(CommandList& cmdlist) noexcept;
 	void vis_sync(Device& device, Stream& stream) noexcept;
 
-public:
 	luisa::string name = "BasicVisualizer";
 	luisa::uint2 resolution = {1024u, 768u};
 
