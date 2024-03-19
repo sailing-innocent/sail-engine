@@ -6,16 +6,14 @@ import matplotlib.pyplot as plt
 
 from module.utils.torch.transform import T2Sigma
 
-@pytest.mark.app
-def test_tile_sampler_cov():
+@pytest.mark.current
+def test_tile_sampler_xy():
     sampler = DiffGSTileSampler()
-    N = 2
+    N = 1
     height = 512
     width = 512
 
     means_2d = torch.zeros((N, 2), dtype=torch.float32).cuda()
-    means_2d[0, 0] = 0.5
-    means_2d[0, 1] = 0.5
     # means_2d.requires_grad = True 
 
     # s1 = 0.1 * torch.ones((N), dtype=torch.float32).cuda()
@@ -48,18 +46,19 @@ def test_tile_sampler_cov():
     target_img_np = target_img.detach().cpu().detach().numpy().transpose(1, 2, 0).clip(0, 1)[::-1, :, :]
     target_img.requires_grad = False
 
-    # change cov2d
-    covs_2d = 5. * covs_2d
-
+    # change xy
+    means_2d[0, 0] = 0.5
+    means_2d[0, 1] = 0.5
     opacity_features.requires_grad = True
     color_features.requires_grad = True
     covs_2d.requires_grad = True
+    means_2d.requires_grad = True
     # s1.requires_grad = True
     # s2.requires_grad = True
     # theta.requires_grad = True
 
     # optim = torch.optim.AdamW([s1, s2], lr= 1e-3)
-    optim = torch.optim.AdamW([covs_2d], lr= 1e-3)
+    optim = torch.optim.AdamW([means_2d], lr= 1e-2)
     N_ROUND = 410
     N_SHOW = 100
     N_OPTIM = 10
