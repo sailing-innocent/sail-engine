@@ -32,6 +32,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 		auto xy = dispatch_id().xy();
 		auto w = resolution.x;
 		auto h = resolution.y;
+
 		auto thread_idx = thread_id().x + thread_id().y * block_size().x;
 
 		Bool inside = Bool(xy.x < resolution.x) & Bool(xy.y < resolution.y);
@@ -157,6 +158,8 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 		auto xy = dispatch_id().xy();
 		auto w = resolution.x;
 		auto h = resolution.y;
+		Float ddelx_dx = 0.5f * w;
+		Float ddely_dy = 0.5f * w;
 		auto thread_idx = thread_id().x + thread_id().y * block_size().x;
 
 		Bool inside = Bool(xy.x < resolution.x) & Bool(xy.y < resolution.y);
@@ -292,12 +295,21 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 
 				Float gdx = G * d.x;
 				Float gdy = G * d.y;
+				// const float dG_ddelx = -gdx * con_o.x - gdy * con_o.y;
+				// const float dG_ddely = -gdy * con_o.z - gdx * con_o.y;
+				auto dG_ddelx = -gdx * con_o.x - gdy * con_o.y;
+				auto dG_ddely = -gdy * con_o.z - gdx * con_o.y;
 
 				// backward conic
 				dL_d_conic.atomic(global_id * 3 + 0).fetch_add(-0.5f * gdx * d.x * dL_dG);
 				dL_d_conic.atomic(global_id * 3 + 1).fetch_add(-0.5f * gdx * d.y * dL_dG);
 				dL_d_conic.atomic(global_id * 3 + 2).fetch_add(-0.5f * gdy * d.y * dL_dG);
 
+				// Update gradients w.r.t. 2D mean position of the Gaussian
+				// atomicAdd(&dL_dmean2D[global_id].x, dL_dG * dG_ddelx * ddelx_dx);
+				// atomicAdd(&dL_dmean2D[global_id].y, dL_dG * dG_ddely * ddely_dy);
+				dL_d_means2d.atomic(global_id * 2 + 0).fetch_add(dL_dG * dG_ddelx * ddelx_dx);
+				dL_d_means2d.atomic(global_id * 2 + 1).fetch_add(dL_dG * dG_ddely * ddely_dy);
 				// TODO: dL_d_means2d
 			};
 

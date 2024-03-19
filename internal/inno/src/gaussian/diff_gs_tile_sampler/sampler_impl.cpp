@@ -42,7 +42,6 @@ void DiffGaussianTileSampler::GeometryState::allocate(Device& device, size_t siz
 	conic = device.create_buffer<float>(size * 3);
 	tiles_touched = device.create_buffer<uint>(size);
 	point_offsets = device.create_buffer<uint>(size);
-
 	dL_d_conic = device.create_buffer<float>(size * 3);
 	dL_d_means_2d = device.create_buffer<float>(size * 4);
 	// allocate scan temp storage
@@ -51,6 +50,7 @@ void DiffGaussianTileSampler::GeometryState::allocate(Device& device, size_t siz
 }
 
 void DiffGaussianTileSampler::GeometryState::clear(Device& device, CommandList& cmdlist, BufferFiller& filler) {
+	cmdlist << filler.fill(device, means_2d_res, 0.0f);
 	cmdlist << filler.fill(device, radii, 0);
 	cmdlist << filler.fill(device, color_features, 0.0f);
 	cmdlist << filler.fill(device, opacity_features, 0.0f);
