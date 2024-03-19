@@ -23,17 +23,17 @@ def test_tile_sampler():
     depth_features = torch.ones((N, 1), dtype=torch.float32).cuda()
     depth_features[0, 0] = 0
     # color_features = torch.stack([black, red], dim=0).cuda()
-    color_features = torch.ones((N, 4), dtype=torch.float32).cuda()
+    color_features = torch.ones((N, 3), dtype=torch.float32).cuda()
     # set red
     color_features[:, 0] = 1
     color_features[:, 1] = 0
     color_features[:, 2] = 0
 
-    color_features[0, 0] = 0
-    color_features[0, 1] = 1
+    opacity_features = torch.ones((N, 1), dtype=torch.float32).cuda()
+
     # color_features = torch.rand((N, 4), dtype=torch.float32).cuda()
 
-    result_img = sampler.forward(means_2d, covs_2d, depth_features, color_features, height, width)
+    result_img = sampler.forward(means_2d, covs_2d, depth_features, opacity_features, color_features, height, width)
     
     result_img_np = result_img.cpu().detach().numpy()
     # CHW -> HWC

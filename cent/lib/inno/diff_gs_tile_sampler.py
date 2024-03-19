@@ -19,7 +19,7 @@ import torch.nn as nn
 class _DiffGSTileSampler(torch.autograd.Function):
     @staticmethod
     def forward(ctx, 
-                means_2d, covs_2d, depth_features, color_features, 
+                means_2d, covs_2d, depth_features, opacity_features, color_features, 
                 height, width, app):
         result_img = torch.zeros((3, height, width), dtype=torch.float32).cuda()
         P = means_2d.shape[0]
@@ -27,6 +27,7 @@ class _DiffGSTileSampler(torch.autograd.Function):
                     means_2d.contiguous().data_ptr(), 
                     covs_2d.contiguous().data_ptr(), 
                     depth_features.contiguous().data_ptr(), 
+                    opacity_features.contiguous().data_ptr(),
                     color_features.contiguous().data_ptr(), 
                     result_img.contiguous().data_ptr())
         
@@ -45,16 +46,28 @@ class _DiffGSTileSampler(torch.autograd.Function):
 
         dL_dmeans_2d = torch.zeros((P, 2), dtype=torch.float32).cuda()
         dL_dcovs_2d = torch.zeros((P, 3), dtype=torch.float32).cuda()
-        dL_dcolor_features = torch.zeros((P, 4), dtype=torch.float32).cuda()
+        dL_d_opacity_features = torch.zeros((P, 1), dtype=torch.float32).cuda()
+        dL_d_color_features = torch.zeros((P, 3), dtype=torch.float32).cuda()
 
         ctx.app.backward(dL_dtpix.contiguous().data_ptr(), 
                         dL_dmeans_2d.contiguous().data_ptr(), 
                         dL_dcovs_2d.contiguous().data_ptr(), 
-                        dL_dcolor_features.contiguous().data_ptr())
+                        dL_d_opacity_features.contiguous().data_ptr(),
+                        dL_d_color_features.contiguous().data_ptr())
         
         # print(dL_dcolor_features)
         print(dL_dcovs_2d)
-        return dL_dmeans_2d, dL_dcovs_2d, None, dL_dcolor_features, None, None, None
+        grads = (
+            dL_dmeans_2d,
+            dL_dcovs_2d,
+            None,
+            dL_d_opacity_features,
+            dL_d_color_features,
+            None,
+            None,
+            None
+        )
+        return grads
 
 class DiffGSTileSampler(nn.Module):
     def __init__(self):
@@ -62,5 +75,5 @@ class DiffGSTileSampler(nn.Module):
         self.app = DiffGSTileSamplerApp()
         self.app.create(sys.path[-1], "cuda")
 
-    def forward(self, means_2d, covs_2d, depth_features, color_features, height, width):
-        return _DiffGSTileSampler.apply(means_2d, covs_2d, depth_features, color_features, height, width, self.app)
+    def forward(self, means_2d, covs_2d, depth_features, opacity_features, color_features, height, width):
+        return _DiffGSTileSampler.apply(means_2d, covs_2d, depth_features, opacity_features, color_features, height, width, self.app)

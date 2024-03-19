@@ -4,7 +4,7 @@ from lib.inno.diff_gs_tile_sampler import DiffGSTileSampler
 import torch 
 import matplotlib.pyplot as plt
 
-@pytest.mark.current 
+@pytest.mark.app
 def test_tile_sampler_color():
     
     sampler = DiffGSTileSampler()
@@ -17,7 +17,7 @@ def test_tile_sampler_color():
     # means_2d[0, 1] = 0.5
     means_2d.requires_grad = True 
 
-    covs_2d = 0.001 * torch.ones((N, 3), dtype=torch.float32).cuda()
+    covs_2d = 0.01 * torch.ones((N, 3), dtype=torch.float32).cuda()
     covs_2d[:, 1] = 0
 
 
@@ -43,14 +43,14 @@ def test_tile_sampler_color():
     target_img.requires_grad = False
 
     # change covs
-    covs_2d = 100.0 * covs_2d
+    covs_2d = .1 * covs_2d
 
     covs_2d.requires_grad = True
     color_features.requires_grad = True
 
     optim = torch.optim.SGD([covs_2d], lr=0.1)
-    N_ROUND = 21
-    N_SHOW = 5
+    N_ROUND = 210
+    N_SHOW = 50
 
     for i in range(N_ROUND):
         optim.zero_grad()

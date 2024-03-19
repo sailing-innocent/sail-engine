@@ -4,9 +4,8 @@ from lib.inno.diff_gs_tile_sampler import DiffGSTileSampler
 import torch 
 import matplotlib.pyplot as plt
 
-@pytest.mark.app
-def test_tile_sampler_color():
-    
+@pytest.mark.current
+def test_tile_sampler_opacity():
     sampler = DiffGSTileSampler()
     N = 1
     height = 512
@@ -32,7 +31,7 @@ def test_tile_sampler_color():
     color_features[:, 2] = 0.0
 
     opacity_features = torch.ones((N, 1), dtype=torch.float32).cuda()
-
+    opacity_features[0] = 0.1
     # color_features[0, 0] = 0
     # color_features[0, 1] = 1
 
@@ -43,20 +42,17 @@ def test_tile_sampler_color():
         opacity_features, color_features, 
         height, width)
     target_img = target_img.detach()
+    target_img_np = target_img.cpu().detach().numpy().transpose(1, 2, 0).clip(0, 1)[::-1, :, :]
+    
     target_img.requires_grad = False
 
-    # change color
-    # set blue
-    blue = torch.zeros((N, 3), dtype=torch.float32).cuda()
-    blue[:, 2] = 1
-    color_features = blue
     # set the first opacity to 0.1
-    # opacity_features[0] = 0.1
+    opacity_features[0] = 0.9
     opacity_features.requires_grad = True
     color_features.requires_grad = True
 
 
-    optim = torch.optim.SGD([color_features], lr=0.1)
+    optim = torch.optim.SGD([opacity_features], lr=0.1)
     N_ROUND = 210
     N_SHOW = 50
 
@@ -77,12 +73,16 @@ def test_tile_sampler_color():
 
         with torch.no_grad():
             if i % N_SHOW == 0:
-                print(color_features)
                 result_img_np = result_img.cpu().detach().numpy()
                 # CHW -> HWC
                 result_img_np = result_img_np.transpose(1, 2, 0)
                 # flip y
                 result_img_np = result_img_np[::-1, :, :]
+                # compare show
+                # print(covs_2d.detach().cpu().numpy())
+                plt.subplot(1, 2, 1)
+                plt.imshow(target_img_np)
+                plt.subplot(1, 2, 2)
                 plt.imshow(result_img_np)
                 plt.show()
             
