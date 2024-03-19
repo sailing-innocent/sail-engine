@@ -61,7 +61,7 @@ def test_tile_sampler_color():
     N_SHOW = 50
 
     for i in range(N_ROUND):
-        optim.zero_grad()
+        # optim.zero_grad()
         result_img = sampler.forward(
             means_2d, 
             covs_2d, 

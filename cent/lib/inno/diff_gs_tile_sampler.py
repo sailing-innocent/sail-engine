@@ -60,10 +60,10 @@ class _DiffGSTileSampler(torch.autograd.Function):
                          dL_d_opacity_features.contiguous().data_ptr(),
                          dL_d_color_features.contiguous().data_ptr())
         
-        # print(dL_dcolor_features)
+        # print(dL_d_color_features)
         # print(dL_dcovs_2d)
         # print(dL_d_opacity_features)
-        print(dL_dmeans_2d)
+        # print(dL_dmeans_2d)
         grads = (
             dL_dmeans_2d,
             dL_dcovs_2d,
