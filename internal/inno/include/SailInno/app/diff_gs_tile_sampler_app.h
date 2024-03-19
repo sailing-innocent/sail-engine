@@ -27,8 +27,15 @@ public:
 	void backward(
 		// input
 		int64_t dL_dpix,
+		// params
+		int64_t covs_2d,
+		int64_t opacity_features,
+		int64_t color_features,
 		// output
-		int64_t dL_d_means_2d, int64_t dL_d_covs_2d, int64_t dL_d_opacity_features, int64_t dL_d_color_features);
+		int64_t dL_d_means_2d,
+		int64_t dL_d_covs_2d,
+		int64_t dL_d_opacity_features,
+		int64_t dL_d_color_features);
 
 protected:
 	int m_num_gaussians;

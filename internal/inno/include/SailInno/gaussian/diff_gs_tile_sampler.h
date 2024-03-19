@@ -37,9 +37,13 @@ public:
 	void backward_impl(
 		Device& device,
 		CommandList& cmdlist,
-		// params all saved
 		// input
 		BufferView<float> dL_dpix,
+		// params
+		BufferView<float> covs_2d,
+		BufferView<float> opacity_features,
+		BufferView<float> color_features,
+
 		// output
 		BufferView<float> dL_d_means_2d,
 		BufferView<float> dL_d_covs_2d,
@@ -131,10 +135,9 @@ protected:
 	U<Shader<1, int,// num_gaussians
 			 // input
 			 Buffer<float>,// dL_d_conic
-
 			 // params
 			 uint2,		   // resolution
-			 Buffer<float>,// conics
+			 Buffer<float>,// covs_2d
 			 // output
 			 Buffer<float>// dL_d_cov_2d
 			 >>

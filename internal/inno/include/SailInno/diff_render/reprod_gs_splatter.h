@@ -67,7 +67,6 @@ public:
 		BufferView<float> scale_buffer,
 		BufferView<float> rotq_buffer);
 
-public:
 	// component
 	struct GeometryState {
 		size_t scan_temp_storage_size;

@@ -44,6 +44,12 @@ void DiffGaussianTileSampler::compile_tile_split_shader(Device& device) noexcept
 			covs_2d.read(3 * idx + 1) * resolution.x * resolution.y * 0.25f,
 			covs_2d.read(3 * idx + 2) * resolution.y * resolution.y * 0.25f);
 
+		// Float3 cov_2d = make_float3(
+		// 	covs_2d.read(3 * idx + 0),
+		// 	covs_2d.read(3 * idx + 1),
+		// 	covs_2d.read(3 * idx + 2));
+		// make positive
+
 		auto point_image_ndc = make_float2(means_2d.read(2 * idx + 0), means_2d.read(2 * idx + 1));
 		auto point_image = make_float2(util::ndc2pix<Float>(point_image_ndc.x, resolution.x), util::ndc2pix<Float>(point_image_ndc.y, resolution.y));
 
@@ -81,38 +87,47 @@ void DiffGaussianTileSampler::compile_tile_split_shader(Device& device) noexcept
 					 BufferVar<float> dL_d_conic,
 					 // params
 					 UInt2 resolution,
-					 BufferVar<float> conics,
+					 BufferVar<float> covs_2d,
 					 // output
 					 BufferVar<float> dL_d_cov_2d) {
 		set_block_size(m_blocks.x * m_blocks.y);
 		auto idx = dispatch_id().x;
 		$if(idx >= static_cast<$uint>(P)) { return; };
 
-		Float3 conic = make_float3(
-			conics.read(3 * idx + 0),
-			conics.read(3 * idx + 1),
-			conics.read(3 * idx + 2));
-		Float det_inv = conic.x * conic.z - conic.y * conic.y;
-		Float det_inv_2 = det_inv * det_inv;
-		Float det = 1.0f / (det_inv + 1e-6f);
-		Float3 cov_2d = det * make_float3(conic.z, -conic.y, conic.x);
+		Float3 cov_2d = make_float3(
+			covs_2d.read(3 * idx + 0) * resolution.x * resolution.x * 0.25f,
+			covs_2d.read(3 * idx + 1) * resolution.x * resolution.y * 0.25f,
+			covs_2d.read(3 * idx + 2) * resolution.y * resolution.y * 0.25f);
+		// Float3 cov_2d = make_float3(
+		// 	covs_2d.read(3 * idx + 0),
+		// 	covs_2d.read(3 * idx + 1),
+		// 	covs_2d.read(3 * idx + 2));
+		Float det = cov_2d.x * cov_2d.z - cov_2d.y * cov_2d.y;
+		// Float det_inv = conic.x * conic.z - conic.y * conic.y;
+		Float det_inv_2 = 1 / (det * det + 1e-6f);
 		Float a = cov_2d.x;
 		Float b = cov_2d.y;
 		Float c = cov_2d.z;
 		Float3 dL_d_con = make_float3(dL_d_conic.read(idx * 3 + 0), dL_d_conic.read(idx * 3 + 1), dL_d_conic.read(idx * 3 + 2));
 		Float3 dL_d_cov2d;
+		// dc_a/da= - c * c
+		// dc_b/da= + c * b
+		// dc_c/da= - b * b
 
-		// dc_a/da=-c*c
-		// dc_b/da= - c * b
-		// dc_c/da= - b
+		// dc_a / dc = - b * b
+		// dc_b / dc =  a * b
+		// dc_c / dc = - a * a
 
-		dL_d_cov2d.x = det_inv_2 * (-c * c * dL_d_con.x + b * c * dL_d_con.y - b * dL_d_con.z);
-		dL_d_cov2d.z = det_inv_2 * (-a * a * dL_d_con.z + a * b * dL_d_con.y - b * dL_d_con.x);
+		dL_d_cov2d.x = det_inv_2 * (-c * c * dL_d_con.x + b * c * dL_d_con.y - b * b * dL_d_con.z);
+		dL_d_cov2d.z = det_inv_2 * (-b * b * dL_d_con.x + a * b * dL_d_con.y - a * a * dL_d_con.z);
 		dL_d_cov2d.y = det_inv_2 * 2 * (b * c * dL_d_con.x - (a * c + b * b) * dL_d_con.y + a * b * dL_d_con.z);
 		// dL_d_cov2d = dL_d_con;
 		dL_d_cov_2d.write(3 * idx + 0, dL_d_cov2d.x * resolution.x * resolution.x * 0.25f);
-		dL_d_cov_2d.write(3 * idx + 1, dL_d_cov2d.y * resolution.x * resolution.y * 0.25f);
 		dL_d_cov_2d.write(3 * idx + 2, dL_d_cov2d.z * resolution.y * resolution.y * 0.25f);
+		// dL_d_cov_2d.write(3 * idx + 1, dL_d_cov2d.y * resolution.x * resolution.y * 0.25f);
+		// dL_d_cov_2d.write(3 * idx + 0, dL_d_cov2d.x);
+		// dL_d_cov_2d.write(3 * idx + 2, dL_d_cov2d.z);
+		// dL_d_cov_2d.write(3 * idx + 1, dL_d_cov2d.y);
 	});
 }
 

@@ -11,9 +11,12 @@ namespace sail::inno::gaussian {
 void DiffGaussianTileSampler::backward_impl(
 	Device& device,
 	CommandList& cmdlist,
-	// params all saved
 	// input
 	BufferView<float> dL_dpix,
+	// params
+	BufferView<float> covs_2d,
+	BufferView<float> opacity_features,
+	BufferView<float> color_features,
 	// output
 	BufferView<float> dL_d_means_2d,
 	BufferView<float> dL_d_covs_2d,
@@ -29,8 +32,8 @@ void DiffGaussianTileSampler::backward_impl(
 				   img_state->ranges,
 				   tile_state->point_list,
 				   geom_state->means_2d_res,
-				   geom_state->opacity_features,
-				   geom_state->color_features,
+				   opacity_features,
+				   color_features,
 				   geom_state->conic,
 				   img_state->n_contrib,
 				   img_state->accum_alpha,
@@ -45,7 +48,7 @@ void DiffGaussianTileSampler::backward_impl(
 				   m_num_gaussians,
 				   geom_state->dL_d_conic,
 				   m_resolution,
-				   geom_state->conic,
+				   covs_2d,
 				   dL_d_covs_2d)
 				   .dispatch(m_num_gaussians);
 }

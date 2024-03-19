@@ -38,3 +38,13 @@ def qvec2R(qvec, device="cuda", qtype='rxyz'):
     R[:, 2, 2] = 1 - 2 * (x*x + y*y)
 
     return R
+
+def T2Sigma(s1,s2,theta):
+    c = torch.cos(theta)
+    s = torch.sin(theta)
+    c00 =  c * c * s1 * s1 + s * s * s2 * s2
+    c01 =  (s1 * s1 - s2 * s2) * c * s
+    c11 =  c * c * s2 * s2 + s * s * s1 * s1
+    # -> N x 3
+    return torch.stack([c00, c01, c11], dim=1)
+

@@ -6,7 +6,7 @@ from module.data.point_cloud import BasicPointCloud
 import os 
 
 from module.utils.torch.math import inverse_sigmoid, strip_symmetric
-from module.utils.torch.transform import qvec2R
+from module.utils.torch.transform import qvec2R, T2Sigma
 from module.utils.torch.sh import RGB2SH
 from module.utils.np.func import discrete_exp_func
 from module.utils.core.system import mkdir_p

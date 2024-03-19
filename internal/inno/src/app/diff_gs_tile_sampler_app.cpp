@@ -61,8 +61,15 @@ void DiffGSTileSamplerApp::forward(
 void DiffGSTileSamplerApp::backward(
 	// input
 	int64_t dL_dpix,
+	// params
+	int64_t covs_2d,
+	int64_t opacity_features,
+	int64_t color_features,
 	// output
-	int64_t dL_d_means_2d, int64_t dL_d_covs_2d, int64_t dL_d_opacity_features, int64_t dL_d_color_features) {
+	int64_t dL_d_means_2d,
+	int64_t dL_d_covs_2d,
+	int64_t dL_d_opacity_features,
+	int64_t dL_d_color_features) {
 	// LUISA_INFO("DiffGSTileSamplerApp::backward with {}, {}, {}", m_num_gaussians, m_height, m_width);
 	// input
 	Buffer<float> dL_dpix_buf = mp_device->import_external_buffer<float>((void*)dL_dpix, m_height * m_width * 3);
@@ -72,10 +79,21 @@ void DiffGSTileSamplerApp::backward(
 	Buffer<float> dL_d_opacity_features_buf = mp_device->import_external_buffer<float>((void*)dL_d_opacity_features, m_num_gaussians * 1);
 	Buffer<float> dL_d_color_features_buf = mp_device->import_external_buffer<float>((void*)dL_d_color_features, m_num_gaussians * 3);
 
+	// params
+	Buffer<float> covs_2d_buf = mp_device->import_external_buffer<float>((void*)covs_2d, m_num_gaussians * 3);
+	Buffer<float> opacity_features_buf = mp_device->import_external_buffer<float>((void*)opacity_features, m_num_gaussians * 1);
+	Buffer<float> color_features_buf = mp_device->import_external_buffer<float>((void*)color_features, m_num_gaussians * 3);
+
 	CommandList cmdlist;
 	mp_sampler->backward_impl(
 		*mp_device, cmdlist,
+		// input
 		dL_dpix_buf,
+		// params
+		covs_2d_buf,
+		opacity_features_buf,
+		color_features_buf,
+		// output
 		dL_d_means_2d_buf,
 		dL_d_covs_2d_buf,
 		dL_d_opacity_features_buf,
