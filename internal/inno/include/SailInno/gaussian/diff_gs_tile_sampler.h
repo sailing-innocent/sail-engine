@@ -29,6 +29,7 @@ public:
 		BufferView<float> means_2d,
 		BufferView<float> covs_2d,
 		BufferView<float> depth_features,
+		BufferView<float> opacity_features,
 		BufferView<float> color_features,
 		// output
 		BufferView<float> target_img_buffer);
@@ -42,16 +43,18 @@ public:
 		// output
 		BufferView<float> dL_d_means_2d,
 		BufferView<float> dL_d_covs_2d,
+		BufferView<float> dL_d_opacity_features,
 		BufferView<float> dL_d_color_features);
 
 	// component
 	struct GeometryState {
 		size_t scan_temp_storage_size;
 		Buffer<int> scan_temp_storage;
-		Buffer<float> means_2d_res;	 // 2 * P means 2d in resolution
-		Buffer<int> radii;			 // P
-		Buffer<float> color_features;// 4 * P
-		Buffer<float> conic;		 // 3 * P
+		Buffer<float> means_2d_res;	   // 2 * P means 2d in resolution
+		Buffer<int> radii;			   // P
+		Buffer<float> opacity_features;// P
+		Buffer<float> color_features;  // 3 * P
+		Buffer<float> conic;		   // 3 * P
 		// saved for backward
 		Buffer<uint> tiles_touched;// P
 		Buffer<uint> point_offsets;// P
@@ -160,7 +163,8 @@ protected:
 			 Buffer<uint>, // ranges
 			 Buffer<uint>, // point_list
 			 Buffer<float>,// means_2d
-			 Buffer<float>,// features, P * 4
+			 Buffer<float>,// opacity_features, P
+			 Buffer<float>,// color features, P * 3
 			 Buffer<float>,// conic
 			 // save for backward
 			 Buffer<uint>,// last_contributors
@@ -176,13 +180,15 @@ protected:
 			 Buffer<uint>, // ranges
 			 Buffer<uint>, // point_list
 			 Buffer<float>,// means_2d_res
-			 Buffer<float>,// features
+			 Buffer<float>,// opacity_features
+			 Buffer<float>,// color_features
 			 Buffer<float>,// conic
 			 Buffer<uint>, // last_contributors
 			 Buffer<float>,// final_Ts
 			 // output
 			 Buffer<float>,// dL_d_means2d
 			 Buffer<float>,// dL_d_conic
+			 Buffer<float>,// dL_d_opacity_features
 			 Buffer<float> // dL_d_color_feature
 			 >>
 		m_backward_render_shader;

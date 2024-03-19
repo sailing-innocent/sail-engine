@@ -92,29 +92,27 @@ void DiffGaussianTileSampler::compile_tile_split_shader(Device& device) noexcept
 			conics.read(3 * idx + 0),
 			conics.read(3 * idx + 1),
 			conics.read(3 * idx + 2));
-
-		// Float det_inv = (conic.x * conic.z - conic.y * conic.y) * resolution.x * resolution.y * resolution.x * resolution.y * 0.25f * 0.25f;
-
 		Float det_inv = conic.x * conic.z - conic.y * conic.y;
 		Float det_inv_2 = det_inv * det_inv;
-		Float3 cov_2d = det_inv * make_float3(
-									  conic.z,
-									  -conic.y,
-									  conic.x);
-		Float a = cov_2d.x * resolution.x * resolution.x * 0.25f;
-		Float b = cov_2d.y * resolution.x * resolution.x * 0.25f;
-		Float c = cov_2d.z * resolution.x * resolution.x * 0.25f;
-
+		Float det = 1.0f / (det_inv + 1e-6f);
+		Float3 cov_2d = det * make_float3(conic.z, -conic.y, conic.x);
+		Float a = cov_2d.x;
+		Float b = cov_2d.y;
+		Float c = cov_2d.z;
 		Float3 dL_d_con = make_float3(dL_d_conic.read(idx * 3 + 0), dL_d_conic.read(idx * 3 + 1), dL_d_conic.read(idx * 3 + 2));
 		Float3 dL_d_cov2d;
-		dL_d_cov2d.x = det_inv_2 * (-c * c * dL_d_con.x + 2 * b * c * dL_d_con.y - b * b * dL_d_con.z);
-		dL_d_cov2d.z = det_inv_2 * (-a * a * dL_d_con.z + 2 * a * b * dL_d_con.y - b * b * dL_d_con.x);
-		dL_d_cov2d.y = det_inv_2 * 2 * (b * c * dL_d_con.x - (a * c + b * b) * dL_d_con.y + a * b * dL_d_con.z);
 
+		// dc_a/da=-c*c
+		// dc_b/da= - c * b
+		// dc_c/da= - b
+
+		dL_d_cov2d.x = det_inv_2 * (-c * c * dL_d_con.x + b * c * dL_d_con.y - b * dL_d_con.z);
+		dL_d_cov2d.z = det_inv_2 * (-a * a * dL_d_con.z + a * b * dL_d_con.y - b * dL_d_con.x);
+		dL_d_cov2d.y = det_inv_2 * 2 * (b * c * dL_d_con.x - (a * c + b * b) * dL_d_con.y + a * b * dL_d_con.z);
 		// dL_d_cov2d = dL_d_con;
-		dL_d_cov_2d.write(3 * idx + 0, dL_d_cov2d.x);
-		dL_d_cov_2d.write(3 * idx + 1, dL_d_cov2d.y);
-		dL_d_cov_2d.write(3 * idx + 2, dL_d_cov2d.z);
+		dL_d_cov_2d.write(3 * idx + 0, dL_d_cov2d.x * resolution.x * resolution.x * 0.25f);
+		dL_d_cov_2d.write(3 * idx + 1, dL_d_cov2d.y * resolution.x * resolution.y * 0.25f);
+		dL_d_cov_2d.write(3 * idx + 2, dL_d_cov2d.z * resolution.y * resolution.y * 0.25f);
 	});
 }
 

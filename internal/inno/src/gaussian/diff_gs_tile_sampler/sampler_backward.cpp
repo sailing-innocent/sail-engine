@@ -17,6 +17,7 @@ void DiffGaussianTileSampler::backward_impl(
 	// output
 	BufferView<float> dL_d_means_2d,
 	BufferView<float> dL_d_covs_2d,
+	BufferView<float> dL_d_opacity_features,
 	BufferView<float> dL_d_color_features) {
 
 	cmdlist << (*m_backward_render_shader)(
@@ -28,6 +29,7 @@ void DiffGaussianTileSampler::backward_impl(
 				   img_state->ranges,
 				   tile_state->point_list,
 				   geom_state->means_2d_res,
+				   geom_state->opacity_features,
 				   geom_state->color_features,
 				   geom_state->conic,
 				   img_state->n_contrib,
@@ -35,6 +37,7 @@ void DiffGaussianTileSampler::backward_impl(
 				   // output
 				   dL_d_means_2d,
 				   geom_state->dL_d_conic,
+				   dL_d_opacity_features,
 				   dL_d_color_features)
 				   .dispatch(m_resolution);
 

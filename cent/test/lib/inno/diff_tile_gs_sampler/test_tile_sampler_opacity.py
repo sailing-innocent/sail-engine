@@ -4,7 +4,7 @@ from lib.inno.diff_gs_tile_sampler import DiffGSTileSampler
 import torch 
 import matplotlib.pyplot as plt
 
-@pytest.mark.current
+@pytest.mark.app
 def test_tile_sampler_opacity():
     sampler = DiffGSTileSampler()
     N = 1

@@ -24,10 +24,11 @@ void DiffGaussianTileSampler::forward_impl(
 	int num_gaussians,
 	int height, int width,
 	// input
-	BufferView<float> means_2d,
-	BufferView<float> covs_2d,
-	BufferView<float> depth_features,
-	BufferView<float> color_features,
+	BufferView<float> means_2d,		   // P * 2
+	BufferView<float> covs_2d,		   // P * 3
+	BufferView<float> depth_features,  // P * 1
+	BufferView<float> opacity_features,// P * 1
+	BufferView<float> color_features,  // P * 3
 	// output
 	BufferView<float> target_img_buffer) {
 	m_grids = luisa::make_uint2(
@@ -61,6 +62,8 @@ void DiffGaussianTileSampler::forward_impl(
 
 	// copy color_features
 	cmdlist << geom_state->color_features.copy_from(color_features);
+	// copy opacity features
+	cmdlist << geom_state->opacity_features.copy_from(opacity_features);
 
 	cmdlist << luisa::compute::cuda::lcub::DeviceScan::InclusiveSum(
 		geom_state->scan_temp_storage,
@@ -110,8 +113,9 @@ void DiffGaussianTileSampler::forward_impl(
 				   img_state->ranges,
 				   tile_state->point_list,
 				   geom_state->means_2d_res,
-				   geom_state->color_features,
 				   geom_state->conic,
+				   geom_state->opacity_features,
+				   geom_state->color_features,
 				   // save for backward
 				   img_state->n_contrib,
 				   img_state->accum_alpha)
