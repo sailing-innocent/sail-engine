@@ -46,6 +46,9 @@ void DiffGaussianTileSampler::forward_impl(
 		m_resolution = luisa::make_uint2(width, height);
 	}
 	CommandList cmdlist;
+	// clear geom state
+	geom_state->clear(device, cmdlist, *mp_buffer_filler);
+
 	cmdlist << (*m_forward_tile_split_shader)(
 				   num_gaussians,
 				   m_resolution,
