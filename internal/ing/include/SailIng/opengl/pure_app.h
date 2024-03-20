@@ -22,7 +22,7 @@ public:
 									   m_resw(_resw),
 									   m_resh(_resh) {
 	}
-	~INGGLPureApp();
+	virtual ~INGGLPureApp();
 	void init() override;
 	bool tick(int count = 0) override;
 	void terminate() override {}

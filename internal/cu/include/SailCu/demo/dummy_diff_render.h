@@ -6,8 +6,7 @@
  * @author sailing-innocent
 */
 #include <cstdint>
-#include "SailBase/config.h"
-
+#include "SailCu/config.h"
 namespace sail::cu {
 
 class SAIL_CU_API DummyDiffRender {
