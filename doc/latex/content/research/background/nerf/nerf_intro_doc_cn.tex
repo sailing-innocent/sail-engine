@@ -1,0 +1,28 @@
+\paragraph{神经辐射场} 
+
+通过将“体渲染器”(Volumetric Renderer)中估计体光照和密度的计算过程替换为多层感知器（Multi-Layer Perceptron, MLP），“神经辐射场”(Neural Radiance Field，NeRF)\cite{mildenhallNeRFRepresentingScenes2020} 及其改进成为了新视角生成问题近三年效果最好(SOTA)的解决方案，目前已经成为该问题的主流方法。已经有上百篇成果发表在计算机视觉领域CVPR，ICCV/ECCV, 图形学领域SIGGRAPH等CCF-A类会议以及TPAMI, TOG等CCF-A类期刊上，是相关学术领域最活跃的领域之一。
+
+原始的NeRF方法虽然在预测高分辨率图形啊的精确度上成功超过了传统方法，但是仍然存在许多弊端，比如训练时间和推理时间过长；只能针对单独场景进行训练，无法泛化到其他场景；只能针对静态场景而无法支持动态场景；需要高精度的相机位姿；因为使用了隐式空间表示方法从而无法方便地进行编辑；有模糊和残影现象；代价昂贵导致落地困难等。
+
+\paragraph{更高的渲染质量}
+
+NeRF的原始团队在提出神经辐射场之后一直致力于进一步提高渲染精度和效果，MipNeRF\cite{barronMipNeRFMultiscaleRepresentation2021} 通过mipmap技术降低了模糊并支持超高精度（8k分辨率）的图片，MipNeRF360\cite{barronMipNeRF360Unbounded2022}降低模糊并支持 360 度全景，ZipNeRF\cite{barronZipNeRFAntiAliasedGridBased2023}进一步引入了哈希编码特征来。NeRFLix\cite{zhouNeRFLiXHighQualityNeural2023} 则将效果优化到高清视频。但是更高的渲染质量往往也意味着更大的计算量与更长的训练时间。
+
+\paragraph{更高的效率}
+
+原版 NeRF 的训练时间长达 2 天，即使是在最新的NVIDIA 4090 机器上也需要 3-5 个小时，因此针对时间和效率进行优化是一直以来的核心问题。绝大部分的加速措施都需要修改原本的网络，将其中神经网络的部分尽可能地减少甚至消除，比如PointNeRF\cite{xuPointNeRFPointbasedNeurala} 将 NeRF 变换为特征点云，DiVoxGrid\cite{sunDirectVoxelGrid2022}使用体素混合 MLP，Plenoxels\cite{yuPlenoxelsRadianceFields2021} 则完全使用稀疏体素而放弃 MLP ，获得了大量的训练与推理速度提升。Instant NGP \cite{mullerInstantNeuralGraphics2022} 使用多精度空间哈希编码将大网络转化为小网络，从而将渲染速度优化到了实时。MeRF\cite{reiserMERFMemoryEfficientRadiance2023} 则着重于如何减少NeRF的内存占用。
+
+\paragraph{特殊场景}
+
+包括动态场景，镜头模糊，暗光场景，大场景等特殊的需求。比如NeRF in the wild\cite{martin-bruallaNeRFWildNeural2021} 实现了不受限制的室外场景重建，Deblur NeRF \cite{leeDPNeRFDeblurredNeural2023} 专注于消除因为运动引起的镜头模糊。Large Urban Scene \cite{xuGridguidedNeuralRadiance2023} 利用grid先验将拓展了大规模城市场景重。D-NeRF \cite{pumarolaDNeRFNeuralRadiance2021} 基于基准场景和变换实现了动态场景建模，k-planes\cite{KPlanesExplicitRadiance2023} 则使用正交投影来支持高清的4D 动态场景
+
+\paragraph{编辑与泛化}
+
+编辑能力指的是有能力对于三维表示的形状，颜色，材质等由人类进行进一步的编辑和调整。对于编辑的支持往往需要转变为另一个可编辑的对象，比如网络，四面体，特征点云等。比如对于NeRF训练的结果生成可编辑的网格，或者四面体网格\cite{kulhanekTetraNeRFRepresentingNeural2023}
+泛化分为两个方面，一方面在单独场景中希望可以用更少的约束（稀疏的视角-图片对，有噪声的位姿，甚至无位姿），比如Nope NeRF \cite{bianNoPeNeRFOptimisingNeural2023} 让训练不需要相机的位姿，一方面希望对于单独场景的训练可以拓展到其他场景。这一方面的研究比较少，Semantic Ray \cite{liuSemanticRayLearning2023} 基于提取图片语义信息并对前后景速度进行估计和积分，一定程度上研究了这方面的问题。
+
+\paragraph{拓展和应用}
+
+拓展和应用主要是将 NeRF 作为一个组件合并到更大的系统中，主要是从文字到 3D 模型的大生成模型中，用 NeRF 可以很好地填平当前生成模型只能生成 2D 图像，对于 3D 图形能力薄弱的特点。比如CLIP NeRF \cite{wangCLIPNeRFTextandImageDriven2022} 结合CLIP的多模态能力，尝试了使用文本到场景的转换。
+GIRAFFE \cite{niemeyerGIRAFFERepresentingScenes2021} 使用 NeRF 作为 GAN 的后处理生成场景，GIRAFFE HD \cite{xueGIRAFFEHDHighResolution2022} 则尝试生成分辨率更高的模型，Lift3D \cite{liLift3DSynthesize3D2023} 则使用 3D GAN 进行后续生成。最近使用Diffusion Model相关进行拓展的应用增加，比如Dream Fusion \cite{pooleDreamFusionTextto3DUsing2022} 将 Diffusion Model 和 NeRF 结合，利用 SDS loss 实现文本控制 3D 模型生成。
+

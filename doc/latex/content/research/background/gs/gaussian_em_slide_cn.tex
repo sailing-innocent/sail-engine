@@ -1,0 +1,66 @@
+\begin{frame}
+    \frametitle{Gaussian Splatting 算法总览}
+    \begin{columns}[c]
+        \begin{column}{0.3\textwidth}
+            \begin{figure}
+                \includegraphics[width=\textwidth]{fig_demo_guassian_3d_gaussian.png}
+                \caption{3D Gaussian Scene}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.3\textwidth}
+            \begin{figure}
+                \includegraphics[width=\textwidth]{fig_demo_gaussian_mixture_gaussian.png}
+                \caption{2D Gaussian Instance}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.3\textwidth}
+            \begin{figure}
+                \includegraphics[width=\textwidth]{fig_demo_res_img_gaussian.png}
+                \caption{Blended Image}
+            \end{figure}
+        \end{column}
+    \end{columns}
+    \begin{itemize}
+        \item 从3D高斯场景描述转为相机平面上的2D高斯分布，本质是一个投影变换$y=Mx$
+        \item 从2D高斯分布分块光栅叠合成图片过程的本质是一个加权平均$pix=\sum\limits_{i=1}\limits^{N} \alpha_i w_in_i$
+    \end{itemize}   
+\end{frame}
+
+\begin{frame}
+    \frametitle{Gaussian Mixture模型}
+    \begin{figure}[H]
+        \includegraphics[width=\textwidth]{fig_demo_gaussian_mixture_gaussian.png}
+        \caption{2D Gaussian Mixture}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{EM算法类}
+    \begin{figure}[H]
+        \includegraphics[width=\textwidth]{fig_demo_em_algorithm.png}
+        \caption{EM算法示例}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Gaussian Splatting = EM + Optim}
+    正向：渲染过程
+    \begin{itemize}
+        \item 从3D高斯场景描述转为相机平面上的2D高斯分布，本质是一个投影变换$y=Mx$
+        \item 从2D高斯分布分块光栅叠合成图片过程的本质是一个加权平均$pix=\sum\limits_{i=1}\limits^{N} \alpha_i w_in_i$
+    \end{itemize}  
+    逆向：估计过程
+    \begin{itemize}
+        \item 加权平均$pix=\sum\limits_{i=1}\limits^{N} \alpha_i w_in_i$的反向：从目标像素样本估计2D高斯混合模型分布（EM）
+        \item $y=Mx$的反向：从某个未知3D高斯的若干2D投影样本估计原本的3D高斯分布，本质是给定若干$M_1,M_2,\dots,M_k$和$y_1,y_2,\dots,y_k$，可以数学化为求解优化问题$\arg\min_X \sum\limits_{i=1}\limits^{k} (M_iX-y_i)^2$（最小二乘法）
+    \end{itemize}   
+\end{frame}
+
+\begin{frame}
+    \frametitle{可能的优化方向和问题}
+    \begin{itemize}
+        \item 优化步骤每个局部都是一个类似最小二乘的问题，是存在解析解的，这样就可以跳过大量的梯度优化步骤
+        \item 如果能够借此完成稀疏视角的重建或者加快训练收敛速度，则肯定是一个非常有意义的工作
+        \item 但是同时也可能带来收敛不稳定和OOM的问题，需要进一步测试和分析。
+    \end{itemize}
+\end{frame}
