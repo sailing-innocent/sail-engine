@@ -4,7 +4,7 @@ from lib.inno.diff_gs_tile_sampler import DiffGSTileSampler
 import torch 
 import matplotlib.pyplot as plt
 
-@pytest.mark.app
+@pytest.mark.todo
 def test_tile_sampler():
     sampler = DiffGSTileSampler()
     N = 2

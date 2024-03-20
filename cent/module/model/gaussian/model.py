@@ -34,6 +34,15 @@ class Gaussians2D:
             gs.color_features[i * N_per_layers: (i + 1) * N_per_layers, 1] = 1 - i / N_layers
         return gs
 
+    def subview(self, from_idx, to_idx):
+        gs = Gaussians2D(to_idx - from_idx)
+        gs.means_2d = self.means_2d[from_idx:to_idx]
+        gs.covs_2d = self.covs_2d[from_idx:to_idx]
+        gs.depth_features = self.depth_features[from_idx:to_idx]
+        gs.color_features = self.color_features[from_idx:to_idx]
+        gs.opacity_features = self.opacity_features[from_idx:to_idx]
+        return gs
+
 class Gaussians3D:
     def __init__(self, N):
         self.N = N

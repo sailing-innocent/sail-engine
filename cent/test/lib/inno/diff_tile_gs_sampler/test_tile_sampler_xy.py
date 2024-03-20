@@ -3,8 +3,7 @@ import pytest
 from lib.inno.diff_gs_tile_sampler import DiffGSTileSampler
 import torch 
 import matplotlib.pyplot as plt
-
-from module.utils.torch.transform import T2Sigma
+import os
 
 @pytest.mark.app
 def test_tile_sampler_xy():
@@ -12,6 +11,8 @@ def test_tile_sampler_xy():
     N = 1
     height = 512
     width = 512
+    save_dir = "D:/workspace/data/result/tile_gs_sampler_xy"
+    # os.mkdir(save_dir)
 
     means_2d = torch.zeros((N, 2), dtype=torch.float32).cuda()
     # means_2d.requires_grad = True 
@@ -44,6 +45,7 @@ def test_tile_sampler_xy():
         opacity_features, color_features, 
         height, width)
     target_img_np = target_img.detach().cpu().detach().numpy().transpose(1, 2, 0).clip(0, 1)[::-1, :, :]
+    plt.imsave(f'{save_dir}/target.png', target_img_np)
     target_img.requires_grad = False
 
     # change xy
@@ -94,6 +96,8 @@ def test_tile_sampler_xy():
                 plt.subplot(1, 2, 2)
                 plt.imshow(result_img_np)
                 plt.show()
+                plt.imsave(f'{save_dir}/result_{i}.png', result_img_np)
+
             optim.step()
             optim.zero_grad(set_to_none=True)
 

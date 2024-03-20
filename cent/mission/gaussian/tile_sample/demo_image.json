@@ -1,0 +1,20 @@
+{
+    "name": "demo_image",
+    "train_params": {
+        "lr": "1e-3",
+        "cov_lr": "1e-3",
+        "iters": [
+            100,
+            200,
+            300,
+            400
+        ]
+    },
+    "results": [
+        {
+            "type": "images",
+            "name": "fig_pack_demo_tile_gs_sample_optim",
+            "item": "fig_demo_tile_gs_sample_optim_{iter}"
+        }
+    ]
+}

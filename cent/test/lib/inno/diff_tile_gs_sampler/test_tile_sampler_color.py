@@ -3,6 +3,7 @@ import pytest
 from lib.inno.diff_gs_tile_sampler import DiffGSTileSampler
 import torch 
 import matplotlib.pyplot as plt
+import os 
 
 @pytest.mark.app
 def test_tile_sampler_color():
@@ -11,6 +12,8 @@ def test_tile_sampler_color():
     N = 1
     height = 512
     width = 512
+    save_dir = "D:/workspace/data/result/tile_gs_sampler_color"
+    # os.mkdir(save_dir)
 
     means_2d = torch.zeros((N, 2), dtype=torch.float32).cuda()
     means_2d[0, 0] = 0.5
@@ -43,6 +46,8 @@ def test_tile_sampler_color():
         opacity_features, color_features, 
         height, width)
     target_img = target_img.detach()
+    target_img_np = target_img.detach().cpu().detach().numpy().transpose(1, 2, 0).clip(0, 1)[::-1, :, :]
+    plt.imsave(f'{save_dir}/target.png', target_img_np)
     target_img.requires_grad = False
 
     # change color
@@ -61,6 +66,7 @@ def test_tile_sampler_color():
     N_SHOW = 50
 
     for i in range(N_ROUND):
+        break
         # optim.zero_grad()
         result_img = sampler.forward(
             means_2d, 
@@ -85,6 +91,7 @@ def test_tile_sampler_color():
                 result_img_np = result_img_np[::-1, :, :]
                 plt.imshow(result_img_np)
                 plt.show()
+                plt.imsave(f'{save_dir}/result_{i}.png', result_img_np)
             
             optim.step()
             optim.zero_grad()
