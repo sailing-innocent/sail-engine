@@ -6,6 +6,7 @@
 */
 
 #include "SailCu/demo/dummy_diff_render.h"
+#include <iostream>
 
 namespace sail::cu {
 
@@ -41,13 +42,19 @@ void DummyDiffRender::forward(float* d_source_pix, int h, int w, float* d_target
 }
 
 void DummyDiffRender::forward_py(int64_t d_source_pix, int h, int w, int64_t d_target_pix) noexcept {
+	m_w = w;
+	m_h = h;
 	forward(reinterpret_cast<float*>(d_source_pix), h, w, reinterpret_cast<float*>(d_target_pix));
 }
 
 void DummyDiffRender::backward(float* d_dL_d_target_pix, float* d_dL_d_source_pix) noexcept {
+	dim3 block(32, 32);
+	dim3 grid((m_w + block.x - 1) / block.x, (m_h + block.y - 1) / block.y);
+	backward_kernel<<<grid, block>>>(m_w, m_h, d_dL_d_target_pix, d_dL_d_source_pix);
 }
 
 void DummyDiffRender::backward_py(int64_t d_dL_d_target_pix, int64_t d_dL_d_source_pix) noexcept {
+	// std::cout << "backward" << std::endl;
 	backward(reinterpret_cast<float*>(d_dL_d_target_pix), reinterpret_cast<float*>(d_dL_d_source_pix));
 }
 

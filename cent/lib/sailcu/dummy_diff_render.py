@@ -10,15 +10,18 @@ class _DummyDiffRender(torch.autograd.Function):
                     height, width, 
                     result_img.contiguous().data_ptr())
         ctx.app = app
+        ctx.height = height
+        ctx.width = width
         
         return result_img
     
     @staticmethod
     def backward(ctx, dL_dtpix):
         app = ctx.app
-        dL_dsource_img = torch.zeros_like(dL_dtpix).clone()
+        dL_dsource_img = torch.zeros((3, ctx.height, ctx.width), dtype=torch.float32).cuda()
         app.backward(dL_dtpix.contiguous().data_ptr(),
                      dL_dsource_img.contiguous().data_ptr())
+        # print(dL_dsource_img)
         return dL_dsource_img, None, None, None 
 
 class DummyDiffRender(nn.Module):
