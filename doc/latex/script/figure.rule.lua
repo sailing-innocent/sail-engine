@@ -35,6 +35,13 @@ rule("latex.ppm_image")
     end)
 rule_end()
 
+function add_ppm(name)
+    target(name)
+        add_rules("latex.ppm_image")
+        add_files( name .. ".ppm")
+    target_end()
+end
+
 rule("latex.python_figure")
     set_extensions(".py")
     add_deps("latex.indirect_content")

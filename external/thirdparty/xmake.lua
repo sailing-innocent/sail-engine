@@ -5,3 +5,4 @@ if get_config("enable_gl") then
 end 
 
 includes("stb_util")
+includes("pybind11")

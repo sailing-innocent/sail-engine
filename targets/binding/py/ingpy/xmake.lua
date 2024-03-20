@@ -1,6 +1,7 @@
-target("innopy")
+target("ingpy")
     set_languages("cxx20")
-    add_deps("SailInno") -- with its own pybind11
+    add_deps("SailIng")
+    add_deps("external_pybind11")
     add_files("**.cpp")
     add_rules("pybind")
 target_end()

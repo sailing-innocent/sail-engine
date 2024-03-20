@@ -14,5 +14,4 @@ includes("figure")
 includes("table")
 includes("content")
 includes("note")
-
 includes("archive")

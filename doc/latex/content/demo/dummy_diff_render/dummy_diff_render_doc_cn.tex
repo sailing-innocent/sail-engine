@@ -1,0 +1,44 @@
+用ing框架构建了一个最基础的可微渲染器，并将其bind到pytorch框架中使用
+
+实现于2023年12月17日初始化如下
+
+\begin{figure}[H]
+    \centering
+        \begin{subfigure}{0.3\linewidth}
+            \includegraphics[width=\textwidth]{fig_result_ddr_target_dummy_diff_raster}
+            \caption{Target}
+        \end{subfigure}
+        \begin{subfigure}{0.3\linewidth}
+            \includegraphics[width=\textwidth]{fig_result_ddr_source_0_dummy_diff_raster}
+            \caption{Initial Source}
+        \end{subfigure}
+        \begin{subfigure}{0.3\linewidth}
+            \includegraphics[width=\textwidth]{fig_result_ddr_target_0_dummy_diff_raster}
+            \caption{Initial Target}
+        \end{subfigure}
+\end{figure}
+
+进行迭代后的最终效果
+
+\begin{figure}[H]
+    \centering
+        \begin{subfigure}{0.3\linewidth}
+            \includegraphics[width=\textwidth]{fig_result_ddr_target_dummy_diff_raster}
+            \caption{Target}
+        \end{subfigure}
+        \begin{subfigure}{0.3\linewidth}
+            \includegraphics[width=\textwidth]{fig_result_ddr_source_final_dummy_diff_raster}
+            \caption{Final Source}
+        \end{subfigure}
+        \begin{subfigure}{0.3\linewidth}
+            \includegraphics[width=\textwidth]{fig_result_ddr_target_final_dummy_diff_raster}
+            \caption{Final Target}
+        \end{subfigure}
+\end{figure}
+
+全过程loss下降曲线
+
+\begin{figure}[H]
+    \input{pgf_ing_dummy_diff_raster}
+    \caption{Loss Function}
+\end{figure}

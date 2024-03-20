@@ -35,3 +35,11 @@ rule("latex.json_table")
         progress.show(opt.progress, "building json2tex %s to %s", sourcefile, ofile)
     end)
 rule_end()
+
+
+function add_json_table(name) 
+    target(name)
+        add_rules("latex.json_table")
+        add_files(name .. ".json")
+    target_end()
+end 

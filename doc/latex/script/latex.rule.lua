@@ -124,7 +124,7 @@ rule("latex")
                     end
 
                     if (dep_target:rule("latex.indirect_content")) then 
-                        print("indirect content")
+                        -- print("indirect content")
                         local targetfile = path.absolute(dep_target:values("targetfile"))
                         table.insert(subcontent[group_name], targetfile)
                     end
@@ -225,10 +225,3 @@ function add_latex(name, deps, main, compiler)
         add_deps(deps, { order = true})
     target_end()
 end
-
-function add_json_table(name) 
-    target(name)
-        add_rules("latex.json_table")
-        add_files(name .. ".json")
-    target_end()
-end 
