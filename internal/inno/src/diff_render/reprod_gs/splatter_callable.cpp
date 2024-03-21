@@ -115,9 +115,10 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 			BufferVar<float> dL_d_color_feature,
 			BufferVar<float> dL_d_feat) {
 		Int sh_idx_start = idx * (max_deg + 1) * (max_deg + 1) * 3;
-		Float3 sh_00 = make_float3(shs.read(sh_idx_start + 0), shs.read(sh_idx_start + 1), shs.read(sh_idx_start + 2));
-		Float3 dL_d_sh00 = make_float3(0.0f);
-
+		Float3 sh_00 = make_float3(
+			shs.read(sh_idx_start + 0),
+			shs.read(sh_idx_start + 1),
+			shs.read(sh_idx_start + 2));
 		Float3 result = sh_00;
 		// input
 		Float3 dL_d_color = make_float3(
@@ -127,9 +128,9 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 
 		// output
 		$if(deg == -1) {
-			dL_d_feat.write(3 * idx + 0, dL_d_color[0]);
-			dL_d_feat.write(3 * idx + 1, dL_d_color[1]);
-			dL_d_feat.write(3 * idx + 2, dL_d_color[2]);
+			dL_d_feat.write(sh_idx_start + 0, dL_d_color[0]);
+			dL_d_feat.write(sh_idx_start + 1, dL_d_color[1]);
+			dL_d_feat.write(sh_idx_start + 2, dL_d_color[2]);
 			// dL_d_feat.write(3 * idx + 0, 1.0f);
 			// dL_d_feat.write(3 * idx + 1, 1.0f);
 			// dL_d_feat.write(3 * idx + 2, 1.0f);
@@ -138,10 +139,11 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 		// USE SH
 		$if(deg > -1) {
 			result = util::compute_color_from_sh_level_0(sh_00);
+			Float3 dL_d_sh00 = make_float3(0.0f);
 			util::compute_color_from_sh_level_0_backward(dL_d_color, dL_d_sh00);
-			dL_d_feat.write(3 * idx + 0, dL_d_sh00[0]);
-			dL_d_feat.write(3 * idx + 1, dL_d_sh00[1]);
-			dL_d_feat.write(3 * idx + 2, dL_d_sh00[2]);
+			dL_d_feat.write(sh_idx_start + 0, dL_d_sh00[0]);
+			dL_d_feat.write(sh_idx_start + 1, dL_d_sh00[1]);
+			dL_d_feat.write(sh_idx_start + 2, dL_d_sh00[2]);
 
 			$if(deg > 0) {
 				Float3 pos = make_float3(means.read(idx * 3 + 0), means.read(idx * 3 + 1), means.read(idx * 3 + 2));
@@ -159,19 +161,17 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 				result = result + util::compute_color_from_sh_level_1(dir, sh_10, sh_11, sh_12);
 				util::compute_color_from_sh_level_1_backward(dL_d_color, dir, dL_d_sh10, dL_d_sh11, dL_d_sh12, dL_d_dir);
 
-				dL_d_feat.write(3 * idx + 3, dL_d_sh10[0]);
-				dL_d_feat.write(3 * idx + 4, dL_d_sh10[1]);
-				dL_d_feat.write(3 * idx + 5, dL_d_sh10[2]);
-				dL_d_feat.write(3 * idx + 6, dL_d_sh11[0]);
-				dL_d_feat.write(3 * idx + 7, dL_d_sh11[1]);
-				dL_d_feat.write(3 * idx + 8, dL_d_sh11[2]);
-				dL_d_feat.write(3 * idx + 9, dL_d_sh12[0]);
-				dL_d_feat.write(3 * idx + 10, dL_d_sh12[1]);
-				dL_d_feat.write(3 * idx + 11, dL_d_sh12[2]);
+				dL_d_feat.write(sh_idx_start + 3, dL_d_sh10[0]);
+				dL_d_feat.write(sh_idx_start + 4, dL_d_sh10[1]);
+				dL_d_feat.write(sh_idx_start + 5, dL_d_sh10[2]);
+				dL_d_feat.write(sh_idx_start + 6, dL_d_sh11[0]);
+				dL_d_feat.write(sh_idx_start + 7, dL_d_sh11[1]);
+				dL_d_feat.write(sh_idx_start + 8, dL_d_sh11[2]);
+				dL_d_feat.write(sh_idx_start + 9, dL_d_sh12[0]);
+				dL_d_feat.write(sh_idx_start + 10, dL_d_sh12[1]);
+				dL_d_feat.write(sh_idx_start + 11, dL_d_sh12[2]);
 
 				$if(deg > 1) {
-					// TODO: high SH backward
-
 					auto sh_20 = make_float3(shs.read(sh_idx_start + 12), shs.read(sh_idx_start + 13), shs.read(sh_idx_start + 14));
 					auto sh_21 = make_float3(shs.read(sh_idx_start + 15), shs.read(sh_idx_start + 16), shs.read(sh_idx_start + 17));
 					auto sh_22 = make_float3(shs.read(sh_idx_start + 18), shs.read(sh_idx_start + 19), shs.read(sh_idx_start + 20));
