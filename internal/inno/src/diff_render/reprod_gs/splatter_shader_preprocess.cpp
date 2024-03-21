@@ -70,7 +70,6 @@ void ReprodGS::compile_forward_preprocess_shader(Device& device) noexcept {
 					 // input
 					 BufferVar<float> means_3d,
 					 BufferVar<float> feat_buffer,
-					 BufferVar<float> opacity_buffer,
 					 BufferVar<float> scale_buffer,
 					 BufferVar<float> rotq_buffer,
 					 // params
@@ -116,18 +115,12 @@ void ReprodGS::compile_forward_preprocess_shader(Device& device) noexcept {
 		covs_2d.write(3 * idx + 0, cov_2d.x);
 		covs_2d.write(3 * idx + 1, cov_2d.y);
 		covs_2d.write(3 * idx + 2, cov_2d.z);
-
 		means_2d.write(2 * idx + 0, p_proj.x);
 		means_2d.write(2 * idx + 1, p_proj.y);
-
-		auto opacity = opacity_buffer.read(idx);
-		color_features.write(4 * idx + 0, color.x);
-		color_features.write(4 * idx + 1, color.y);
-		color_features.write(4 * idx + 2, color.z);
-		color_features.write(4 * idx + 3, opacity);
-		Float4 depth_feature = make_float4(0.0f);
-		depth_feature.x = p_view.z;
-		depth_features.write(idx, depth_feature.x);
+		color_features.write(3 * idx + 0, color.x);
+		color_features.write(3 * idx + 1, color.y);
+		color_features.write(3 * idx + 2, color.z);
+		depth_features.write(idx, p_view.z);
 	});
 }
 

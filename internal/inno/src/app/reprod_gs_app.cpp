@@ -83,10 +83,11 @@ void ReprodGSApp::backward(
 	int64_t dL_d_opacity,
 	int64_t dL_d_scale,
 	int64_t dL_d_rotq,
+	int64_t dL_d_means_2d,
 	// params
 	int64_t target_img_buffer,// hwc
 	int64_t xyz_buffer,
-	int64_t feature_buffer,// for color
+	int64_t feature_buffer,// for color backward
 	int64_t opacity_buffer,
 	int64_t scale_buffer,
 	int64_t rotq_buffer) {
@@ -106,8 +107,11 @@ void ReprodGSApp::backward(
 
 	Buffer<float> scale_buf = mp_device->import_external_buffer<float>((void*)scale_buffer, m_P * 3);
 	Buffer<float> dL_d_scale_buf = mp_device->import_external_buffer<float>((void*)dL_d_scale, m_P * 3);
+
 	Buffer<float> rotq_buf = mp_device->import_external_buffer<float>((void*)rotq_buffer, m_P * 4);
 	Buffer<float> dL_d_rotq_buf = mp_device->import_external_buffer<float>((void*)dL_d_rotq, m_P * 4);
+
+	Buffer<float> dL_d_means_2d_buf = mp_device->import_external_buffer<float>((void*)dL_d_means_2d, m_P * 2);
 
 	// LUISA_INFO("ReprodGSApp::backward");
 	mp_render->backward_impl(
@@ -121,6 +125,7 @@ void ReprodGSApp::backward(
 		dL_d_op_buf.view(),
 		dL_d_scale_buf.view(),
 		dL_d_rotq_buf.view(),
+		dL_d_means_2d_buf.view(),
 		// params
 		target_img_buf.view(),// hwc
 		xyz_buf.view(),

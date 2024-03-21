@@ -19,12 +19,15 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 				 [&](
 					 UInt2 resolution,
 					 BufferVar<float> target_img,
+					 // output
 					 UInt2 grids,
 					 BufferVar<uint> ranges,
 					 BufferVar<uint> point_list,
 					 BufferVar<float> means_2d_res,
-					 BufferVar<float> features,// 4 * features
-					 BufferVar<float> conic,
+					 BufferVar<float> conic,		   // 3 * P
+					 BufferVar<float> opacity_features,// P
+					 BufferVar<float> color_features,  // 3 * P
+					 // save for backward
 					 BufferVar<uint> n_contrib,
 					 BufferVar<float> accum_alpha) {
 		set_block_size(m_blocks);
@@ -79,7 +82,7 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 					means_2d_res.read(2 * coll_id + 0),
 					means_2d_res.read(2 * coll_id + 1));
 				collected_means->write(thread_idx, means);
-				Float opacity = features.read(4 * coll_id + 3);
+				Float opacity = opacity_features.read(coll_id);
 
 				Float4 conic_opacity = make_float4(
 					conic.read(3 * coll_id + 0),
@@ -112,9 +115,9 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 				};
 				auto id = collected_ids->read(j);
 				Float3 feat = make_float3(
-					features->read(4 * id + 0),
-					features->read(4 * id + 1),
-					features->read(4 * id + 2));
+					color_features->read(3 * id + 0),
+					color_features->read(3 * id + 1),
+					color_features->read(3 * id + 2));
 				//  feat = make_float3(1.0f, 0.0f, 0.0f);
 				C = C + T * alpha * feat;
 				T = test_T;
@@ -150,11 +153,12 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 					 UInt2 resolution,
 					 UInt2 grids,
 					 BufferVar<float> result_img,
-					 BufferVar<float2> means_2d,
 					 BufferVar<uint> ranges,
 					 BufferVar<uint> point_list,
-					 BufferVar<float4> features,
-					 BufferVar<float4> conic_opacity,
+					 BufferVar<float> means_2d,
+					 BufferVar<float> conic,
+					 BufferVar<float> opacity_features,
+					 BufferVar<float> color_features,
 					 BufferVar<uint> n_contrib,
 					 BufferVar<float> accum_alpha) {
 		set_block_size(m_blocks);
@@ -224,11 +228,19 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 				//  Int coll_id = point_list.read(progress + range_start);
 				Int coll_id = point_list.read(range_end - 1 - progress);
 				collected_ids->write(thread_idx, coll_id);
-				collected_means->write(thread_idx, means_2d.read(coll_id));
-				collected_conic_opacity->write(thread_idx, conic_opacity.read(coll_id));
-				auto color = features.read(coll_id);
+				collected_means->write(thread_idx, make_float2(
+													   means_2d.read(2 * coll_id + 0),
+													   means_2d.read(2 * coll_id + 1)));
+
+				auto opacity = opacity_features.read(coll_id);
+				collected_conic_opacity->write(thread_idx, make_float4(
+															   conic.read(3 * coll_id + 0),
+															   conic.read(3 * coll_id + 1),
+															   conic.read(3 * coll_id + 2), opacity));
+
 				$for(ch, 3) {
-					collected_color->write(3 * thread_idx + ch, color[ch]);
+					auto n = color_features.read(3 * coll_id + ch);
+					collected_color->write(3 * thread_idx + ch, n);
 				};
 			};
 			sync_block();

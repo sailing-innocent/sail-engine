@@ -36,7 +36,8 @@ void ReprodGS::GeometryState::allocate(Device& device, size_t size) {
 	means_2d = device.create_buffer<float>(size * 2);
 	means_2d_res = device.create_buffer<float>(size * 2);
 	depth_features = device.create_buffer<float>(size);
-	color_features = device.create_buffer<float>(4 * size);
+	opacity_features = device.create_buffer<float>(size);
+	color_features = device.create_buffer<float>(3 * size);
 	covs_2d = device.create_buffer<float>(size * 3);
 	conic = device.create_buffer<float>(size * 3);
 

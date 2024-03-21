@@ -26,7 +26,6 @@ void ReprodGS::gaussian_proj_impl(
 	// input
 	BufferView<float> xyz_buffer,
 	BufferView<float> feature_buffer,// for color
-	BufferView<float> opacity_buffer,
 	BufferView<float> scale_buffer,
 	BufferView<float> rotq_buffer,
 	Camera& cam) {
@@ -39,7 +38,6 @@ void ReprodGS::gaussian_proj_impl(
 				   // input
 				   xyz_buffer,
 				   feature_buffer,
-				   opacity_buffer,
 				   scale_buffer,
 				   rotq_buffer,
 				   // params
@@ -91,7 +89,7 @@ void ReprodGS::forward_impl(
 	}
 	if ((m_resolution.x != width) || (m_resolution.y != height)) {
 		// resolution changed, reallocate image buffer
-		img_state->allocate(device, static_cast<size_t>(width * height));
+		img_state->allocate(device, width * height);
 		m_resolution = luisa::make_uint2(width, height);
 	}
 	CommandList cmdlist;
@@ -100,9 +98,10 @@ void ReprodGS::forward_impl(
 		device, cmdlist,
 		num_gaussians, sh_deg, max_sh_deg,
 		scale_modifier,
-		xyz_buffer, feature_buffer, opacity_buffer,
+		xyz_buffer, feature_buffer,
 		scale_buffer, rotq_buffer, cam);
 
+	cmdlist << geom_state->opacity_features.copy_from(opacity_buffer);
 	cmdlist << (*m_forward_tile_split_shader)(
 				   num_gaussians,
 				   m_resolution,
@@ -165,8 +164,9 @@ void ReprodGS::forward_impl(
 				   img_state->ranges,
 				   tile_state->point_list,
 				   geom_state->means_2d_res,
-				   geom_state->color_features,
 				   geom_state->conic,
+				   geom_state->opacity_features,
+				   geom_state->color_features,
 				   // save for backward
 				   img_state->n_contrib,
 				   img_state->accum_alpha)

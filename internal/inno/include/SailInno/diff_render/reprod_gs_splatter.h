@@ -49,7 +49,6 @@ public:
 		float scale_modifier,
 		BufferView<float> xyz_buffer,
 		BufferView<float> feature_buffer,// for color
-		BufferView<float> opacity_buffer,
 		BufferView<float> scale_buffer,
 		BufferView<float> rotq_buffer,
 		Camera& cam);
@@ -65,6 +64,7 @@ public:
 		BufferView<float> dL_d_opacity,
 		BufferView<float> dL_d_scale,
 		BufferView<float> dL_d_rotq,
+		BufferView<float> dL_d_means_2d,// retained for trick
 		// params
 		BufferView<float> target_img_buffer,// hwc
 		BufferView<float> xyz_buffer,
@@ -77,14 +77,15 @@ public:
 	struct GeometryState {
 		size_t scan_temp_storage_size;
 		Buffer<int> scan_temp_storage;
-		Buffer<float> means_2d;		 // 2 * P
-		Buffer<float> means_2d_res;	 // 2 * P means 2d in resolution
-		Buffer<float> depth_features;// P
-		Buffer<float> color_features;// 4 * P
-		Buffer<float> covs_2d;		 // 3 * P
-		Buffer<float> conic;		 // 3 * P
-		Buffer<uint> tiles_touched;	 // P
-		Buffer<uint> point_offsets;	 // P
+		Buffer<float> means_2d;		   // 2 * P
+		Buffer<float> means_2d_res;	   // 2 * P means 2d in resolution
+		Buffer<float> depth_features;  // P
+		Buffer<float> color_features;  // 3 * P
+		Buffer<float> opacity_features;// P
+		Buffer<float> covs_2d;		   // 3 * P
+		Buffer<float> conic;		   // 3 * P
+		Buffer<uint> tiles_touched;	   // P
+		Buffer<uint> point_offsets;	   // P
 		// method
 		void allocate(Device& device, size_t size);
 		void clear(Device& device, CommandList& cmdlist, BufferFiller& filler);
@@ -189,7 +190,6 @@ protected:
 	U<Shader<1, int, int, int,// P, D, M
 			 Buffer<float>,	  // means_3d
 			 Buffer<float>,	  // feat_buffer
-			 Buffer<float>,	  // opacity_buffer
 			 Buffer<float>,	  // scale_buffer
 			 Buffer<float>,	  // rotq_buffer
 			 // params
@@ -249,14 +249,17 @@ protected:
 			 >>
 		m_get_ranges_shader;
 
-	U<Shader<2, uint2,	   // resolution
+	U<Shader<2,
+			 uint2,		   // resolution
 			 Buffer<float>,// target img
+			 // input
 			 uint2,		   // grids
 			 Buffer<uint>, // ranges
 			 Buffer<uint>, // point_list
-			 Buffer<float>,// means_2d
-			 Buffer<float>,// features, P * 4
-			 Buffer<float>,// conic
+			 Buffer<float>,// means_2d, P x 2
+			 Buffer<float>,// conic, P x 3
+			 Buffer<float>,// opacity_features, P
+			 Buffer<float>,// color_features, P * 3
 			 // save for backward
 			 Buffer<uint>,// last_contributors
 			 Buffer<float>// final_Ts
@@ -272,16 +275,17 @@ protected:
 			 Buffer<float>,// dL_d_color_feature
 			 Buffer<float>,// dL_d_opacity
 			 // params
-			 uint2,			// resolution
-			 uint2,			// grids
-			 Buffer<float>, // result_img
-			 Buffer<float2>,// means_2d
-			 Buffer<uint>,	// ranges
-			 Buffer<uint>,	// point_list
-			 Buffer<float4>,// features
-			 Buffer<float4>,// conic_opacity
-			 Buffer<uint>,	// n_contrib
-			 Buffer<float>	// accum_alpha
+			 uint2,		   // resolution
+			 uint2,		   // grids
+			 Buffer<float>,// result_img
+			 Buffer<uint>, // ranges
+			 Buffer<uint>, // point_list
+			 Buffer<float>,// means_2d
+			 Buffer<float>,// conic
+			 Buffer<float>,// opacity
+			 Buffer<float>,// features
+			 Buffer<uint>, // final_contrib
+			 Buffer<float> // final_Ts
 			 >>
 		m_backward_render_shader;
 };

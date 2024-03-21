@@ -23,7 +23,7 @@ class GaussianRenderer:
         cam_pos_arr = cam.info.T.flatten().tolist()
         view_matrix_arr = cam.view_matrix.T.flatten().tolist()
         proj_matrix_arr = cam.proj_matrix.T.flatten().tolist()
-        N = scene.n_points
+        P = scene.n_points
         xyz = scene.xyz_torch()
         opacity = scene.opacity_torch()
         color = scene.color_torch()
@@ -45,7 +45,7 @@ class GaussianRenderer:
         )
 
         # just a place holder, requires its grad for trick
-        screenspace_points = torch.zeros_like(xyz, dtype=xyz.dtype, requires_grad=True, device="cuda") + 0
+        screenspace_points = torch.zeros((P, 2), dtype=xyz.dtype, requires_grad=True, device="cuda")
         try:
             screenspace_points.retain_grad()
         except:
@@ -53,6 +53,7 @@ class GaussianRenderer:
 
         rendered_image, radii = self.rasterizer(
             means_3d = xyz,
+            means_2d = screenspace_points,
             features = color,
             opacities = opacity,
             scales = scales,
@@ -60,7 +61,7 @@ class GaussianRenderer:
             raster_settings = raster_settings
         )
 
-        return rendered_image
+        return rendered_image, radii 
 
     def render(self, camera: Camera, gaussians, scale_modifier=1.0):
         view_mat = camera.view_matrix.T.flatten().tolist()
@@ -83,7 +84,14 @@ class GaussianRenderer:
             prefiltered = False,
             debug = False
         )
+
         means_3d = gaussians.get_xyz
+        # just a place holder, requires its grad for trick
+        screenspace_points = torch.zeros((P, 2), dtype=xyz.dtype, requires_grad=True, device="cuda")
+        try:
+            screenspace_points.retain_grad()
+        except:
+            pass
         opacity = gaussians.get_opacity
         scales = gaussians.get_scaling
         rotations = gaussians.get_rotation
@@ -91,6 +99,7 @@ class GaussianRenderer:
 
         rendered_image, radii = self.rasterizer(
             means_3d = means_3d,
+            means_2d = screenspace_points,
             features = features,
             opacities = opacity,
             scales = scales,
@@ -99,6 +108,6 @@ class GaussianRenderer:
         )
         return {
             "render": rendered_image,
+            "viewspace_points": screenspace_points,
             "visibility_filter": radii > 0,
-            "radii": radii
-            }
+            "radii": radii}

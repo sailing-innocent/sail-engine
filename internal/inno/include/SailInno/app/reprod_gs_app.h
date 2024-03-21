@@ -36,6 +36,7 @@ public:
 		int64_t dL_d_opacity,
 		int64_t dL_d_scale,
 		int64_t dL_d_rotq,
+		int64_t dL_d_means_2d,
 		// params
 		int64_t target_img_buffer,// hwc
 		int64_t xyz_buffer,

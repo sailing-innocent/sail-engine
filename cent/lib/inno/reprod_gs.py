@@ -90,8 +90,8 @@ class _RasterizeGaussians(torch.autograd.Function):
 
         grad_means_3d = torch.zeros(means_3d.shape, dtype=torch.float32, device="cuda")
         
-        grad_means_2d = torch.zeros(means_3d.shape, dtype=torch.float32, device="cuda")
-
+        P = means_3d.shape[0]
+        grad_means_2d = torch.zeros((P, 2), dtype=torch.float32, device="cuda")
         grad_features = torch.zeros(features.shape, dtype=torch.float32, device="cuda")
         # print(grad_features.stride())
         grad_opacities = torch.zeros(opacities.shape, dtype=torch.float32, device="cuda")
