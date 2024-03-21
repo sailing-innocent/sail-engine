@@ -1,6 +1,8 @@
 from module.utils.camera.basic import Camera
 from lib.inno.reprod_gs import GaussianRasterizationSettings, GaussianRasterizer
 
+import torch 
+
 def create_gaussian_renderer(env_config):
     config = GaussianRendererConfig(env_config)
     return GaussianRenderer(config)
@@ -41,6 +43,14 @@ class GaussianRenderer:
             prefiltered = False,
             debug = False
         )
+
+        # just a place holder, requires its grad for trick
+        screenspace_points = torch.zeros_like(xyz, dtype=xyz.dtype, requires_grad=True, device="cuda") + 0
+        try:
+            screenspace_points.retain_grad()
+        except:
+            pass
+
         rendered_image, radii = self.rasterizer(
             means_3d = xyz,
             features = color,
