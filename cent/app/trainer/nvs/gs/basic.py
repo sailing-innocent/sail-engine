@@ -6,6 +6,7 @@ from tqdm import tqdm
 from random import randint
 import os 
 from loguru import logger 
+import matplotlib.pyplot as plt 
 
 from dataclasses import dataclass
 
@@ -88,9 +89,21 @@ class GaussianTrainer(TrainerBase):
                 if iteration % 10 == 0:
                     progress_bar.set_postfix({"Loss": f"{loss.item():.{7}f}"})
                     progress_bar.update(10)
+                
                 if iteration == iterations:
                     progress_bar.close()
 
+                if iteration % 100 == 0:
+                    image_np = image.detach().cpu().numpy().transpose(1, 2, 0)
+                    gt_image_np = gt_image.detach().cpu().numpy().transpose(1, 2, 0)
+                    # compare show
+                    plt.figure()
+                    plt.subplot(1, 2, 1)
+                    plt.imshow(image_np)
+                    plt.subplot(1, 2, 2)
+                    plt.imshow(gt_image_np)
+                    plt.show()
+                
                 # save
                 if (iteration in params.saving_iterations):
                     logger.info(f"\n[ITER {iteration}] Saving Gaussians")

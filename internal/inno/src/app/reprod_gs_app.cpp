@@ -32,6 +32,7 @@ void ReprodGSApp::forward(
 	int P, int sh_deg, int max_sh_deg,
 	int64_t xyz, int64_t feat, int64_t opacity, int64_t scales, int64_t rotqs, float scale_modifier,
 	std::array<float, 3> cam_pos, float fov_rad, std::array<float, 16> view_matrix_arr, std::array<float, 16> proj_matrix_arr) {
+	// save for background
 	m_width = width;
 	m_height = height;
 	m_P = P;

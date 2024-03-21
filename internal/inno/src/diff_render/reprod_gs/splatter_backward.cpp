@@ -22,7 +22,7 @@ void ReprodGS::backward_impl(
 	BufferView<float> dL_d_pix,
 	// output
 	BufferView<float> dL_d_xyz,
-	BufferView<float> dL_d_feature,
+	BufferView<float> dL_d_feature,// (feat_dim + 1) * (feat_dim + 1) * 3
 	BufferView<float> dL_d_opacity,
 	BufferView<float> dL_d_scale,
 	BufferView<float> dL_d_rotq,

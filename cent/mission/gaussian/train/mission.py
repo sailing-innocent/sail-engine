@@ -27,11 +27,8 @@ class Mission(BaseMission):
         proj_config = TrainGaussianProjectConfig(self.env_config)
         proj_config.name = self.name
         proj_config.usage = self.usage 
-
-        proj_config.sh_deg = 0
-        
+        # proj_config.sh_deg = 0
         project = TrainGaussianProject(proj_config)
-        
         train_params = self.create_trainer_params[self.trainer_name]()
 
         for key in self.train_params:
