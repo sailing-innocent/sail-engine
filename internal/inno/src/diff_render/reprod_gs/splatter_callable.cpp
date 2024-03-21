@@ -58,7 +58,6 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 		[&](Int idx, Int deg, Int max_deg, BufferVar<float> means, Float3 campos, BufferVar<float> shs) {
 		Int sh_idx_start = idx * (max_deg + 1) * (max_deg + 1) * 3;
 		Float3 sh_00 = make_float3(shs.read(sh_idx_start + 0), shs.read(sh_idx_start + 1), shs.read(sh_idx_start + 2));
-
 		Float3 result = sh_00;
 		// use color when deg == -1 and max_deg == 0
 		$if(deg > -1) {
@@ -120,18 +119,20 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 		Float3 dL_d_sh00 = make_float3(0.0f);
 
 		Float3 result = sh_00;
-
 		// input
 		Float3 dL_d_color = make_float3(
-			dL_d_color_feature.read(4 * idx + 0),
-			dL_d_color_feature.read(4 * idx + 1),
-			dL_d_color_feature.read(4 * idx + 2));
+			dL_d_color_feature.read(3 * idx + 0),
+			dL_d_color_feature.read(3 * idx + 1),
+			dL_d_color_feature.read(3 * idx + 2));
 
 		// output
 		$if(deg == -1) {
 			dL_d_feat.write(3 * idx + 0, dL_d_color[0]);
 			dL_d_feat.write(3 * idx + 1, dL_d_color[1]);
 			dL_d_feat.write(3 * idx + 2, dL_d_color[2]);
+			// dL_d_feat.write(3 * idx + 0, 1.0f);
+			// dL_d_feat.write(3 * idx + 1, 1.0f);
+			// dL_d_feat.write(3 * idx + 2, 1.0f);
 		};
 
 		// USE SH

@@ -154,6 +154,7 @@ void ReprodGS::compile_backward_preprocess_shader(Device& device) noexcept {
 		auto mean_3d = make_float3(means.read(3 * idx + 0), means.read(3 * idx + 1), means.read(3 * idx + 2));
 		Float4 p_hom = make_float4(mean_3d, 1.0f);
 		Float4 p_view_hom = view_matrix * p_hom;
+
 		// TODO: SH backward not done
 		(*mp_compute_color_from_sh_backward)(
 			// params
@@ -195,13 +196,16 @@ void ReprodGS::compile_backward_preprocess_shader(Device& device) noexcept {
 		inno::math::calc_cov_backward<Float3, Float4, Float3x3>(dL_d_cov3d, dL_ds, dL_dqvec, scale, qvec);
 
 		// write out
-		dL_d_scale.write(3 * idx + 0, dL_ds.x);
-		dL_d_scale.write(3 * idx + 1, dL_ds.y);
-		dL_d_scale.write(3 * idx + 2, dL_ds.z);
-		dL_d_rotq.write(4 * idx + 0, dL_dqvec.x);
-		dL_d_rotq.write(4 * idx + 1, dL_dqvec.y);
-		dL_d_rotq.write(4 * idx + 2, dL_dqvec.z);
-		dL_d_rotq.write(4 * idx + 3, dL_dqvec.w);
+		// dL_d_scale.write(3 * idx + 0, dL_ds.x);
+		// dL_d_scale.write(3 * idx + 1, dL_ds.y);
+		// dL_d_scale.write(3 * idx + 2, dL_ds.z);
+		// dL_d_rotq.write(4 * idx + 0, dL_dqvec.x);
+		// dL_d_rotq.write(4 * idx + 1, dL_dqvec.y);
+		// dL_d_rotq.write(4 * idx + 2, dL_dqvec.z);
+		// dL_d_rotq.write(4 * idx + 3, dL_dqvec.w);
+		// dL_d_xyz.write(3 * idx + 0, dL_d_cov3d[0][0]);
+		// dL_d_xyz.write(3 * idx + 1, dL_d_cov3d[1][1]);
+		// dL_d_xyz.write(3 * idx + 2, dL_d_cov3d[2][2]);
 	});
 }
 

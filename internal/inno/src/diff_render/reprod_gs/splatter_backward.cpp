@@ -38,14 +38,11 @@ void ReprodGS::backward_impl(
 
 	CommandList cmdlist;
 
-	auto dL_d_color_feature = device.create_buffer<float>(m_num_gaussians * 4);
+	auto dL_d_color_feature = device.create_buffer<float>(m_num_gaussians * 3);
 	auto dL_d_conic = device.create_buffer<float>(m_num_gaussians * 3);
 	// clear grad
 	cmdlist << mp_buffer_filler->fill(device, dL_d_color_feature, 0.0f);
 	cmdlist << mp_buffer_filler->fill(device, dL_d_conic, 0.0f);
-	cmdlist << mp_buffer_filler->fill(device, dL_d_opacity, 0.0f);
-	cmdlist << mp_buffer_filler->fill(device, dL_d_scale, 0.0f);
-	cmdlist << mp_buffer_filler->fill(device, dL_d_rotq, 0.0f);
 
 	cmdlist << (*m_backward_render_shader)(
 				   // input
@@ -61,13 +58,13 @@ void ReprodGS::backward_impl(
 				   target_img_buffer,
 				   img_state->ranges,
 				   tile_state->point_list,
-				   geom_state->means_2d,
+				   geom_state->means_2d_res,
 				   geom_state->conic,
 				   geom_state->opacity_features,
 				   geom_state->color_features,
 				   img_state->n_contrib,
 				   img_state->accum_alpha)
-				   .dispatch(m_resolution.x, m_resolution.y);
+				   .dispatch(m_resolution);
 
 	// LUISA_INFO("backward preprocess with {} ", m_num_gaussians);
 	cmdlist << (*m_backward_preprocess_shader)(

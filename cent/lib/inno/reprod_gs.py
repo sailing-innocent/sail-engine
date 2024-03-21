@@ -121,6 +121,10 @@ class _RasterizeGaussians(torch.autograd.Function):
         #     for j in range(grad_out_color.shape[2]):
         #         print(grad_out_color[:, i, j])
         # print(grad_features)
+        # print(grad_opacities)
+        # print(grad_means_2d)
+        # print(grad_means_3d)
+        # print(grad_scales)
 
         grads = (
             grad_means_3d,

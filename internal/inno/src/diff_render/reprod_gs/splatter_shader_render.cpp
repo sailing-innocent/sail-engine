@@ -145,10 +145,10 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 					 // input
 					 BufferVar<float> dL_d_pix,
 					 // output
-					 BufferVar<float> dL_d_means_2d,// 2 * P
-					 BufferVar<float> dL_d_conic,	// 3 * P
-					 BufferVar<float> dL_d_color_feature,
-					 BufferVar<float> dL_d_opacity,// 4 * P
+					 BufferVar<float> dL_d_means_2d,	 // 2 * P
+					 BufferVar<float> dL_d_conic,		 // 3 * P
+					 BufferVar<float> dL_d_color_feature,// 3 * P
+					 BufferVar<float> dL_d_opacity,		 // P
 					 // params
 					 UInt2 resolution,
 					 UInt2 grids,
@@ -191,7 +191,6 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 		// make rounds
 		// round step = shared_mem_size = block_size = block_x * block_y
 		const Int round_step = Int(m_shared_mem_size);
-
 		const Int rounds = ((range_end - range_start + round_step - 1) / round_step);
 		Int todo = range_end - range_start;
 
@@ -224,6 +223,7 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 		$for(i, rounds) {
 			sync_block();
 			Int progress = i * round_step + thread_idx;
+
 			$if(progress + range_start < range_end) {
 				//  Int coll_id = point_list.read(progress + range_start);
 				Int coll_id = point_list.read(range_end - 1 - progress);
@@ -232,7 +232,7 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 													   means_2d.read(2 * coll_id + 0),
 													   means_2d.read(2 * coll_id + 1)));
 
-				auto opacity = opacity_features.read(coll_id);
+				Float opacity = opacity_features.read(coll_id);
 				collected_conic_opacity->write(thread_idx, make_float4(
 															   conic.read(3 * coll_id + 0),
 															   conic.read(3 * coll_id + 1),
@@ -269,7 +269,9 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 				Float d_ch_d_color = alpha * T;
 				//  Float d_ch_d_color = 1.0f;
 				Float dL_dalpha = 0.0f;
+
 				UInt global_id = collected_ids->read(j);
+
 				$for(ch, 3) {
 					Float c = collected_color->read(3 * j + ch);
 					accum_rec[ch] = last_alpha * last_color[ch] + (1.0f - last_alpha) * accum_rec[ch];
@@ -279,8 +281,11 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 					dL_dalpha += (c - accum_rec[ch]) * dL_d_ch;
 					// atomic add to dL_dcolor
 					Float dL_d_color_feat = d_ch_d_color * dL_d_ch;
-					dL_d_color_feature.atomic(4 * global_id + ch)
+
+					dL_d_color_feature.atomic(3 * global_id + ch)
 						.fetch_add(dL_d_color_feat);
+					// dL_d_color_feature.atomic(3 * global_id + ch)
+					// 	.fetch_add(1.0f);
 				};
 
 				dL_dalpha = dL_dalpha * T;
@@ -293,6 +298,7 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 				dL_dalpha += (-T_final / (1.0f - alpha)) * bg_dot_pixel;
 				// backward for opacity
 				dL_d_opacity.atomic(global_id).fetch_add(G * dL_dalpha);
+				// dL_d_opacity.atomic(global_id).fetch_add(1.0f);
 
 				Float dL_dG = dL_dalpha * con_o.w;
 				Float gdx = G * d.x;
@@ -304,7 +310,6 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 				dL_d_conic.atomic(global_id * 3 + 0).fetch_add(-0.5f * gdx * d.x * dL_dG);
 				dL_d_conic.atomic(global_id * 3 + 1).fetch_add(-0.5f * gdx * d.y * dL_dG);
 				dL_d_conic.atomic(global_id * 3 + 2).fetch_add(-0.5f * gdy * d.y * dL_dG);
-
 				dL_d_means_2d.atomic(global_id * 2 + 0).fetch_add(dL_dG * dG_ddelx * ddelx_dx);
 				dL_d_means_2d.atomic(global_id * 2 + 1).fetch_add(dL_dG * dG_ddely * ddely_dy);
 			};

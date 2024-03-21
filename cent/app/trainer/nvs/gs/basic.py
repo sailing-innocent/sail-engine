@@ -93,16 +93,16 @@ class GaussianTrainer(TrainerBase):
                 if iteration == iterations:
                     progress_bar.close()
 
-                if iteration % 100 == 0:
-                    image_np = image.detach().cpu().numpy().transpose(1, 2, 0)
-                    gt_image_np = gt_image.detach().cpu().numpy().transpose(1, 2, 0)
-                    # compare show
-                    plt.figure()
-                    plt.subplot(1, 2, 1)
-                    plt.imshow(image_np)
-                    plt.subplot(1, 2, 2)
-                    plt.imshow(gt_image_np)
-                    plt.show()
+                # if iteration % 100 == 0:
+                #     image_np = image.detach().cpu().numpy().transpose(1, 2, 0)
+                #     gt_image_np = gt_image.detach().cpu().numpy().transpose(1, 2, 0)
+                #     # compare show
+                #     plt.figure()
+                #     plt.subplot(1, 2, 1)
+                #     plt.imshow(image_np)
+                #     plt.subplot(1, 2, 2)
+                #     plt.imshow(gt_image_np)
+                #     plt.show()
                 
                 # save
                 if (iteration in params.saving_iterations):

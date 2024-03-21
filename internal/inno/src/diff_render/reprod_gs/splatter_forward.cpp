@@ -32,7 +32,6 @@ void ReprodGS::gaussian_proj_impl(
 	// clear geometry state
 	geom_state->clear(device, cmdlist, *mp_buffer_filler);
 	// calculate camera primitive
-
 	cmdlist << (*m_forward_preprocess_shader)(
 				   num_gaussians, sh_deg, max_sh_deg,
 				   // input
@@ -92,6 +91,7 @@ void ReprodGS::forward_impl(
 		img_state->allocate(device, width * height);
 		m_resolution = luisa::make_uint2(width, height);
 	}
+
 	CommandList cmdlist;
 
 	gaussian_proj_impl(
@@ -171,6 +171,7 @@ void ReprodGS::forward_impl(
 				   img_state->n_contrib,
 				   img_state->accum_alpha)
 				   .dispatch(m_resolution);
+
 	stream << cmdlist.commit() << synchronize();
 }
 

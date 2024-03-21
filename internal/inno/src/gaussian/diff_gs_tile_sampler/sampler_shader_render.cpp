@@ -6,7 +6,6 @@
  */
 
 #include "SailInno/gaussian/diff_gs_tile_sampler.h"
-#include "SailInno/util/graphic/image.h"
 #include <luisa/dsl/sugar.h>
 
 using namespace luisa;
@@ -143,16 +142,17 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 					 BufferVar<uint> ranges,
 					 BufferVar<uint> point_list,
 					 BufferVar<float> means_2d_res,
-					 BufferVar<float> opacity_features,
-					 BufferVar<float> color_features,// 3 * features
+					 BufferVar<float> opacity_features,// P
+					 BufferVar<float> color_features,  // 3 * P
 					 BufferVar<float> conic,
 					 BufferVar<uint> n_contrib,
 					 BufferVar<float> accum_alpha,
 					 // output
-					 BufferVar<float> dL_d_means2d,
-					 BufferVar<float> dL_d_conic,
-					 BufferVar<float> dL_d_opacity_features,
-					 BufferVar<float> dL_d_color_features) {
+					 BufferVar<float> dL_d_means2d,			// 2 * P
+					 BufferVar<float> dL_d_conic,			// 3 * P
+					 BufferVar<float> dL_d_opacity_features,// P
+					 BufferVar<float> dL_d_color_features	// 3 * P
+				 ) {
 		set_block_size(m_blocks);
 		auto xy = dispatch_id().xy();
 		auto w = resolution.x;

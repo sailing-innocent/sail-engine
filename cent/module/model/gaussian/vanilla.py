@@ -48,6 +48,7 @@ class GaussianModel:
         self.percent_dense = 0
         self.spatial_lr_scale = 0
         self.setup_functions()
+
     def capture(self):
         return (
             self.active_sh_degree,

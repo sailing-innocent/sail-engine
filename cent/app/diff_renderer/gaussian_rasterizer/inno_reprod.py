@@ -79,6 +79,8 @@ class GaussianRenderer:
             projmatrix = proj_mat,
             sh_degree = gaussians.active_sh_degree,
             max_sh_degree = gaussians.max_sh_degree,
+            # sh_degree = -1,
+            # max_sh_degree = 0,
             campos = campos,
             prefiltered = False,
             debug = False
@@ -106,6 +108,7 @@ class GaussianRenderer:
             rotations = rotations,
             raster_settings = raster_settings
         )
+
         return {
             "render": rendered_image,
             "viewspace_points": screenspace_points,
