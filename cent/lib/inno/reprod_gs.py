@@ -46,6 +46,8 @@ class _RasterizeGaussians(torch.autograd.Function):
             P *= means_3d.shape[i]
 
         rendered_image = torch.zeros((3, h, w), dtype=torch.float32).cuda()
+        radii = torch.zeros(P, dtype=torch.float32).cuda()
+
         view_matrix_arr = raster_settings.viewmatrix
         proj_matrix_arr = raster_settings.projmatrix
         campos_arr = raster_settings.campos
@@ -57,6 +59,7 @@ class _RasterizeGaussians(torch.autograd.Function):
         app.forward(
             h, w,
             rendered_image.contiguous().data_ptr(),
+            radii.contiguous().data_ptr(),
             P, sh_deg, max_sh_deg,
             means_3d.contiguous().data_ptr(),
             features.contiguous().data_ptr(),
@@ -68,7 +71,7 @@ class _RasterizeGaussians(torch.autograd.Function):
             fov_rad,
             view_matrix_arr,
             proj_matrix_arr)
-        radii = 1
+        
         ctx.app = app
         ctx.save_for_backward(
             means_3d,
@@ -77,6 +80,7 @@ class _RasterizeGaussians(torch.autograd.Function):
             scales,
             rotations,
             rendered_image)
+
         return rendered_image, radii 
 
     @staticmethod 

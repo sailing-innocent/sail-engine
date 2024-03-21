@@ -87,4 +87,8 @@ class GaussianRenderer:
             rotations = rotations,
             raster_settings = raster_settings
         )
-        return {"render": rendered_image}
+        return {
+            "render": rendered_image,
+            "visibility_filter": radii > 0,
+            "radii": radii
+            }
