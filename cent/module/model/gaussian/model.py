@@ -1,14 +1,22 @@
 import torch 
 
 class Gaussians2D:
-    def __init__(self, N):
-        self.N = N
+    def __init__(self):
+        self.means_2d = torch.empty(0)
+        self.covs_2d = torch.empty(0)
+        self.depth_features = torch.empty(0)
+        self.color_features = torch.empty(0)
+        self.opacity_features = torch.empty(0)
+
+    def _create(self, N):
+        self.N = N 
         self.means_2d = torch.zeros((N, 2), dtype=torch.float32).cuda()
         self.covs_2d = 0.0001 * torch.ones((N, 3), dtype=torch.float32).cuda()
         self.covs_2d[:, 1] = 0
         self.depth_features = torch.ones((N, 1), dtype=torch.float32).cuda()
         self.color_features = torch.ones((N, 3), dtype=torch.float32).cuda()
         self.opacity_features = 0.5 * torch.ones((N, 1), dtype=torch.float32).cuda()
+
 
     def requires_grad(self):
         self.means_2d.requires_grad = True
@@ -22,11 +30,14 @@ class Gaussians2D:
     
     @classmethod 
     def default(cls):
-        return cls(1)
+        gs = cls()
+        gs._create(1)
+        return gs
     
     @classmethod 
     def random(cls, N_per_layers, N_layers=1):
-        gs = cls(N_per_layers * N_layers)
+        gs = cls()
+        gs._create(N_per_layers * N_layers)
         gs.means_2d = 2 * torch.rand((N_per_layers * N_layers, 2), dtype=torch.float32).cuda() - 1
         for i in range(N_layers):
             gs.depth_features[i * N_per_layers: (i + 1) * N_per_layers, 0] = i / N_layers
@@ -44,10 +55,10 @@ class Gaussians2D:
         return gs
 
 class Gaussians3D:
-    def __init__(self, N):
+    def __init__(self, N, N_FEAT = 3):
         self.N = N
-        self.means_3d = torch.zeros((N, 3), dtype=torch.float32).cuda()
-        self.scales = torch.ones((N, 3), dtype=torch.float32).cuda()
+        self.xyz = torch.zeros((N, 3), dtype=torch.float32).cuda()
+        self.scale = torch.ones((N, 3), dtype=torch.float32).cuda()
         self.rotq = torch.zeros((N, 4), dtype=torch.float32).cuda()
-        self.color_features = torch.ones((N, 3), dtype=torch.float32).cuda()
+        self.feature = torch.ones((N, N_FEAT), dtype=torch.float32).cuda()
         self.opacity_features = 0.5 * torch.ones((N, 1), dtype=torch.float32).cuda()
