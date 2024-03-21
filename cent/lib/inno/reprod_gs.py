@@ -55,6 +55,8 @@ class _RasterizeGaussians(torch.autograd.Function):
         scale_modifier = raster_settings.scale_modifier
         sh_deg = raster_settings.sh_degree
         max_sh_deg = raster_settings.max_sh_degree
+        # print("sh_deg: ", sh_deg, "max_sh_deg: ", max_sh_deg)
+
         fov_rad = raster_settings.fov_rad
 
         app.forward(
@@ -93,7 +95,9 @@ class _RasterizeGaussians(torch.autograd.Function):
         P = means_3d.shape[0]
         grad_means_2d = torch.zeros((P, 2), dtype=torch.float32, device="cuda")
         grad_features = torch.zeros(features.shape, dtype=torch.float32, device="cuda")
-        # print(grad_features.stride())
+        
+        # print(grad_features.shape)
+
         grad_opacities = torch.zeros(opacities.shape, dtype=torch.float32, device="cuda")
         grad_scales = torch.zeros(scales.shape, dtype=torch.float32, device="cuda")
         grad_rotations = torch.zeros(rotations.shape, dtype=torch.float32, device="cuda")
