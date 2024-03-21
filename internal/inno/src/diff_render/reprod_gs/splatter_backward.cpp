@@ -69,7 +69,7 @@ void ReprodGS::backward_impl(
 				   img_state->accum_alpha)
 				   .dispatch(m_resolution.x, m_resolution.y);
 
-	LUISA_INFO("backward preprocess with {} ", m_num_gaussians);
+	// LUISA_INFO("backward preprocess with {} ", m_num_gaussians);
 	cmdlist << (*m_backward_preprocess_shader)(
 				   // input
 				   dL_d_means_2d,

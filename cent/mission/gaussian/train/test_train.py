@@ -4,6 +4,7 @@ from .mission import Mission
 def test_train():
     # f = "train_vanilla_basic"
     f = "train_vanilla_vanilla"
+    f = "train_inno_reprod_basic"
     # f = "train_vanilla_nerf_blender_full"
     # f = "train_vanilla_mip360"
     # f = "train_vanilla_mip360_full"
@@ -12,8 +13,6 @@ def test_train():
 
     # f = "train_reprod_mip360_full"
     # f = "train_reprod_noxyz_sample"
-
-    # f = "train_inno_reprod_sample"
     # f = "train_vanilla_plain"
 
     # f = "eval_vanilla_sample"

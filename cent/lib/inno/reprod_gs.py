@@ -99,12 +99,16 @@ class _RasterizeGaussians(torch.autograd.Function):
         grad_rotations = torch.zeros(rotations.shape, dtype=torch.float32, device="cuda")
 
         ctx.app.backward(
+            # input
             grad_out_color.contiguous().data_ptr(),
+            # output
             grad_means_3d.contiguous().data_ptr(),
             grad_features.contiguous().data_ptr(),
             grad_opacities.contiguous().data_ptr(),
             grad_scales.contiguous().data_ptr(),
             grad_rotations.contiguous().data_ptr(),
+            grad_means_2d.contiguous().data_ptr(),
+            # params
             rendered_image.contiguous().data_ptr(),
             means_3d.contiguous().data_ptr(),
             features.contiguous().data_ptr(),
@@ -120,6 +124,7 @@ class _RasterizeGaussians(torch.autograd.Function):
 
         grads = (
             grad_means_3d,
+            grad_means_2d,
             grad_features,
             grad_opacities,
             grad_scales,

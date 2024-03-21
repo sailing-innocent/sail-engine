@@ -70,7 +70,6 @@ class GaussianRenderer:
         height = camera.info.ResH
         fovy = camera.info.FovY
         campos = camera.info.T.flatten().tolist()
-
         raster_settings = GaussianRasterizationSettings(
             image_height = int(height),
             image_width = int(width),
@@ -86,8 +85,9 @@ class GaussianRenderer:
         )
 
         means_3d = gaussians.get_xyz
+        P = means_3d.shape[0]
         # just a place holder, requires its grad for trick
-        screenspace_points = torch.zeros((P, 2), dtype=xyz.dtype, requires_grad=True, device="cuda")
+        screenspace_points = torch.zeros((P, 2), dtype=torch.float32, requires_grad=True, device="cuda")
         try:
             screenspace_points.retain_grad()
         except:

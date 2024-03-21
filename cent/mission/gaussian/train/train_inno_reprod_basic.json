@@ -1,0 +1,20 @@
+{
+    "name": "train_gs_inno_reprod_basic",
+    "dataset_name": "nerf_blender",
+    "usage": "train",
+    "benchmarks": [
+        "psnr"
+    ],
+    "objects": [
+        "lego"
+    ],
+    "trainer_name": "basic",
+    "render_name": "inno_reprod",
+    "loss_name": "l1",
+    "train_params": {
+        "saving_iterations": [
+            700,
+            3000
+        ]
+    }
+}
