@@ -1,20 +1,20 @@
 /**
- * @file packages/gaussian/diff_gs_tile_sampler/sampler_shader_tile_split.cpp
+ * @file package/diff_render/gs/gaussian_splatter_shader.cpp
  * @author sailing-innocent
- * @date 2024-03-18
- * @brief Tile Split Shader Forward and Backward
+ * @date 2023-12-27
+ * @brief The Gaussian Splatter Shader
  */
 
-#include "SailInno/gaussian/diff_gs_tile_sampler.h"
-#include "SailInno/util/graphic/image.h"
+#include "SailInno/diff_render/reprod_gs_splatter.h"
 #include <luisa/dsl/sugar.h>
+#include "SailInno/util/math/gaussian.h"
 
 using namespace luisa;
 using namespace luisa::compute;
 
-namespace sail::inno::gaussian {
+namespace sail::inno::render {
 
-void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
+void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 	lazy_compile(device, m_forward_render_shader,
 				 [&](
 					 UInt2 resolution,
@@ -22,17 +22,15 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 					 UInt2 grids,
 					 BufferVar<uint> ranges,
 					 BufferVar<uint> point_list,
-					 BufferVar<float> means_2d_res,	   // 2 * P
-					 BufferVar<float> conic,		   // 3 * P
-					 BufferVar<float> opacity_features,// P
-					 BufferVar<float> color_features,  // 3 * P
+					 BufferVar<float> means_2d_res,
+					 BufferVar<float> features,// 4 * features
+					 BufferVar<float> conic,
 					 BufferVar<uint> n_contrib,
 					 BufferVar<float> accum_alpha) {
 		set_block_size(m_blocks);
 		auto xy = dispatch_id().xy();
 		auto w = resolution.x;
 		auto h = resolution.y;
-
 		auto thread_idx = thread_id().x + thread_id().y * block_size().x;
 
 		Bool inside = Bool(xy.x < resolution.x) & Bool(xy.y < resolution.y);
@@ -48,14 +46,17 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 		Int range_end = (Int)ranges.read(2 * (tile_xy.x + tile_xy.y * grids.x) + 1u);
 
 		// background color
-		Float3 color = make_float3(0.0f, 0.0f, 0.0f);
+		Float3 color = make_float3(1.0f, 1.0f, 1.0f);
 		// debug grid
-		// $if((tile_xy.x + tile_xy.y) % 2 == 0) {
-		// 	color = make_float3(0.0f, 0.0f, 0.0f);
-		// };
+		//  $if((tile_xy.x + tile_xy.y) % 2 == 0)
+		//  {
+		//      color = make_float3(0.0f, 0.0f, 0.0f);
+		//  };
+
 		// make rounds
 		// round step = shared_mem_size = block_size = block_x * block_y
 		const Int round_step = Int(m_shared_mem_size);
+
 		const Int rounds = ((range_end - range_start + round_step - 1) / round_step);
 		Int todo = range_end - range_start;
 
@@ -78,7 +79,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 					means_2d_res.read(2 * coll_id + 0),
 					means_2d_res.read(2 * coll_id + 1));
 				collected_means->write(thread_idx, means);
-				Float opacity = opacity_features.read(coll_id);
+				Float opacity = features.read(4 * coll_id + 3);
 
 				Float4 conic_opacity = make_float4(
 					conic.read(3 * coll_id + 0),
@@ -92,6 +93,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 			// iterate over the current batch
 
 			$for(j, min(round_step, todo)) {
+
 				$if(done) { $break; };
 				contributor = contributor + 1u;
 
@@ -110,9 +112,9 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 				};
 				auto id = collected_ids->read(j);
 				Float3 feat = make_float3(
-					color_features->read(3 * id + 0),
-					color_features->read(3 * id + 1),
-					color_features->read(3 * id + 2));
+					features->read(4 * id + 0),
+					features->read(4 * id + 1),
+					features->read(4 * id + 2));
 				//  feat = make_float3(1.0f, 0.0f, 0.0f);
 				C = C + T * alpha * feat;
 				T = test_T;
@@ -132,33 +134,36 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 			n_contrib.write(pix_id, last_contributor);
 		};
 	});
+}
 
+void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 	lazy_compile(device, m_backward_render_shader,
 				 [&](
-					 UInt2 resolution,
 					 // input
 					 BufferVar<float> dL_d_pix,
+					 // output
+					 BufferVar<float> dL_d_means_2d,// 2 * P
+					 BufferVar<float> dL_d_conic,	// 3 * P
+					 BufferVar<float> dL_d_color_feature,
+					 BufferVar<float> dL_d_opacity,// 4 * P
 					 // params
+					 UInt2 resolution,
 					 UInt2 grids,
+					 BufferVar<float> result_img,
+					 BufferVar<float2> means_2d,
 					 BufferVar<uint> ranges,
 					 BufferVar<uint> point_list,
-					 BufferVar<float> means_2d_res,
-					 BufferVar<float> opacity_features,
-					 BufferVar<float> color_features,// 3 * features
-					 BufferVar<float> conic,
+					 BufferVar<float4> features,
+					 BufferVar<float4> conic_opacity,
 					 BufferVar<uint> n_contrib,
-					 BufferVar<float> accum_alpha,
-					 // output
-					 BufferVar<float> dL_d_means2d,
-					 BufferVar<float> dL_d_conic,
-					 BufferVar<float> dL_d_opacity_features,
-					 BufferVar<float> dL_d_color_features) {
+					 BufferVar<float> accum_alpha) {
 		set_block_size(m_blocks);
 		auto xy = dispatch_id().xy();
 		auto w = resolution.x;
 		auto h = resolution.y;
 		Float ddelx_dx = 0.5f * w;
 		Float ddely_dy = 0.5f * w;
+
 		auto thread_idx = thread_id().x + thread_id().y * block_size().x;
 
 		Bool inside = Bool(xy.x < resolution.x) & Bool(xy.y < resolution.y);
@@ -174,8 +179,13 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 		Int range_end = (Int)ranges.read(2 * (tile_xy.x + tile_xy.y * grids.x) + 1u);
 
 		// background color
-		Float3 bg_color = make_float3(0.0f, 0.0f, 0.0f);
-
+		Float3 bg_color = make_float3(1.0f, 1.0f, 1.0f);
+		//  $if((tile_xy.x + tile_xy.y) % 2 == 0)
+		//  {
+		//      color = make_float3(0.0f, 0.0f, 0.0f);
+		//  };
+		// make rounds
+		// round step = shared_mem_size = block_size = block_x * block_y
 		const Int round_step = Int(m_shared_mem_size);
 
 		const Int rounds = ((range_end - range_start + round_step - 1) / round_step);
@@ -186,12 +196,12 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 		Shared<float4>* collected_conic_opacity = new Shared<float4>(m_shared_mem_size);
 		Shared<float>* collected_color = new Shared<float>(m_shared_mem_size * 3);
 
-		// init T & last_contributor saved from forward
 		Float T_final = 0.0f;
 		$if(inside) {
 			T_final = accum_alpha.read(pix_id);
 		};
 		Float T = T_final;
+
 		UInt contributor = todo;
 		UInt last_contributor = 0u;
 		$if(inside) {
@@ -206,9 +216,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 		Float3 accum_rec = make_float3(0.0f);
 		Float last_alpha = 0.0f;
 		Float3 last_color = make_float3(0.0f);
-
 		// Traverse all Gaussians
-
 		$for(i, rounds) {
 			sync_block();
 			Int progress = i * round_step + thread_idx;
@@ -216,21 +224,11 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 				//  Int coll_id = point_list.read(progress + range_start);
 				Int coll_id = point_list.read(range_end - 1 - progress);
 				collected_ids->write(thread_idx, coll_id);
-				collected_means->write(thread_idx,
-									   make_float2(
-										   means_2d_res.read(2 * coll_id + 0),
-										   means_2d_res.read(2 * coll_id + 1)));
-				Float opacity = opacity_features.read(coll_id);
-
-				Float4 conic_opacity = make_float4(
-					conic.read(3 * coll_id + 0),
-					conic.read(3 * coll_id + 1),
-					conic.read(3 * coll_id + 2),
-					opacity);
-				collected_conic_opacity->write(thread_idx, conic_opacity);
-
+				collected_means->write(thread_idx, means_2d.read(coll_id));
+				collected_conic_opacity->write(thread_idx, conic_opacity.read(coll_id));
+				auto color = features.read(coll_id);
 				$for(ch, 3) {
-					collected_color->write(3 * thread_idx + ch, color_features.read(3 * coll_id + ch));
+					collected_color->write(3 * thread_idx + ch, color[ch]);
 				};
 			};
 			sync_block();
@@ -251,7 +249,6 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 				$if(power > 0.0f) { $continue; };
 
 				Float G = exp(power);
-
 				Float alpha = min(0.99f, con_o.w * G);
 				$if(alpha < 1.0f / 255.0f) { $continue; };
 
@@ -261,25 +258,20 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 				//  Float d_ch_d_color = 1.0f;
 				Float dL_dalpha = 0.0f;
 				UInt global_id = collected_ids->read(j);
-
 				$for(ch, 3) {
 					Float c = collected_color->read(3 * j + ch);
-
 					accum_rec[ch] = last_alpha * last_color[ch] + (1.0f - last_alpha) * accum_rec[ch];
 					last_color[ch] = c;
 					//  Float dL_d_ch = 1.0f;
 					Float dL_d_ch = dLdpix[ch];
 					dL_dalpha += (c - accum_rec[ch]) * dL_d_ch;
-
 					// atomic add to dL_dcolor
 					Float dL_d_color_feat = d_ch_d_color * dL_d_ch;
-
-					dL_d_color_features.atomic(3 * global_id + ch)
+					dL_d_color_feature.atomic(4 * global_id + ch)
 						.fetch_add(dL_d_color_feat);
 				};
 
 				dL_dalpha = dL_dalpha * T;
-
 				last_alpha = alpha;
 
 				Float bg_dot_pixel = 0;
@@ -288,14 +280,11 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 				};
 				dL_dalpha += (-T_final / (1.0f - alpha)) * bg_dot_pixel;
 				// backward for opacity
-				dL_d_opacity_features.atomic(global_id).fetch_add(G * dL_dalpha);
+				dL_d_opacity.atomic(global_id).fetch_add(G * dL_dalpha);
 
 				Float dL_dG = dL_dalpha * con_o.w;
-
 				Float gdx = G * d.x;
 				Float gdy = G * d.y;
-				// const float dG_ddelx = -gdx * con_o.x - gdy * con_o.y;
-				// const float dG_ddely = -gdy * con_o.z - gdx * con_o.y;
 				auto dG_ddelx = -gdx * con_o.x - gdy * con_o.y;
 				auto dG_ddely = -gdy * con_o.z - gdx * con_o.y;
 
@@ -304,16 +293,12 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 				dL_d_conic.atomic(global_id * 3 + 1).fetch_add(-0.5f * gdx * d.y * dL_dG);
 				dL_d_conic.atomic(global_id * 3 + 2).fetch_add(-0.5f * gdy * d.y * dL_dG);
 
-				// Update gradients w.r.t. 2D mean position of the Gaussian
-				// atomicAdd(&dL_dmean2D[global_id].x, dL_dG * dG_ddelx * ddelx_dx);
-				// atomicAdd(&dL_dmean2D[global_id].y, dL_dG * dG_ddely * ddely_dy);
-				dL_d_means2d.atomic(global_id * 2 + 0).fetch_add(dL_dG * dG_ddelx * ddelx_dx);
-				dL_d_means2d.atomic(global_id * 2 + 1).fetch_add(dL_dG * dG_ddely * ddely_dy);
+				dL_d_means_2d.atomic(global_id * 2 + 0).fetch_add(dL_dG * dG_ddelx * ddelx_dx);
+				dL_d_means_2d.atomic(global_id * 2 + 1).fetch_add(dL_dG * dG_ddely * ddely_dy);
 			};
 
 			todo = todo - round_step;
 		};
 	});
 }
-
-}// namespace sail::inno::gaussian
+}// namespace sail::inno::render

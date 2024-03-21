@@ -23,11 +23,17 @@ public:
 	void create(Device& device) noexcept;
 
 	virtual void forward_impl(
+		// common params
 		Device& device,
 		Stream& stream,
+		// output params
 		int height, int width,
+		// output
 		BufferView<float> target_img_buffer,// hwc
+		BufferView<int> radii,
+		// params
 		int num_gaussians, int sh_deg, int max_sh_deg,
+		// input
 		BufferView<float> xyz_buffer,
 		BufferView<float> feature_buffer,// for color
 		BufferView<float> opacity_buffer,
@@ -38,7 +44,7 @@ public:
 
 	void gaussian_proj_impl(
 		Device& device,
-		CommandList& stream,
+		CommandList& cmdlist,
 		int num_gaussians, int sh_deg, int max_sh_deg,
 		float scale_modifier,
 		BufferView<float> xyz_buffer,
@@ -75,7 +81,6 @@ public:
 		Buffer<float> means_2d_res;	 // 2 * P means 2d in resolution
 		Buffer<float> depth_features;// P
 		Buffer<float> color_features;// 4 * P
-		Buffer<int> radii;			 // P
 		Buffer<float> covs_2d;		 // 3 * P
 		Buffer<float> conic;		 // 3 * P
 		Buffer<uint> tiles_touched;	 // P
@@ -84,6 +89,7 @@ public:
 		void allocate(Device& device, size_t size);
 		void clear(Device& device, CommandList& cmdlist, BufferFiller& filler);
 	};
+
 	class TileState {
 	public:
 		size_t sort_temp_storage_size;
@@ -129,7 +135,7 @@ protected:
 	int m_max_sh_deg;
 	float m_scale_modifier = 1.f;
 
-protected:
+	// compile shaders
 	virtual void compile(Device& device) noexcept;
 	virtual void compile_callables(Device& device) noexcept;
 	virtual void compile_forward_preprocess_shader(Device& device) noexcept;
@@ -140,7 +146,6 @@ protected:
 	virtual void compile_copy_with_keys_shader(Device& device) noexcept;
 	virtual void compile_get_ranges_shader(Device& device) noexcept;
 
-protected:
 	// callables
 	UCallable<float(float, uint)> mp_ndc2pix;
 	UCallable<void(float2, int, uint2&, uint2&, uint2, uint2)> mp_get_rect;
@@ -166,7 +171,6 @@ protected:
 		)>
 		mp_compute_color_from_sh_backward;
 
-protected:
 	// shaders
 	U<Shader<1, int,// num_gaussians
 			 uint2, // resolution

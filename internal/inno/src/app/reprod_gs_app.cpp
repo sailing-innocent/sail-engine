@@ -28,6 +28,7 @@ void ReprodGSApp::create(luisa::string& cwd, luisa::string& device_name) {
 void ReprodGSApp::forward(
 	int height, int width,
 	int64_t target_img,
+	int64_t radii,
 	int P, int sh_deg, int max_sh_deg,
 	int64_t xyz, int64_t feat, int64_t opacity, int64_t scales, int64_t rotqs, float scale_modifier,
 	std::array<float, 3> cam_pos, float fov_rad, std::array<float, 16> view_matrix_arr, std::array<float, 16> proj_matrix_arr) {
@@ -44,6 +45,7 @@ void ReprodGSApp::forward(
 	Buffer<float> opacity_buf = mp_device->import_external_buffer<float>((void*)opacity, P);
 
 	Buffer<float> target_img_buf = mp_device->import_external_buffer<float>((void*)target_img, width * height * 3);
+	Buffer<int> radii_buf = mp_device->import_external_buffer<int>((void*)radii, P);
 
 	Buffer<float> scale_buf = mp_device->import_external_buffer<float>((void*)scales, P * 3);
 	Buffer<float> rotq_buf = mp_device->import_external_buffer<float>((void*)rotqs, P * 4);
@@ -64,6 +66,7 @@ void ReprodGSApp::forward(
 		*mp_stream,
 		height, width,
 		target_img_buf.view(),
+		radii_buf.view(),
 		P, sh_deg, max_sh_deg,
 		xyz_buf.view(), feat_buf.view(), opacity_buf.view(),
 		scale_buf.view(), rotq_buf.view(),

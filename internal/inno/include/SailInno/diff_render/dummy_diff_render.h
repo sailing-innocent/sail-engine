@@ -1,6 +1,6 @@
 #pragma once
 /**
- * @file packages/diff_render/dummy_diff_render.h
+ * @file app/dummy_diff_render.h
  * @author sailing-innocent
  * @date 2023-12-29
  * @brief the dummy diff render

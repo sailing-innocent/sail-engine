@@ -1,8 +1,8 @@
 /**
- * @file app/diff_render/gaussian_splatter_app.cpp
+ * @file app/dummy_diff_render.cpp
  * @author sailing-innocent
- * @date 2023-12-29
- * @brief the gaussian scene render app impl
+ * @date 2024-03-21
+ * @brief The Dummy Diff Render App Interface
  */
 #include "SailInno/app/dummy_diff_render_app.h"
 #include <luisa/runtime/buffer.h>
