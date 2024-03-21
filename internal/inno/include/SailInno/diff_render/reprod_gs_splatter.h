@@ -143,7 +143,6 @@ protected:
 	virtual void compile_forward_render_shader(Device& device) noexcept;
 	virtual void compile_backward_preprocess_shader(Device& device) noexcept;
 	virtual void compile_backward_render_shader(Device& device) noexcept;
-
 	virtual void compile_copy_with_keys_shader(Device& device) noexcept;
 	virtual void compile_get_ranges_shader(Device& device) noexcept;
 
@@ -218,17 +217,19 @@ protected:
 			 Buffer<float>,// dL_d_scale
 			 Buffer<float>,// dL_d_rotq
 			 // params
-			 int, int, int, // P, D, M
-			 uint2, uint2,	// resolution, grids
-			 Buffer<float>, // means_3d
-			 Buffer<float>, // shs
-			 Buffer<float>, // scale_buffer
-			 Buffer<float>, // qvec_buffer
-			 Buffer<float4>,// color_feature
-			 Buffer<float4>,// conic_opacity
-			 float3,		// cam_pos
-			 float4,		// focal_x, focal_y, tan_fov_x, tan_fov_y
-			 float4x4		// view_matrix
+			 int, int, int,// P, D, M
+			 uint2, uint2, // resolution, grids
+			 Buffer<float>,// means_3d
+			 Buffer<float>,// shs
+			 Buffer<float>,// scale_buffer
+			 Buffer<float>,// qvec_buffer
+			 Buffer<float>,// opacity_features
+			 Buffer<float>,// color_feature
+			 Buffer<float>,// conics
+			 // camera
+			 float3, // cam_pos
+			 float4, // focal_x, focal_y, tan_fov_x, tan_fov_y
+			 float4x4// view_matrix
 			 >>
 		m_backward_preprocess_shader;
 

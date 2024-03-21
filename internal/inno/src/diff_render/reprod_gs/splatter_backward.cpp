@@ -69,30 +69,32 @@ void ReprodGS::backward_impl(
 				   img_state->accum_alpha)
 				   .dispatch(m_resolution.x, m_resolution.y);
 
-	// LUISA_INFO("backward preprocess with {} ", m_num_gaussians);
-	// cmdlist << (*m_backward_preprocess_shader)(
-	// 			   // input
-	// 			   dL_d_means_2d,
-	// 			   dL_d_conic,
-	// 			   dL_d_color_feature,
-	// 			   // output
-	// 			   dL_d_xyz,
-	// 			   dL_d_feature,
-	// 			   dL_d_scale,
-	// 			   dL_d_rotq,
-	// 			   // params
-	// 			   m_num_gaussians, m_sh_deg, m_max_sh_deg,
-	// 			   m_resolution, m_grids,
-	// 			   xyz_buffer,
-	// 			   feature_buffer,
-	// 			   scale_buffer,
-	// 			   rotq_buffer,
-	// 			   geom_state->color_features,
-	// 			   geom_state->conic_opacity,
-	// 			   mp_camera->pos(),
-	// 			   mp_camera->camera_primitive(m_resolution.x, m_resolution.y),
-	// 			   mp_camera->view_matrix())
-	// 			   .dispatch(m_num_gaussians);
+	LUISA_INFO("backward preprocess with {} ", m_num_gaussians);
+	cmdlist << (*m_backward_preprocess_shader)(
+				   // input
+				   dL_d_means_2d,
+				   dL_d_conic,
+				   dL_d_color_feature,
+				   // output
+				   dL_d_xyz,
+				   dL_d_feature,
+				   dL_d_scale,
+				   dL_d_rotq,
+				   // params
+				   m_num_gaussians, m_sh_deg, m_max_sh_deg,
+				   m_resolution, m_grids,
+				   xyz_buffer,
+				   feature_buffer,
+				   scale_buffer,
+				   rotq_buffer,
+				   geom_state->opacity_features,
+				   geom_state->color_features,
+				   geom_state->conic,
+				   // camera
+				   mp_camera->pos(),
+				   mp_camera->camera_primitive(m_resolution.x, m_resolution.y),
+				   mp_camera->view_matrix())
+				   .dispatch(m_num_gaussians);
 
 	stream << cmdlist.commit() << synchronize();
 }

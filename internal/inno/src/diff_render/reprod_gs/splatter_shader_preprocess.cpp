@@ -143,8 +143,9 @@ void ReprodGS::compile_backward_preprocess_shader(Device& device) noexcept {
 					 BufferVar<float> shs,
 					 BufferVar<float> scale_buffer,
 					 BufferVar<float> rotq_buffer,
-					 BufferVar<float4> color_feature,
-					 BufferVar<float4> conic_opacity,
+					 BufferVar<float> opacity_features,
+					 BufferVar<float> color_feature,
+					 BufferVar<float> conics,
 					 Float3 campos,
 					 Float4 camera_primitive,
 					 Float4x4 view_matrix) {
@@ -166,10 +167,14 @@ void ReprodGS::compile_backward_preprocess_shader(Device& device) noexcept {
 			dL_d_feat);
 
 		// dL_d_conic -> dL_d_cov_2d
-		Float4 conic_o = conic_opacity.read(idx);
-		Float det_inv = (conic_o.x * conic_o.z - conic_o.y * conic_o.y);
+		Float3 conic = make_float3(
+			conics.read(3 * idx + 0),
+			conics.read(3 * idx + 1),
+			conics.read(3 * idx + 2));
+		// Float opacity = opacity_features.read(idx);
+		Float det_inv = (conic.x * conic.z - conic.y * conic.y);
 		Float det_inv_2 = det_inv * det_inv;
-		Float3 cov_2d = make_float3(conic_o.z, -conic_o.y, conic_o.x) * det_inv;
+		Float3 cov_2d = make_float3(conic.z, -conic.y, conic.x) * det_inv;
 		Float a = cov_2d.x;
 		Float b = cov_2d.y;
 		Float c = cov_2d.z;
@@ -193,11 +198,10 @@ void ReprodGS::compile_backward_preprocess_shader(Device& device) noexcept {
 		dL_d_scale.write(3 * idx + 0, dL_ds.x);
 		dL_d_scale.write(3 * idx + 1, dL_ds.y);
 		dL_d_scale.write(3 * idx + 2, dL_ds.z);
-
-		//  dL_d_rotq.write(4 * idx + 0, dL_dqvec.x);
-		//  dL_d_rotq.write(4 * idx + 1, dL_dqvec.y);
-		//  dL_d_rotq.write(4 * idx + 2, dL_dqvec.z);
-		//  dL_d_rotq.write(4 * idx + 3, dL_dqvec.w);
+		dL_d_rotq.write(4 * idx + 0, dL_dqvec.x);
+		dL_d_rotq.write(4 * idx + 1, dL_dqvec.y);
+		dL_d_rotq.write(4 * idx + 2, dL_dqvec.z);
+		dL_d_rotq.write(4 * idx + 3, dL_dqvec.w);
 	});
 }
 
