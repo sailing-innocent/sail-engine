@@ -17,16 +17,6 @@ class GaussianTrainerConfig(TrainerConfigBase):
         self.model_name: str = "vanilla_gaussian"
         self.target_path = ""
 
-class GaussianTrainerProcessLog(TrainProcessLogBase):
-    def __init__(self):
-        super().__init__()
-
-    def load(self):
-        pass 
-
-    def save(self):
-        pass 
-
 @dataclass
 class GaussianTrainerParams:
     name: str = "dummy_params"
@@ -42,20 +32,12 @@ class GaussianTrainerParams:
     saving_iterations = [7000, 30000]
     max_iterations = 30000
 
-class GaussianTrainer(TrainerBase):
-    """
-    inherited
-        - config
-        - eval_results
-        - train_process_logs
-        - weights
-    """
+class GaussianTrainer:
     def __init__(self,
         config: GaussianTrainerConfig):
-        super().__init__(config)
+        self.config = config
 
     def train(self, gaussians, dataset, renderer, loss_fn, params: GaussianTrainerParams):
-        process_log = GaussianTrainerProcessLog()
         iterations = params.max_iterations 
         first_iter = 0
         progress_bar = tqdm(range(first_iter, iterations), desc="Training Progress")
@@ -117,8 +99,6 @@ class GaussianTrainer(TrainerBase):
                 if iteration < iterations:
                     gaussians.optimizer.step()
                     gaussians.optimizer.zero_grad(set_to_none=True)
-
-        return process_log
 
 def create_trainer(env_config, target_path):
     trainer_config = GaussianTrainerConfig(env_config)

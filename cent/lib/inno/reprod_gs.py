@@ -89,15 +89,12 @@ class _RasterizeGaussians(torch.autograd.Function):
     @staticmethod 
     def backward(ctx, grad_out_color, _):
         means_3d, features, opacities, scales, rotations, rendered_image = ctx.saved_tensors
-
         grad_means_3d = torch.zeros(means_3d.shape, dtype=torch.float32, device="cuda")
-        
         P = means_3d.shape[0]
         grad_means_2d = torch.zeros((P, 2), dtype=torch.float32, device="cuda")
         grad_features = torch.zeros(features.shape, dtype=torch.float32, device="cuda")
         
         # print(grad_features.shape)
-
         grad_opacities = torch.zeros(opacities.shape, dtype=torch.float32, device="cuda")
         grad_scales = torch.zeros(scales.shape, dtype=torch.float32, device="cuda")
         grad_rotations = torch.zeros(rotations.shape, dtype=torch.float32, device="cuda")
