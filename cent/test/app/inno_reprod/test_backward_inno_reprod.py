@@ -58,12 +58,11 @@ def test_backward_inno_reprod():
     plt.imshow(target_img_np)
     plt.show()
 
-    N_TRAIN = 100
-    N_LOG = 20
+    N_TRAIN = 1000
+    N_LOG = 200
     pcd = sphere_point_cloud(r, N, red)
     gs = GaussianModel(3)
     gs.create_from_pcd(pcd, r)
-
     params = GaussianTrainerParams()
     gs.training_setup(params)
     for i in range(1, N_TRAIN+1):
@@ -71,6 +70,7 @@ def test_backward_inno_reprod():
         if i % 1000 == 0:
             gs.oneupSHdegree()
         result_img = inno_reprod_renderer.render(cam, gs)["render"]
+        # result_img = vanilla_renderer.render(cam, gs)["render"]
         loss = torch.mean((result_img - target_img) ** 2)
         loss.backward()
 
