@@ -51,15 +51,13 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 		// background color
 		Float3 color = make_float3(1.0f, 1.0f, 1.0f);
 		// debug grid
-		//  $if((tile_xy.x + tile_xy.y) % 2 == 0)
-		//  {
-		//      color = make_float3(0.0f, 0.0f, 0.0f);
-		//  };
+		// $if((tile_xy.x + tile_xy.y) % 2 == 0) {
+		// 	color = make_float3(0.0f, 0.0f, 0.0f);
+		// };
 
 		// make rounds
 		// round step = shared_mem_size = block_size = block_x * block_y
 		const Int round_step = Int(m_shared_mem_size);
-
 		const Int rounds = ((range_end - range_start + round_step - 1) / round_step);
 		Int todo = range_end - range_start;
 
@@ -83,7 +81,6 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 					means_2d_res.read(2 * coll_id + 1));
 				collected_means->write(thread_idx, means);
 				Float opacity = opacity_features.read(coll_id);
-
 				Float4 conic_opacity = make_float4(
 					conic.read(3 * coll_id + 0),
 					conic.read(3 * coll_id + 1),
@@ -96,8 +93,7 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 			// iterate over the current batch
 
 			$for(j, min(round_step, todo)) {
-
-				$if(done) { $break; };
+				// $if(done) { $break; };
 				contributor = contributor + 1u;
 
 				Float2 mean = collected_means->read(j);
@@ -121,7 +117,6 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 				//  feat = make_float3(1.0f, 0.0f, 0.0f);
 				C = C + T * alpha * feat;
 				T = test_T;
-
 				last_contributor = contributor;
 			};
 
@@ -131,7 +126,7 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 		$if(inside) {
 			color = color * T + C;
 			$for(i, 0, 3) {
-				target_img.write(pix_id + i * h * w, min(1.0f, color[i]));
+				target_img.write(pix_id + i * h * w, color[i]);
 			};
 			accum_alpha.write(pix_id, T);
 			n_contrib.write(pix_id, last_contributor);
@@ -184,10 +179,9 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 
 		// background color
 		Float3 bg_color = make_float3(1.0f, 1.0f, 1.0f);
-		//  $if((tile_xy.x + tile_xy.y) % 2 == 0)
-		//  {
-		//      color = make_float3(0.0f, 0.0f, 0.0f);
-		//  };
+		$if((tile_xy.x + tile_xy.y) % 2 == 0) {
+			bg_color = make_float3(0.0f, 0.0f, 0.0f);
+		};
 		// make rounds
 		// round step = shared_mem_size = block_size = block_x * block_y
 		const Int round_step = Int(m_shared_mem_size);

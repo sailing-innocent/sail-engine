@@ -39,13 +39,14 @@ void ReprodGS::compile_copy_with_keys_shader(Device& device) noexcept {
 			UInt2 rect_min, rect_max;
 
 			(*mp_get_rect)(point_xy, radius, rect_min, rect_max, blocks, grids);
-			$for(i, rect_min.x, rect_max.x) {
-				$for(j, rect_min.y, rect_max.y) {
+			$for(j, rect_min.y, rect_max.y) {
+				$for(i, rect_min.x, rect_max.x) {
 					ULong key = ULong(i + j * grids.x);
 					key <<= 32ull;
 					// TODO: directly bit-and float depth
 					auto depth = depth_features.read(idx);
-					key |= ULong(depth.as<UInt>());
+
+					key |= ULong(depth.as<UInt>()) & 0x00000000FFFFFFFFull;
 					keys_unsorted.write(off, key);
 					values_unsorted.write(off, idx);
 					off = off + 1u;
@@ -61,7 +62,10 @@ void ReprodGS::compile_get_ranges_shader(Device& device) noexcept {
 		ULong key = point_list_keys.read(idx);
 		UInt curr_tile = UInt(key >> 32ull);
 		UInt prev_tile = 0u;
-		$if(idx > 0u) {
+		$if(idx == 0u) {
+			ranges.write(2 * curr_tile + 0u, 0u);
+		}
+		$else {
 			prev_tile = UInt(point_list_keys.read(idx - 1) >> 32ull);
 			$if(curr_tile != prev_tile) {
 				ranges.write(2 * prev_tile + 1u, idx);

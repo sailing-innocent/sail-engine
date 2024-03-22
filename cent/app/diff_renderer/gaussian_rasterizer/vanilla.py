@@ -63,6 +63,7 @@ class GaussianRenderer:
         rotations = gaussians.get_rotation
 
         shs = gaussians.get_features
+        print(shs.shape)
 
         colors_precomp = None
         

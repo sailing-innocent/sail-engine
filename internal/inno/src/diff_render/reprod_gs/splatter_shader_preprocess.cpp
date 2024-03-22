@@ -37,6 +37,7 @@ void ReprodGS::compile_forward_preprocess_shader(Device& device) noexcept {
 		// invert covariance
 		// det(M) = M[0][0] * M[1][1] - M[0][1] * M[1][0]
 		Float3 cov_2d = make_float3(covs_2d.read(3 * idx + 0), covs_2d.read(3 * idx + 1), covs_2d.read(3 * idx + 2));
+
 		Float det = cov_2d.x * cov_2d.z - cov_2d.y * cov_2d.y;
 		Float inv_det = 1.0f / det;
 		Float3 conic = inv_det * make_float3(cov_2d.z, -cov_2d.y, cov_2d.x);// inv: [0][0] [0][1] transpose [1][1] inverse
@@ -87,7 +88,6 @@ void ReprodGS::compile_forward_preprocess_shader(Device& device) noexcept {
 		set_block_size(m_blocks.x * m_blocks.y);
 		auto idx = dispatch_id().x;
 		$if(idx >= static_cast<$uint>(P)) { return; };
-
 		// preprocess SH
 		auto color = (*mp_compute_color_from_sh)(static_cast<Int>(idx), D, M, means_3d, cam_pos, feat_buffer);
 		// -----------------------------
@@ -105,16 +105,19 @@ void ReprodGS::compile_forward_preprocess_shader(Device& device) noexcept {
 		// color = make_float3(p_proj.x, p_proj.y, p_view.z / 10.0f); // debug xyz color
 		// near culling method
 		$if(p_view.z <= 0.2f) { return; };
+
 		// calculate 3d covariance
 		Float3 s = make_float3(scale_buffer.read(3 * idx + 0), scale_buffer.read(3 * idx + 1), scale_buffer.read(3 * idx + 2));
 		Float4 rotq = make_float4(rotq_buffer.read(4 * idx + 0), rotq_buffer.read(4 * idx + 1), rotq_buffer.read(4 * idx + 2), rotq_buffer.read(4 * idx + 3));
+
 		Float3x3 cov_3d = (*mp_compute_cov_3d)(s, scale_modifier, rotq);
-		// cov_3d = make_float3x3(1.0f) * 0.0001f;
 		// calculate projected covariance 2d
 		Float3 cov_2d = (*mp_compute_cov_2d)(p_view_hom, camera_primitive, cov_3d, view_matrix);
+
 		covs_2d.write(3 * idx + 0, cov_2d.x);
 		covs_2d.write(3 * idx + 1, cov_2d.y);
 		covs_2d.write(3 * idx + 2, cov_2d.z);
+
 		means_2d.write(2 * idx + 0, p_proj.x);
 		means_2d.write(2 * idx + 1, p_proj.y);
 		color_features.write(3 * idx + 0, color.x);
