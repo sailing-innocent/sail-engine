@@ -61,4 +61,4 @@ class Gaussians3D:
         self.scale = torch.ones((N, 3), dtype=torch.float32).cuda()
         self.rotq = torch.zeros((N, 4), dtype=torch.float32).cuda()
         self.feature = torch.ones((N, N_FEAT), dtype=torch.float32).cuda()
-        self.opacity_features = 0.5 * torch.ones((N, 1), dtype=torch.float32).cuda()
+        self.opacity_features = 0.5 * torch.ones(N, dtype=torch.float32).cuda()
