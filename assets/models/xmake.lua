@@ -1,5 +1,5 @@
 target("models")
     set_kind("object")
-    add_files("**.obj")
+    add_files("**.obj", "**.ply")
     add_rules("sail.asset")
 target_end()

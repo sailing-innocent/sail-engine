@@ -5,7 +5,10 @@ rule("sail.asset")
         ".hlsl",
         ".png",
         ".jpg",
-        ".obj"
+        ".obj",
+        ".ply",
+        ".gltf",
+        ".bin"
     )
     on_build_file(function(target, sourcefile, opt) 
         -- if not exist directory, create it

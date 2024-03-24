@@ -1,10 +1,11 @@
-import bpy
+# Wrapper for Blender Noise
+
+import bpy 
 
 from mathutils.noise import (
-    noise,
-    multi_fractal
+    noise, 
+    multi_fractal    
 )
-
 from math import (
     floor, sqrt,
     sin, cos, pi,
@@ -24,7 +25,6 @@ def scale(val, iscale, offset, invert):
         return (1.0 - val) * iscale + offset 
     else:
         return val * iscale + offset  
-
 
 def si_noise(coord, props):
     x, y, z = coord
