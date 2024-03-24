@@ -1,4 +1,3 @@
-from module.config.env import BaseEnvConfig
 from ..base import RegressionDatasetConfig, RegressionDataset, data_iter
 import csv
 import os 
@@ -6,7 +5,7 @@ import numpy as np
 import torch 
 
 class AQIDatasetConfig(RegressionDatasetConfig):
-    def __init__(self, env_config: BaseEnvConfig):
+    def __init__(self, env_config):
         super().__init__(env_config)
         self.input_dim = 10
         self.output_dim = 1
