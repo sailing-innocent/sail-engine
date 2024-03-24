@@ -1,9 +1,8 @@
 from module.dataset.base import BaseDataset, BaseDatasetConfig
 from abc import ABC, abstractmethod
-from module.config.env import BaseEnvConfig
 
 class ClassifyDatasetConfig(BaseDatasetConfig):
-    def __init__(self, env_config: BaseEnvConfig):
+    def __init__(self, env_config):
         super().__init__(env_config)
 
     def dataset_root(self):

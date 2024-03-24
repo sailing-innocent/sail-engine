@@ -1,7 +1,6 @@
 import pytest 
-from .dataset import MNIST, MNISTConfig 
-from module.config.env import get_env_config
-
+from module.dataset.classify.mnist.dataset import MNIST, MNISTConfig 
+from mission.config.env import get_env_config
 
 @pytest.mark.current 
 def test_mnist():

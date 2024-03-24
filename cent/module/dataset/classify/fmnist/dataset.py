@@ -17,7 +17,7 @@ class FMNISTConfig(ClassifyDatasetConfig):
     def dataset_root(self):
         subfolder = "fmnist"
         return os.path.join(
-            self.env_config.dataset_root(), subfolder)
+            self.env_config.dataset_root, subfolder)
 
 class FMNIST(ImageClassifyDataset):
     def __init__(self, config: FMNISTConfig):

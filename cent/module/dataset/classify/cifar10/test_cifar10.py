@@ -1,14 +1,13 @@
 import pytest 
 
-from .dataset import CIFAR10, CIFAR10Config
-from module.config.env import get_env_config
+from module.dataset.classify.cifar10.dataset import CIFAR10, CIFAR10Config
+from mission.config.env import get_env_config
 
 @pytest.mark.current 
 def test_cifar10():
     env_config = get_env_config()
     config = CIFAR10Config(env_config)
     dataset = CIFAR10(config)
-
     assert len(dataset) == 50000
     assert dataset.batch_size == 64
     sample, label = dataset[0]

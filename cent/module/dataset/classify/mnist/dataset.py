@@ -17,7 +17,7 @@ class MNISTConfig(ClassifyDatasetConfig):
     def dataset_root(self):
         subfolder = "mnist"
         return os.path.join(
-            self.env_config.dataset_root(), subfolder)
+            self.env_config.dataset_root, subfolder)
 
 class MNIST(ImageClassifyDataset):
     def __init__(self, config: MNISTConfig):
