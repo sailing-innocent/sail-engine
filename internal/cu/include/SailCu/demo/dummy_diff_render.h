@@ -7,6 +7,7 @@
 */
 #include <cstdint>
 #include "SailCu/config.h"
+
 namespace sail::cu {
 
 class SAIL_CU_API DummyDiffRender {

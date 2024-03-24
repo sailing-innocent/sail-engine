@@ -6,7 +6,6 @@
  */
 
 #include <luisa/dsl/sugar.h>
-
 #include "transform.h"
 
 namespace sail::inno::math {
