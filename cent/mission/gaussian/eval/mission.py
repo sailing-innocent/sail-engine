@@ -1,11 +1,11 @@
 import os 
-from mission.base import BaseMission 
+from mission.base import MissionBase 
 from app.project.nvs.gs.eval import EvalGaussianProjectConfig, EvalGaussianProjectParams, EvalGaussianProject
 
 def get_ply_from_json(gs_ply_json, parent_path = ""):
     return os.path.join(parent_path, gs_ply_json['ckpt_path'], "_".join([gs_ply_json['dataset_name'], gs_ply_json['obj_name'], str(gs_ply_json["iter"])]) + ".ply")
 
-class Mission(BaseMission):
+class Mission(MissionBase):
     def __init__(self, config_json_file):
         super().__init__(config_json_file, __file__)
         self.name = self.config_json["name"]

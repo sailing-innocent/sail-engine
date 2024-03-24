@@ -9,7 +9,6 @@ from module.utils.torch.math import inverse_sigmoid, strip_symmetric
 from module.utils.torch.transform import qvec2R, T2Sigma
 from module.utils.torch.sh import RGB2SH
 from module.utils.np.func import discrete_exp_func
-from module.utils.core.system import mkdir_p
 
 class GaussianModel:
     def setup_functions(self):
@@ -141,8 +140,7 @@ class GaussianModel:
         self.max_radii2D = torch.zeros((self.get_xyz.shape[0]), device="cuda")
 
     def save_ply(self, path):
-        mkdir_p(os.path.dirname(path))
-
+        os.mkdirs(os.path.dirname(path), exist_ok=True)
         xyz = self._xyz.detach().cpu().numpy()
         normals = np.zeros_like(xyz)
         f_dc = self._features_dc.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()

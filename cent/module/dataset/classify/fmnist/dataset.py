@@ -56,7 +56,7 @@ class FMNIST(ImageClassifyDataset):
     def __getitem__(self, index: int):
         return self._dataset[index]
 
-def create_fmnist(env_config, usage, batch_size=32):
+def create_dataset(env_config, usage, batch_size=32):
     fmnist_config = FMNISTConfig(env_config)
     fmnist_config.usage = usage 
     fmnist_config.batch_size = batch_size

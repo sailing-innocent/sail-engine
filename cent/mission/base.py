@@ -10,7 +10,7 @@ mpl_logger.setLevel(logging.INFO)
 pil_logger = logging.getLogger('PIL')  
 pil_logger.setLevel(logging.INFO)
 
-class BaseMission(ABC):
+class MissionBase(ABC):
     def __init__(self, config_json_file, current_f=__file__):
         with open(os.path.join(os.path.dirname(current_f), config_json_file), 'r') as config_json_f:
             self.config_json = json.loads(config_json_f.read())

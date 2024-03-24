@@ -1,11 +1,11 @@
-from mission.base import BaseMission
+from mission.base import MissionBase
 import itertools 
 from app.project.nvs.gs.train import TrainGaussianProjectConfig, TrainGaussianProjectParams, TrainGaussianProject
 
 from app.trainer.nvs.gs.basic import GaussianTrainerParams
 from app.trainer.nvs.gs.vanilla import GaussianVanillaTrainerParams
 
-class Mission(BaseMission):
+class Mission(MissionBase):
     def __init__(self, config_json_file):
         super().__init__(config_json_file, __file__)
         # parse the compenent
