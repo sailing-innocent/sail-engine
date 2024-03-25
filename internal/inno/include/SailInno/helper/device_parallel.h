@@ -42,7 +42,6 @@ public:
 	// lifecycle
 	void create(Device& device);
 
-public:
 	// API
 	void scan_exclusive_sum(size_t& temp_storage_size,
 							BufferView<IntType> d_in,

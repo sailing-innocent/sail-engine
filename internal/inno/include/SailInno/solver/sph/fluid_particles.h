@@ -43,7 +43,6 @@ private:
 	void reset(CommandList& cmdlist) noexcept;
 	void allocate(Device& device, size_t size) noexcept;
 
-private:
 	size_t m_size;
 	size_t m_max_size;
 };
