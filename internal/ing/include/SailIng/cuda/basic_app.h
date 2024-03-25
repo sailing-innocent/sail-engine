@@ -5,11 +5,13 @@
  * @date 2023-03-25
  * @brief the basic INGCUDAApp class
  */
+#ifdef SAIL_ING_CUDA
+#ifdef SAIL_ING_GL
 
 #include "SailIng/opengl/pure_app.h"
 #include "SailIng/opengl/gl_shader.h"
 #include <cuda.h>
-#include "SailCu/demo/simple2d.h"
+
 #include <cuda_runtime_api.h>
 #include <cuda_gl_interop.h>
 
@@ -39,3 +41,6 @@ protected:
 };
 
 }// namespace sail::ing
+
+#endif
+#endif

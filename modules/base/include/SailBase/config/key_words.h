@@ -66,3 +66,10 @@
 #else
 #define SAIL_FORCEINLINE inline __attribute__((always_inline))
 #endif
+
+// ALIGNAS
+#if defined(_MSC_VER)
+#define SAIL_ALIGNAS(x) __declspec(align(x))
+#else
+#define SAIL_ALIGNAS(x) __attribute__((aligned(x)))
+#endif

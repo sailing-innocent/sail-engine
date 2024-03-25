@@ -1,12 +1,14 @@
-#pragma once
 /**
  * @file app/cuda/basic_app.cpp
  * @author sailing-innocent
  * @date 2023-03-25
  * @brief the basic INGCUDAApp class
  */
+#ifdef SAIL_ING_CUDA
+#ifdef SAIL_ING_GL
 
 #include "SailIng/cuda/basic_app.h"
+#include "SailCu/demo/simple2d.h"
 
 namespace sail::ing {
 
@@ -79,3 +81,6 @@ void INGCUDAApp::destroy_buffers() {
 }
 
 }// namespace sail::ing
+
+#endif// SAIL_ING_GL
+#endif// SAIL_ING_CUDA

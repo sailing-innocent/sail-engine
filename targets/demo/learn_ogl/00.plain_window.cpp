@@ -1,13 +1,11 @@
-#include "test_util.h"
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
-
 #include "util.h"
 #include <iostream>
 
-namespace sail::test {
 using namespace sail::ing::test;
-int ogl_plain_window() {
+int main() {
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -49,12 +47,4 @@ int ogl_plain_window() {
 	glfwTerminate();
 
 	return 0;
-}
-
-}// namespace sail::test
-
-TEST_SUITE("ing::learn_ogl") {
-	TEST_CASE("plain_window") {
-		REQUIRE(sail::test::ogl_plain_window() == 0);
-	}
 }
