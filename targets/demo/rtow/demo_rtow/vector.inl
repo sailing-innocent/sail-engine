@@ -5,8 +5,6 @@
  * @author sailing-innocent
 */
 
-#include <iostream>
-
 namespace sail {
 
 template<typename T, int I>

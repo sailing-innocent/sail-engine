@@ -23,7 +23,6 @@ public:
 	Vector<T, I>& operator=(Vector<T, I>&& rhs);
 	~Vector() {}
 
-public:
 	// size
 	int size() const { return I; }
 	// get
@@ -31,16 +30,13 @@ public:
 	// set
 	T& operator[](int index);
 
-public:
 	// +=,-=,*=,/=,=
 	Vector<T, I>& operator+=(const Vector<T, I>& rhs);
 	Vector<T, I>& operator-=(const Vector<T, I>& rhs);
 	Vector<T, I>& operator*=(const Vector<T, I>& rhs);
 	Vector<T, I>& operator/=(const Vector<T, I>& rhs);
-
-public:
 	// -
-	friend Vector<T, I>& operator-(const Vector<T, I>& rhs) {
+	friend Vector<T, I> operator-(const Vector<T, I>& rhs) {
 		Vector<T, I> result;
 		for (int i = 0; i < I; i++) {
 			result[i] = -rhs[i];
@@ -91,7 +87,6 @@ public:
 		return true;
 	}
 
-public:
 	// T v[T] ops
 	friend Vector<T, I> operator+(const Vector<T, I>& lhs, const T& rhs) {
 		Vector<T, I> result;
@@ -153,7 +148,6 @@ public:
 		return result;
 	}
 
-public:
 	// T v[T] singleton ops
 	Vector<T, I>& operator+=(const T val);
 	Vector<T, I>& operator-=(const T val);
@@ -161,7 +155,6 @@ public:
 	Vector<T, I>& operator/=(const T val);
 
 	// special ops
-public:
 	// dot
 	friend T dot(const Vector<T, I>& lhs, const Vector<T, I>& rhs) {
 		T result = 0;

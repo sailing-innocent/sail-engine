@@ -1,18 +1,20 @@
-#include "test_util.h"
-#include "rtow.h"
-#include "hittable.h"
-#include "hittable_list.h"
-#include "sphere.h"
-#include "camera.h"
+#include "demo_rtow/rtow.h"
+#include "demo_rtow/hittable_list.h"
+#include "demo_rtow/sphere.h"
+#include "demo_rtow/camera.h"
 
 #include <string>
 #include <vector>
+#include <filesystem>
 
-namespace ing::test06 {
+using namespace sail::rtow;
 
-using namespace ing::rtow;
+int main(int argc, char** argv) {
+	std::string odir = argv[1];
+	std::string oname = argv[2];
+	std::filesystem::path odir_path(odir);
+	std::filesystem::create_directories(odir_path);
 
-int test_lambertian() {
 	double aspect_ratio = 16.0 / 9.0;
 	int image_width = 512;
 	int image_height = static_cast<int>(image_width / aspect_ratio);
@@ -35,16 +37,9 @@ int test_lambertian() {
 			cam.spp = spp;
 			cam.render(world, image_buffer);
 			// writing file
-			std::string fname = "D:/workspace/data/result/rtow/fig_lambertian_rtow_" + std::to_string(depth) + "_" + std::to_string(spp) + ".ppm";
-			write_image(fname, image_buffer, image_width, image_height);
+			std::filesystem::path of_path(odir + "/" + oname + "_" + std::to_string(depth) + "_" + std::to_string(spp) + ".ppm");
+			write_image(of_path, image_buffer, image_width, image_height);
 		}
 	}
-
 	return 0;
-}
-
-}// namespace ing::test06
-
-TEST_CASE("rtow_08") {
-	REQUIRE(ing::test06::test_lambertian() == 0);
 }

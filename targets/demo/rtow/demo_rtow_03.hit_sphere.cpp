@@ -1,20 +1,42 @@
-#include "test_util.h"
-#include "vec3.h"
-#include "ray.h"
-
+#include "demo_rtow/vec3.h"
+#include "demo_rtow/ray.h"
 #include <fstream>
 #include <vector>
+#include <string>
+#include <filesystem>
 
-namespace ing::test {
+using namespace sail::rtow;
 
-using namespace ing::rtow;
+namespace rtow::test03 {
+
+bool hit_sphere(const point3& center, double radius, const ray& r) {
+	vec3 oc = r.origin() - center;
+	auto a = dot(r.direction(), r.direction());
+	auto b = 2.0 * dot(oc, r.direction());
+	auto c = dot(oc, oc) - radius * radius;
+	auto discriminant = b * b - 4 * a * c;
+	return discriminant > 0;
+}
+
 color ray_color(const ray& r) {
+	if (hit_sphere(point3{0.0, 0.0, -1.0}, 0.5, r)) {
+		return color{1.0, 0.0, 0.0};
+	}
+
 	vec3 unit_direction = unit_vector(r.direction());
 	auto a = 0.5 * (unit_direction[1] + 1.0);
 	return (1.0 - a) * color{1.0} + a * color{0.5, 0.7, 1.0};
 }
+}// namespace rtow::test03
 
-int test_simple_ray() {
+int main(int argc, char** argv) {
+	using namespace rtow::test03;
+	std::string odir = argv[1];
+	std::string oname = argv[2];
+	std::filesystem::path odir_path(odir);
+	std::filesystem::create_directories(odir_path);
+	std::filesystem::path of_path(odir + "/" + oname + ".ppm");
+
 	double aspect_ratio = 16.0 / 9.0;
 	int image_width = 512;
 	int image_height = static_cast<int>(image_width / aspect_ratio);
@@ -35,7 +57,6 @@ int test_simple_ray() {
 	// output buffer
 	std::vector<char> image_buffer(image_width * image_height * 3, 0);
 	// fill buffer
-
 	for (auto i = 0; i < image_height; i++) {
 		for (auto j = 0; j < image_width; j++) {
 			ray r{camera_center, pixel00_loc + pixel_dalta_u * j - pixel_dalta_v * i - camera_center};
@@ -52,16 +73,10 @@ int test_simple_ray() {
 
 	// writing file
 	std::ofstream ofs;
-	ofs.open("D:/workspace/data/result/rtow/fig_simple_ray_rtow.ppm", std::ios::binary);
+	ofs.open(of_path, std::ios::binary);
 	ofs << "P6\n"
 		<< image_width << " " << image_height << "\n255\n";
 	ofs.write(image_buffer.data(), image_width * image_height * 3);
 	ofs.close();
 	return 0;
-}
-
-}// namespace ing::test
-
-TEST_CASE("rtow_02") {
-	REQUIRE(ing::test::test_simple_ray() == 0);
 }

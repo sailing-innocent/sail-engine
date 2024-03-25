@@ -1,17 +1,20 @@
-#include "test_util.h"
-#include "rtow.h"
-#include "hittable.h"
-#include "hittable_list.h"
-#include "sphere.h"
-#include "camera.h"
-#include "material.h"
+#include "demo_rtow/rtow.h"
+#include "demo_rtow/hittable.h"
+#include "demo_rtow/hittable_list.h"
+#include "demo_rtow/sphere.h"
+#include "demo_rtow/camera.h"
+#include "demo_rtow/material.h"
 
-#include <vector>
+using namespace sail::rtow;
 
-namespace ing::test {
-using namespace ing::rtow;
+int main(int argc, char** argv) {
 
-int test_final_render() {
+	std::string odir = argv[1];
+	std::string oname = argv[2];
+	std::filesystem::path odir_path(odir);
+	std::filesystem::create_directories(odir_path);
+	std::filesystem::path of_path(odir + "/" + oname + ".ppm");
+
 	double aspect_ratio = 16.0 / 9.0;
 	int image_width = 1200;
 	int image_height = static_cast<int>(image_width / aspect_ratio);
@@ -67,13 +70,7 @@ int test_final_render() {
 
 	std::vector<char> image_buffer(image_width * image_height * 3, 0);
 	cam.render(world, image_buffer);
-	std::string fname = "D:/workspace/data/result/rtow/fig_final_rtow.ppm";
-	write_image(fname, image_buffer, image_width, image_height);
+
+	write_image(of_path, image_buffer, image_width, image_height);
 	return 0;
-}
-
-}// namespace ing::test
-
-TEST_CASE("rtow_final") {
-	REQUIRE(ing::test::test_final_render() == 0);
 }

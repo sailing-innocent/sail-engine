@@ -1,14 +1,15 @@
-#include "test_util.h"
-#include "rtow.h"
-#include "hittable.h"
-#include "hittable_list.h"
-#include "sphere.h"
+#include "demo_rtow/rtow.h"
+#include "demo_rtow/hittable.h"
+#include "demo_rtow/hittable_list.h"
+#include "demo_rtow/sphere.h"
 
 #include <fstream>
+#include <string>
+#include <filesystem>
 
-namespace ing::test02 {
+using namespace sail::rtow;
 
-using namespace ing::rtow;
+namespace rtow::test02 {
 
 color ray_color(const ray& r, const hittable& world) {
 	hit_record rec;
@@ -22,7 +23,15 @@ color ray_color(const ray& r, const hittable& world) {
 	return (1.0 - a) * color{1.0} + a * color{0.5, 0.7, 1.0};
 }
 
-int test_sphere_normal() {
+}// namespace rtow::test02
+int main(int argc, char** argv) {
+	using namespace rtow::test02;
+	std::string odir = argv[1];
+	std::string oname = argv[2];
+	std::filesystem::path odir_path(odir);
+	std::filesystem::create_directories(odir_path);
+	std::filesystem::path of_path(odir + "/" + oname + ".ppm");
+
 	double aspect_ratio = 16.0 / 9.0;
 	int image_width = 512;
 	int image_height = static_cast<int>(image_width / aspect_ratio);
@@ -64,16 +73,10 @@ int test_sphere_normal() {
 
 	// writing file
 	std::ofstream ofs;
-	ofs.open("D:/workspace/data/result/rtow/fig_sphere_normal_rtow.ppm", std::ios::binary);
+	ofs.open(of_path, std::ios::binary);
 	ofs << "P6\n"
 		<< image_width << " " << image_height << "\n255\n";
 	ofs.write(image_buffer.data(), image_width * image_height * 3);
 	ofs.close();
 	return 0;
-}
-
-}// namespace ing::test02
-
-TEST_CASE("rtow_04") {
-	REQUIRE(ing::test02::test_sphere_normal() == 0);
 }
