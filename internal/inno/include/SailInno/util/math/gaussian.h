@@ -76,9 +76,9 @@ Float3_T proj_cov3d_to_cov2d_01(Float4_T p_view, Float4_T camera_primitive, Floa
 	Float3x3_T T = J * W;
 	Float3x3_T cov = T * cov3d * transpose(T);
 	// low pass filter
-	auto focal = camera_primitive.y;
-	cov[0][0] += 0.005f * focal;
-	cov[1][1] += 0.005f * focal;
+	// auto focal = camera_primitive.y;
+	// cov[0][0] += 0.005f * focal;
+	// cov[1][1] += 0.005f * focal;
 	return make_float3(cov[0][0], cov[0][1], cov[1][1]);
 }
 

@@ -47,6 +47,7 @@ def test_backward_inno_split():
     source_gs.load_ply("D:/pretrained/gaussian/nerf_blender_lego_30000.ply")
     cam = Camera("FlipY")
     cam.lookat(2 * np.array([1, 0, 1]), np.array([0, 0, 0]))
+    cam.set_res(1600, 1600)
 
     vanilla_renderer = create_vanilla_renderer(env_config)
     inno_split_renderer = GaussianRenderer(env_config)
