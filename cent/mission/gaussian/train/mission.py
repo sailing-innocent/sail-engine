@@ -33,6 +33,7 @@ class Mission(MissionBase):
 
         for key in self.train_params:
             setattr(train_params, key, self.train_params[key])
+        
         train_params.max_iterations = max(train_params.saving_iterations)
         for obj_name in self.objects:
             params = TrainGaussianProjectParams(
