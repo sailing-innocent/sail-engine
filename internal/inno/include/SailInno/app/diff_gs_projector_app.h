@@ -31,9 +31,9 @@ public:
 		int64_t rotq,
 		// output
 		int64_t means_2d,
+		int64_t covs_2d,
 		int64_t depth_features,
 		int64_t color_features,
-		int64_t covs_2d,
 		// camera
 		std::array<float, 3> cam_pos, float fov_rad, float aspect, std::array<float, 16> view_matrix, std::array<float, 16> proj_matrix);
 	void backward();

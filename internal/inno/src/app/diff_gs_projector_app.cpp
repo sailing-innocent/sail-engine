@@ -33,9 +33,9 @@ void DiffGSProjectorApp::forward(
 	int64_t rotq,
 	// output
 	int64_t means_2d,
+	int64_t covs_2d,
 	int64_t depth_features,
 	int64_t color_features,
-	int64_t covs_2d,
 	// camera
 	std::array<float, 3> cam_pos, float fov_rad, float aspect, std::array<float, 16> view_matrix_arr, std::array<float, 16> proj_matrix_arr) {
 	CommandList cmdlist;
@@ -65,10 +65,15 @@ void DiffGSProjectorApp::forward(
 	mp_projector->forward_impl(
 		*mp_device, cmdlist,
 		num_gaussians, sh_deg, max_sh_deg, scale_modifier,
-		xyz_buf, feature_buf, scale_buf, rotq_buf,
+		xyz_buf,
+		feature_buf,
+		scale_buf,
+		rotq_buf,
 		cam,
-		means_2d_buf, depth_features_buf, color_features_buf, covs_2d_buf);
-
+		means_2d_buf,
+		depth_features_buf,
+		color_features_buf,
+		covs_2d_buf);
 	(*mp_stream) << cmdlist.commit();
 }
 

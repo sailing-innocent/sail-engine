@@ -33,17 +33,19 @@ class GaussianTrainerParams:
     saving_iterations = [7000, 30000]
     max_iterations = 30000
 
-@pytest.mark.app
+@pytest.mark.current 
 def test_backward_inno_split():
     env_config = get_env_config()
     source_gs = GaussianModel(3)
-    r = 1.0
-    N = 1000
-    red = [1, 0, 0]
-    blue = [0, 0, 1]
-    pcd = sphere_point_cloud(r, N, blue)
+    # r = 1.0
+    # N = 1000
+    # red = [1, 0, 0]
+    # blue = [0, 0, 1]
+    # pcd = sphere_point_cloud(r, N, blue)
+
+    # source_gs.create_from_pcd(pcd, r)
+    source_gs.load_ply("D:/pretrained/gaussian/nerf_blender_lego_30000.ply")
     cam = Camera("FlipY")
-    source_gs.create_from_pcd(pcd, r)
     cam.lookat(2 * np.array([1, 0, 1]), np.array([0, 0, 0]))
 
     vanilla_renderer = create_vanilla_renderer(env_config)
@@ -54,7 +56,6 @@ def test_backward_inno_split():
     target_img_np = target_img.cpu().numpy().transpose(1, 2, 0)
     target_img_np = target_img_np[::-1, :, :]
     target_img_np = target_img_np.clip(0, 1)
-
     plt.imshow(target_img_np)
     plt.show()
 

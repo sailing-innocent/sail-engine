@@ -8,7 +8,7 @@ from app.diff_renderer.gaussian_projector.orth import GaussianProjector
 import numpy as np 
 import pytest 
 
-@pytest.mark.current
+@pytest.mark.app
 def test_diff_gs_projector():
     env_config = get_env_config()
     source_gs = GaussianModel(3)
