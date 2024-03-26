@@ -140,7 +140,7 @@ class GaussianModel:
         self.max_radii2D = torch.zeros((self.get_xyz.shape[0]), device="cuda")
 
     def save_ply(self, path):
-        os.mkdirs(os.path.dirname(path), exist_ok=True)
+        os.mkdir(os.path.dirname(path), exist_ok=True)
         xyz = self._xyz.detach().cpu().numpy()
         normals = np.zeros_like(xyz)
         f_dc = self._features_dc.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
