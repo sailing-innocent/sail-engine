@@ -48,6 +48,7 @@ class Mission(MissionBase):
                 metric_types=[b["name"] for b in self.benchmarks]
             )
             result = self.project.run(params)
+            result["name"] = obj_name
             yield result
 
     def run_project(self):
