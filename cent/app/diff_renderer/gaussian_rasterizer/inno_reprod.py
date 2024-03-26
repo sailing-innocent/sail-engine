@@ -9,59 +9,12 @@ def create_gaussian_renderer(env_config):
 
 class GaussianRendererConfig:
     def __init__(self, env_config):
-        self._env_config = env_config
+        self.env_config = env_config
 
 class GaussianRenderer:
     def __init__(self, config: GaussianRendererConfig):
         self.config = config
         self.rasterizer = GaussianRasterizer() 
-
-    def render_scene(self, scene, cam, scale_modifier=0.1):
-        width = cam.info.ResW
-        height = cam.info.ResH
-
-        cam_pos_arr = cam.info.T.flatten().tolist()
-        view_matrix_arr = cam.view_matrix.T.flatten().tolist()
-        proj_matrix_arr = cam.proj_matrix.T.flatten().tolist()
-        P = scene.n_points
-        xyz = scene.xyz_torch()
-        opacity = scene.opacity_torch()
-        color = scene.color_torch()
-        scales = scene.scale_torch()
-        rots = scene.rot_torch()
-
-        raster_settings = GaussianRasterizationSettings(
-            image_height = int(height),
-            image_width = int(width),
-            fov_rad = cam.info.FovY,
-            scale_modifier = scale_modifier,
-            viewmatrix = view_matrix_arr,
-            projmatrix = proj_matrix_arr,
-            sh_degree = -1,
-            max_sh_degree = 0,
-            campos = cam_pos_arr,
-            prefiltered = False,
-            debug = False
-        )
-
-        # just a place holder, requires its grad for trick
-        screenspace_points = torch.zeros((P, 2), dtype=xyz.dtype, requires_grad=True, device="cuda")
-        try:
-            screenspace_points.retain_grad()
-        except:
-            pass
-
-        rendered_image, radii = self.rasterizer(
-            means_3d = xyz,
-            means_2d = screenspace_points,
-            features = color,
-            opacities = opacity,
-            scales = scales,
-            rotations = rots,
-            raster_settings = raster_settings
-        )
-
-        return rendered_image, radii 
 
     def render(self, camera: Camera, gaussians, scale_modifier=1.0):
         view_mat = camera.view_matrix.T.flatten().tolist()

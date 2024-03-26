@@ -1,5 +1,5 @@
 import sys 
-from innopy import DiffGSProjector
+from innopy import DiffGSProjectorApp
 
 
 import torch 
@@ -61,10 +61,10 @@ class DiffGSProjectorSettings(NamedTuple):
     viewmatrix : list
     projmatrix : list
 
-class DiffGSProjectorModule(nn.Module):
+class DiffGSProjector(nn.Module):
     def __init__(self):
         super(DiffGSProjector, self).__init__()
-        self.app = DiffGSProjector()
+        self.app = DiffGSProjectorApp()
         self.app.create(sys.path[-1], "cuda")
 
     def forward(self, xyz, feature, scale, rotq, settings):
