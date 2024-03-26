@@ -68,15 +68,11 @@ class TexFigure:
             f.write(pgf_content)
         xmake_file = os.path.join(target_dir, "xmake.lua")
         dat_content = "\n".join([f"add_dat(\"{line.file_name}\")" for line in self.lines])
-        deps_content = "add_deps(\n"+",\n".join([f"\"{line.file_name}\"" for line in self.lines])+"\n)"
+        deps_content = "{" + ",\n".join([f"\"{line.file_name}\"" for line in self.lines]) + "}"
         xmake_content = f"""
 {dat_content}
-target("{tt}")
-    add_rules("latex-content")
-    add_files("{tt}.tex")
-    {deps_content}
-target_end()
-        """
+add_content(\"{tt}\",\n{deps_content}\n)\n
+"""
         with open(xmake_file, "w") as f:
             f.write(xmake_content)
 

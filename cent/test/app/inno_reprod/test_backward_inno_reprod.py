@@ -58,7 +58,7 @@ def test_backward_inno_reprod():
     plt.imshow(target_img_np)
     plt.show()
 
-    N_TRAIN = 1000
+    N_TRAIN = 2000
     N_LOG = 200
     pcd = sphere_point_cloud(r, N, red)
     gs = GaussianModel(3)
