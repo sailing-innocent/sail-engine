@@ -36,9 +36,7 @@ class Mission(MissionBase):
         fig = TexFigure()
         fig.title = self.result_json["title"]
         output_path = os.path.join(self.env_config.doc_fig_result_path, self.result_json["output_path"])
-        
         os.makedirs(output_path, exist_ok=True)
-        
         for idx, result in enumerate(results):
             dt = TexFigData()
             dt.data = result 

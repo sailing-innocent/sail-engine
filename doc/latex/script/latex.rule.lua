@@ -18,6 +18,13 @@ function add_content(name, deps, srclist)
     target_end()
 end
 
+function add_dat(name)
+    target(name)
+        add_rules("latex.content")
+        add_files(name..".dat")
+    target_end()
+end
+
 function add_img(name, ext)
     ext = ext or "png"
     target(name)
