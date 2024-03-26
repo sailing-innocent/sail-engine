@@ -86,7 +86,7 @@ class Mission(MissionBase):
                 i = 0
                 average = 0.0
                 result_tab = TexTable(1, n_objs + 1)
-                result_tab.rows[0] = "3dgs " + "_".join([render_name,trainer_name,loss_name,train_params_item["name"]])
+                result_tab.rows[0] = "3dgs " + "_".join([render_name,trainer_name,loss_name,train_params["name"]])
                 for result in results:
                     result_data = result[benchmark]
                     average += result_data 
