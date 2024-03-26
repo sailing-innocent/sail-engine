@@ -4,12 +4,12 @@
 
 #include <cmath>
 #include <limits>
-#include <memory>
 #include <random>
 
 #include "vec3.h"
 #include <fstream>
 #include <filesystem>
+
 // Constants
 
 namespace sail::rtow {

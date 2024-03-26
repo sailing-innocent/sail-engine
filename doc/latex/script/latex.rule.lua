@@ -103,6 +103,9 @@ rule("latex")
         -- parse dependencies
         local subcontent = {}
         subcontent["main"] = target:sourcefiles()
+        depend.on_changed(function() 
+        
+        end, {files = subcontent["main"]})
         local bibs = {}
         local bib_deps = {}
 
@@ -135,8 +138,8 @@ rule("latex")
                 gen_recursive(dep_target, subcontent, bib_deps)
             end
         end
-        gen_recursive(target, subcontent, bib_deps)
 
+        gen_recursive(target, subcontent, bib_deps)
         for _, bib_dep in ipairs(bib_deps) do
             local bib_target = project.target(bib_dep)
             local item_bibs_json = bib_target:values("bibs")
@@ -145,11 +148,9 @@ rule("latex")
                 bibs[key] = value
             end
         end
-
         -- copy to gendir 
         local gendir = target:autogendir({root = true})
-        target:set("values", "succontent", json.encode(subcontent))
-
+        target:set("values", "subcontent", json.encode(subcontent))
         -- gen ref.bib
         local bibfile_path = path.join(gendir, "ref.bib")
         os.tryrm(bibfile_path)
@@ -159,6 +160,7 @@ rule("latex")
             bibcontent = bibcontent .. value .. "\n"
         end
         bibfile:write(bibcontent)
+
     end)
 
     on_build(function(target, opt)
@@ -168,7 +170,7 @@ rule("latex")
         import("core.project.depend")
 
         local gendir = target:autogendir({root = true})
-        local subcontent = json.decode(target:values("succontent"))
+        local subcontent = json.decode(target:values("subcontent"))
 
         -- copy source files
         for group_name, sourcefiles in pairs(subcontent) do
@@ -179,14 +181,12 @@ rule("latex")
             if (not os.isdir(group_dir)) then
                 os.mkdir(group_dir) 
             end 
-            depend.on_changed(function()
-                for _, file in ipairs(sourcefiles) do
-                    os.cp(file, group_dir)
-                end
-            end, {files = sourcefiles})
+            for _, file in ipairs(sourcefiles) do
+                os.cp(file, group_dir)
+            end
         end
 
-        local proj_files = os.files(path.join(gendir, "**.tex|**.sty|**.cls|**.bst|**.dtx|**.cfg|**.png|**.jpg|**.jpeg|**.pdf|**.dat|**.eps|**.bib"))
+        local proj_files = os.files(path.join(gendir, "**.tex|**.sty|**.cls|**.bst|**.dtx|**.cfg|**.png|**.jpg|**.jpeg|**.dat|**.eps|**.bib"))
         -- print(proj_files)
         depend.on_changed(function()
             os.cd(target:autogendir({root=true})) -- enter project dir
@@ -209,13 +209,16 @@ rule("latex")
             latex_main = 'main.tex'
         end
         local out_pdf = path.join(target:autogendir({root=true}), path.basename(latex_main) .. ".pdf") 
+
         depend.on_changed(function()
-            progress.show(opt.progress, "build %s.pdf done", target:name())
-            local latex_out = get_config("latex_out")
-            if (latex_out ~= nil) then 
-                progress.show(opt.progress, "copy %s.pdf to %s", target:name(), latex_out)
-                os.cp(out_pdf, path.join(latex_out, target:name() .. ".pdf"))
-            end 
+            if os.isfile(out_pdf) then
+                progress.show(opt.progress, "build %s.pdf done", target:name())
+                local latex_out = get_config("latex_out")
+                if (latex_out ~= nil) then 
+                    progress.show(opt.progress, "copy %s.pdf to %s", target:name(), latex_out)
+                    os.cp(out_pdf, path.join(latex_out, target:name() .. ".pdf"))
+                end 
+            end
         end, {files={out_pdf}})
     end)
 rule_end()

@@ -5,8 +5,9 @@
 namespace sail::rtow {
 
 class ray {
+
 public:
-	ray() {}
+	ray() = default;
 	explicit ray(const point3& origin, const vec3& direction) : m_orig(origin), m_dir(direction) {}
 
 	point3 at(double t) const {

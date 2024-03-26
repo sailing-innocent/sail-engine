@@ -1,5 +1,6 @@
 #include "demo_rtow/vec3.h"
 #include "demo_rtow/ray.h"
+
 #include <fstream>
 #include <vector>
 #include <string>

@@ -1,7 +1,7 @@
 #pragma once
+
 #include "rtow.h"
 #include "hittable.h"
-
 #include <vector>
 
 namespace sail::rtow {
