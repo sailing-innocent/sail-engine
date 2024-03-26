@@ -1,1 +1,5 @@
-{"rows": ["bubble_sort_py", "selection_sort_py", "insertion_sort_py", "np_sort_py", "bubble_sort_cpp", "selection_sort_cpp", "insertion_sort_cpp", "merge_sort_cpp"], "cols": [32, 1024, 4096], "data": [["1.00", "885.60", "14774.41"], ["1.00", "470.60", "7432.73"], ["1.01", "680.94", "11233.34"], ["0.00", "0.00", "3.00"], ["0.00", "0.31", "4.10"], ["0.00", "0.25", "3.21"], ["0.00", "0.06", "0.95"], ["0.00", "0.08", "0.34"]], "caption": "tab_sort_compare_result", "label": "tab_sort_compare_result"}
+{
+    files = {
+        [[doc\latex\table\result\algorithm\sort\compare\tab_sort_compare_result.json]]
+    }
+}

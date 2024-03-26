@@ -1,3 +1,3 @@
 add_content("rtow_doc_cn", {
-    "fig_pack_rtow"
+    -- "fig_pack_rtow"
 })

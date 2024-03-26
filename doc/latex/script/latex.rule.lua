@@ -80,7 +80,6 @@ end
 -- latex project entry
 rule("latex")
     set_extensions(".tex")
-
     on_load(function (target)
         -- generate .latexmkrc
         target:set("kind", "object")
@@ -161,10 +160,12 @@ rule("latex")
         end
         bibfile:write(bibcontent)
     end)
+
     on_build(function(target, opt)
         import("utils.progress")
         import("lib.detect.find_tool")
         import("core.base.json")
+        import("core.project.depend")
 
         local gendir = target:autogendir({root = true})
         local subcontent = json.decode(target:values("succontent"))
@@ -178,35 +179,44 @@ rule("latex")
             if (not os.isdir(group_dir)) then
                 os.mkdir(group_dir) 
             end 
-            for _, file in ipairs(sourcefiles) do
-                os.cp(file, group_dir)
-            end
+            depend.on_changed(function()
+                for _, file in ipairs(sourcefiles) do
+                    os.cp(file, group_dir)
+                end
+            end, {files = sourcefiles})
         end
 
-        os.cd(target:autogendir({root=true})) -- enter project dir
-        local latexmk = assert(find_tool("latexmk"), "latexmk not found!")
-        local latex_compiler = target:extraconf("rules", "latex", "latex_compiler")
-        
-        if latex_compiler == nil then 
-            latex_compiler = 'xelatex'
-        end
-        progress.show(opt.progress, "building %s.pdf", target:name())
-        os.vrunv(latexmk.program, {"-pdf", "-" .. latex_compiler})
-        os.cd("$(projectdir)") -- back to project root
+        local proj_files = os.files(path.join(gendir, "**.tex|**.sty|**.cls|**.bst|**.dtx|**.cfg|**.png|**.jpg|**.jpeg|**.pdf|**.dat|**.eps|**.bib"))
+        -- print(proj_files)
+        depend.on_changed(function()
+            os.cd(target:autogendir({root=true})) -- enter project dir
+            local latexmk = assert(find_tool("latexmk"), "latexmk not found!")
+            local latex_compiler = target:extraconf("rules", "latex", "latex_compiler")
+            if latex_compiler == nil then 
+                latex_compiler = 'xelatex'
+            end
+            progress.show(opt.progress, "building %s.pdf", target:name())
+            os.vrunv(latexmk.program, {"-pdf", "-" .. latex_compiler})
+            os.cd("$(projectdir)") -- back to project root
+        end, { files = proj_files })
     end)
 
     after_build(function (target, opt)
         import("utils.progress")
-        progress.show(opt.progress, "build %s.pdf done", target:name())
-        local latex_out = get_config("latex_out")
+        import("core.project.depend")
         local latex_main = target:extraconf("rules", "latex", "latex_main")
         if latex_main == nil then 
             latex_main = 'main.tex'
-        end 
-        if (latex_out ~= nil) then 
-            progress.show(opt.progress, "copy %s.pdf to %s", target:name(), latex_out)
-            os.cp(path.join(target:autogendir({root=true}), path.basename(latex_main) .. ".pdf"), path.join(latex_out, target:name() .. ".pdf"))
-        end 
+        end
+        local out_pdf = path.join(target:autogendir({root=true}), path.basename(latex_main) .. ".pdf") 
+        depend.on_changed(function()
+            progress.show(opt.progress, "build %s.pdf done", target:name())
+            local latex_out = get_config("latex_out")
+            if (latex_out ~= nil) then 
+                progress.show(opt.progress, "copy %s.pdf to %s", target:name(), latex_out)
+                os.cp(out_pdf, path.join(latex_out, target:name() .. ".pdf"))
+            end 
+        end, {files={out_pdf}})
     end)
 rule_end()
 
