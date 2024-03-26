@@ -4,7 +4,13 @@
     "usage": "train",
     "objects": [
         "lego",
-        "chair"
+        "chair",
+        "drums",
+        "ficus",
+        "hotdog",
+        "materials",
+        "mic",
+        "ship"
     ],
     "benchmarks": [
         {
@@ -24,7 +30,7 @@
             "position_lr_init": 0.0,
             "position_lr_final": 0.0,
             "saving_iterations": [
-                3000
+                30000
             ]
         },
         {
@@ -34,13 +40,13 @@
             "scaling_lr": 0.0,
             "rotation_lr": 0.0,
             "saving_iterations": [
-                3000
+                30000
             ]
         },
         {
             "name": "default",
             "saving_iterations": [
-                3000
+                30000
             ]
         }
     ],
