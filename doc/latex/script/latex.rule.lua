@@ -7,7 +7,7 @@ rule("latex.content")
     end)
 rule_end()
 
-function add_content(name,deps, srclist)
+function add_content(name, deps, srclist)
     if srclist == nil then 
         srclist = name .. ".tex"
     end
@@ -75,7 +75,6 @@ function add_bib(name, deps)
         add_files(name .. ".bib")
     target_end()
 end
-
 
 -- latex project entry
 rule("latex")

@@ -46,6 +46,7 @@ function add_ppm(name)
     target_end()
 end
 
+
 rule("latex.python_figure")
     set_extensions(".py")
     add_deps("latex.indirect_content")
