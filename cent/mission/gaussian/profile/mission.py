@@ -45,7 +45,7 @@ class Mission(MissionBase):
                 render_name=render_name,
                 train_params=train_params,
                 loss_name=loss_name,
-                metric_types=self.benchmarks
+                metric_types=[b["name"] for b in self.benchmarks]
             )
             result = self.project.run(params)
             yield result
