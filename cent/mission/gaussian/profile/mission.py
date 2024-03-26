@@ -4,6 +4,9 @@ from app.project.nvs.gs.train import TrainGaussianProjectConfig, TrainGaussianPr
 from app.trainer.nvs.gs.basic import GaussianTrainerParams
 from app.trainer.nvs.gs.vanilla import GaussianVanillaTrainerParams
 
+from module.utils.tex.table import TexTable 
+import os 
+
 class Mission(MissionBase):
     def __init__(self, config_json_file):
         super().__init__(config_json_file, __file__)
@@ -18,8 +21,8 @@ class Mission(MissionBase):
         self.loss_names = self.config_json["loss_names"]
         self.render_names = self.config_json["render_names"]
         self.trainer_names = self.config_json["trainer_names"]
+        self.result_template = self.config_json["result_template"]
 
-  
         self.create_train_params = {
             "vanilla": GaussianVanillaTrainerParams,
             "basic": GaussianTrainerParams
@@ -30,8 +33,43 @@ class Mission(MissionBase):
         proj_config.name = self.name
         proj_config.usage = self.usage 
         # proj_config.sh_deg = 0
-        project = TrainGaussianProject(proj_config)
+        self.project = TrainGaussianProject(proj_config)
+        results = self.run_project()
         
+    def run_through_objects(self, trainer_name, render_name, train_params, loss_name):
+        for obj_name in self.objects:
+            params = TrainGaussianProjectParams(
+                dataset_name=self.dataset_name,
+                obj_name=obj_name,
+                trainer_name=trainer_name,
+                render_name=render_name,
+                train_params=train_params,
+                loss_name=loss_name,
+                metric_types=self.benchmarks
+            )
+            result = self.project.run(params)
+            yield result
+
+    def run_project(self):
+        n_objs = len(self.objects)
+        full_result_tabs = {}
+        suffix = ".json"
+        result_path = self.result_template["path"]
+
+        for benchmark_json in self.benchmarks:
+            benchmark = benchmark_json["name"]
+            full_result_tab = TexTable(0, n_objs + 1)
+            full_result_tab.caption = f"3DGS Profile Results ({benchmark})"
+            full_result_tabs[benchmark] = full_result_tab
+            # add to template 
+            if benchmark_json["use_template"]:
+                template = self.result_template["template"]
+                template_file_name = os.path.join(result_path, template.replace("{benchmark}", benchmark) + suffix)
+                template_tab = TexTable(1, n_objs + 1)
+                template_tab.from_json_file(template_file_name)
+                full_result_tabs[benchmark].append_rows(template_tab)
+        
+        idx = 0
 
         for render_name, trainer_name, _train_params, loss_name in itertools.product(self.render_names, self.trainer_names, self.train_params_list, self.loss_names):
             print(f"render_name: {render_name}, trainer_name: {trainer_name}, train_params: {_train_params}, loss_name: {loss_name}")
@@ -40,14 +78,31 @@ class Mission(MissionBase):
                 setattr(train_params, key, _train_params[key])
             
             train_params.max_iterations = max(train_params.saving_iterations)
-            for obj_name in self.objects:
-                params = TrainGaussianProjectParams(
-                    dataset_name=self.dataset_name,
-                    obj_name=obj_name,
-                    trainer_name=trainer_name,
-                    render_name=render_name,
-                    train_params=train_params,
-                    loss_name=loss_name,
-                    metric_types=self.benchmarks
-                )
-                project.run(params)
+            # THROUGH OBJECTS
+            results = self.run_through_objects(trainer_name, render_name, train_params, loss_name)
+
+            # PARSE RESULT
+            for benchmark in full_result_tabs.keys():
+                i = 0
+                average = 0.0
+                result_tab = TexTable(1, n_objs + 1)
+                result_tab.rows[0] = "3dgs " + "_".join([render_name,trainer_name,loss_name,train_params_item["name"]])
+                for result in results:
+                    result_data = result[benchmark]
+                    average += result_data 
+                    result_tab[0, i] = "{:.2f}".format(float(result_data))
+                    result_tab.cols[i] = result["name"]
+                    i = i + 1
+                # average
+                average = average / n_objs
+                result_tab[0, i] = "{:.2f}".format(float(average))
+                result_tab.cols[i] = "average"
+                full_result_tabs[benchmark].append_rows(result_tab)
+            
+        # EXPORT
+        for benchmark in full_result_tabs.keys():    
+            result_name = self.result_template["name"].replace("{benchmark}",benchmark)
+            result_name = result_name + f"_{self.dataset_name}"
+            target_file_path = os.path.join(result_path, result_name + suffix)
+            full_result_tabs[benchmark].to_json_file(target_file_path)
+

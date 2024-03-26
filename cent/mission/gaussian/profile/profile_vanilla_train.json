@@ -24,7 +24,7 @@
             "position_lr_init": 0.0,
             "position_lr_final": 0.0,
             "saving_iterations": [
-                30000
+                3000
             ]
         },
         {
@@ -34,20 +34,20 @@
             "scaling_lr": 0.0,
             "rotation_lr": 0.0,
             "saving_iterations": [
-                30000
+                3000
             ]
         },
         {
             "name": "default",
             "saving_iterations": [
-                30000
+                3000
             ]
         }
     ],
     "loss_names": [
         "l1+ssim"
     ],
-    "result": {
+    "result_template": {
         "name": "tab_3dgs_profile_{benchmark}_result",
         "type": "tab_json",
         "template": "3dgs_paper_{benchmark}",
