@@ -1,0 +1,17 @@
+
+\begin{tikzpicture}
+	\begin{axis}[
+		 title={Profile Img Classify MLP BS EP},
+		 xlabel={x},
+		 ylabel={y},
+		 legend style={at={(0.97,0.5)},anchor=west},
+		 legend entries={
+simple mlp batchsize 32,
+simple mlp batchsize 64
+ },
+		]
+\addplot table {result_simple_mlp_batchsize_32_data.dat};
+\addplot table {result_simple_mlp_batchsize_64_data.dat};
+	\end{axis}
+\end{tikzpicture}
+        
