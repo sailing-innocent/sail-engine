@@ -1,2 +1,2 @@
 add_json_table("tab_3dgs_profile_psnr_result_nerf_blender")
-add_json_table("tab_3dgs_profile_xyz_grad_psnr_result_nerf_blender")
+-- add_json_table("tab_3dgs_profile_xyz_grad_psnr_result_nerf_blender")
