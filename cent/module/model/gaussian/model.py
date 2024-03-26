@@ -17,7 +17,6 @@ class Gaussians2D:
         self.color_features = torch.ones((N, 3), dtype=torch.float32).cuda()
         self.opacity_features = 0.5 * torch.ones((N, 1), dtype=torch.float32).cuda()
 
-
     def requires_grad(self):
         self.means_2d.requires_grad = True
         self.covs_2d.requires_grad = True

@@ -41,9 +41,7 @@ def test_backward_inno_split():
     blue = [0, 0, 1]
     pcd = sphere_point_cloud(r, N, blue)
     cam = Camera("FlipY")
-
     source_gs.create_from_pcd(pcd, r)
-
     cam.lookat(2 * np.array([1, 0, 1]), np.array([0, 0, 0]))
 
     vanilla_renderer = create_vanilla_renderer(env_config)
