@@ -6,6 +6,7 @@ from module.model.gaussian.vanilla import GaussianModel
 from app.diff_renderer.gaussian_rasterizer.vanilla import create_gaussian_renderer as create_vanilla_renderer 
 # from app.renderer.gaussian_rasterizer.vanilla_ing import create_gaussian_renderer as create_vanilla_ing_renderer
 from app.diff_renderer.gaussian_rasterizer.inno_reprod import create_gaussian_renderer as create_inno_reprod_renderer
+from app.diff_renderer.gaussian_rasterizer.inno_split import create_gaussian_renderer as create_inno_split_renderer
 # from app.renderer.gaussian_rasterizer.inno_zzh import create_gaussian_renderer as 
 # from app.renderer.gaussian_rasterizer.inno_split import create_gaussian_renderer as create_inno_split_renderer
 
@@ -46,7 +47,7 @@ class EvalGaussianProject(ProjectBase):
             # 'vanilla_ing': create_vanilla_ing_renderer,
             # 'reprod': create_reprod_renderer,
             "inno_reprod": create_inno_reprod_renderer,
-            # "inno_zzh": create_inno_zzh_renderer
+            "inno_split": create_inno_split_renderer,
             'vanilla': create_vanilla_renderer
         }
 

@@ -1,16 +1,11 @@
-#include "test_util.h"
-
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
-
+#include <iostream>
 #include "util.h"
 
-#include <iostream>
+using namespace sail::demo;
 
-namespace sail::test {
-using namespace sail::ing::test;
-
-int ogl_rectangle() {
+int main() {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -175,12 +170,4 @@ int ogl_rectangle() {
 	// ------------------------------------------------------------------
 	glfwTerminate();
 	return 0;
-}
-
-}// namespace sail::test
-
-TEST_SUITE("ing::learn_ogl") {
-	TEST_CASE("rectangle") {
-		REQUIRE(sail::test::ogl_rectangle() == 0);
-	}
 }

@@ -1,15 +1,12 @@
-#include "test_util.h"
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
-
 #include <iostream>
 
 #include "util.h"
 
-namespace sail::test {
-using namespace sail::ing::test;
+using namespace sail::demo;
 
-int ogl_triangle() {
+int main() {
 	const unsigned int SCR_WIDTH = 800;
 	const unsigned int SCR_HEIGHT = 600;
 	glfwInit();
@@ -20,7 +17,7 @@ int ogl_triangle() {
 	// --------------------
 	GLFWwindow* window =
 		glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-	if (window == NULL) {
+	if (!window) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 		return -1;
@@ -149,12 +146,4 @@ int ogl_triangle() {
 	// ------------------------------------------------------------------
 	glfwTerminate();
 	return 0;
-}
-
-}// namespace sail::test
-
-TEST_SUITE("ing::learn_ogl") {
-	TEST_CASE("triangle") {
-		REQUIRE(sail::test::ogl_triangle() == 0);
-	}
 }

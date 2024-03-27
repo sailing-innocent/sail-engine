@@ -5,6 +5,7 @@ from .mission import Mission
 def test_gaussian_reprod_render():
     # f = "render_vanilla"
     # f = "render_inno_reprod"
-    f = "render_inno_reprod_sphere"
+    # f = "render_inno_reprod_sphere"
+    f = "render_inno_split"
     mission = Mission(f + ".json")
     mission.exec()

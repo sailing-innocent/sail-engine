@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <string>
 
-namespace sail::ing::test {
+namespace sail::demo {
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
@@ -25,4 +25,4 @@ struct GLShader {
 	void set_mat4(const std::string& name, float* value_ptr);
 };
 
-}// namespace sail::ing::test
+}// namespace sail::demo

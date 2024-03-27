@@ -3,7 +3,8 @@
 #include "util.h"
 #include <iostream>
 
-using namespace sail::ing::test;
+using namespace sail::demo;
+
 int main() {
 
 	glfwInit();

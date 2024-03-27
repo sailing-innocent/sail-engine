@@ -1,22 +1,15 @@
-#include "test_util.h"
-
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include <stb_image.h>
-#include <stb_image_write.h>
 
 #include "util.h"
 
-// GLM
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <stb_image.h>
+#include <stb_image_write.h>
 
-namespace sail::test {
-using namespace sail::ing::test;
+using namespace sail::demo;
 
-int ogl_transform() {
+int main() {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -43,8 +36,8 @@ int ogl_transform() {
 	// load shader
 	// -----------
 	GLShader shader{
-		"assets/shaders/learnogl/transform.vert",
-		"assets/shaders/learnogl/transform.frag"};
+		"assets/shaders/learnogl/texture.vert",
+		"assets/shaders/learnogl/texture.frag"};
 
 	float vertices[] = {
 		// positions          // colors           // texture coords
@@ -154,10 +147,6 @@ int ogl_transform() {
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		shader.use();
-		glm::mat4 rot = glm::mat4(1.f);
-		rot = glm::rotate(rot, (float)glfwGetTime(), glm::vec3(0.f, 0.f, 1.f));
-		shader.set_mat4("transform", glm::value_ptr(rot));
-
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -169,12 +158,4 @@ int ogl_transform() {
 
 	glfwTerminate();
 	return 0;
-}
-
-}// namespace sail::test
-
-TEST_SUITE("ing::learn_ogl") {
-	TEST_CASE("transform") {
-		REQUIRE(sail::test::ogl_transform() == 0);
-	}
 }

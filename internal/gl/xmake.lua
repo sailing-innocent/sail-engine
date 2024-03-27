@@ -1,0 +1,10 @@
+add_requires("glfw")
+add_requires("glm")
+
+SHARED_MODULE("SailGL", "SAIL_GL", engine_version)
+    add_includedirs("include", {public=true})
+    add_files("src/**.cpp")
+    add_deps("SailBase")
+    add_packages("glm", "glfw", "imgui", {public = true})
+    add_deps("external_glad", {public = true})
+    add_defines("SAIL_GL", {public=true})
