@@ -12,6 +12,8 @@
     "render_name": "vanilla",
     "loss_name": "l1",
     "train_params": {
+        "data_limit": 10,
+        "data_shuffle": false,
         "saving_iterations": [
             3000
         ]
