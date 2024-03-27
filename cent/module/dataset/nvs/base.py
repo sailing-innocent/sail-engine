@@ -59,8 +59,15 @@ class NVSDataset(BaseDataset):
     def __len__(self):
         return self.N
     
-    def pairs(self):
-        return self._cam_img_pairs.copy()
+    def pairs(self, limit = -1, shuffle=False):
+        if (limit < 0):
+            limit = self.N
+        indices = list(range(self.N))
+        if shuffle:
+            import random
+            random.shuffle(indices)
+        _pairs = self._cam_img_pairs.copy()
+        return [_pairs[i] for i in indices[:limit]]
     
     def _load_dataset(self):
         raise NotImplementedError("Not implemented")

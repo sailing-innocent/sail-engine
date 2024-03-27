@@ -38,3 +38,25 @@ class BaseDataset(ABC):
 
     def __str__(self):
         return self.name
+    
+
+class DataLoader:
+    def __init__(self, dataset, batch_size=64, shuffle=True):
+        self.dataset = dataset
+        self.batch_size = batch_size
+        self.shuffle = shuffle
+        self.index = 0
+        self.indices = list(range(len(dataset)))
+        if shuffle:
+            import random
+            random.shuffle(self.indices)
+
+    def __iter__(self):
+        return self 
+    
+    def __next__(self):
+        if self.index >= len(self.indices):
+            raise StopIteration
+        indices = self.indices[self.index:self.index+self.batch_size]
+        self.index += self.batch_size
+        return [self.dataset[i] for i in indices]
