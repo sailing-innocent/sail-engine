@@ -39,6 +39,7 @@ class NVSDataset(BaseDataset):
         # Ray - Color pairs
         self._ray_color_pairs = []
         self.use_rays = False
+        self.indices = None
 
     def enable_rays(self):
         return self.config.enable_rays
