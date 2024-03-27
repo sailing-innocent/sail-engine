@@ -62,11 +62,11 @@ class GaussianTrainPipeline(NVSPipeline):
         pairs = dataset.pairs(train_params.data_limit, train_params.data_shuffle)
         
         save_dir = os.path.join(self.target_path, "train_pairs")
-        for idx, (cam, image) in enumerate(pairs):
+        for idx, pair in enumerate(pairs):
             json_f = os.path.join(save_dir, f"{str(idx)}.json")
             # dump cam info
             with open(json_f, "w") as f:
-                json.dump(cam, f)
+                json.dump(pair.cam, f)
             # save img
-            image.save(os.path.join(save_dir, f"{str(idx)}.png"))
+            pair.img.save(os.path.join(save_dir, f"{str(idx)}.png"))
 
