@@ -14,6 +14,7 @@ from loguru import logger
 import os 
 import json
 import matplotlib.pyplot as plt 
+import numpy as np 
 
 class GaussianTrainPipelineConfig(NVSPipelineConfig):
     def __init__(self, env_config):
@@ -71,5 +72,5 @@ class GaussianTrainPipeline(NVSPipeline):
                 json.dump(pair.cam.to_dict(), f)
             # save img
             img_f = os.path.join(save_dir, f"{str(idx)}.png")
-            plt.imsave(img_f, pair.img.data)
+            plt.imsave(img_f, (pair.img.data * 255.0).astype(np.uint8))
 
