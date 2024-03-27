@@ -1,7 +1,7 @@
 import pytest 
 import torch 
 
-@pytest.mark.current 
+@pytest.mark.app
 def test_prod():
     m1 = torch.tensor([[1,2],[3,4]])
     m2 = torch.tensor([[5,6],[7,8]])

@@ -129,21 +129,16 @@ def test_sampler_2d():
     # estimate new x0, y0, z0
     # (X^TX)^-1 X^T Y
 
-    # TODO: data
-    X = torch.tensor([V1[0][0], V1[0][1], V1[0][2],
-                      V1[1][0], V1[1][1], V1[1][2],
-                      V2[0][0], V2[0][1], V2[0][2],
-                      V2[1][0], V2[1][1], V2[1][2]], dtype=torch.float32)
-
-    y1 = gs2d_01.means_2d[:, 0]
-    y2 = gs2d_01.means_2d[:, 1]
-    y3 = gs2d_02.means_2d[:, 0]
-    y4 = gs2d_02.means_2d[:, 1]
-
-    Y = torch.tensor([y1, y2, y3, y4], dtype=torch.float32)
-
-    mean_3d_pred = torch.matmul(torch.matmul(torch.inverse(torch.matmul(X.T, X)), X.T), Y.T).T
-
+    Y1 = gs2d_01.means_2d.reshape(N, 2, 1)
+    Y2 = gs2d_02.means_2d.reshape(N, 2, 1)
+    Y = torch.cat([Y1, Y2], dim=2)
+    V1_01 = torch.stack(V1[:, 0], V1[:, 1])
+    V1_2 = V1[:, 2]
+    C1 = V1_2 * Y - V1_01
+    V2_02 = torch.stack(V2[:, 0], V2[:, 1])
+    V2_2 = V2[:, 2]
+    C2 = V2_2 * Y - V2_02
+    X = torch.inverse(C1.transpose(1, 2) @ C1) @ C1.transpose(1, 2) @ C2
 
 
     
