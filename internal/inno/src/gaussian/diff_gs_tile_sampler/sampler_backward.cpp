@@ -48,6 +48,7 @@ void DiffGaussianTileSampler::backward_impl(
 				   m_num_gaussians,
 				   geom_state->dL_d_conic,
 				   m_resolution,
+				   m_fov_rad,
 				   covs_2d,
 				   dL_d_covs_2d)
 				   .dispatch(m_num_gaussians);

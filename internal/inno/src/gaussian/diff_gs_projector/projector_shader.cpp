@@ -33,13 +33,12 @@ void DiffGaussianProjector::compile(Device& device) noexcept {
 		return cov;
 	});
 
-	mp_compute_cov_2d = luisa::make_unique<Callable<float3(float4, float4, float3x3, float4x4)>>(
+	mp_compute_cov_2d = luisa::make_unique<Callable<float3(float3, float3x3, float4x4)>>(
 		[](
-			Float4 p_view,
-			Float4 camera_primitive,
+			Float3 p_view,
 			Float3x3 cov_3d,
 			Float4x4 view_matrix) {
-		Float3 cov = math::proj_cov3d_to_cov2d_01<Float3, Float4, Float3x3, Float4x4>(p_view, camera_primitive, cov_3d, view_matrix);
+		Float3 cov = math::proj_cov3d_to_cov2d_01<Float3, Float3x3, Float4x4>(p_view, cov_3d, view_matrix);
 		return cov;
 	});
 
@@ -105,7 +104,6 @@ void DiffGaussianProjector::compile(Device& device) noexcept {
 					 BufferVar<float> covs_2d,
 					 // camera
 					 Float3 cam_pos,
-					 Float4 camera_primitive,
 					 Float4x4 view_matrix,
 					 Float4x4 proj_matrix) {
 		set_block_size(m_blocks.x * m_blocks.y);
@@ -121,12 +119,6 @@ void DiffGaussianProjector::compile(Device& device) noexcept {
 		Float4 p_hom = make_float4(mean_3d, 1.0f);
 		Float4 p_view_hom = view_matrix * p_hom;
 		Float3 p_view = p_view_hom.xyz();
-
-		Float4 p_proj_hom = proj_matrix * p_view_hom;
-		Float p_w = 1.0f / (p_proj_hom.w + 1e-6f);
-		Float3 p_proj = p_proj_hom.xyz() * p_w;
-
-		// color = make_float3(p_proj.x, p_proj.y, p_view.z / 10.0f); // debug xyz color
 		// near culling method
 		$if(p_view.z <= 0.2f) { return; };
 		// calculate 3d covariance
@@ -135,14 +127,12 @@ void DiffGaussianProjector::compile(Device& device) noexcept {
 		Float3x3 cov_3d = (*mp_compute_cov_3d)(s, scale_modifier, rotq);
 		// cov_3d = make_float3x3(1.0f) * 0.0001f;
 		// calculate projected covariance 2d
-		Float3 cov_2d = (*mp_compute_cov_2d)(p_view_hom, camera_primitive, cov_3d, view_matrix);
+		Float3 cov_2d = (*mp_compute_cov_2d)(p_view, cov_3d, view_matrix);
 		covs_2d.write(3 * idx + 0, cov_2d.x);
 		covs_2d.write(3 * idx + 1, cov_2d.y);
 		covs_2d.write(3 * idx + 2, cov_2d.z);
-
-		means_2d.write(2 * idx + 0, p_proj.x);
-		means_2d.write(2 * idx + 1, p_proj.y);
-
+		means_2d.write(2 * idx + 0, p_view.x / p_view.z);
+		means_2d.write(2 * idx + 1, p_view.y / p_view.z);
 		color_features.write(3 * idx + 0, color.x);
 		color_features.write(3 * idx + 1, color.y);
 		color_features.write(3 * idx + 2, color.z);

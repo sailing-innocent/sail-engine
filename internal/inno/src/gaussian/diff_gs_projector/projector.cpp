@@ -61,7 +61,6 @@ void DiffGaussianProjector::forward_impl(
 				   covs_2d,
 				   // camera
 				   cam.pos(),
-				   cam.camera_primitive(),
 				   cam.view_matrix(),
 				   cam.proj_matrix())
 				   .dispatch(num_gaussians);

@@ -44,12 +44,12 @@ float4 Camera::camera_primitive(int width, int height) const noexcept {
 }
 
 float4 Camera::camera_primitive() const noexcept {
-	float fheight = 1.0f;
+	float focal = 1.0f;
 	float tan_fov_y = tanf(this->fov_rad() * 0.5f);
 	float aspect = this->aspect_ratio();
 	float tan_fov_x = tan_fov_y * aspect;
-	float focal_y = fheight / 2.0f / tan_fov_y;
-	float focal_x = focal_y;
+	float focal_y = focal / 2.0f / tan_fov_y;
+	float focal_x = focal_y * aspect;
 	float4 camera_primitive = luisa::make_float4(focal_x, focal_y, tan_fov_x, tan_fov_y);
 	return camera_primitive;
 }

@@ -22,7 +22,7 @@ void DiffGaussianTileSampler::forward_impl(
 	Stream& stream,
 	// params
 	int num_gaussians,
-	int height, int width,
+	int height, int width, float fov_rad,
 	// input
 	BufferView<float> means_2d,		   // P * 2
 	BufferView<float> covs_2d,		   // P * 3
@@ -31,6 +31,7 @@ void DiffGaussianTileSampler::forward_impl(
 	BufferView<float> color_features,  // P * 3
 	// output
 	BufferView<float> target_img_buffer) {
+	m_fov_rad = fov_rad;
 	m_grids = luisa::make_uint2(
 		(unsigned int)((width + m_blocks.x - 1u) / m_blocks.x),
 		(unsigned int)((height + m_blocks.y - 1u) / m_blocks.y));
@@ -53,6 +54,7 @@ void DiffGaussianTileSampler::forward_impl(
 				   num_gaussians,
 				   m_resolution,
 				   m_grids,
+				   fov_rad,
 				   // input
 				   means_2d,
 				   covs_2d,

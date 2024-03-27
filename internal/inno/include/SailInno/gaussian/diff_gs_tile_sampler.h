@@ -24,7 +24,7 @@ public:
 		Stream& stream,
 		// params
 		int num_gaussians,
-		int height, int width,
+		int height, int width, float fov_rad,
 		// input
 		BufferView<float> means_2d,
 		BufferView<float> covs_2d,
@@ -111,6 +111,7 @@ protected:
 	uint2 m_blocks = {16u, 16u};
 	uint2 m_grids = {1u, 1u};
 	uint2 m_resolution;
+	float m_fov_rad = 60.0f / 180.0f * 3.14159265358979323846f;
 	uint m_shared_mem_size = 256u;
 	S<BufferFiller> mp_buffer_filler;
 	int m_num_gaussians;
@@ -121,6 +122,7 @@ protected:
 	U<Shader<1, int,// num_gaussians
 			 uint2, // resolution
 			 uint2, // grids
+			 float, // fov_rad
 			 // input
 			 Buffer<float>,// screen means
 			 Buffer<float>,// screen cov2d
@@ -137,6 +139,7 @@ protected:
 			 Buffer<float>,// dL_d_conic
 			 // params
 			 uint2,		   // resolution
+			 float,		   // fov_rad
 			 Buffer<float>,// covs_2d
 			 // output
 			 Buffer<float>// dL_d_cov_2d

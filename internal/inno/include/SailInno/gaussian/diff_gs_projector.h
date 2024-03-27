@@ -63,7 +63,7 @@ protected:
 	// callables
 
 	UCallable<float3x3(float3, float, float4)> mp_compute_cov_3d;
-	UCallable<float3(float4, float4, float3x3, float4x4)> mp_compute_cov_2d;
+	UCallable<float3(float3, float3x3, float4x4)> mp_compute_cov_2d;
 	UCallable<float3(
 		int, int, int,
 		Buffer<float>,
@@ -85,7 +85,6 @@ protected:
 			 Buffer<float>,// covs_2d // 3 * P
 			 // PARAMS
 			 float3,  // cam_pos
-			 float4,  // focal_x, focal_y, tan_fov_x, tan_fov_y
 			 float4x4,// view_matrix
 			 float4x4 // proj_matrix
 			 >>

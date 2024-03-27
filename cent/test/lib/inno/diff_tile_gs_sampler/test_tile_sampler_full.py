@@ -1,6 +1,6 @@
 import pytest 
 
-from lib.inno.diff_gs_tile_sampler import DiffGSTileSampler
+from lib.inno.diff_gs_tile_sampler import DiffGSTileSampler, DiffGSTileSamplerSettings
 import torch 
 import matplotlib.pyplot as plt
 
@@ -9,7 +9,10 @@ def test_tile_sampler_full():
     sampler = DiffGSTileSampler()
     N = 2
     height = 512
-    width = 512
+    width = 1024
+    fov = 60 / 180 * 3.1415926 
+    settings = DiffGSTileSamplerSettings(
+        width, height, fov) 
 
     means_2d = torch.zeros((N, 2), dtype=torch.float32).cuda()
     means_2d[0, 0] = -0.5
@@ -28,7 +31,7 @@ def test_tile_sampler_full():
     target_img = sampler.forward(
         means_2d, covs_2d, depth_features,             
         opacity_features, color_features, 
-        height, width)
+        settings)
     target_img_np = target_img.detach().cpu().detach().numpy().transpose(1, 2, 0).clip(0, 1)[::-1, :, :]
     target_img.requires_grad = False
 
@@ -65,7 +68,7 @@ def test_tile_sampler_full():
             depth_features, 
             opacity_features, 
             color_features, 
-            height, width)
+            settings)
         # clamp
         # result_img = torch.clamp(result_img, 0, 1)
 
@@ -87,6 +90,7 @@ def test_tile_sampler_full():
                 plt.subplot(1, 2, 2)
                 plt.imshow(result_img_np)
                 plt.show()
+            
             optim.step()
             optim.zero_grad(set_to_none=True)
             if i > COV_DELAY:

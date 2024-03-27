@@ -1,6 +1,6 @@
 import pytest 
 
-from lib.inno.diff_gs_tile_sampler import DiffGSTileSampler
+from lib.inno.diff_gs_tile_sampler import DiffGSTileSampler, DiffGSTileSamplerSettings
 import torch 
 import matplotlib.pyplot as plt
 
@@ -44,10 +44,14 @@ def test_tile_sampler_cov():
 
     opacity_features = torch.ones((N, 1), dtype=torch.float32).cuda()
 
+    fov = 60 / 180 * 3.1415926
+    settings = DiffGSTileSamplerSettings(
+        width, height, fov)
+    
     target_img = sampler.forward(
         means_2d, covs_2d, depth_features,             
         opacity_features, color_features, 
-        height, width)
+        settings)
     target_img_np = target_img.detach().cpu().detach().numpy().transpose(1, 2, 0).clip(0, 1)[::-1, :, :]
     plt.imsave(f'{save_dir}/target.png', target_img_np)
     target_img.requires_grad = False
@@ -77,7 +81,7 @@ def test_tile_sampler_cov():
             depth_features, 
             opacity_features, 
             color_features, 
-            height, width)
+            settings)
         # clamp
         # result_img = torch.clamp(result_img, 0, 1)
 
