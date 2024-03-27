@@ -67,7 +67,7 @@ class GaussianTrainPipeline(NVSPipeline):
             json_f = os.path.join(save_dir, f"{str(idx)}.json")
             # dump cam info
             with open(json_f, "w") as f:
-                json.dump(pair.cam, f)
+                json.dump(pair.cam.to_dict(), f)
             # save img
             pair.img.save(os.path.join(save_dir, f"{str(idx)}.png"))
 
