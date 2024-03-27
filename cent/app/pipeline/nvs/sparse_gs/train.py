@@ -13,6 +13,7 @@ from lib.reimpl.vanilla_diff_gaussian.utils.loss_utils import l1_loss, ssim
 from loguru import logger 
 import os 
 import json
+import matplotlib.pyplot as plt 
 
 class GaussianTrainPipelineConfig(NVSPipelineConfig):
     def __init__(self, env_config):
@@ -69,5 +70,6 @@ class GaussianTrainPipeline(NVSPipeline):
             with open(json_f, "w") as f:
                 json.dump(pair.cam.to_dict(), f)
             # save img
-            pair.img.save(os.path.join(save_dir, f"{str(idx)}.png"))
+            img_f = os.path.join(save_dir, f"{str(idx)}.png")
+            plt.imsave(img_f, pair.img.data)
 
