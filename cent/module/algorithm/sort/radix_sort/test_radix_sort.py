@@ -44,7 +44,7 @@ def bitwise_sort(orig_arr, offset, start_N, end_N):
 
     return total_false
 
-@pytest.mark.current 
+@pytest.mark.app
 def test_radix_sort():
     orig_arr = np.array([5, 4, 3, 2, 1], dtype=np.uint32)
 

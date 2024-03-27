@@ -23,6 +23,12 @@ class Gaussians2D:
         self.color_features.requires_grad = True
         self.opacity_features.requires_grad = True  
 
+    def clone_detach(self):
+        self.means_2d = self.means_2d.detach().clone()
+        self.covs_2d = self.covs_2d.detach().clone()
+        self.color_features = self.color_features.detach().clone()
+        self.opacity_features = self.opacity_features.detach().clone()
+    
     def parameters(self):
         # return [self.means_2d, self.covs_2d, self.color_features, self.opacity_features]
         return [self.means_2d, self.color_features, self.opacity_features]

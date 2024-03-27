@@ -49,7 +49,15 @@ class _DiffGSProjector(torch.autograd.Function):
 
     @staticmethod 
     def backward(ctx, dL_dmeans_2d, dL_dcovs_2d, dL_ddepth_features, dL_dcolor_features):
-        pass 
+        grad = (
+            None, 
+            None,
+            None, 
+            None,
+            None,
+            None
+        )
+        return grad
 
 class DiffGSProjectorSettings(NamedTuple):
     sh_degree : int
