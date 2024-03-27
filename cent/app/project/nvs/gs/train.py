@@ -72,6 +72,7 @@ class TrainGaussianProject(ProjectBase):
             train_pipeline.run(self.model, renderer, params.train_params)
             logger.info("Train Finished, start Eval")
         
+
         # eval after train
         eval_config.dataset_name = params.dataset_name
         eval_config.obj_name = params.obj_name

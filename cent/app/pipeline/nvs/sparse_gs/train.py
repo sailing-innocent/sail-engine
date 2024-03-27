@@ -11,6 +11,8 @@ from app.trainer.nvs.sparse_gs.vanilla import create_trainer as create_vanilla_t
 # loss
 from lib.reimpl.vanilla_diff_gaussian.utils.loss_utils import l1_loss, ssim
 from loguru import logger 
+import os 
+import json
 
 class GaussianTrainPipelineConfig(NVSPipelineConfig):
     def __init__(self, env_config):
@@ -54,5 +56,17 @@ class GaussianTrainPipeline(NVSPipeline):
         # init model
         init_pcd = dataset.get_point_cloud()
         model.create_from_pcd(init_pcd, 1.0) 
-
         trainer.train(model, dataset, renderer, loss_fn, train_params)
+
+        # save pairs
+        pairs = dataset.pairs(train_params.data_limit, train_params.data_shuffle)
+        
+        save_dir = os.path.join(self.target_path, "train_pairs")
+        for idx, (cam, image) in enumerate(pairs):
+            json_f = os.path.join(save_dir, f"{str(idx)}.json")
+            # dump cam info
+            with open(json_f, "w") as f:
+                json.dump(cam, f)
+            # save img
+            image.save(os.path.join(save_dir, f"{str(idx)}.png"))
+
