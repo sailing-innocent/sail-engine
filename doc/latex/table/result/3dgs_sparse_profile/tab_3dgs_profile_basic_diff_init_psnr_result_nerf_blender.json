@@ -1,1 +1,27 @@
-{"rows": ["3dgs ____trained", "3dgs ____random", "3dgs ____preprocess"], "cols": ["lego", "average"], "data": [["32.08", "32.08"], ["14.22", "14.22"], ["17.61", "17.61"]], "caption": "3DGS Profile Results (psnr)", "label": ""}
+{
+    "rows": [
+        "3dgs ____trained",
+        "3dgs ____random",
+        "3dgs ____preprocess"
+    ],
+    "cols": [
+        "lego",
+        "average"
+    ],
+    "data": [
+        [
+            "32.08",
+            "32.08"
+        ],
+        [
+            "14.22",
+            "14.22"
+        ],
+        [
+            "17.61",
+            "17.61"
+        ]
+    ],
+    "caption": "3DGS Profile Results (psnr)",
+    "label": ""
+}
