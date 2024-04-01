@@ -55,6 +55,9 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 			Float4 camera_primitive,
 			Float3x3 cov_3d,
 			Float4x4 view_matrix) {
+		// Linear Gaussian Transformation
+		// $\Sigma_y=A\Sigma_xA^T$
+
 		auto focal_x = camera_primitive.x;
 		auto focal_y = camera_primitive.y;
 		auto tan_fov_x = camera_primitive.z;
@@ -67,10 +70,24 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 		t.x = clamp(txtz, -limx, limx) * t.z;
 		t.y = clamp(tytz, -limy, limy) * t.z;
 
+		// Float3x3 J = make_float3x3(
+		// 	focal_x / t.z, 0.0f, -(focal_x * t.x) / (t.z * t.z),
+		// 	0.0f, focal_y / t.z, -(focal_y * t.y) / (t.z * t.z),
+		// 	0.0f, 0.0f, 0.0f);
+
+		// consider function p = m(t)
+		// $p_x=\frac{f_xt_x}{t_z}$
+		// $p_y=\frac{f_yt_y}{t_z}$
+		// $p_z=1$
+		// Calculate the Jacobian of m(t)
+		// J =
+		// fx/tz, 0.0,  fx*tx/(tz * tz)
+		// 0.0,   fy/tz, fy*ty/(tz * tz)
+		// 0.0    0.0,   0.0
 		Float3x3 J = make_float3x3(
-			focal_x / t.z, 0.0f, -(focal_x * t.x) / (t.z * t.z),
-			0.0f, focal_y / t.z, -(focal_y * t.y) / (t.z * t.z),
-			0.0f, 0.0f, 0.0f);
+			focal_x / t.z, 0.0f, 0.0f,
+			0.0f, focal_y / t.z, 0.0f,
+			-(focal_x * t.x) / (t.z * t.z), -(focal_y * t.y) / (t.z * t.z), 0.0f);
 
 		Float3x3 W = make_float3x3(
 			view_matrix[0].xyz(),
@@ -102,6 +119,7 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 		// use color when deg == -1 and max_deg == 0
 		$if(deg > -1) {
 			result = util::compute_color_from_sh_level_0(sh_00);
+
 			$if(deg > 0) {
 				Float3 pos = make_float3(means.read(idx * 3 + 0), means.read(idx * 3 + 1), means.read(idx * 3 + 2));
 				Float3 dir = normalize(pos - campos);
@@ -137,9 +155,12 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 					};
 				};
 			};
+
 			result = result + 0.5f;
 		};
 		result = max(result, 0.0f);
+		// result = clamp(result, 0.0f, 1.0f);
+		// result = 0.5f * result;
 		return result;
 	});
 

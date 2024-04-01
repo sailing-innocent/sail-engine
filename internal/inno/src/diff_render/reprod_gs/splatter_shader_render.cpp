@@ -23,7 +23,7 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 					 UInt2 grids,
 					 BufferVar<uint> ranges,
 					 BufferVar<uint> point_list,
-					 BufferVar<float> means_2d_res,
+					 BufferVar<float> means_2d,
 					 BufferVar<float> conic,		   // 3 * P
 					 BufferVar<float> opacity_features,// P
 					 BufferVar<float> color_features,  // 3 * P
@@ -34,7 +34,9 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 		auto xy = dispatch_id().xy();
 		auto w = resolution.x;
 		auto h = resolution.y;
+
 		auto thread_idx = thread_id().x + thread_id().y * block_size().x;
+		// auto thread_idx = thread_id().y + thread_id().x * block_size().y;
 
 		Bool inside = Bool(xy.x < resolution.x) & Bool(xy.y < resolution.y);
 		Bool done = !inside;
@@ -49,11 +51,11 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 		Int range_end = (Int)ranges.read(2 * (tile_xy.x + tile_xy.y * grids.x) + 1u);
 
 		// background color
-		Float3 color = make_float3(1.0f, 1.0f, 1.0f);
+		Float3 bg_color = make_float3(1.0f, 1.0f, 1.0f);
 		// debug grid
-		$if((tile_xy.x + tile_xy.y) % 2 == 0) {
-			color = make_float3(0.0f, 0.0f, 0.0f);
-		};
+		// $if((tile_xy.x + tile_xy.y) % 2 == 0) {
+		// 	color = make_float3(0.0f, 0.0f, 0.0f);
+		// };
 
 		// make rounds
 		// round step = shared_mem_size = block_size = block_x * block_y
@@ -72,17 +74,19 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 
 		$for(i, rounds) {
 			// require __syncthreads_count(done) to accelerate
-			$if(done) {
-				$continue;
-			};
+			// perhaps here will cause artifacts
+			sync_block();
+			// $if(done) {
+			// 	$continue;
+			// };
 			Int progress = i * round_step + thread_idx;
 
 			$if(progress + range_start < range_end) {
 				Int coll_id = point_list.read(progress + range_start);
 				collected_ids->write(thread_idx, coll_id);
 				Float2 means = make_float2(
-					means_2d_res.read(2 * coll_id + 0),
-					means_2d_res.read(2 * coll_id + 1));
+					means_2d.read(2 * coll_id + 0),
+					means_2d.read(2 * coll_id + 1));
 				collected_means->write(thread_idx, means);
 				Float opacity = opacity_features.read(coll_id);
 				Float4 conic_opacity = make_float4(
@@ -118,7 +122,7 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 					color_features->read(3 * id + 0),
 					color_features->read(3 * id + 1),
 					color_features->read(3 * id + 2));
-				//  feat = make_float3(1.0f, 0.0f, 0.0f);
+				// feat = make_float3(0.2, 0.2f, 0.2f);
 				C = C + T * alpha * feat;
 				T = test_T;
 				last_contributor = contributor;
@@ -128,7 +132,7 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 		};
 
 		$if(inside) {
-			color = color * T + C;
+			auto color = bg_color * T + C;
 			$for(i, 0, 3) {
 				target_img.write(pix_id + i * h * w, color[i]);
 			};

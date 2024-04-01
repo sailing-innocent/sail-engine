@@ -106,7 +106,10 @@ class EvalGaussianProject(ProjectBase):
         # init renderer
         renderer = self.create_renderer[params.render_name](self.config.env_config)
 
-        camera.set_res(1600, 1600)
+        # camera.set_res(1600, 1600)
+        camera.set_res(1024, 1024)
+        # camera.set_res(256, 256)
+        # camera.set_res(3200, 3200)
         img = renderer.render(camera, self.model)["render"]
         img_np = img.detach().cpu().clone()
         img_np=img_np.numpy().transpose(1, 2, 0).clip(0, 1)  
