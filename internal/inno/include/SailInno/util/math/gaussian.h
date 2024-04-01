@@ -21,6 +21,8 @@ Float3x3_T calc_cov(Float3_T scale, Float4_T qvec) {
 	S[2][2] = scale.z;
 	// compute covariance
 	// $\Sigma=RSS^TR^T$
+	// in source code, it use R^T in reality, but back to true finally
+	// ?????
 	Float3x3_T M = R * S;
 	return M * transpose(M);
 }

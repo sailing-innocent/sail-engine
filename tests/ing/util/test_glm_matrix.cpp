@@ -57,6 +57,13 @@ TEST_SUITE("ing::util") {
 		CHECK(rv.x == doctest::Approx(1.0f));
 		CHECK(rv.y == doctest::Approx(2.0f));
 		CHECK(rv.z == doctest::Approx(6.0f));
+
+		glm::mat3 RT = glm::transpose(R);
+		auto rtv = RT * v;
+
+		CHECK(rtv.x == doctest::Approx(4.0f));
+		CHECK(rtv.y == doctest::Approx(5.0f));
+		CHECK(rtv.z == doctest::Approx(3.0f));
 	}
 
 	TEST_CASE("glm_mm") {

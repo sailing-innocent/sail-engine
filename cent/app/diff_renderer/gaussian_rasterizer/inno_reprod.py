@@ -17,11 +17,13 @@ class GaussianRenderer:
         self.rasterizer = GaussianRasterizer() 
 
     def render(self, camera: Camera, gaussians, scale_modifier=1.0):
+        # LC is col-major but numpy is row-major
         view_mat = camera.view_matrix.T.flatten().tolist()
         proj_mat = camera.proj_matrix.T.flatten().tolist()
         width = camera.info.ResW
         height = camera.info.ResH
         fovy = camera.info.FovY
+
         campos = camera.info.T.flatten().tolist()
         raster_settings = GaussianRasterizationSettings(
             image_height = int(height),
@@ -32,8 +34,6 @@ class GaussianRenderer:
             projmatrix = proj_mat,
             sh_degree = gaussians.active_sh_degree,
             max_sh_degree = gaussians.max_sh_degree,
-            # sh_degree = -1,
-            # max_sh_degree = 0,
             campos = campos,
             prefiltered = False,
             debug = False

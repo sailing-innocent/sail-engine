@@ -30,6 +30,8 @@ void DiffGaussianProjector::compile(Device& device) noexcept {
 
 		Float4 qvec = make_float4(x, y, z, r);
 		Float3x3 cov = math::calc_cov<Float3, Float4, Float3x3>(scale, qvec);
+
+		// TODO
 		return cov;
 	});
 

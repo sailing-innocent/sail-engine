@@ -29,8 +29,10 @@ Float3x3_T R_from_aa(Float4_T axis_angle) {
 	return R;
 }
 
+// $\mathbf{R}=\left[\begin{matrix}1-2z^2-2y^2 & 2xy-2wz & 2xz+2wy \\ 2xy+2wz & 1-2x^2-2z^2 & 2yz-2wx \\ 2xz-2wy & 2yz+2wx & 1-2x^2-2y^2 \end{matrix}\right]$
+// LC is col-major
 template<typename Float4_T, typename Float3x3_T>
-Float3x3_T R_from_qvec(Float4_T q, bool col_major = true) {
+inline Float3x3_T R_from_qvec(Float4_T q, bool col_major = true) {
 	Float3x3_T R;
 	// col 1
 	R[0][0] = 1 - 2 * q.y * q.y - 2 * q.z * q.z;

@@ -55,8 +55,35 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 			Float4 camera_primitive,
 			Float3x3 cov_3d,
 			Float4x4 view_matrix) {
-		Float3 cov = math::proj_cov3d_to_cov2d<Float3, Float4, Float3x3, Float4x4>(p_view, camera_primitive, cov_3d, view_matrix);
-		return cov;
+		auto focal_x = camera_primitive.x;
+		auto focal_y = camera_primitive.y;
+		auto tan_fov_x = camera_primitive.z;
+		auto tan_fov_y = camera_primitive.w;
+		auto t = p_view.xyz();
+		auto limx = 1.3f * tan_fov_x;
+		auto limy = 1.3f * tan_fov_y;
+		auto txtz = t.x / t.z;
+		auto tytz = t.y / t.z;
+		t.x = clamp(txtz, -limx, limx) * t.z;
+		t.y = clamp(tytz, -limy, limy) * t.z;
+
+		Float3x3 J = make_float3x3(
+			focal_x / t.z, 0.0f, -(focal_x * t.x) / (t.z * t.z),
+			0.0f, focal_y / t.z, -(focal_y * t.y) / (t.z * t.z),
+			0.0f, 0.0f, 0.0f);
+
+		Float3x3 W = make_float3x3(
+			view_matrix[0].xyz(),
+			view_matrix[1].xyz(),
+			view_matrix[2].xyz());
+
+		Float3x3 T = J * W;
+		Float3x3 cov = T * cov_3d * transpose(T);
+		// low pass filter
+		// auto focal = camera_primitive.y;
+		cov[0][0] += 0.1f;
+		cov[1][1] += 0.1f;
+		return make_float3(cov[0][0], cov[0][1], cov[1][1]);
 	});
 
 	mp_compute_color_from_sh = luisa::make_unique<Callable<float3(int, int, int, Buffer<float>, float3, Buffer<float>)>>(

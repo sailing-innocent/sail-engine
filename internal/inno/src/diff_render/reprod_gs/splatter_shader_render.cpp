@@ -51,9 +51,9 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 		// background color
 		Float3 color = make_float3(1.0f, 1.0f, 1.0f);
 		// debug grid
-		// $if((tile_xy.x + tile_xy.y) % 2 == 0) {
-		// 	color = make_float3(0.0f, 0.0f, 0.0f);
-		// };
+		$if((tile_xy.x + tile_xy.y) % 2 == 0) {
+			color = make_float3(0.0f, 0.0f, 0.0f);
+		};
 
 		// make rounds
 		// round step = shared_mem_size = block_size = block_x * block_y
