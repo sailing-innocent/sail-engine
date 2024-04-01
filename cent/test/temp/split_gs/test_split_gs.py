@@ -32,7 +32,7 @@ def test_split_gs():
     pairs = dataset.pairs(N_sparse, True)
     gs = GaussianModel(3)
     r = 1.0
-    N = 10000
+    N = 100000
     N_batch = 10
     red = [1, 0, 0]
     blue = [0, 0, 1]
