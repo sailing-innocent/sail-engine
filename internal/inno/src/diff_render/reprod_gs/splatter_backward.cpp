@@ -58,7 +58,7 @@ void ReprodGS::backward_impl(
 				   target_img_buffer,
 				   img_state->ranges,
 				   tile_state->point_list,
-				   geom_state->means_2d_res,
+				   geom_state->means_2d,
 				   geom_state->conic,
 				   geom_state->opacity_features,
 				   geom_state->color_features,

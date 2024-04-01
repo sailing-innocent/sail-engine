@@ -1,5 +1,5 @@
 {
-    "name": "gaussian_render_inno_reprod",
+    "name": "gaussian_eval_inno_reprod",
     "render_name": "inno_reprod",
     "usage": "render",
     "scenes": [

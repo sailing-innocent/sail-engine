@@ -42,17 +42,6 @@ public:
 		float scale_modifier,
 		Camera& cam);
 
-	void gaussian_proj_impl(
-		Device& device,
-		CommandList& cmdlist,
-		int num_gaussians, int sh_deg, int max_sh_deg,
-		float scale_modifier,
-		BufferView<float> xyz_buffer,
-		BufferView<float> feature_buffer,// for color
-		BufferView<float> scale_buffer,
-		BufferView<float> rotq_buffer,
-		Camera& cam);
-
 	virtual void backward_impl(
 		Device& device,
 		Stream& stream,
@@ -78,11 +67,9 @@ public:
 		size_t scan_temp_storage_size;
 		Buffer<int> scan_temp_storage;
 		Buffer<float> means_2d;		   // 2 * P
-		Buffer<float> means_2d_res;	   // 2 * P means 2d in resolution
 		Buffer<float> depth_features;  // P
 		Buffer<float> color_features;  // 3 * P
 		Buffer<float> opacity_features;// P
-		Buffer<float> covs_2d;		   // 3 * P
 		Buffer<float> conic;		   // 3 * P
 		Buffer<uint> tiles_touched;	   // P
 		Buffer<uint> point_offsets;	   // P
@@ -171,33 +158,21 @@ protected:
 		)>
 		mp_compute_color_from_sh_backward;
 
-	// shaders
-	U<Shader<1, int,// num_gaussians
-			 uint2, // resolution
-			 uint2, // grids
-			 // input
-			 Buffer<float>,// screen means
-			 Buffer<float>,// screen cov2d
-			 // output
-			 Buffer<float>,// conic
-			 Buffer<float>,// means_2d_screen
-			 Buffer<uint>, // tiles_touched
-			 Buffer<int>   // radii
-			 >>
-		m_forward_tile_split_shader;
-
 	U<Shader<1, int, int, int,// P, D, M
 			 Buffer<float>,	  // means_3d
 			 Buffer<float>,	  // feat_buffer
 			 Buffer<float>,	  // scale_buffer
 			 Buffer<float>,	  // rotq_buffer
 			 // params
-			 float,// scale_modifier
+			 float,		  // scale_modifier
+			 uint2, uint2,// resolution, grids
 			 // output
 			 Buffer<float>,// means_2d // 2 * P
 			 Buffer<float>,// depth_features // P
 			 Buffer<float>,// color_features // 4 * P
-			 Buffer<float>,// covs_2d // 3 * P
+			 Buffer<float>,// conic // 3 * P
+			 Buffer<uint>, // tiles_touched
+			 Buffer<int>,  // radii
 			 // PARAMS
 			 float3,  // cam_pos
 			 float4,  // focal_x, focal_y, tan_fov_x, tan_fov_y

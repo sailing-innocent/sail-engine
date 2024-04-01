@@ -18,42 +18,6 @@ using namespace luisa::compute;
 
 namespace sail::inno::render {
 
-void ReprodGS::gaussian_proj_impl(
-	Device& device,
-	CommandList& cmdlist,
-	int num_gaussians, int sh_deg, int max_sh_deg,
-	float scale_modifier,
-	// input
-	BufferView<float> xyz_buffer,
-	BufferView<float> feature_buffer,// for color
-	BufferView<float> scale_buffer,
-	BufferView<float> rotq_buffer,
-	Camera& cam) {
-	// clear geometry state
-	geom_state->clear(device, cmdlist, *mp_buffer_filler);
-	// calculate camera primitive
-	cmdlist << (*m_forward_preprocess_shader)(
-				   num_gaussians, sh_deg, max_sh_deg,
-				   // input
-				   xyz_buffer,
-				   feature_buffer,
-				   scale_buffer,
-				   rotq_buffer,
-				   // params
-				   scale_modifier,
-				   // output
-				   geom_state->means_2d,
-				   geom_state->depth_features,
-				   geom_state->color_features,
-				   geom_state->covs_2d,
-				   // camera
-				   mp_camera->pos(),
-				   mp_camera->camera_primitive(m_resolution.x, m_resolution.y),
-				   mp_camera->view_matrix(),
-				   mp_camera->proj_matrix())
-				   .dispatch(num_gaussians);
-}
-
 void ReprodGS::forward_impl(
 	Device& device,
 	Stream& stream,
@@ -94,29 +58,37 @@ void ReprodGS::forward_impl(
 
 	CommandList cmdlist;
 
-	gaussian_proj_impl(
-		device, cmdlist,
-		num_gaussians, sh_deg, max_sh_deg,
-		scale_modifier,
-		xyz_buffer, feature_buffer,
-		scale_buffer, rotq_buffer, cam);
-
-	cmdlist << geom_state->opacity_features.copy_from(opacity_buffer);
-	cmdlist << (*m_forward_tile_split_shader)(
-				   num_gaussians,
+	// clear geometry state
+	geom_state->clear(device, cmdlist, *mp_buffer_filler);
+	// preprocess
+	cmdlist << (*m_forward_preprocess_shader)(
+				   num_gaussians, sh_deg, max_sh_deg,
+				   // input
+				   xyz_buffer,
+				   feature_buffer,
+				   scale_buffer,
+				   rotq_buffer,
+				   // params
+				   scale_modifier,
 				   m_resolution,
 				   m_grids,
-				   // input
-				   geom_state->means_2d,
-				   geom_state->covs_2d,
 				   // output
+				   geom_state->means_2d,
+				   geom_state->depth_features,
+				   geom_state->color_features,
 				   geom_state->conic,
-				   geom_state->means_2d_res,
 				   geom_state->tiles_touched,
-				   radii)
+				   radii,
+				   // camera
+				   mp_camera->pos(),
+				   mp_camera->camera_primitive(m_resolution.x, m_resolution.y),
+				   mp_camera->view_matrix(),
+				   mp_camera->proj_matrix())
 				   .dispatch(num_gaussians);
+	// copy for backward
+	cmdlist << geom_state->opacity_features.copy_from(opacity_buffer);
 
-	// device scan
+	// get the instances to render
 	cmdlist << luisa::compute::cuda::lcub::DeviceScan::InclusiveSum(
 		geom_state->scan_temp_storage,
 		geom_state->tiles_touched,
@@ -127,12 +99,13 @@ void ReprodGS::forward_impl(
 	stream << cmdlist.commit() << synchronize();
 
 	if (num_rendered <= 0) { return; }
+
 	tile_state->allocate(device, static_cast<size_t>(num_rendered));
 	tile_state->clear(device, cmdlist, *mp_buffer_filler);
 	// duplicate keys
 	cmdlist << (*m_copy_with_keys_shader)(
 				   num_gaussians,
-				   geom_state->means_2d_res,
+				   geom_state->means_2d,
 				   geom_state->point_offsets,
 				   radii,
 				   geom_state->depth_features,
@@ -157,13 +130,14 @@ void ReprodGS::forward_impl(
 				   img_state->ranges)
 				   .dispatch(num_rendered);
 
+	// final draw
 	cmdlist << (*m_forward_render_shader)(
 				   m_resolution,
 				   target_img_buffer,
 				   m_grids,
 				   img_state->ranges,
 				   tile_state->point_list,
-				   geom_state->means_2d_res,
+				   geom_state->means_2d,
 				   geom_state->conic,
 				   geom_state->opacity_features,
 				   geom_state->color_features,
