@@ -20,7 +20,6 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 	mp_ndc2pix = luisa::make_unique<Callable<float(float, uint)>>([](Float v, UInt S) {
 		return ((v + 1.0f) * S - 1.0f) * 0.5f;
 	});
-
 	mp_get_rect = luisa::make_unique<Callable<void(luisa::compute::float2, int, luisa::compute::uint2&, luisa::compute::uint2&, luisa::compute::uint2, luisa::compute::uint2)>>(
 		[](
 			Float2 p,
@@ -98,8 +97,8 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 		Float3x3 cov = T * cov_3d * transpose(T);
 		// low pass filter
 		// auto focal = camera_primitive.y;
-		cov[0][0] += 0.1f;
-		cov[1][1] += 0.1f;
+		cov[0][0] += 0.3f;
+		cov[1][1] += 0.3f;
 		return make_float3(cov[0][0], cov[0][1], cov[1][1]);
 	});
 

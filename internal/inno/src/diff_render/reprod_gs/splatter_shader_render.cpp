@@ -74,11 +74,11 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 
 		$for(i, rounds) {
 			// require __syncthreads_count(done) to accelerate
-			// perhaps here will cause artifacts
-			sync_block();
 			// $if(done) {
 			// 	$continue;
 			// };
+			sync_block();
+
 			Int progress = i * round_step + thread_idx;
 
 			$if(progress + range_start < range_end) {
