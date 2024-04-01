@@ -47,8 +47,8 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 		Int range_end = (Int)ranges.read(2 * (tile_xy.x + tile_xy.y * grids.x) + 1u);
 
 		// background color
-		// Float3 color = make_float3(1.0f, 1.0f, 1.0f);
-		Float3 color = make_float3(0.0f, 0.0f, 0.0f);
+		Float3 color = make_float3(1.0f, 1.0f, 1.0f);
+		// Float3 color = make_float3(0.0f, 0.0f, 0.0f);
 		// debug grid
 		// $if((tile_xy.x + tile_xy.y) % 2 == 0) {
 		// 	color = make_float3(0.0f, 0.0f, 0.0f);
@@ -175,8 +175,8 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 		Int range_end = (Int)ranges.read(2 * (tile_xy.x + tile_xy.y * grids.x) + 1u);
 
 		// background color
-		// Float3 bg_color = make_float3(1.0f, 1.0f, 1.0f);
-		Float3 bg_color = make_float3(0.0f, .0f, .0f);
+		Float3 bg_color = make_float3(1.0f, 1.0f, 1.0f);
+		// Float3 bg_color = make_float3(0.0f, .0f, .0f);
 
 		const Int round_step = Int(m_shared_mem_size);
 
