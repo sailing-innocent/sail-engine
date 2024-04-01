@@ -1,0 +1,78 @@
+{
+    "name": "compare_gaussian_diff_render_full",
+    "usage": "eval",
+    "scenes": [
+        {
+            "type": "ckpt",
+            "dataset_name": "nerf_blender",
+            "obj_name": "lego",
+            "ckpt_path": "gaussian",
+            "iter": 30000
+        },
+        {
+            "type": "ckpt",
+            "dataset_name": "nerf_blender",
+            "obj_name": "chair",
+            "ckpt_path": "gaussian",
+            "iter": 30000
+        },
+        {
+            "type": "ckpt",
+            "dataset_name": "nerf_blender",
+            "obj_name": "drums",
+            "ckpt_path": "gaussian",
+            "iter": 30000
+        },
+        {
+            "type": "ckpt",
+            "dataset_name": "nerf_synthetic",
+            "obj_name": "ficus",
+            "ckpt_path": "gaussian",
+            "iter": 30000
+        },
+        {
+            "type": "ckpt",
+            "dataset_name": "nerf_synthetic",
+            "obj_name": "hotdog",
+            "ckpt_path": "gaussian",
+            "iter": 30000
+        },
+        {
+            "type": "ckpt",
+            "dataset_name": "nerf_synthetic",
+            "obj_name": "materials",
+            "ckpt_path": "gaussian",
+            "iter": 30000
+        },
+        {
+            "type": "ckpt",
+            "dataset_name": "nerf_synthetic",
+            "obj_name": "mic",
+            "ckpt_path": "gaussian",
+            "iter": 30000
+        },
+        {
+            "type": "ckpt",
+            "dataset_name": "nerf_synthetic",
+            "obj_name": "ship",
+            "ckpt_path": "gaussian",
+            "iter": 30000
+        }
+    ],
+    "benchmarks": [
+        {
+            "name": "psnr",
+            "use_template": true
+        }
+    ],
+    "render_names": [
+        "vanilla",
+        "inno_reprod"
+    ],
+    "result_template": {
+        "name": "tab_3dgs_compare_diff_render_{benchmark}_result",
+        "type": "tab_json",
+        "template": "3dgs_paper_{benchmark}",
+        "path": "../doc/latex/table/result/3dgs_profile/"
+    }
+}
