@@ -25,35 +25,35 @@
         },
         {
             "type": "ckpt",
-            "dataset_name": "nerf_synthetic",
+            "dataset_name": "nerf_blender",
             "obj_name": "ficus",
             "ckpt_path": "gaussian",
             "iter": 30000
         },
         {
             "type": "ckpt",
-            "dataset_name": "nerf_synthetic",
+            "dataset_name": "nerf_blender",
             "obj_name": "hotdog",
             "ckpt_path": "gaussian",
             "iter": 30000
         },
         {
             "type": "ckpt",
-            "dataset_name": "nerf_synthetic",
+            "dataset_name": "nerf_blender",
             "obj_name": "materials",
             "ckpt_path": "gaussian",
             "iter": 30000
         },
         {
             "type": "ckpt",
-            "dataset_name": "nerf_synthetic",
+            "dataset_name": "nerf_blender",
             "obj_name": "mic",
             "ckpt_path": "gaussian",
             "iter": 30000
         },
         {
             "type": "ckpt",
-            "dataset_name": "nerf_synthetic",
+            "dataset_name": "nerf_blender",
             "obj_name": "ship",
             "ckpt_path": "gaussian",
             "iter": 30000
