@@ -1,0 +1,22 @@
+{
+    "rows": [
+        "3dgs_vanilla",
+        "3dgs_inno_reprod"
+    ],
+    "cols": [
+        "lego",
+        "average"
+    ],
+    "data": [
+        [
+            "26.82",
+            "26.82"
+        ],
+        [
+            "25.22",
+            "25.22"
+        ]
+    ],
+    "caption": "3DGS Profile Results (psnr)",
+    "label": ""
+}

@@ -47,6 +47,7 @@ Float3_T compute_color_from_sh_level_1(Float3_T dir,
 	auto x = dir.x;
 	auto y = dir.y;
 	auto z = dir.z;
+	// ? is it right?
 	return -SH_C1 * (sh_10 * y - sh_11 * z + sh_12 * x);
 }
 
