@@ -85,7 +85,11 @@ class GaussianTrainer(TrainerBase):
             render_pkg = renderer.render(camera, gaussians)
             image, viewspace_point_tensor, visibility_filter, radii = \
                 render_pkg["render"], render_pkg["viewspace_points"], render_pkg["visibility_filter"], render_pkg["radii"]
-            
+            try:
+                viewspace_point_tensor.retain_grad()
+                # will cause leaking
+            except:
+                pass 
             # load ground truth
             gt_image = torch.tensor(pair.img.data.transpose(2, 0, 1)).float().cuda()
             
