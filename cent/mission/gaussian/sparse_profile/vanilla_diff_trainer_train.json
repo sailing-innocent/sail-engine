@@ -29,8 +29,8 @@
         "vanilla"
     ],
     "trainer_names": [
-        "vanilla",
-        "epipolar"
+        "epipolar",
+        "vanilla"
     ],
     "train_params_list": [
         {
