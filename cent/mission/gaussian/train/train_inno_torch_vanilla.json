@@ -20,14 +20,14 @@
     "loss_name": "l1+ssim",
     "train_params": {
         "name": "inno_torch_params",
-        "opacity_reset_interval": 1000,
+        "opacity_reset_interval": 300,
         "densify_interval": 100,
         "densify_from_iter": 500,
-        "densify_until_iter": 1500,
-        "densify_grad_threshold": 1e-6,
+        "densify_until_iter": 2000,
+        "densify_grad_threshold": 1e-7,
         "saving_iterations": [
-            2000,
-            3000
+            3000,
+            5000
         ]
     }
 }
