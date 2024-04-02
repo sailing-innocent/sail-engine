@@ -34,6 +34,7 @@ class _DiffGSTileSampler(torch.autograd.Function):
         result_img = torch.zeros((3, height, width), dtype=torch.float32).cuda()
         P = means_2d.shape[0]
         # print(means_2d)
+        # print("covs_2d")
         # print(covs_2d)
         # print(P)
         # print(width)
@@ -77,6 +78,7 @@ class _DiffGSTileSampler(torch.autograd.Function):
                          dL_d_color_features.contiguous().data_ptr())
         
         # print(dL_d_color_features)
+        # print("dL_dcovs_2d")
         # print(dL_dcovs_2d)
         # print(dL_d_opacity_features)
         # print(dL_dmeans_2d)

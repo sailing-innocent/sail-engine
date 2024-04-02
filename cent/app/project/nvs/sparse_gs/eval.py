@@ -1,5 +1,5 @@
 from ...base import ProjectConfigBase, ProjectBase
-from module.model.gaussian.vanilla import GaussianModel 
+from module.model.gaussian.sparse import GaussianModel 
 
 # renderer
 # from app.renderer.gaussian_rasterizer.reprod import create_gaussian_renderer as create_reprod_renderer 

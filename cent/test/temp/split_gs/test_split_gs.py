@@ -1,6 +1,6 @@
 import pytest 
 
-from module.model.gaussian.model import Gaussians2D
+from module.model.gaussian.model import Gaussians2D, Gaussians2DTrainArgs
 from app.diff_renderer.gaussian_sampler.inno import GaussianSampler
 from app.diff_renderer.gaussian_projector.inno import GaussianProjector
 
@@ -33,26 +33,32 @@ def test_split_gs():
     gs = GaussianModel(3)
     r = 1.0
     N = 10000
-    N_batch = 10
+    N_batch = 5
     red = [1, 0, 0]
     blue = [0, 0, 1]
     pcd = sphere_point_cloud(r, N, blue)
     gs.create_from_pcd(pcd, r)
     gs.save_ply('D:/temp/before.ply')
+
     N_ITER = 10
     N_SHOW = 2
-    N_SUB_ITER = 400
-    N_SUB_LOG = 600
+    N_SUB_ITER = 200
+    N_SUB_LOG = 350
     cam_infos = []
     cams = []
     imgs = []
     target_imgs = []    
     gs2ds = []
+
+    train_args = Gaussians2DTrainArgs()
+
     for idx in range(N_ITER):
-        indicies = torch.randint(0, N_sparse, (N_batch,))
+        # indicies = torch.randint(0, N_sparse, (N_batch,))
         for i in range(N_batch):
-            cam_infos.append(pairs[indicies[i]].cam)
-            imgs.append(pairs[indicies[i]].img)
+            # cam_infos.append(pairs[indicies[i]].cam)
+            # imgs.append(pairs[indicies[i]].img)
+            cam_infos.append(pairs[i].cam)
+            imgs.append(pairs[i].img)
             cam = Camera("FlipY")
             cam.from_info(cam_infos[i])
             cam.set_res(imgs[i].W, imgs[i].H)
@@ -66,14 +72,14 @@ def test_split_gs():
             gs2d = projector.project(gs, cams[i])
             gs2d.clone_detach()
             gs2d.requires_grad()
-            optim = torch.optim.AdamW(gs2d.parameters(), lr=1e-2)
+            gs2d.training_setup(train_args)
             for sub_i in range(N_SUB_ITER):
                 result_img = sampler.sample(gs2d, imgs[i].W, imgs[i].H, cams[i].info.FovY)
                 loss = torch.functional.F.mse_loss(target_imgs[i], result_img)
                 loss.backward(retain_graph=True)
                 with torch.no_grad():
-                    optim.step()
-                    optim.zero_grad()
+                    gs2d.optim.step()
+                    gs2d.optim.zero_grad()
                     if (sub_i+1) % N_SUB_LOG == 0:
                         print(f'Iter {sub_i}, loss: {loss.item()}')
                         result_img_np = result_img.detach().cpu().detach().numpy().transpose(1, 2, 0).clip(0, 1)

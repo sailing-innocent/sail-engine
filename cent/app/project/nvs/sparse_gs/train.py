@@ -8,10 +8,11 @@ from app.trainer.nvs.gs.basic import GaussianTrainerParams
 from app.pipeline.nvs.sparse_gs.train import GaussianTrainPipelineConfig, GaussianTrainPipeline
 from app.pipeline.nvs.eval import NVSEvalPipelineConfig, NVSEvalPipeline 
 # model
-from module.model.gaussian.vanilla import GaussianModel
+from module.model.gaussian.sparse import GaussianModel 
 # renderer
 from app.diff_renderer.gaussian_rasterizer.vanilla import create_gaussian_renderer as create_vanilla_renderer 
 from app.diff_renderer.gaussian_rasterizer.inno_reprod import create_gaussian_renderer as create_inno_reprod_renderer
+
 import torch 
 import gc
 

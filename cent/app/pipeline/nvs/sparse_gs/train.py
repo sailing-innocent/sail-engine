@@ -8,6 +8,7 @@ from module.dataset.nvs.tank_temple.dataset import create_dataset as create_tank
 # trainer 
 from app.trainer.nvs.sparse_gs.basic import create_trainer as create_basic_trainer
 from app.trainer.nvs.sparse_gs.vanilla import create_trainer as create_vanilla_trainer
+from app.trainer.nvs.sparse_gs.epipolar import create_trainer as create_epipolar_trainer
 # loss
 from lib.reimpl.vanilla_diff_gaussian.utils.loss_utils import l1_loss, ssim
 from loguru import logger 
@@ -40,8 +41,7 @@ class GaussianTrainPipeline(NVSPipeline):
         self.create_trainer = {
             "basic": create_basic_trainer,
             "vanilla": create_vanilla_trainer,
-            # "panorama": create_panorama_trainer,
-            # "pano": create_pano_trainer
+            "epipolar": create_epipolar_trainer
         }
         logger.info(f"setup trainer with {config.trainer_name}")
         # loss

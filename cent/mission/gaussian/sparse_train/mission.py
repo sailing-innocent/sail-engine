@@ -1,7 +1,10 @@
 from mission.base import MissionBase
 from app.project.nvs.sparse_gs.train import TrainGaussianProjectConfig, TrainGaussianProjectParams, TrainGaussianProject
+
 from app.trainer.nvs.sparse_gs.basic import GaussianTrainerParams
 from app.trainer.nvs.sparse_gs.vanilla import GaussianVanillaTrainerParams
+from app.trainer.nvs.sparse_gs.epipolar import  GaussianEpipolarTrainerParams
+
 
 class Mission(MissionBase):
     def __init__(self, config_json_file):
@@ -16,9 +19,11 @@ class Mission(MissionBase):
         self.objects = self.config_json["objects"]
         self.benchmarks = self.config_json["benchmarks"]
         self.usage = self.config_json["usage"]
+        self.init_scene = self.config_json["init_scene"]
         self.create_trainer_params = {
             "vanilla": GaussianVanillaTrainerParams,
-            "basic": GaussianTrainerParams
+            "basic": GaussianTrainerParams,
+            "epipolar": GaussianEpipolarTrainerParams
         }
 
     def exec(self):
@@ -37,6 +42,7 @@ class Mission(MissionBase):
             params = TrainGaussianProjectParams(
                 dataset_name=self.dataset_name,
                 obj_name=obj_name,
+                init_scene=self.init_scene,
                 trainer_name=self.trainer_name,
                 render_name=self.render_name,
                 train_params=train_params,

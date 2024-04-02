@@ -1,5 +1,5 @@
 {
-    "name": "train_sparse_gs_vanilla_vanilla",
+    "name": "train_sparse_gs_vanilla_epipolar",
     "dataset_name": "nerf_blender",
     "usage": "train",
     "objects": [
@@ -15,7 +15,7 @@
     "benchmarks": [
         "psnr"
     ],
-    "trainer_name": "vanilla",
+    "trainer_name": "epipolar",
     "render_name": "vanilla",
     "loss_name": "l1+ssim",
     "train_params": {
