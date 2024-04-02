@@ -88,24 +88,23 @@ inline Float3x3_T calc_J(Float4_T camera_primitive, Float4_T p_view) {
 // Jacobian for view-space -> ray-space
 template<typename Float3_T, typename Float3x3_T>
 Float3x3_T J_view2ray(Float3_T u) {
-	auto s = sqrt(u.x * u.x + u.y * u.y + u.z * u.z);
 	Float3x3_T J = make_float3x3(
-		1.0f / u.z, 0.0f, u.x / s,					   // col 1
-		0.0f, 1.0f / u.z, u.y / s,					   // col 2
-		-u.x / (u.z * u.z), -u.y / (u.z * u.z), u.z / s// col 3
+		1.0f / u.z, 0.0f, 0.0f,						// col 1
+		0.0f, 1.0f / u.z, 0.0f,						// col 2
+		-u.x / (u.z * u.z), -u.y / (u.z * u.z), 0.0f// col 3
 	);
 	return J;
 }
 
 template<typename Float3_T, typename Float3x3_T, typename Float4x4_T>
-Float3_T proj_cov3d_to_cov2d_01(Float3_T p_view, Float3x3_T cov3d, Float4x4_T view_matrix) {
+Float3_T proj_cov3d_to_cov2d_screen(Float3_T p_view, Float3x3_T cov3d, Float4x4_T view_matrix) {
 	Float3x3_T J = J_view2ray<Float3_T, Float3x3_T>(p_view);
 	Float3x3_T W = make_float3x3(
 		view_matrix[0].xyz(),
 		view_matrix[1].xyz(),
 		view_matrix[2].xyz());
 	Float3x3_T T = J * W;
-	Float3x3_T cov = transpose(T) * cov3d * T;
+	Float3x3_T cov = T * cov3d * transpose(T);
 	// low pass filter
 	cov[0][0] += 1e-5f;
 	cov[1][1] += 1e-5f;

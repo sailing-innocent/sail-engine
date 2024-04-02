@@ -5,7 +5,6 @@ def test_mult_reg():
     N_in_dim = 3
     N_out_dim = 1
     N_sample = 4
-
     W = torch.arange(N_batch * N_in_dim).reshape(N_batch, N_in_dim, N_out_dim).float()
     X = torch.randn(N_batch, N_sample, N_in_dim)
     # repeat N samples

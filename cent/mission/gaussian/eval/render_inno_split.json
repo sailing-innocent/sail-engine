@@ -1,5 +1,5 @@
 {
-    "name": "gaussian_render_inno_split",
+    "name": "gaussian_eval_inno_split",
     "render_name": "inno_split",
     "usage": "render",
     "scenes": [

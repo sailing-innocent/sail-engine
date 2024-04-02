@@ -13,17 +13,13 @@ class GaussianProjector:
 
         cam_pos_arr = cam.info.T.flatten().tolist()
         view_matrix_arr = cam.view_matrix.T.flatten().tolist()
-        proj_matrix_arr = cam.proj_matrix.T.flatten().tolist()
-    
+
         settings = DiffGSProjectorSettings(
             sh_degree = gaussians.active_sh_degree,
             max_sh_degree = gaussians.max_sh_degree,
             scale_modifier=scale_modifier,
             campos = cam_pos_arr,
-            fov_rad = cam.info.FovY,
-            aspect = width / height,
-            viewmatrix = view_matrix_arr,
-            projmatrix = proj_matrix_arr
+            viewmatrix = view_matrix_arr
         )
 
         means_2d, covs_2d, depth_features, color_features = self.projector(

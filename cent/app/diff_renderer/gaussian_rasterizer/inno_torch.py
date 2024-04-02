@@ -16,8 +16,6 @@ class GaussianRenderer:
     def render(self, camera: Camera, gaussians, scale_modifier=1.0):
         gaussians_2d = self.projector.project(
             gaussians, camera, scale_modifier)
-
-        
         img =  self.sampler.sample(
             gaussians_2d, 
             camera.info.ResW, 

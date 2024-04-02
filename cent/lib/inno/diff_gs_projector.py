@@ -11,12 +11,8 @@ class _DiffGSProjector(torch.autograd.Function):
     def forward(ctx, xyz, feature, scale, rotq, settings, app):
         ctx.app = app 
         # dpkg settings
-        fov_rad = settings.fov_rad
-        aspect = settings.aspect
         scale_modifier = settings.scale_modifier
         viewmatrix = settings.viewmatrix
-        projmatrix = settings.projmatrix
-
         sh_degree = settings.sh_degree
         max_sh_degree = settings.max_sh_degree
         campos = settings.campos
@@ -40,7 +36,7 @@ class _DiffGSProjector(torch.autograd.Function):
             depth_features.contiguous().data_ptr(),
             color_features.contiguous().data_ptr(),
             # camera
-            campos, fov_rad, aspect, viewmatrix, projmatrix
+            campos, viewmatrix
             )
         
         app.sync()
@@ -64,10 +60,7 @@ class DiffGSProjectorSettings(NamedTuple):
     max_sh_degree: int
     scale_modifier : float
     campos : list
-    fov_rad: float
-    aspect: float
     viewmatrix : list
-    projmatrix : list
 
 class DiffGSProjector(nn.Module):
     def __init__(self):

@@ -84,9 +84,8 @@ protected:
 			 Buffer<float>,// color_features // 3 * P
 			 Buffer<float>,// covs_2d // 3 * P
 			 // PARAMS
-			 float3,  // cam_pos
-			 float4x4,// view_matrix
-			 float4x4 // proj_matrix
+			 float3, // cam_pos
+			 float4x4// view_matrix
 			 >>
 		m_forward_preprocess_shader;
 };

@@ -37,19 +37,13 @@ void DiffGSProjectorApp::forward(
 	int64_t depth_features,
 	int64_t color_features,
 	// camera
-	std::array<float, 3> cam_pos, float fov_rad, float aspect, std::array<float, 16> view_matrix_arr, std::array<float, 16> proj_matrix_arr) {
+	std::array<float, 3> cam_pos, std::array<float, 16> view_matrix_arr) {
 	CommandList cmdlist;
 	auto view_matrix = arr16_mat44(view_matrix_arr);
-	auto proj_matrix = arr16_mat44(proj_matrix_arr);
-
 	auto cam_pos_float = make_float3(cam_pos[0], cam_pos[1], cam_pos[2]);
 	Camera cam{cam_pos_float};
 	cam._external_matrix = true;
 	cam._view_matrix = view_matrix;
-	cam._proj_matrix = proj_matrix;
-	cam.set_aspect_ratio(aspect);
-	cam.set_fov_rad(fov_rad);
-
 	// input
 	Buffer<float> xyz_buf = mp_device->import_external_buffer<float>((void*)xyz, num_gaussians * 3);
 	Buffer<float> feature_buf = mp_device->import_external_buffer<float>((void*)feature, num_gaussians * 3);
