@@ -35,6 +35,7 @@ class GaussianEpipolarTrainerParams(GaussianVanillaTrainerParams):
         self.name = "epipolar params"
         self.opacity_reset_interval = 3000
         self.epipolar_interval = 1777
+        self.epipolar_until_iter = 15_000
         self.densify_interval = 100
         self.densify_from_iter = 500
         self.densify_until_iter = 15_000
@@ -168,7 +169,7 @@ class GaussianTrainer(TrainerBase):
             loss = loss_fn(image, gt_image)
             loss.backward()
             
-            if iteration % params.epipolar_interval == 0:
+            if iteration % params.epipolar_interval == 0 and iteration < params.epipolar_until_iter:
                 pairs = dataset.pairs(params.data_limit, params.data_shuffle)
                 epipolar_update(gaussians, pairs, params.data_limit, self.config.target_path)
 
