@@ -12,7 +12,6 @@ class GaussianProjector:
 
     def project(self, gaussians: GaussianModel, cam: Camera, scale_modifier = 1.0) -> Gaussians2D:
         view_mat = torch.from_numpy(cam.view_matrix).float().cuda()
-        view_mat._requires_grad = False
         xyz = gaussians.get_xyz
         N = xyz.shape[0]
         p_hom = torch.cat([xyz, torch.ones(N, 1).cuda()], dim=1)

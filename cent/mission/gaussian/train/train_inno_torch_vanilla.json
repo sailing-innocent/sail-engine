@@ -24,7 +24,7 @@
         "densify_interval": 100,
         "densify_from_iter": 500,
         "densify_until_iter": 2000,
-        "densify_grad_threshold": 1e-7,
+        "densify_grad_threshold": 5e-8,
         "saving_iterations": [
             3000,
             5000
