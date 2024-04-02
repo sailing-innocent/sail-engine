@@ -1,5 +1,5 @@
 {
-    "name": "profile_gaussian_diff_init",
+    "name": "profile_gaussian_diff_trainer",
     "dataset_name": "nerf_blender",
     "usage": "train",
     "objects": [
@@ -39,7 +39,7 @@
         "l1+ssim"
     ],
     "result_template": {
-        "name": "tab_3dgs_profile_diff_train_{benchmark}_result",
+        "name": "tab_3dgs_profile_diff_trainer_{benchmark}_result",
         "type": "tab_json",
         "template": "3dgs_paper_{benchmark}",
         "path": "../doc/latex/table/result/3dgs_profile/"
