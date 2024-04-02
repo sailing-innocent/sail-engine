@@ -192,12 +192,10 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 
 		// output
 		$if(deg == -1) {
+			// use RGB, direct output
 			dL_d_feat.write(sh_idx_start + 0, dL_d_color[0]);
 			dL_d_feat.write(sh_idx_start + 1, dL_d_color[1]);
 			dL_d_feat.write(sh_idx_start + 2, dL_d_color[2]);
-			// dL_d_feat.write(3 * idx + 0, 1.0f);
-			// dL_d_feat.write(3 * idx + 1, 1.0f);
-			// dL_d_feat.write(3 * idx + 2, 1.0f);
 		};
 
 		// USE SH
@@ -225,40 +223,97 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 				result = result + util::compute_color_from_sh_level_1(dir, sh_10, sh_11, sh_12);
 				util::compute_color_from_sh_level_1_backward(dL_d_color, dir, dL_d_sh10, dL_d_sh11, dL_d_sh12, dL_d_dir);
 
-				// $for(i, 3) {
-				// 	$for(j, 3) {
-				// 		dL_d_feat.write(sh_idx_start + (i + 1) * 3 + j, dL_d_sh10[j]);
-				// 	};
-				// };
-				dL_d_feat.write(sh_idx_start + 3, dL_d_sh10[0]);
-				dL_d_feat.write(sh_idx_start + 4, dL_d_sh10[1]);
-				dL_d_feat.write(sh_idx_start + 5, dL_d_sh10[2]);
-				dL_d_feat.write(sh_idx_start + 6, dL_d_sh11[0]);
-				dL_d_feat.write(sh_idx_start + 7, dL_d_sh11[1]);
-				dL_d_feat.write(sh_idx_start + 8, dL_d_sh11[2]);
-				dL_d_feat.write(sh_idx_start + 9, dL_d_sh12[0]);
-				dL_d_feat.write(sh_idx_start + 10, dL_d_sh12[1]);
-				dL_d_feat.write(sh_idx_start + 11, dL_d_sh12[2]);
+				// 1-3
+				dL_d_feat.write(sh_idx_start + 1 * 3 + 0, dL_d_sh10[0]);
+				dL_d_feat.write(sh_idx_start + 1 * 3 + 1, dL_d_sh10[1]);
+				dL_d_feat.write(sh_idx_start + 1 * 3 + 2, dL_d_sh10[2]);
+				dL_d_feat.write(sh_idx_start + 2 * 3 + 0, dL_d_sh11[0]);
+				dL_d_feat.write(sh_idx_start + 2 * 3 + 1, dL_d_sh11[1]);
+				dL_d_feat.write(sh_idx_start + 2 * 3 + 2, dL_d_sh11[2]);
+				dL_d_feat.write(sh_idx_start + 3 * 3 + 0, dL_d_sh12[0]);
+				dL_d_feat.write(sh_idx_start + 3 * 3 + 1, dL_d_sh12[1]);
+				dL_d_feat.write(sh_idx_start + 3 * 3 + 2, dL_d_sh12[2]);
 
 				$if(deg > 1) {
-					auto sh_20 = make_float3(shs.read(sh_idx_start + 12), shs.read(sh_idx_start + 13), shs.read(sh_idx_start + 14));
-					auto sh_21 = make_float3(shs.read(sh_idx_start + 15), shs.read(sh_idx_start + 16), shs.read(sh_idx_start + 17));
-					auto sh_22 = make_float3(shs.read(sh_idx_start + 18), shs.read(sh_idx_start + 19), shs.read(sh_idx_start + 20));
-					auto sh_23 = make_float3(shs.read(sh_idx_start + 21), shs.read(sh_idx_start + 22), shs.read(sh_idx_start + 23));
-					auto sh_24 = make_float3(shs.read(sh_idx_start + 24), shs.read(sh_idx_start + 25), shs.read(sh_idx_start + 26));
+					// 4-8
+					auto sh_20 = make_float3(shs.read(sh_idx_start + 4 * 3 + 0), shs.read(sh_idx_start + 4 * 3 + 1), shs.read(sh_idx_start + 4 * 3 + 2));
+					auto sh_21 = make_float3(shs.read(sh_idx_start + 5 * 3 + 0), shs.read(sh_idx_start + 5 * 3 + 1), shs.read(sh_idx_start + 5 * 3 + 2));
+					auto sh_22 = make_float3(shs.read(sh_idx_start + 6 * 3 + 0), shs.read(sh_idx_start + 6 * 3 + 1), shs.read(sh_idx_start + 6 * 3 + 2));
+					auto sh_23 = make_float3(shs.read(sh_idx_start + 7 * 3 + 0), shs.read(sh_idx_start + 7 * 3 + 1), shs.read(sh_idx_start + 7 * 3 + 2));
+					auto sh_24 = make_float3(shs.read(sh_idx_start + 8 * 3 + 0), shs.read(sh_idx_start + 8 * 3 + 1), shs.read(sh_idx_start + 8 * 3 + 2));
 
 					result = result + util::compute_color_from_sh_level_2(dir, sh_20, sh_21, sh_22, sh_23, sh_24);
 
-					$if(deg > 2) {
-						auto sh_30 = make_float3(shs.read(sh_idx_start + 27), shs.read(sh_idx_start + 28), shs.read(sh_idx_start + 29));
-						auto sh_31 = make_float3(shs.read(sh_idx_start + 30), shs.read(sh_idx_start + 31), shs.read(sh_idx_start + 32));
-						auto sh_32 = make_float3(shs.read(sh_idx_start + 33), shs.read(sh_idx_start + 34), shs.read(sh_idx_start + 35));
-						auto sh_33 = make_float3(shs.read(sh_idx_start + 36), shs.read(sh_idx_start + 37), shs.read(sh_idx_start + 38));
-						auto sh_34 = make_float3(shs.read(sh_idx_start + 39), shs.read(sh_idx_start + 40), shs.read(sh_idx_start + 41));
-						auto sh_35 = make_float3(shs.read(sh_idx_start + 42), shs.read(sh_idx_start + 43), shs.read(sh_idx_start + 44));
-						auto sh_36 = make_float3(shs.read(sh_idx_start + 45), shs.read(sh_idx_start + 46), shs.read(sh_idx_start + 47));
+					Float3 dL_d_sh_20 = make_float3(0.0f);
+					Float3 dL_d_sh_21 = make_float3(0.0f);
+					Float3 dL_d_sh_22 = make_float3(0.0f);
+					Float3 dL_d_sh_23 = make_float3(0.0f);
+					Float3 dL_d_sh_24 = make_float3(0.0f);
 
+					util::compute_color_from_sh_level_2_backward(
+						dL_d_color, dir, dL_d_sh_20, dL_d_sh_21, dL_d_sh_22, dL_d_sh_23, dL_d_sh_24, dL_d_dir);
+
+					// write back to dL_d_feat
+					dL_d_feat.write(sh_idx_start + 4 * 3 + 0, dL_d_sh_20[0]);
+					dL_d_feat.write(sh_idx_start + 4 * 3 + 1, dL_d_sh_20[1]);
+					dL_d_feat.write(sh_idx_start + 4 * 3 + 2, dL_d_sh_20[2]);
+					dL_d_feat.write(sh_idx_start + 5 * 3 + 0, dL_d_sh_21[0]);
+					dL_d_feat.write(sh_idx_start + 5 * 3 + 1, dL_d_sh_21[1]);
+					dL_d_feat.write(sh_idx_start + 5 * 3 + 2, dL_d_sh_21[2]);
+					dL_d_feat.write(sh_idx_start + 6 * 3 + 0, dL_d_sh_22[0]);
+					dL_d_feat.write(sh_idx_start + 6 * 3 + 1, dL_d_sh_22[1]);
+					dL_d_feat.write(sh_idx_start + 6 * 3 + 2, dL_d_sh_22[2]);
+					dL_d_feat.write(sh_idx_start + 7 * 3 + 0, dL_d_sh_23[0]);
+					dL_d_feat.write(sh_idx_start + 7 * 3 + 1, dL_d_sh_23[1]);
+					dL_d_feat.write(sh_idx_start + 7 * 3 + 2, dL_d_sh_23[2]);
+					dL_d_feat.write(sh_idx_start + 8 * 3 + 0, dL_d_sh_24[0]);
+					dL_d_feat.write(sh_idx_start + 8 * 3 + 1, dL_d_sh_24[1]);
+					dL_d_feat.write(sh_idx_start + 8 * 3 + 2, dL_d_sh_24[2]);
+
+					$if(deg > 2) {
+						// 9 - 15
+						auto sh_30 = make_float3(shs.read(sh_idx_start + 9 * 3 + 0), shs.read(sh_idx_start + 9 * 3 + 1), shs.read(sh_idx_start + 9 * 3 + 2));
+						auto sh_31 = make_float3(shs.read(sh_idx_start + 10 * 3 + 0), shs.read(sh_idx_start + 10 * 3 + 1), shs.read(sh_idx_start + 10 * 3 + 2));
+						auto sh_32 = make_float3(shs.read(sh_idx_start + 11 * 3 + 0), shs.read(sh_idx_start + 11 * 3 + 1), shs.read(sh_idx_start + 11 * 3 + 2));
+						auto sh_33 = make_float3(shs.read(sh_idx_start + 12 * 3 + 0), shs.read(sh_idx_start + 12 * 3 + 1), shs.read(sh_idx_start + 12 * 3 + 2));
+						auto sh_34 = make_float3(shs.read(sh_idx_start + 13 * 3 + 0), shs.read(sh_idx_start + 13 * 3 + 1), shs.read(sh_idx_start + 13 * 3 + 2));
+						auto sh_35 = make_float3(shs.read(sh_idx_start + 14 * 3 + 0), shs.read(sh_idx_start + 14 * 3 + 1), shs.read(sh_idx_start + 14 * 3 + 2));
+						auto sh_36 = make_float3(shs.read(sh_idx_start + 15 * 3 + 0), shs.read(sh_idx_start + 15 * 3 + 1), shs.read(sh_idx_start + 15 * 3 + 2));
 						result = result + util::compute_color_from_sh_level_3(dir, sh_30, sh_31, sh_32, sh_33, sh_34, sh_35, sh_36);
+
+						Float3 dL_d_sh_30 = make_float3(0.0f);
+						Float3 dL_d_sh_31 = make_float3(0.0f);
+						Float3 dL_d_sh_32 = make_float3(0.0f);
+						Float3 dL_d_sh_33 = make_float3(0.0f);
+						Float3 dL_d_sh_34 = make_float3(0.0f);
+						Float3 dL_d_sh_35 = make_float3(0.0f);
+						Float3 dL_d_sh_36 = make_float3(0.0f);
+
+						util::compute_color_from_sh_level_3_backward(
+							dL_d_color, dir, dL_d_sh_30, dL_d_sh_31, dL_d_sh_32, dL_d_sh_33, dL_d_sh_34, dL_d_sh_35, dL_d_sh_36, dL_d_dir);
+
+						// write back
+						dL_d_feat.write(sh_idx_start + 9 * 3 + 0, dL_d_sh_30[0]);
+						dL_d_feat.write(sh_idx_start + 9 * 3 + 1, dL_d_sh_30[1]);
+						dL_d_feat.write(sh_idx_start + 9 * 3 + 2, dL_d_sh_30[2]);
+						dL_d_feat.write(sh_idx_start + 10 * 3 + 0, dL_d_sh_31[0]);
+						dL_d_feat.write(sh_idx_start + 10 * 3 + 1, dL_d_sh_31[1]);
+						dL_d_feat.write(sh_idx_start + 10 * 3 + 2, dL_d_sh_31[2]);
+						dL_d_feat.write(sh_idx_start + 11 * 3 + 0, dL_d_sh_32[0]);
+						dL_d_feat.write(sh_idx_start + 11 * 3 + 1, dL_d_sh_32[1]);
+						dL_d_feat.write(sh_idx_start + 11 * 3 + 2, dL_d_sh_32[2]);
+						dL_d_feat.write(sh_idx_start + 12 * 3 + 0, dL_d_sh_33[0]);
+						dL_d_feat.write(sh_idx_start + 12 * 3 + 1, dL_d_sh_33[1]);
+						dL_d_feat.write(sh_idx_start + 12 * 3 + 2, dL_d_sh_33[2]);
+						dL_d_feat.write(sh_idx_start + 13 * 3 + 0, dL_d_sh_34[0]);
+						dL_d_feat.write(sh_idx_start + 13 * 3 + 1, dL_d_sh_34[1]);
+						dL_d_feat.write(sh_idx_start + 13 * 3 + 2, dL_d_sh_34[2]);
+						dL_d_feat.write(sh_idx_start + 14 * 3 + 0, dL_d_sh_35[0]);
+						dL_d_feat.write(sh_idx_start + 14 * 3 + 1, dL_d_sh_35[1]);
+						dL_d_feat.write(sh_idx_start + 14 * 3 + 2, dL_d_sh_35[2]);
+						dL_d_feat.write(sh_idx_start + 15 * 3 + 0, dL_d_sh_36[0]);
+						dL_d_feat.write(sh_idx_start + 15 * 3 + 1, dL_d_sh_36[1]);
+						dL_d_feat.write(sh_idx_start + 15 * 3 + 2, dL_d_sh_36[2]);
 					};
 				};
 			};
@@ -266,6 +321,7 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 			result = max(result, 0.0f);
 		};
 		return result;
+		// TODO: d_xyz
 	});
 }
 }// namespace sail::inno::render

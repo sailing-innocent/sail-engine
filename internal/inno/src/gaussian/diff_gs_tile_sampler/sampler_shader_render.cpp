@@ -69,7 +69,8 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 		UInt last_contributor = 0u;
 
 		$for(i, rounds) {
-			// require __syncthreads_count(done) to accelerate
+			// require __syncthreads_count(done)
+			sync_block();
 			Int progress = i * round_step + thread_idx;
 			$if(progress + range_start < range_end) {
 				Int coll_id = point_list.read(progress + range_start);
@@ -293,11 +294,8 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 				dL_d_opacity_features.atomic(global_id).fetch_add(G * dL_dalpha);
 
 				Float dL_dG = dL_dalpha * con_o.w;
-
 				Float gdx = G * d.x;
 				Float gdy = G * d.y;
-				// const float dG_ddelx = -gdx * con_o.x - gdy * con_o.y;
-				// const float dG_ddely = -gdy * con_o.z - gdx * con_o.y;
 				auto dG_ddelx = -gdx * con_o.x - gdy * con_o.y;
 				auto dG_ddely = -gdy * con_o.z - gdx * con_o.y;
 
@@ -307,8 +305,6 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 				dL_d_conic.atomic(global_id * 3 + 2).fetch_add(-0.5f * gdy * d.y * dL_dG);
 
 				// Update gradients w.r.t. 2D mean position of the Gaussian
-				// atomicAdd(&dL_dmean2D[global_id].x, dL_dG * dG_ddelx * ddelx_dx);
-				// atomicAdd(&dL_dmean2D[global_id].y, dL_dG * dG_ddely * ddely_dy);
 				dL_d_means2d.atomic(global_id * 2 + 0).fetch_add(dL_dG * dG_ddelx * ddelx_dx);
 				dL_d_means2d.atomic(global_id * 2 + 1).fetch_add(dL_dG * dG_ddely * ddely_dy);
 			};

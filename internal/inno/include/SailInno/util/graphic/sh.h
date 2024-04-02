@@ -86,15 +86,17 @@ Float3_T compute_color_from_sh_level_2(
 }
 
 template<typename Float3_T>
-void compute_color_from_sh_level_2_backward(Float3_T dL_dcolor,// input
-											Float3_T dir,	   // param
-											// output
-											Float3_T& dL_d_sh20,
-											Float3_T& dL_d_sh21,
-											Float3_T& dL_d_sh22,
-											Float3_T& dL_d_sh23,
-											Float3_T& dL_d_sh24,
-											Float3_T& dL_d_dir) {
+inline void compute_color_from_sh_level_2_backward(
+	Float3_T dL_dcolor,// input
+	Float3_T dir,	   // param
+	// output
+	Float3_T& dL_d_sh20,
+	Float3_T& dL_d_sh21,
+	Float3_T& dL_d_sh22,
+	Float3_T& dL_d_sh23,
+	Float3_T& dL_d_sh24,
+	Float3_T& dL_d_dir) {
+
 	auto x = dir.x;
 	auto y = dir.y;
 	auto z = dir.z;
@@ -104,6 +106,7 @@ void compute_color_from_sh_level_2_backward(Float3_T dL_dcolor,// input
 	auto zz = z * z;
 	auto zx = z * x;
 	auto xy = x * y;
+
 	dL_d_sh20 = util::SH_C2[0] * xy * dL_dcolor;
 	dL_d_sh21 = util::SH_C2[1] * yz * dL_dcolor;
 	dL_d_sh22 = util::SH_C2[2] * (2.0f * zz - xx - yy) * dL_dcolor;

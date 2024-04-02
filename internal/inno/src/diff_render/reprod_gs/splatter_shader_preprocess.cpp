@@ -82,10 +82,12 @@ void ReprodGS::compile_forward_preprocess_shader(Device& device) noexcept {
 		auto point_image = make_float2((*mp_ndc2pix)(point_image_ndc.x, resolution.x), (*mp_ndc2pix)(point_image_ndc.y, resolution.y));
 
 		(*mp_get_rect)(point_image, my_radius, rect_min, rect_max, m_blocks, grids);
-		// write means_2d
+
+		// write out
+
 		radii.write(idx, my_radius);
 		tiles_touched.write(idx, (rect_max.x - rect_min.x) * (rect_max.y - rect_min.y));
-		// write conic
+
 		conics.write(3 * idx + 0, conic.x);
 		conics.write(3 * idx + 1, conic.y);
 		conics.write(3 * idx + 2, conic.z);
@@ -96,6 +98,7 @@ void ReprodGS::compile_forward_preprocess_shader(Device& device) noexcept {
 		color_features.write(3 * idx + 0, color.x);
 		color_features.write(3 * idx + 1, color.y);
 		color_features.write(3 * idx + 2, color.z);
+
 		depth_features.write(idx, p_view.z);
 	});
 }
@@ -131,7 +134,6 @@ void ReprodGS::compile_backward_preprocess_shader(Device& device) noexcept {
 		Float4 p_hom = make_float4(mean_3d, 1.0f);
 		Float4 p_view_hom = view_matrix * p_hom;
 
-		// TODO: SH backward not done
 		(*mp_compute_color_from_sh_backward)(
 			// params
 			static_cast<Int>(idx), D, M,

@@ -254,24 +254,19 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 					// no contribution to color, pass
 					$continue;
 				};
-				// calcuate alpha
+				// forward params
 				Float2 mean = collected_means->read(j);
 				Float2 d = mean - pix_f;
 				Float4 con_o = collected_conic_opacity->read(j);
-
 				Float power = -0.5f * (con_o.x * d.x * d.x + con_o.z * d.y * d.y) - con_o.y * d.x * d.y;
 				$if(power > 0.0f) { $continue; };
-
 				Float G = exp(power);
 				Float alpha = min(0.99f, con_o.w * G);
 				$if(alpha < 1.0f / 255.0f) { $continue; };
-
-				T = T / (1.0f - alpha);// backward calc weight
-
+				// T_j
+				T = T / (1.0f - alpha);
 				Float d_ch_d_color = alpha * T;
-				//  Float d_ch_d_color = 1.0f;
 				Float dL_dalpha = 0.0f;
-
 				UInt global_id = collected_ids->read(j);
 
 				$for(ch, 3) {
@@ -283,7 +278,7 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 					dL_dalpha += (c - accum_rec[ch]) * dL_d_ch;
 					// atomic add to dL_dcolor
 					Float dL_d_color_feat = d_ch_d_color * dL_d_ch;
-
+					// backward for color
 					dL_d_color_feature.atomic(3 * global_id + ch)
 						.fetch_add(dL_d_color_feat);
 				};
