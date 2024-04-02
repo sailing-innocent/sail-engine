@@ -19,10 +19,15 @@ class GaussianProjector:
         p_view_hom = p_hom @ view_mat.transpose(0, 1)
         p_view = p_view_hom[:, :3] / (p_view_hom[:, 3].unsqueeze(1) + 1e-6)
         mask = p_view[:, 2] > 0.2
+
+        p_proj = torch.zeros(N, 2).float().cuda()
         p_proj = p_view[:, :2] / (p_view[:, 2].unsqueeze(1) + 1e-6)
         result = Gaussians2D()
         result.means_2d = p_proj
-        result.means_2d.retain_grad()
+        try:
+            result.means_2d.retain_grad()
+        except:
+            pass
         
         R = qvec2R(gaussians.get_rotation)
         s = gaussians.get_scaling
