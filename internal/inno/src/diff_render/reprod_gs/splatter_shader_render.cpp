@@ -304,6 +304,7 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 				dL_d_conic.atomic(global_id * 3 + 0).fetch_add(-0.5f * gdx * d.x * dL_dG);
 				dL_d_conic.atomic(global_id * 3 + 1).fetch_add(-0.5f * gdx * d.y * dL_dG);
 				dL_d_conic.atomic(global_id * 3 + 2).fetch_add(-0.5f * gdy * d.y * dL_dG);
+
 				dL_d_means_2d.atomic(global_id * 2 + 0).fetch_add(dL_dG * dG_ddelx * ddelx_dx);
 				dL_d_means_2d.atomic(global_id * 2 + 1).fetch_add(dL_dG * dG_ddely * ddely_dy);
 			};

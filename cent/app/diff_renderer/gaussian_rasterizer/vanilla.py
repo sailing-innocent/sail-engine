@@ -65,10 +65,8 @@ class GaussianRenderer:
         
         means_2d = screenspace_points
         opacity = gaussians.get_opacity
-
         scales = gaussians.get_scaling
         rotations = gaussians.get_rotation
-
         shs = gaussians.get_features
         # print(shs.shape)
 

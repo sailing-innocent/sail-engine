@@ -3,8 +3,7 @@ from module.utils.camera.basic import Camera
 from module.model.gaussian.vanilla import GaussianModel
 import numpy as np 
 import torch 
-
-from app.diff_renderer.gaussian_rasterizer.inno_reprod import create_gaussian_renderer as create_inno_reprod_renderer
+import pytest 
 from app.diff_renderer.gaussian_rasterizer.vanilla import create_gaussian_renderer as create_vanilla_renderer 
 from mission.config.env import get_env_config
 import matplotlib.pyplot as plt
@@ -33,7 +32,8 @@ class GaussianTrainerParams:
     saving_iterations = [7000, 30000]
     max_iterations = 30000
 
-def test_backward_inno_reprod():
+@pytest.mark.current 
+def test_backward_inno_reprod_size():
     env_config = get_env_config()
     source_gs = GaussianModel(3)
     r = 1.0
@@ -42,13 +42,11 @@ def test_backward_inno_reprod():
     blue = [0, 0, 1]
     pcd = sphere_point_cloud(r, N, blue)
     cam = Camera("FlipY")
-
     source_gs.create_from_pcd(pcd, r)
 
     cam.lookat(2 * np.array([1, 0, 1]), np.array([0, 0, 0]))
 
     vanilla_renderer = create_vanilla_renderer(env_config)
-    inno_reprod_renderer = create_inno_reprod_renderer(env_config)
     target_img = vanilla_renderer.render(cam, source_gs)["render"]
     target_img = target_img.detach()
     target_img_np = target_img.cpu().numpy().transpose(1, 2, 0)
@@ -58,18 +56,19 @@ def test_backward_inno_reprod():
     plt.imshow(target_img_np)
     plt.show()
 
-    N_TRAIN = 2000
-    N_LOG = 200
-    pcd = sphere_point_cloud(r, N, red)
+
     gs = GaussianModel(3)
-    gs.create_from_pcd(pcd, r)
+    gs.create_from_pcd(pcd, r, 10.0)
+
     params = GaussianTrainerParams()
     gs.training_setup(params)
+    N_TRAIN = 2000
+    N_LOG = 200
     for i in range(1, N_TRAIN+1):
         gs.update_learning_rate(i)
         if i % 1000 == 0:
             gs.oneupSHdegree()
-        result_img = inno_reprod_renderer.render(cam, gs)["render"]
+        result_img = vanilla_renderer.render(cam, gs)["render"]
         # result_img = vanilla_renderer.render(cam, gs)["render"]
         loss = torch.mean((result_img - target_img) ** 2)
         loss.backward()

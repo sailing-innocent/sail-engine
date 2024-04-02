@@ -34,36 +34,53 @@ void calc_cov_backward(
 	// params
 	Float3_T scale, Float4_T qvec) {
 	Float3x3_T R = R_from_qvec<Float4_T, Float3x3_T>(qvec);
-	Float3x3_T dL_dM = 2.0f * dL_dSigma;
-	Float3x3_T dL_dR;
-	for (int i = 0; i < 3; i++) {
-		dL_dscale[i] = dot(R[i], dL_dM[i]);
-		dL_dR[i] = scale[i] * dL_dM[i];
-	}
-	dL_dqvec = R_from_qvec_backward<Float3_T, Float4_T, Float3x3_T>(dL_dR, qvec, R);
+	Float3x3_T S = make_float3x3(
+		scale.x, 0.0f, 0.0f,
+		0.0f, scale.y, 0.0f,
+		0.0f, 0.0f, scale.z);
+	Float3x3_T M = R * S;
+	Float3x3_T dL_dM = 2.0f * transpose(M) * dL_dSigma;
+
+	Float3x3_T RT = transpose(R);
+	$for(i, 3) {
+		dL_dscale[i] = dot(RT[i], dL_dM[i]);
+	};
+
+	// TODO: backward qvec
 }
 
 template<typename Float4_T, typename Float3x3_T>
-Float3x3_T calc_J(Float4_T camera_primitive, Float4_T p_view) {
+inline Float3x3_T calc_J(Float4_T camera_primitive, Float4_T p_view) {
 	auto focal_x = camera_primitive.x;
 	auto focal_y = camera_primitive.y;
 	auto tan_fov_x = camera_primitive.z;
 	auto tan_fov_y = camera_primitive.w;
-
 	auto t = p_view.xyz();
 	auto limx = 1.3f * tan_fov_x;
 	auto limy = 1.3f * tan_fov_y;
-
 	auto txtz = t.x / t.z;
 	auto tytz = t.y / t.z;
-
 	t.x = clamp(txtz, -limx, limx) * t.z;
 	t.y = clamp(tytz, -limy, limy) * t.z;
 
+	// Float3x3 J = make_float3x3(
+	// 	focal_x / t.z, 0.0f, -(focal_x * t.x) / (t.z * t.z),
+	// 	0.0f, focal_y / t.z, -(focal_y * t.y) / (t.z * t.z),
+	// 	0.0f, 0.0f, 0.0f);
+
+	// consider function p = m(t)
+	// $p_x=\frac{f_xt_x}{t_z}$
+	// $p_y=\frac{f_yt_y}{t_z}$
+	// $p_z=1$
+	// Calculate the Jacobian of m(t)
+	// J =
+	// fx/tz, 0.0,  fx*tx/(tz * tz)
+	// 0.0,   fy/tz, fy*ty/(tz * tz)
+	// 0.0    0.0,   0.0
 	Float3x3_T J = make_float3x3(
-		focal_x / t.z, 0.0f, -(focal_x * t.x) / (t.z * t.z),
-		0.0f, focal_y / t.z, -(focal_y * t.y) / (t.z * t.z),
-		0.0f, 0.0f, 0.0f);
+		focal_x / t.z, 0.0f, 0.0f,
+		0.0f, focal_y / t.z, 0.0f,
+		-(focal_x * t.x) / (t.z * t.z), -(focal_y * t.y) / (t.z * t.z), 0.0f);
 
 	return J;
 }
@@ -129,24 +146,17 @@ void proj_cov3d_to_cov2d_backward(
 	auto dL_db = dL_d_cov_2d.y;
 	auto dL_dc = dL_d_cov_2d.z;
 
-	// Gradients of loss L w.r.t. each 3D covariance matrix (Vrk) entry,
-	// given gradients w.r.t. 2D covariance matrix (diagonal).
-	// cov2D = transpose(T) * transpose(Vrk) * T;
+	T = transpose(T);
 	dL_dcov[0][0] = (T[0][0] * T[0][0] * dL_da + T[0][0] * T[1][0] * dL_db + T[1][0] * T[1][0] * dL_dc);
 	dL_dcov[1][1] = (T[0][1] * T[0][1] * dL_da + T[0][1] * T[1][1] * dL_db + T[1][1] * T[1][1] * dL_dc);
 	dL_dcov[2][2] = (T[0][2] * T[0][2] * dL_da + T[0][2] * T[1][2] * dL_db + T[1][2] * T[1][2] * dL_dc);
-
-	// Gradients of loss L w.r.t. each 3D covariance matrix (Vrk) entry,
-	// given gradients w.r.t. 2D covariance matrix (off-diagonal).
-	// Off-diagonal elements appear twice --> double the gradient.
-	// cov2D = transpose(T) * transpose(Vrk) * T;
 	dL_dcov[0][1] = 2 * T[0][0] * T[0][1] * dL_da + (T[0][0] * T[1][1] + T[0][1] * T[1][0]) * dL_db + 2 * T[1][0] * T[1][1] * dL_dc;
 	dL_dcov[0][2] = 2 * T[0][0] * T[0][2] * dL_da + (T[0][0] * T[1][2] + T[0][2] * T[1][0]) * dL_db + 2 * T[1][0] * T[1][2] * dL_dc;
 	dL_dcov[1][2] = 2 * T[0][2] * T[0][1] * dL_da + (T[0][1] * T[1][2] + T[0][2] * T[1][1]) * dL_db + 2 * T[1][1] * T[1][2];
-
-	// symmetry
 	dL_dcov[1][0] = dL_dcov[0][1];
 	dL_dcov[2][0] = dL_dcov[0][2];
 	dL_dcov[2][1] = dL_dcov[1][2];
+	// asym
 }
+
 }// namespace sail::inno::math

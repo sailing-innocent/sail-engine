@@ -153,27 +153,32 @@ void ReprodGS::compile_backward_preprocess_shader(Device& device) noexcept {
 		// Float opacity = opacity_features.read(idx);
 		Float det_inv = (conic.x * conic.z - conic.y * conic.y);
 		Float det_inv_2 = det_inv * det_inv;
-		Float3 cov_2d = make_float3(conic.z, -conic.y, conic.x) * det_inv;
+		Float3 cov_2d = make_float3(conic.z, -conic.y, conic.x) / det_inv;
 		Float a = cov_2d.x;
 		Float b = cov_2d.y;
 		Float c = cov_2d.z;
+		// device_log("cov2d: {}", cov_2d);
+
 		Float3 dL_d_con = make_float3(dL_d_conic.read(idx * 3 + 0), dL_d_conic.read(idx * 3 + 1), dL_d_conic.read(idx * 3 + 2));
 		Float3 dL_d_cov2d;
-
 		dL_d_cov2d.x = det_inv_2 * (-c * c * dL_d_con.x + 2 * b * c * dL_d_con.y - b * b * dL_d_con.z);
-		dL_d_cov2d.y = det_inv_2 * (-a * a * dL_d_con.z + 2 * a * b * dL_d_con.y - b * b * dL_d_con.z);
-		dL_d_cov2d.z = det_inv_2 * 2 * (b * c * dL_d_con.x - (a * c + b * b) * dL_d_con.y + a * b * dL_d_con.z);
+		dL_d_cov2d.z = det_inv_2 * (-b * b * dL_d_con.x + 2 * a * b * dL_d_con.y - a * a * dL_d_con.z);
+		dL_d_cov2d.y = det_inv_2 * 2 * (b * c * dL_d_con.x - (a * c + b * b) * dL_d_con.y + a * b * dL_d_con.z);
+		// device_log("dL_d_cov2d: {}", dL_d_cov2d);
 
 		// dL_d_cov_3d -> dL_d_cov3d
-		Float3x3 dL_d_cov3d;
+		Float3x3 dL_d_cov3d = make_float3x3(0.0f);
+		// dL_d_cov3d[0][0] = dL_d_cov2d.x;
+		// dL_d_cov3d[1][1] = dL_d_cov2d.z;
 		inno::math::proj_cov3d_to_cov2d_backward<Float3, Float4, Float3x3, Float4x4>(dL_d_cov2d, dL_d_cov3d, p_view_hom, camera_primitive, view_matrix);
-		Float3 dL_ds;
-		Float4 dL_dqvec;
+		Float3 dL_ds = make_float3(0.0f, 0.0f, 0.0f);
+		Float4 dL_dqvec = make_float4(0.0f, 0.0f, 0.0f, 0.0f);
 		Float3 scale = make_float3(scale_buffer.read(3 * idx + 0), scale_buffer.read(3 * idx + 1), scale_buffer.read(3 * idx + 2));
 		Float4 qvec = make_float4(rotq_buffer.read(4 * idx + 0), rotq_buffer.read(4 * idx + 1), rotq_buffer.read(4 * idx + 2), rotq_buffer.read(4 * idx + 3));
 		inno::math::calc_cov_backward<Float3, Float4, Float3x3>(dL_d_cov3d, dL_ds, dL_dqvec, scale, qvec);
 
 		// write out
+		// TODO: the gradient is not correct
 		// dL_d_scale.write(3 * idx + 0, dL_ds.x);
 		// dL_d_scale.write(3 * idx + 1, dL_ds.y);
 		// dL_d_scale.write(3 * idx + 2, dL_ds.z);
