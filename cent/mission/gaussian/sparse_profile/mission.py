@@ -3,6 +3,8 @@ import itertools
 from app.project.nvs.sparse_gs.train import TrainGaussianProjectConfig, TrainGaussianProjectParams, TrainGaussianProject
 from app.trainer.nvs.sparse_gs.basic import GaussianTrainerParams
 from app.trainer.nvs.sparse_gs.vanilla import GaussianVanillaTrainerParams
+from app.trainer.nvs.sparse_gs.epipolar import  GaussianEpipolarTrainerParams
+
 
 from module.utils.tex.table import TexTable 
 import os 
@@ -26,7 +28,8 @@ class Mission(MissionBase):
 
         self.create_train_params = {
             "vanilla": GaussianVanillaTrainerParams,
-            "basic": GaussianTrainerParams
+            "basic": GaussianTrainerParams,
+            "epipolar": GaussianEpipolarTrainerParams
         }
 
     def exec(self):

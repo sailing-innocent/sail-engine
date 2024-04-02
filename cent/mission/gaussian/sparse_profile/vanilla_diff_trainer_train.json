@@ -4,7 +4,13 @@
     "usage": "train",
     "objects": [
         "lego",
-        "chair"
+        "chair",
+        "drums",
+        "ficus",
+        "hotdog",
+        "materials",
+        "mic",
+        "ship"
     ],
     "init_scenes": [
         {
