@@ -81,6 +81,7 @@ class EvalGaussianProject(ProjectBase):
         pipeline_config.metric_types = self.params.benchmarks
         # create and run pipeline
         pipeline = NVSEvalPipeline(pipeline_config)
+        
         renderer = self.create_renderer[self.params.render_name](self.config.env_config)
         result = pipeline.run(self.model, renderer)
         return result

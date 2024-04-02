@@ -70,7 +70,7 @@
         "inno_reprod"
     ],
     "result_template": {
-        "name": "tab_3dgs_compare_diff_render_{benchmark}_result",
+        "name": "tab_3dgs_compare_diff_render_{benchmark}_result_nerf_blender",
         "type": "tab_json",
         "template": "3dgs_paper_{benchmark}",
         "path": "../doc/latex/table/result/3dgs_profile/"
