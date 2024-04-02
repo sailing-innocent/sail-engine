@@ -45,15 +45,14 @@ void DiffGaussianTileSampler::compile_tile_split_shader(Device& device) noexcept
 		auto hf = Float(resolution.y);
 
 		auto aspect = wf / hf;
-		auto tan_fov_y = tan(fov_rad * 0.5f);
-		auto fy = 1.0f * tan_fov_y * 2;
+		auto fy = 1.0f / tan(fov_rad * 0.5f);
 		auto fx = fy * aspect;
 
 		auto point_image_2d = make_float2(means_2d.read(2 * idx + 0), means_2d.read(2 * idx + 1));
 		// zoom to ndc
 		auto point_image_ndc = make_float2(
-			point_image_2d.x / fx,
-			point_image_2d.y / fy);
+			point_image_2d.x * fx,
+			point_image_2d.y * fy);
 
 		// zoom to pixel
 		auto point_image = make_float2(util::ndc2pix<Float>(point_image_ndc.x, resolution.x), util::ndc2pix<Float>(point_image_ndc.y, resolution.y));
@@ -65,7 +64,7 @@ void DiffGaussianTileSampler::compile_tile_split_shader(Device& device) noexcept
 			covs_2d.read(3 * idx + 2));
 
 		// zoom to NDC
-		cov_2d = make_float3(cov_2d.x / fx / fx, cov_2d.y / fx / fy, cov_2d.z / fy / fy);
+		cov_2d = make_float3(cov_2d.x * fx * fx, cov_2d.y * fx * fy, cov_2d.z * fy * fy);
 		// zoom to pixel
 		cov_2d = make_float3(cov_2d.x * wf * wf / 4.0f, cov_2d.y * wf * hf / 4.0f, cov_2d.z * hf * hf / 4.0f);
 
@@ -115,13 +114,13 @@ void DiffGaussianTileSampler::compile_tile_split_shader(Device& device) noexcept
 
 		auto wf = Float(resolution.x);
 		auto hf = Float(resolution.y);
-		auto fx = 2.0f / tan(fov_rad * 0.5f);
-		auto fy = fx * wf / hf;
+		auto fy = 1.0f / tan(fov_rad * 0.5f);
+		auto fx = fy * wf / hf;
 
 		Float3 cov_2d = make_float3(
-			covs_2d.read(3 * idx + 0) * resolution.x * resolution.x * 0.25f / fx / fx,
-			covs_2d.read(3 * idx + 1) * resolution.x * resolution.y * 0.25f / fx / fy,
-			covs_2d.read(3 * idx + 2) * resolution.y * resolution.y * 0.25f / fy / fy);
+			covs_2d.read(3 * idx + 0) * resolution.x * resolution.x * 0.25f * fx * fx,
+			covs_2d.read(3 * idx + 1) * resolution.x * resolution.y * 0.25f * fx * fy,
+			covs_2d.read(3 * idx + 2) * resolution.y * resolution.y * 0.25f * fy * fy);
 
 		// Float3 cov_2d = make_float3(
 		// 	covs_2d.read(3 * idx + 0),

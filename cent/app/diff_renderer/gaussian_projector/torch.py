@@ -16,9 +16,11 @@ class GaussianProjector:
         xyz = gaussians.get_xyz
         N = xyz.shape[0]
         p_hom = torch.cat([xyz, torch.ones(N, 1).cuda()], dim=1)
-        p_view_hom = torch.matmul(p_hom, view_mat.t())
+        p_view_hom = p_hom @ view_mat.transpose(0, 1)
         p_view = p_view_hom[:, :3] / (p_view_hom[:, 3].unsqueeze(1) + 1e-6)
+        # print(p_view[:, 2])
         p_proj = p_view[:, :2] / (p_view[:, 2].unsqueeze(1) + 1e-6)
+        
         # print(p_proj)
         # p_proj = p_proj * scale_modifier
         result = Gaussians2D()
@@ -28,7 +30,6 @@ class GaussianProjector:
         S = torch.diag_embed(s)
         cov3d = R @ S @ S @ R.transpose(1,2)
         J = torch.zeros(N, 3, 3).float().cuda()
-        p_norm = torch.norm(p_view, dim=1)
         J[:, 0, 0] = 1.0 / p_view[:, 2]
         J[:, 1, 1] = 1.0 / p_view[:, 2]
         # J[:, 2, 0] = - p_view[:, 0] / (p_norm)

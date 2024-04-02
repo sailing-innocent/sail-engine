@@ -1,0 +1,14 @@
+{
+    "name": "gaussian_eval_inno_torch",
+    "render_name": "inno_torch",
+    "usage": "demo",
+    "scenes": [
+        {
+            "type": "ckpt",
+            "dataset_name": "nerf_blender",
+            "obj_name": "lego",
+            "ckpt_path": "gaussian",
+            "iter": 30000
+        }
+    ]
+}
