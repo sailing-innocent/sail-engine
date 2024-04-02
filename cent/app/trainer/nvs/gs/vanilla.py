@@ -5,6 +5,7 @@ from tqdm import tqdm
 from random import randint
 import os 
 from loguru import logger 
+import gc
 
 from .basic import GaussianTrainerParams
 
@@ -85,17 +86,19 @@ class GaussianTrainer(TrainerBase):
             image, viewspace_point_tensor, visibility_filter, radii = \
                 render_pkg["render"], render_pkg["viewspace_points"], render_pkg["visibility_filter"], render_pkg["radii"]
             
+            try: 
+                viewspace_point_tensor.retain_grad()
+            except:
+                pass
+            
             # load ground truth
             gt_image = torch.tensor(pair.img.data.transpose(2, 0, 1)).float().cuda()
             
             loss = loss_fn(image, gt_image)
-   
-            if iteration > params.densify_from_iter and iteration < params.densify_until_iter:
-                loss.backward(retain_graph=True)
-            else:
-                loss.backward()
+            loss.backward()
             
             with torch.no_grad():
+
                 if iteration % 10 == 0:
                     progress_bar.set_postfix({"Loss": f"{loss.item():.{7}f}"})
                     progress_bar.update(10)
@@ -128,6 +131,7 @@ class GaussianTrainer(TrainerBase):
                     gaussians.optimizer.step()
                     gaussians.optimizer.zero_grad(set_to_none=True)
 
+                gc.collect()
         return process_log
 
 def create_trainer(env_config, target_path):
