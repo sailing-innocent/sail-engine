@@ -20,8 +20,8 @@
     "loss_name": "l1",
     "train_params": {
         "saving_iterations": [
-            700,
-            3000
+            5000,
+            8000
         ]
     }
 }
