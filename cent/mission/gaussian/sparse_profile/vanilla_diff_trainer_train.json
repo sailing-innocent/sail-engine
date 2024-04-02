@@ -1,5 +1,5 @@
 {
-    "name": "profile_gaussian_diff_trainer",
+    "name": "profile_sparse_gaussisn_dtt",
     "dataset_name": "nerf_blender",
     "usage": "train",
     "objects": [
@@ -9,14 +9,14 @@
     "init_scenes": [
         {
             "type": "ckpt",
-            "ckpt_path": "gaussian_ini",
+            "ckpt_path": "gaussian_init",
             "postfix": "random"
         }
     ],
     "benchmarks": [
         {
             "name": "psnr",
-            "use_template": true
+            "use_template": false
         }
     ],
     "render_names": [
@@ -28,9 +28,10 @@
     ],
     "train_params_list": [
         {
-            "name": "default",
+            "name": "order_10",
+            "data_limit": 10,
+            "data_shuffle": false,
             "saving_iterations": [
-                7000,
                 30000
             ]
         }
@@ -39,9 +40,9 @@
         "l1+ssim"
     ],
     "result_template": {
-        "name": "tab_3dgs_profile_diff_trainer_{benchmark}_result",
+        "name": "tab_3dgs_profile_vanilla_diff_trainer_{benchmark}_result",
         "type": "tab_json",
         "template": "3dgs_paper_{benchmark}",
-        "path": "../doc/latex/table/result/3dgs_profile/"
+        "path": "../doc/latex/table/result/3dgs_sparse_profile/"
     }
 }
