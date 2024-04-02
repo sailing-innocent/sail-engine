@@ -24,11 +24,6 @@ class GaussianProjector:
         p_proj = p_view[:, :2] / (p_view[:, 2].unsqueeze(1) + 1e-6)
         result = Gaussians2D()
         result.means_2d = p_proj
-        try:
-            result.means_2d.retain_grad()
-        except:
-            pass
-        
         R = qvec2R(gaussians.get_rotation)
         s = gaussians.get_scaling
         S = torch.diag_embed(s)

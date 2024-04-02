@@ -89,7 +89,11 @@ class GaussianTrainer(TrainerBase):
             gt_image = torch.tensor(pair.img.data.transpose(2, 0, 1)).float().cuda()
             
             loss = loss_fn(image, gt_image)
-            loss.backward()
+   
+            if iteration > params.densify_from_iter and iteration < params.densify_until_iter:
+                loss.backward(retain_graph=True)
+            else:
+                loss.backward()
             
             with torch.no_grad():
                 if iteration % 10 == 0:
