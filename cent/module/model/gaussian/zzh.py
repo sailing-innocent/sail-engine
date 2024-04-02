@@ -102,7 +102,7 @@ class GaussianModel:
     
     @property
     def get_opacity(self):
-        return self._opacity
+        return self.opacity_activation(self._opacity)
 
     def get_covariance(self, scaling_modifier = 1):
         return self.covariance_activation(self.get_scaling, scaling_modifier, self._rotation)
@@ -130,8 +130,9 @@ class GaussianModel:
         rots = torch.zeros((fused_point_cloud.shape[0], 4), device="cuda")
         rots[:, 0] = 1
 
-        # opacities = inverse_sigmoid(0.1 * torch.ones((fused_point_cloud.shape[0], 1), dtype=torch.float, device="cuda"))
-        opacities = 0.05 * torch.ones((fused_point_cloud.shape[0], 1), dtype=torch.float, device="cuda")
+        opacities = inverse_sigmoid(0.1 * torch.ones((fused_point_cloud.shape[0], 1), dtype=torch.float, device="cuda"))
+        # opacities = 0.05 * torch.ones((fused_point_cloud.shape[0], 1), dtype=torch.float, device="cuda")
+        
         self._xyz = nn.Parameter(fused_point_cloud.requires_grad_(True))
         
         self._features_dc = nn.Parameter(
@@ -151,6 +152,7 @@ class GaussianModel:
         f_dc = self._features_dc.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
         f_rest = self._features_rest.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
         opacities = self._opacity.detach().cpu().numpy()
+        print(opacities.shape)
         scale = self._scaling.detach().cpu().numpy()
         rotation = self._rotation.detach().cpu().numpy()
 
@@ -158,7 +160,6 @@ class GaussianModel:
 
         elements = np.empty(xyz.shape[0], dtype=dtype_full)
         attributes = np.concatenate((xyz, normals, f_dc, f_rest, opacities, scale, rotation), axis=1)
-        
         elements[:] = list(map(tuple, attributes))
         el = PlyElement.describe(elements, 'vertex')
         PlyData([el]).write(path)
@@ -246,6 +247,7 @@ class GaussianModel:
             l.append('scale_{}'.format(i))
         for i in range(self._rotation.shape[1]):
             l.append('rot_{}'.format(i))
+        # print(l)
         return l
 
     def reset_opacity(self):

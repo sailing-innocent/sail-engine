@@ -8,4 +8,5 @@ def test_split():
     dataset = create_nerf_blender_dataset(env_config, 'lego', 'train')
     pcd = dataset.get_point_cloud()
     gs.create_from_pcd(pcd, 1.0)
-    gs.save_ply('D:/pretrained_random.ply')
+    gs.save_ply('D:/pretrained/random.ply')
+    # gs.load_ply('D:/pretrained/random.ply')
