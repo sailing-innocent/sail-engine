@@ -34,6 +34,7 @@ class GaussianVanillaTrainerParams(GaussianTrainerParams):
         self.densify_from_iter = 500
         self.densify_until_iter = 15_000
         self.densify_grad_threshold = 0.0002
+        self.size_threshold = 20
 
 class GaussianTrainer(TrainerBase):
     """
@@ -117,7 +118,7 @@ class GaussianTrainer(TrainerBase):
                     gaussians.add_densification_stats(viewspace_point_tensor, visibility_filter)
 
                     if iteration > params.densify_from_iter and iteration % params.densify_interval == 0:
-                        size_threshold = 20 if iteration > params.opacity_reset_interval else None
+                        size_threshold = params.size_threshold if iteration > params.opacity_reset_interval else None
                         gaussians.densify_and_prune(params.densify_grad_threshold, 0.005, 1, size_threshold)
 
                     # todo white
