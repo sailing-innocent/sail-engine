@@ -146,9 +146,9 @@ void DiffGaussianTileSampler::compile_tile_split_shader(Device& device) noexcept
 		dL_d_cov2d.z = det_inv_2 * (-b * b * dL_d_con.x + a * b * dL_d_con.y - a * a * dL_d_con.z);
 		dL_d_cov2d.y = det_inv_2 * 2 * (b * c * dL_d_con.x - (a * c + b * b) * dL_d_con.y + a * b * dL_d_con.z);
 		// dL_d_cov2d = dL_d_con;
-		dL_d_cov_2d.write(3 * idx + 0, dL_d_cov2d.x * resolution.x * resolution.x * 0.25f / fx / fx);
-		dL_d_cov_2d.write(3 * idx + 2, dL_d_cov2d.z * resolution.y * resolution.y * 0.25f / fx / fy);
-		dL_d_cov_2d.write(3 * idx + 1, dL_d_cov2d.y * resolution.x * resolution.y * 0.25f / fy / fy);
+		dL_d_cov_2d.write(3 * idx + 0, dL_d_cov2d.x * resolution.x * resolution.x * 0.25f * fx * fx);
+		// dL_d_cov_2d.write(3 * idx + 1, dL_d_cov2d.y * resolution.x * resolution.y * 0.25f * fx * fy);
+		dL_d_cov_2d.write(3 * idx + 2, dL_d_cov2d.z * resolution.y * resolution.y * 0.25f * fy * fy);
 		// dL_d_cov_2d.write(3 * idx + 0, dL_d_cov2d.x);
 		// dL_d_cov_2d.write(3 * idx + 2, dL_d_cov2d.z);
 		// dL_d_cov_2d.write(3 * idx + 1, dL_d_cov2d.y);

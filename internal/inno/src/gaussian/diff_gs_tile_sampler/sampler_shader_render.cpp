@@ -159,8 +159,10 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 		auto xy = dispatch_id().xy();
 		auto w = resolution.x;
 		auto h = resolution.y;
+
 		Float ddelx_dx = 0.5f * w;
-		Float ddely_dy = 0.5f * w;
+		Float ddely_dy = 0.5f * h;
+
 		auto thread_idx = thread_id().x + thread_id().y * block_size().x;
 
 		Bool inside = Bool(xy.x < resolution.x) & Bool(xy.y < resolution.y);

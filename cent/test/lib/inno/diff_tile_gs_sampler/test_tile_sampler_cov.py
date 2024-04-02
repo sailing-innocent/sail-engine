@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import os
 
 
-@pytest.mark.app
+@pytest.mark.current
 def test_tile_sampler_cov():
     sampler = DiffGSTileSampler()
     N = 2
@@ -20,13 +20,6 @@ def test_tile_sampler_cov():
     means_2d[0, 0] = 0.5
     means_2d[0, 1] = 0.5
     # means_2d.requires_grad = True 
-
-    # s1 = 0.1 * torch.ones((N), dtype=torch.float32).cuda()
-    # s2 = 0.1 * torch.ones((N), dtype=torch.float32).cuda()
-    # theta = torch.zeros((N), dtype=torch.float32).cuda()
-    
-    # covs_2d = T2Sigma(s1, s2, theta)
-    # print(covs_2d)
     
     covs_2d = 0.1 * torch.ones((N, 3), dtype=torch.float32).cuda()
     covs_2d[:, 1] = 0
@@ -44,7 +37,7 @@ def test_tile_sampler_cov():
 
     opacity_features = torch.ones((N, 1), dtype=torch.float32).cuda()
 
-    fov = 60 / 180 * 3.1415926
+    fov = 120 / 180 * 3.1415926
     settings = DiffGSTileSamplerSettings(
         width, height, fov)
     
@@ -67,7 +60,7 @@ def test_tile_sampler_cov():
     # theta.requires_grad = True
 
     # optim = torch.optim.AdamW([s1, s2], lr= 1e-3)
-    optim = torch.optim.AdamW([covs_2d], lr= 1e-3)
+    optim = torch.optim.AdamW([covs_2d], lr= 5e-3)
     N_ROUND = 410
     N_SHOW = 100
     N_OPTIM = 10
@@ -89,8 +82,8 @@ def test_tile_sampler_cov():
         loss.backward()
 
         with torch.no_grad():
-            print(covs_2d.detach().cpu().numpy())
-            print(loss.item())
+            # print(covs_2d.detach().cpu().numpy())
+            # print(loss.item())
             if i % N_SHOW == 0:
                 result_img_np = result_img.cpu().detach().numpy()
                 # CHW -> HWC

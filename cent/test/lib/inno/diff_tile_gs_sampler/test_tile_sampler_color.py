@@ -5,7 +5,7 @@ import torch
 import matplotlib.pyplot as plt
 import os 
 
-@pytest.mark.current
+@pytest.mark.app
 def test_tile_sampler_color():
     sampler = DiffGSTileSampler()
     N = 1
@@ -40,7 +40,7 @@ def test_tile_sampler_color():
 
     # color_features = torch.rand((N, 4), dtype=torch.float32).cuda()
     settings = DiffGSTileSamplerSettings(
-        width, height, 60 / 180 * 3.1415926)
+        width, height, 120 / 180 * 3.1415926)
     
     target_img = sampler.forward(
         means_2d, covs_2d, depth_features,             

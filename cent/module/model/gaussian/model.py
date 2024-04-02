@@ -30,8 +30,8 @@ class Gaussians2D:
         self.opacity_features = self.opacity_features.detach().clone()
     
     def parameters(self):
-        # return [self.means_2d, self.covs_2d, self.color_features, self.opacity_features]
-        return [self.means_2d, self.color_features, self.opacity_features]
+        return [self.means_2d, self.covs_2d, self.color_features, self.opacity_features]
+        # return [self.means_2d, self.color_features, self.opacity_features]
         # return [self.means_2d, self.color_features]
     
     @classmethod 

@@ -29,7 +29,7 @@ def test_sampler_2d():
 
     N_ITER = 100
     N_LOG = 10
-    optim = torch.optim.AdamW(gaussians.parameters(), lr=1e-2)
+    optim = torch.optim.AdamW(gaussians.parameters(), lr=1e-3)
    
     for i in range(N_ITER):
         result_img = sampler.sample(gaussians, width, height)
