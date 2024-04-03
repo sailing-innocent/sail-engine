@@ -1,7 +1,7 @@
 {
     "name": "profile_sparse_gaussisn_dtt",
     "dataset_name": "nerf_blender",
-    "usage": "train",
+    "usage": "eval",
     "objects": [
         "lego",
         "chair",
@@ -9,8 +9,7 @@
         "ficus",
         "hotdog",
         "materials",
-        "mic",
-        "ship"
+        "mic"
     ],
     "init_scenes": [
         {
@@ -29,8 +28,8 @@
         "vanilla"
     ],
     "trainer_names": [
-        "epipolar",
-        "vanilla"
+        "vanilla",
+        "epipolar"
     ],
     "train_params_list": [
         {
