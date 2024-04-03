@@ -5,3 +5,8 @@ add_content("update_2024_03", {
     "fig_pack_update_2024_03_28",
     "profile_sparse_3dgs_result"
 })
+
+
+add_content("update_2024_04", {
+    "fig_pack_20240403"
+})

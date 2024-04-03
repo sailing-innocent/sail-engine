@@ -1,0 +1,128 @@
+\documentclass{njupre/njupre}
+\title[组会报告]{ 组会报告 }
+\author[朱子航]{\texorpdfstring{朱子航 \\ \smallskip \textit{522022150087@smail.nju.edu.cn}}{}}
+\date[\today]{\texorpdfstring{2023-03-28}{}}
+\begin{document}
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}
+    \frametitle{目录}
+    \tableofcontents
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Reference}
+    \bibliography{ref}
+    \bibliographystyle{plain}
+\end{frame}
+
+\begin{frame}
+    \frametitle{解决了一个困扰了很久的复现bug}
+    \begin{figure}
+        \centering
+            \begin{subfigure}{0.48\linewidth}
+                \includegraphics[width=\textwidth]{fig_debug_before_20240403.png}
+                \caption{}
+            \end{subfigure}
+            \begin{subfigure}{0.48\linewidth}
+                \includegraphics[width=\textwidth]{fig_debug_after_20240403.png}
+                \caption{}
+            \end{subfigure}
+    \end{figure}
+\begin{quote}
+    原因是在使用GPU编程Shared Memory加速时，需要在加载SharedMemory前后进行同步，否则会造成线程竞争导致数据错误
+\end{quote}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Best Reproduction}
+    \begin{figure}
+        \includegraphics[width=\textwidth]{fig_best_reprod_20240403.png}
+        \caption{The Reproduction Result}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{对不同参数组合探索}
+    重启了对不同参数组合的3DGS训练效果的实验
+    \input{profile_3dgs_result}
+\end{frame}
+
+\begin{frame}
+    \frametitle{有限几张图的情况下GS效果}
+    \begin{figure}
+        \begin{subfigure}{0.18\linewidth}
+            \includegraphics[width=\textwidth]{"fig_sparse_gs_train_0.png"}
+        \end{subfigure}
+        \begin{subfigure}{0.18\linewidth}
+            \includegraphics[width=\textwidth]{"fig_sparse_gs_train_1.png"}
+        \end{subfigure}
+        \begin{subfigure}{0.18\linewidth}
+            \includegraphics[width=\textwidth]{"fig_sparse_gs_train_2.png"}
+        \end{subfigure}
+        \begin{subfigure}{0.18\linewidth}
+            \includegraphics[width=\textwidth]{"fig_sparse_gs_train_3.png"}
+        \end{subfigure}
+        \begin{subfigure}{0.18\linewidth}
+            \includegraphics[width=\textwidth]{"fig_sparse_gs_train_4.png"}
+        \end{subfigure}
+        \caption{Gaussian Splatting on Sparse Image dataset}
+    \end{figure}
+    训练之后的结果如图
+
+    \begin{figure}
+        \begin{subfigure}{0.38\linewidth}
+            \includegraphics[width=\textwidth]{"fig_sparse_gs_train_result_0.png"}
+        \end{subfigure}
+        \begin{subfigure}{0.38\linewidth}
+            \includegraphics[width=\textwidth]{"fig_sparse_gs_train_result_1.png"}
+        \end{subfigure}
+        \caption{Gaussian Splatting Train Result}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \begin{quote}
+        对于空间中的一个点$p=(p_1,p_2,p_3)$，我们可以写出它的齐次坐标
+        $p_{hom}=(p_1,p_2,p_3,1)$，这时候相机坐标的（旋转、平移）变换可以表示为4阶变换矩阵$V_{4x4}$
+        将空间坐标中的点变换为相机坐标中的点，进而通过投影变换$(x',y')=(x/z,y/z)$来投影到相机平面上。
+    \end{quote}
+    \begin{quote}
+        如果我们已知同一个3D空间点在N个相机平面上的2D投影点坐标，就相当于我们能写出一2N个方程的线性方程组来
+        求解3个未知量，我们可以用最小二乘法来求解其最接近的结果 $(X^TX)^{-1}X^TY$
+    \end{quote}
+\end{frame}
+
+\begin{frame}
+    \frametitle{用对极几何反解尝试}
+    \begin{figure}
+        \includegraphics[width=\textwidth]{fig_epi_iter_20240403.png}
+        \caption{Epipolar Iteration}
+    \end{figure}
+    \begin{quote}
+        使用pytorch的实现尝试，可以发现问题主要集中在很多不进行更新的点也被对极投影了，
+        导致最终结果有很多噪点，但是几何信息是基本正确的。
+    \end{quote}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{用对极几何反解尝试}
+    \begin{itemize}
+        \item 使用它作为一个预训练方法，得到的比直接训练有增长13.32 -> 15.04, 19.12 -> 20.03 (NeRF Blender Lego Scene)
+        \item 使用它作为一个中间方法和原本的prune混合在一起，增长结果不明显，可能是参数还没有调整好。
+        \item 后续需要做更多的实验来验证，并与成熟方法对比。
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{实现torch的projector，方便后续调试}
+    \begin{figure}
+        \includegraphics[width=0.5\textwidth]{"fig_inno_torch_20240403.png"}
+        \caption{实现torch的projector，方便后续调试}
+    \end{figure}
+\end{frame}
+
+\end{document}

@@ -1,9 +1,9 @@
 {
     "rows": [
         "vanilla_3dgs_paper",
-        "3dgs vanilla_vanilla_l1+ssim_no_xyz",
-        "3dgs vanilla_vanilla_l1+ssim_only_trick",
-        "3dgs vanilla_vanilla_l1+ssim_default"
+        "no_xyz",
+        "only_trick",
+        "default"
     ],
     "cols": [
         "Lego",
