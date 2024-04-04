@@ -23,7 +23,7 @@ _C = load(
         "lib/reimpl/vanilla_diff_gaussian/rasterizer/backward.cu"
     ],
     verbose=False,
-    extra_include_paths=["lib/"]
+    extra_include_paths=["lib/reimpl"]
 )
 
 
