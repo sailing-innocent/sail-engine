@@ -26,8 +26,6 @@ _C = load(
     extra_include_paths=["lib/reimpl"]
 )
 
-
-
 def cpu_deep_copy_tuple(input_tuple):
     copied_tensors = [item.cpu().clone() if isinstance(item, torch.Tensor) else item for item in input_tuple]
     return tuple(copied_tensors)
