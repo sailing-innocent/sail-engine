@@ -25,12 +25,12 @@ def test_sampler_2d():
     target_img = torch.tensor(target_img_np.transpose(2, 0, 1) / 255.0, dtype=torch.float32).cuda()
     # flip y
     train_args = Gaussians2DTrainArgs()
-    gaussians = Gaussians2D.random(100, 5)
+    gaussians = Gaussians2D.random(100000, 3)
     gaussians.requires_grad()
     gaussians.training_setup(train_args)
 
-    N_ITER = 200
-    N_LOG = 30
+    N_ITER = 400
+    N_LOG = 60
     N_DELAY = 50
     for i in range(N_ITER):
         result_img = sampler.sample(gaussians, width, height)
@@ -43,10 +43,14 @@ def test_sampler_2d():
             if i % N_LOG == 0:
                 print(f'Iter {i}, loss: {loss.item()}')
                 result_img_np = result_img.detach().cpu().detach().numpy().transpose(1, 2, 0).clip(0, 1)
+                # result_img_sr = sampler.sample(gaussians, 2 * width, 2 * height)
+                # result_img_sr_np = result_img_sr.detach().cpu().detach().numpy().transpose(1, 2, 0).clip(0, 1)
                 # compare
-                plt.subplot(1, 2, 1)
+                plt.subplot(1, 3, 1)
                 plt.imshow(target_img_np)
-                plt.subplot(1, 2, 2)
+                plt.subplot(1, 3, 2)
                 plt.imshow(result_img_np)
+                plt.subplot(1, 3, 3)
+                plt.imshow(result_img_sr_np)
                 plt.show()
                 plt.imsave(f'{save_dir}/result_{i}.png', result_img_np)

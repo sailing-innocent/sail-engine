@@ -49,7 +49,6 @@ def test_thetaq_to_R():
     assert Rs[1][1][0] == np.sin(thetas[1])
     assert Rs[1][1][1] == np.cos(thetas[1])
 
-
 @pytest.mark.func
 def test_scale_to_S():
     s1 = 2

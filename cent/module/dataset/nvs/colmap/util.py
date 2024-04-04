@@ -3,7 +3,6 @@ import collections
 import struct 
 from module.utils.np.transform import qvec2R
 
-
 CameraModel = collections.namedtuple(
     "CameraModel", ["model_id", "model_name", "num_params"])
 Camera = collections.namedtuple(
