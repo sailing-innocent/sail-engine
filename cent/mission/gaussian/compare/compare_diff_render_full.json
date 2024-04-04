@@ -67,7 +67,8 @@
     ],
     "render_names": [
         "vanilla",
-        "inno_reprod"
+        "inno_reprod",
+        "vanilla_reprod"
     ],
     "result_template": {
         "name": "tab_3dgs_compare_diff_render_{benchmark}_result_nerf_blender",

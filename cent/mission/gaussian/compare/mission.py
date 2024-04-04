@@ -1,6 +1,6 @@
 import os 
 from mission.base import MissionBase 
-from app.project.nvs.gs.eval import EvalGaussianProjectConfig, EvalGaussianProjectParams, EvalGaussianProject
+from app.project.nvs.reprod_gs.eval import EvalGaussianProjectConfig, EvalGaussianProjectParams, EvalGaussianProject
 from module.utils.tex.table import TexTable 
 
 def get_ply_from_json(gs_ply_json, parent_path = ""):

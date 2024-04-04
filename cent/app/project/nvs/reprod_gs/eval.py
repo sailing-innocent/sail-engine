@@ -2,19 +2,14 @@ from ...base import ProjectConfigBase, ProjectBase
 from module.model.gaussian.vanilla import GaussianModel 
 
 # renderer
-# from app.diff_renderer.gaussian_rasterizer.vanilla_reprod import create_gaussian_renderer as create_vanilla_reprod_renderer 
+from app.diff_renderer.gaussian_rasterizer.vanilla_reprod import create_gaussian_renderer as create_vanilla_reprod_renderer 
 from app.diff_renderer.gaussian_rasterizer.vanilla import create_gaussian_renderer as create_vanilla_renderer 
-# from app.renderer.gaussian_rasterizer.vanilla_ing import create_gaussian_renderer as create_vanilla_ing_renderer
 from app.diff_renderer.gaussian_rasterizer.inno_reprod import create_gaussian_renderer as create_inno_reprod_renderer
 from app.diff_renderer.gaussian_rasterizer.inno_split import create_gaussian_renderer as create_inno_split_renderer
 from app.diff_renderer.gaussian_rasterizer.inno_torch import create_gaussian_renderer as create_inno_torch_renderer
 
-# from app.renderer.gaussian_rasterizer.inno_zzh import create_gaussian_renderer as 
-# from app.renderer.gaussian_rasterizer.inno_split import create_gaussian_renderer as create_inno_split_renderer
-
 # scene
 from module.data.point_cloud import sphere_point_cloud
-
 from module.utils.camera.basic import Camera
 from module.utils.video.av import write_mp4
 from app.pipeline.nvs.eval import NVSEvalPipelineConfig, NVSEvalPipeline 
@@ -45,7 +40,7 @@ class EvalGaussianProject(ProjectBase):
         self.model = GaussianModel(3)
         self.create_renderer = {
             # 'vanilla_ing': create_vanilla_ing_renderer,
-            # 'reprod': create_reprod_renderer,
+            'vanilla_reprod': create_vanilla_reprod_renderer,
             "inno_reprod": create_inno_reprod_renderer,
             "inno_split": create_inno_split_renderer,
             "inno_torch": create_inno_torch_renderer,
