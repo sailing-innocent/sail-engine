@@ -108,7 +108,13 @@ rule("latex")
 
         -- parse dependencies
         local subcontent = {}
-        subcontent["main"] = target:sourcefiles()
+        -- we need deep copy
+        -- subcontent["main"] = target:sourcefiles()
+        subcontent["main"] = {} 
+        for _, file in ipairs(target:sourcefiles()) do
+            table.insert(subcontent["main"], file)
+        end
+
         depend.on_changed(function() 
         
         end, {files = subcontent["main"]})
