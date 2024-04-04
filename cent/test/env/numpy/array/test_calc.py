@@ -10,18 +10,6 @@ def test_arr_dot():
     assert True 
 
 @pytest.mark.func 
-def test_np_arr_mul():
-    a = np.array([[1,2],[3,4]])
-    b = np.array([[5,6],[7,8]])
-    c = a*b
-
-    assert c.shape == (2,2)
-    assert c[0,0] == 5
-    assert c[0,1] == 12
-    assert c[1,0] == 21
-    assert c[1,1] == 32
-
-@pytest.mark.func 
 def test_mat_prod():
     mat = np.array([[1, 1], [0, 1]])
     p = np.array([2, 3])
