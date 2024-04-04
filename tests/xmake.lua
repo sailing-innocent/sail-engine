@@ -16,6 +16,7 @@ sail_add_test("basic", "semantic", {})
 sail_add_test("basic", "stl", {})
 sail_add_test("basic", "leetcode", {})
 sail_add_test("basic", "dummy", {"SailDummy"})
+sail_add_test("basic", "deps", {"SailDummy"})
 
 if get_config("enable_inno") then 
     sail_add_test("inno", "util", {"SailInno"})
