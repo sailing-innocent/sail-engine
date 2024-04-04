@@ -33,14 +33,14 @@ def test_split_gs():
     gs = GaussianModel(3)
     r = 1.0
     N = 10000
-    N_batch = 5
+    N_batch = 10
     red = [1, 0, 0]
     blue = [0, 0, 1]
     pcd = sphere_point_cloud(r, N, blue)
     gs.create_from_pcd(pcd, r)
     gs.save_ply('D:/temp/before.ply')
 
-    N_ITER = 10
+    N_ITER = 20
     N_SHOW = 2
     N_SUB_ITER = 200
     N_SUB_LOG = 350

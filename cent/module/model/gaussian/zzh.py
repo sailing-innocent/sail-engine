@@ -416,6 +416,7 @@ class GaussianModel:
         xys = []
         colors = []
         opacities = []
+
         for i in range(N_batch):
             v = torch.from_numpy(cams[i].view_matrix).float().cuda()
             V1s.append(v[0:1,:])
@@ -448,6 +449,7 @@ class GaussianModel:
         # self._xyz = torch.mean(torch.stack([self._xyz, new_xyz]), dim=0)
         color = RGB2SH(torch.mean(torch.stack(colors), dim=0))
         self._features_dc = color.reshape(N_points, 1, 3)
-        self._opacity = torch.mean(torch.stack(opacities), dim=0).reshape(N_points, 1)
+        # self._opacity = torch.mean(torch.stack(opacities), dim=0).reshape(N_points, 1)
+        # self._scaling = torch.mean(torch.stack(rs), dim=0).repeat(1, 3).reshape(N_points, 3)
         # self._opacity = inverse_sigmoid(self._opacity)
 

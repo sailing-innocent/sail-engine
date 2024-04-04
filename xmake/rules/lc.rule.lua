@@ -56,7 +56,7 @@ after_build(function(target)
             os.trycp(path.join(copy_src_dir, v .. ".dll"), bin_dir)
         end
         -- for ptx linking
-        os.trycp(path.join(copy_src_dir, "cudadevrt.lib"), bin_dir)
+        os.trycp(path.join(copy_src_dir, "luisa_nvrtc.exe"), bin_dir)
     end
 
     if not is_mode("release") then

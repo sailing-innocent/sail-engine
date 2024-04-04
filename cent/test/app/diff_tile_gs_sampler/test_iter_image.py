@@ -25,7 +25,7 @@ def test_sampler_2d():
     target_img = torch.tensor(target_img_np.transpose(2, 0, 1) / 255.0, dtype=torch.float32).cuda()
     # flip y
     train_args = Gaussians2DTrainArgs()
-    gaussians = Gaussians2D.random(10000, 5)
+    gaussians = Gaussians2D.random(100, 5)
     gaussians.requires_grad()
     gaussians.training_setup(train_args)
 

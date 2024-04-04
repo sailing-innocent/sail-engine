@@ -2,10 +2,10 @@ import torch
 
 from typing import NamedTuple
 class Gaussians2DTrainArgs(NamedTuple):
-    lr_means_2d = 1e-3
-    lr_covs_2d = 1e-8
+    lr_means_2d = 1e-2
+    lr_covs_2d = 1e-9
     lr_color = 1e-2
-    lr_opacity = 1e-8
+    lr_opacity = 1e-9
 
 class Gaussians2D:
     def __init__(self):
