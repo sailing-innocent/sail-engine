@@ -284,7 +284,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 
 				last_alpha = alpha;
 
-				Float bg_dot_dpixel = 0;
+				Float bg_dot_dpixel = 0.0f;
 				$for(k, 3) {
 					bg_dot_dpixel += bg_color[k] * dLdpix[k];
 				};

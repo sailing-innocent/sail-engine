@@ -77,7 +77,7 @@ def test_tile_sampler_full():
 
         with torch.no_grad():
             # print(covs_2d.detach().cpu().numpy())
-            print(loss.item())
+            # print(loss.item())
             if i % N_SHOW == 0:
                 result_img_np = result_img.cpu().detach().numpy()
                 # CHW -> HWC
