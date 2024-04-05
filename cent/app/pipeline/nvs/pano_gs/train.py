@@ -7,7 +7,7 @@ from module.dataset.nvs.tank_temple.dataset import create_dataset as create_tank
 
 # trainer 
 from app.trainer.nvs.pano_gs.basic import create_trainer as create_basic_trainer
-from app.trainer.nvs.gs.vanilla import create_trainer as create_vanilla_trainer
+from app.trainer.nvs.pano_gs.vanilla import create_trainer as create_vanilla_trainer
 # loss
 from lib.reimpl.vanilla_diff_gaussian.utils.loss_utils import l1_loss, ssim
 from loguru import logger 
