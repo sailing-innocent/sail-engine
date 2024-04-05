@@ -1,0 +1,19 @@
+{
+    "name": "gaussian_eval_pano",
+    "render_name": "pano",
+    "usage": "render",
+    "scenes": [
+        {
+            "type": "ckpt",
+            "dataset_name": "nerf_blender",
+            "obj_name": "lego",
+            "ckpt_path": "gaussian",
+            "iter": 30000
+        },
+        {
+            "type": "sphere",
+            "r": 1.0,
+            "N": 1000
+        }
+    ]
+}

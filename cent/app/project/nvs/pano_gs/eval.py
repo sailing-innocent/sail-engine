@@ -1,24 +1,15 @@
 from ...base import ProjectConfigBase, ProjectBase
 from module.model.gaussian.vanilla import GaussianModel 
 
-# renderer
-# from app.diff_renderer.gaussian_rasterizer.vanilla_reprod import create_gaussian_renderer as create_vanilla_reprod_renderer 
+# renderer 
 from app.diff_renderer.gaussian_rasterizer.vanilla import create_gaussian_renderer as create_vanilla_renderer 
-# from app.renderer.gaussian_rasterizer.vanilla_ing import create_gaussian_renderer as create_vanilla_ing_renderer
-from app.diff_renderer.gaussian_rasterizer.inno_reprod import create_gaussian_renderer as create_inno_reprod_renderer
-from app.diff_renderer.gaussian_rasterizer.inno_split import create_gaussian_renderer as create_inno_split_renderer
-from app.diff_renderer.gaussian_rasterizer.inno_torch import create_gaussian_renderer as create_inno_torch_renderer
 from app.diff_renderer.gaussian_rasterizer.pano import create_gaussian_renderer as create_pano_renderer
-
-# from app.renderer.gaussian_rasterizer.inno_zzh import create_gaussian_renderer as 
-# from app.renderer.gaussian_rasterizer.inno_split import create_gaussian_renderer as create_inno_split_renderer
-
 # scene
 from module.data.point_cloud import sphere_point_cloud
 
 from module.utils.camera.basic import Camera
 from module.utils.video.av import write_mp4
-from app.pipeline.nvs.eval import NVSEvalPipelineConfig, NVSEvalPipeline 
+from app.pipeline.nvs.pano_gs.eval import NVSEvalPipelineConfig, NVSEvalPipeline 
 
 from loguru import logger 
 import os 
@@ -44,12 +35,11 @@ class EvalGaussianProject(ProjectBase):
         super().__init__(config)
         # config, target_path, log
         self.model = GaussianModel(3)
+        self.pano_h = 1024
+        self.pano_w = 2 * self.pano_h
+        self.pano = torch.zeros(3, self.pano_h, self.pano_w).float().cuda()
+
         self.create_renderer = {
-            # 'vanilla_ing': create_vanilla_ing_renderer,
-            # 'reprod': create_reprod_renderer,
-            "inno_reprod": create_inno_reprod_renderer,
-            "inno_split": create_inno_split_renderer,
-            "inno_torch": create_inno_torch_renderer,
             "pano": create_pano_renderer,
             'vanilla': create_vanilla_renderer
         }
@@ -75,13 +65,11 @@ class EvalGaussianProject(ProjectBase):
         self.model.load_ply(scene["ckpt_path"])
 
         pipeline_config = NVSEvalPipelineConfig(self.config.env_config)
-        # configure pipeline 
         pipeline_config.proj_name = self.config.name
         pipeline_config.name = "nvs_eval_pipeline" + "_" + scene["dataset_name"] + "_" + scene["obj_name"]
         pipeline_config.dataset_name = scene["dataset_name"]
         pipeline_config.obj_name = scene["obj_name"] 
         pipeline_config.metric_types = self.params.benchmarks
-        # create and run pipeline
         pipeline = NVSEvalPipeline(pipeline_config)
         
         renderer = self.create_renderer[self.params.render_name](self.config.env_config)
@@ -110,11 +98,7 @@ class EvalGaussianProject(ProjectBase):
         renderer = self.create_renderer[params.render_name](self.config.env_config)
 
         camera.set_res(1600, 1600)
-        # camera.set_res(1024, 1024)
-        # camera.set_res(1024, 256)
-        # camera.set_res(256, 256)
-        # camera.set_res(3200, 3200)
-        img = renderer.render(camera, self.model)["render"]
+        img = renderer.render(camera, self.model, self.pano)["render"]
         img_np = img.detach().cpu().clone()
         img_np=img_np.numpy().transpose(1, 2, 0).clip(0, 1)  
         # flip y & to uint
