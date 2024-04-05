@@ -39,14 +39,24 @@ void calc_cov_backward(
 		0.0f, scale.y, 0.0f,
 		0.0f, 0.0f, scale.z);
 	Float3x3_T M = R * S;
-	Float3x3_T dL_dM = 2.0f * transpose(M) * dL_dSigma;
-
-	Float3x3_T RT = transpose(R);
+	Float3x3_T dL_dM = 2.0f * dL_dSigma * M;
 	$for(i, 3) {
-		dL_dscale[i] = dot(RT[i], dL_dM[i]);
+		dL_dscale[i] = dot(R[i], dL_dM[i]);
 	};
 
 	// TODO: backward qvec
+	// dL_dq.x = 2 * z * (dL_dMt[0][1] - dL_dMt[1][0]) + 2 * y * (dL_dMt[2][0] - dL_dMt[0][2]) + 2 * x * (dL_dMt[1][2] - dL_dMt[2][1]);
+	// dL_dq.y = 2 * y * (dL_dMt[1][0] + dL_dMt[0][1]) + 2 * z * (dL_dMt[2][0] + dL_dMt[0][2]) + 2 * r * (dL_dMt[1][2] - dL_dMt[2][1]) - 4 * x * (dL_dMt[2][2] + dL_dMt[1][1]);
+	// dL_dq.z = 2 * x * (dL_dMt[1][0] + dL_dMt[0][1]) + 2 * r * (dL_dMt[2][0] - dL_dMt[0][2]) + 2 * z * (dL_dMt[1][2] + dL_dMt[2][1]) - 4 * y * (dL_dMt[2][2] + dL_dMt[0][0]);
+	// dL_dq.w = 2 * r * (dL_dMt[0][1] - dL_dMt[1][0]) + 2 * x * (dL_dMt[2][0] + dL_dMt[0][2]) + 2 * y * (dL_dMt[1][2] + dL_dMt[2][1]) - 4 * z * (dL_dMt[1][1] + dL_dMt[0][0]);
+	dL_dM[0] = dL_dM[0] * scale.x;
+	dL_dM[1] = dL_dM[1] * scale.y;
+	dL_dM[2] = dL_dM[2] * scale.z;
+
+	dL_dqvec.w = 2 * qvec.z * (dL_dM[0][1] - dL_dM[1][0]) + 2 * qvec.y * (dL_dM[2][0] - dL_dM[0][2]) + 2 * qvec.x * (dL_dM[1][2] - dL_dM[2][1]);
+	dL_dqvec.x = 2 * qvec.y * (dL_dM[1][0] + dL_dM[0][1]) + 2 * qvec.z * (dL_dM[2][0] + dL_dM[0][2]) + 2 * qvec.w * (dL_dM[1][2] - dL_dM[2][1]) - 4 * qvec.x * (dL_dM[2][2] + dL_dM[1][1]);
+	dL_dqvec.y = 2 * qvec.x * (dL_dM[1][0] + dL_dM[0][1]) + 2 * qvec.w * (dL_dM[2][0] - dL_dM[0][2]) + 2 * qvec.z * (dL_dM[1][2] + dL_dM[2][1]) - 4 * qvec.y * (dL_dM[2][2] + dL_dM[0][0]);
+	dL_dqvec.z = 2 * qvec.w * (dL_dM[0][1] - dL_dM[1][0]) + 2 * qvec.x * (dL_dM[2][0] + dL_dM[0][2]) + 2 * qvec.y * (dL_dM[1][2] + dL_dM[2][1]) - 4 * qvec.z * (dL_dM[1][1] + dL_dM[0][0]);
 }
 
 template<typename Float4_T, typename Float3x3_T>
@@ -152,6 +162,9 @@ void proj_cov3d_to_cov2d_backward(
 	dL_dcov[0][1] = 2 * T[0][0] * T[0][1] * dL_da + (T[0][0] * T[1][1] + T[0][1] * T[1][0]) * dL_db + 2 * T[1][0] * T[1][1] * dL_dc;
 	dL_dcov[0][2] = 2 * T[0][0] * T[0][2] * dL_da + (T[0][0] * T[1][2] + T[0][2] * T[1][0]) * dL_db + 2 * T[1][0] * T[1][2] * dL_dc;
 	dL_dcov[1][2] = 2 * T[0][2] * T[0][1] * dL_da + (T[0][1] * T[1][2] + T[0][2] * T[1][1]) * dL_db + 2 * T[1][1] * T[1][2];
+	dL_dcov[0][1] = dL_dcov[0][1] / 2;
+	dL_dcov[0][2] = dL_dcov[0][2] / 2;
+	dL_dcov[1][2] = dL_dcov[1][2] / 2;
 	dL_dcov[1][0] = dL_dcov[0][1];
 	dL_dcov[2][0] = dL_dcov[0][2];
 	dL_dcov[2][1] = dL_dcov[1][2];

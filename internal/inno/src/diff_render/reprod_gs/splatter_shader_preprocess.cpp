@@ -8,6 +8,8 @@
 #include "SailInno/diff_render/reprod_gs_splatter.h"
 #include <luisa/dsl/sugar.h>
 #include "SailInno/util/math/gaussian.h"
+#include "SailInno/util/math/transform.h"
+#include "luisa/core/basic_types.h"
 
 using namespace luisa;
 using namespace luisa::compute;
@@ -164,28 +166,55 @@ void ReprodGS::compile_backward_preprocess_shader(Device& device) noexcept {
 		dL_d_cov2d.x = det_inv_2 * (-c * c * dL_d_con.x + 2 * b * c * dL_d_con.y - b * b * dL_d_con.z);
 		dL_d_cov2d.z = det_inv_2 * (-b * b * dL_d_con.x + 2 * a * b * dL_d_con.y - a * a * dL_d_con.z);
 		dL_d_cov2d.y = det_inv_2 * 2 * (b * c * dL_d_con.x - (a * c + b * b) * dL_d_con.y + a * b * dL_d_con.z);
-		// device_log("dL_d_cov2d: {}", dL_d_cov2d);
+		// $if(idx < 10) {
+		// 	device_log("dL_d_cov2d: {}", dL_d_cov2d);
+		// };
 
 		// dL_d_cov_3d -> dL_d_cov3d
 		Float3x3 dL_d_cov3d = make_float3x3(0.0f);
 		// dL_d_cov3d[0][0] = dL_d_cov2d.x;
 		// dL_d_cov3d[1][1] = dL_d_cov2d.z;
 		inno::math::proj_cov3d_to_cov2d_backward<Float3, Float4, Float3x3, Float4x4>(dL_d_cov2d, dL_d_cov3d, p_view_hom, camera_primitive, view_matrix);
+
+		// debug dL_d_cov3d
+		// $if(idx < 10) {
+		// 	device_log("dL_d_cov3d: {}", dL_d_cov3d);
+		// };
 		Float3 dL_ds = make_float3(0.0f, 0.0f, 0.0f);
 		Float4 dL_dqvec = make_float4(0.0f, 0.0f, 0.0f, 0.0f);
 		Float3 scale = make_float3(scale_buffer.read(3 * idx + 0), scale_buffer.read(3 * idx + 1), scale_buffer.read(3 * idx + 2));
-		Float4 qvec = make_float4(rotq_buffer.read(4 * idx + 0), rotq_buffer.read(4 * idx + 1), rotq_buffer.read(4 * idx + 2), rotq_buffer.read(4 * idx + 3));
+
+		// F**K U
+		// careful: rxyz -> xyzw
+		Float4 qvec = make_float4(
+			rotq_buffer.read(4 * idx + 1),
+			rotq_buffer.read(4 * idx + 2),
+			rotq_buffer.read(4 * idx + 3),
+			rotq_buffer.read(4 * idx + 0));
+
+		// debug scale and qvec
+		// $if(idx < 10) {
+		// 	device_log("scale: {}", scale);
+		// 	device_log("qvec: {}", qvec);
+		// };
+
 		inno::math::calc_cov_backward<Float3, Float4, Float3x3>(dL_d_cov3d, dL_ds, dL_dqvec, scale, qvec);
+		// Float3x3 R = sail::inno::math::R_from_qvec<Float4, Float3x3>(qvec);
+		// // debug R
+		// $if(idx < 10) {
+		// 	device_log("R: {}", R);
+		// };
 
 		// write out
-		// TODO: the gradient is not correct
-		// dL_d_scale.write(3 * idx + 0, dL_ds.x);
-		// dL_d_scale.write(3 * idx + 1, dL_ds.y);
-		// dL_d_scale.write(3 * idx + 2, dL_ds.z);
-		// dL_d_rotq.write(4 * idx + 0, dL_dqvec.x);
-		// dL_d_rotq.write(4 * idx + 1, dL_dqvec.y);
-		// dL_d_rotq.write(4 * idx + 2, dL_dqvec.z);
-		// dL_d_rotq.write(4 * idx + 3, dL_dqvec.w);
+		dL_d_scale.write(3 * idx + 0, dL_ds.x);
+		dL_d_scale.write(3 * idx + 1, dL_ds.y);
+		dL_d_scale.write(3 * idx + 2, dL_ds.z);
+
+		// careful: xyzw -> rxyz
+		dL_d_rotq.write(4 * idx + 0, dL_dqvec.w);
+		dL_d_rotq.write(4 * idx + 1, dL_dqvec.x);
+		dL_d_rotq.write(4 * idx + 2, dL_dqvec.y);
+		dL_d_rotq.write(4 * idx + 3, dL_dqvec.z);
 		// dL_d_xyz.write(3 * idx + 0, dL_d_cov3d[0][0]);
 		// dL_d_xyz.write(3 * idx + 1, dL_d_cov3d[1][1]);
 		// dL_d_xyz.write(3 * idx + 2, dL_d_cov3d[2][2]);

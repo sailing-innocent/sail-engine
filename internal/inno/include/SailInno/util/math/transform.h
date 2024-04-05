@@ -1,3 +1,4 @@
+#pragma once
 /**
  * @file util/math/transform.h
  * @author sailing-innocent
@@ -54,6 +55,7 @@ template<typename Float3_T, typename Float4_T, typename Float3x3_T>
 Float4_T R_from_qvec_backward(Float3x3_T dL_dR, Float4_T q, Float3x3_T R) {
 	Float4_T dL_dq;
 	// symmetric
+
 	dL_dq.x = 2 * (q.y * (dL_dR[0][1] + dL_dR[1][0]) +
 				   q.z * (dL_dR[0][2] + dL_dR[2][0]) +
 				   q.w * (dL_dR[1][2] - dL_dR[2][1])) -

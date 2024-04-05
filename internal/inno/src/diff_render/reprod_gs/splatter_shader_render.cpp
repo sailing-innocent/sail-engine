@@ -110,7 +110,7 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 			// iterate over the current batch
 
 			$for(j, min(round_step, todo)) {
-				$if(done) { $break; };
+				$if(done) { $break; };// remove this line will cause T >> 1.0 when backward, why?????
 				contributor = contributor + 1u;
 
 				Float2 mean = collected_means->read(j);
