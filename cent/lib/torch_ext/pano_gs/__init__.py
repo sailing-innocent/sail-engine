@@ -166,6 +166,8 @@ class _RasterizeGaussians(torch.autograd.Function):
         else:
              grad_means2D, grad_colors_precomp, grad_opacities, grad_means3D, grad_cov3Ds_precomp, grad_sh, grad_scales, grad_rotations, grad_pano = _C.backward(*args)
 
+        print(grad_pano[:, :10, :10])
+
         grads = (
             grad_means3D,
             grad_means2D,
