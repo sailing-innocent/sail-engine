@@ -25,6 +25,7 @@ class GaussianTrainerParams:
     position_lr_final = 0.0000016
     position_lr_delay_mult = 0.01
     position_lr_max_steps = 30000
+    pano_lr = 0.01
     opacity_lr = 0.05
     scaling_lr = 0.005
     feature_lr = 0.0025
@@ -47,7 +48,7 @@ class GaussianTrainer:
         # train steup
         gaussians.training_setup(params)
         pano.requires_grad = True
-        pano_optimizer = torch.optim.AdamW([pano], lr=0.0001)
+        pano_optimizer = torch.optim.AdamW([pano], lr=params.pano_lr)
 
         for iteration in range(first_iter, iterations + 1):
             gaussians.update_learning_rate(iteration)

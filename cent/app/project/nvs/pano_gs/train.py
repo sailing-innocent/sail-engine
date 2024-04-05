@@ -36,7 +36,7 @@ class TrainGaussianProjectParams(NamedTuple):
 class TrainGaussianProject(ProjectBase):
     def __init__(self, config: TrainGaussianProjectConfig):
         super().__init__(config)
-        self.pano_h = 1024
+        self.pano_h = 128
         self.pano_w = 2 * self.pano_h
         self.pano = torch.zeros(3, self.pano_h, self.pano_w).float().cuda()
 

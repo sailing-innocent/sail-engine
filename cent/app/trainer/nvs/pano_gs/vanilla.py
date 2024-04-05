@@ -59,6 +59,8 @@ class GaussianTrainer(TrainerBase):
         logger.info(f"Training with {params.name}")
         # train steup
         gaussians.training_setup(params)
+        pano.requires_grad = True
+        pano_optimizer = torch.optim.AdamW([pano], lr=params.pano_lr)
 
         for iteration in range(first_iter, iterations + 1):
             gaussians.update_learning_rate(iteration)
@@ -129,6 +131,11 @@ class GaussianTrainer(TrainerBase):
                 if iteration < iterations:
                     gaussians.optimizer.step()
                     gaussians.optimizer.zero_grad(set_to_none=True)
+        
+                    pano_optimizer.step()
+                    pano_optimizer.zero_grad(set_to_none=True)
+
+        
         return process_log
 
 def create_trainer(env_config, target_path):
