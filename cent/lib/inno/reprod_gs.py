@@ -130,7 +130,7 @@ class _RasterizeGaussians(torch.autograd.Function):
         # print(grad_means_2d[:10])
         # print(grad_means_3d)
         # print(grad_scales[:10])
-        print(grad_rotations[:10])
+        # print(grad_rotations[:10])
 
         grads = (
             grad_means_3d,
