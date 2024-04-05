@@ -7,6 +7,7 @@
 */
 #include <cstdint>
 #include "SailCu/config.h"
+#include <span>
 
 namespace sail::cu {
 
@@ -16,12 +17,22 @@ public:
 	~DiffPanoSampler() = default;
 	void forward(
 		// input
-		float* d_source_pix,
+		float* d_source_pix,// the source pano image data
 		// params
-		int h, int w,
+		const int ph,			 // res height h, the total resolution 3, h, 2h
+		std::span<float, 3> dir, // direction x,y,z
+		const float fov_y,		 // field of view
+		const int h, const int w,// the sampled image res 3 x h x w
 		// output
 		float* d_target_pix) noexcept;
-	void forward_py(int64_t d_source_pix, int h, int w, int64_t d_target_pix) noexcept;
+	void forward_py(
+		int64_t d_source_pix,
+		// params
+		const int ph,			 // res height h, the total resolution 3, h, 2h
+		std::span<float, 3> dir, // direction x,y,z
+		const float fov_y,		 // field of view
+		const int h, const int w,// the sampled image res 3 x h x w
+		int64_t d_target_pix) noexcept;
 	void backward(
 		// input
 		float* d_dL_d_target_pix,
