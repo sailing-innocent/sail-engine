@@ -82,7 +82,7 @@ class GaussianTrainer:
                     # scene.save(iteration)
                     point_cloud_name = f"{params.name}_{iteration}.ply"
                     gaussians.save_ply(os.path.join(self.config.target_path, point_cloud_name))
-                    pano_img_np = pano.detach().cpu().numpy().transpose(1, 2, 0)
+                    pano_img_np = pano.detach().cpu().numpy().transpose(1, 2, 0).clip(0, 1)
                     # save
                     plt.imsave(os.path.join(self.config.target_path, f"pano_{iteration}.png"), pano_img_np)
 
