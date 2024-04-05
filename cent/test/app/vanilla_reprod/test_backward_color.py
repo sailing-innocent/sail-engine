@@ -4,7 +4,7 @@ from module.model.gaussian.vanilla import GaussianModel
 import numpy as np 
 import torch 
 import pytest 
-from app.diff_renderer.gaussian_rasterizer.inno_reprod import create_gaussian_renderer as create_reprod_renderer
+from app.diff_renderer.gaussian_rasterizer.vanilla_reprod import create_gaussian_renderer as create_reprod_renderer
 from app.diff_renderer.gaussian_rasterizer.vanilla import create_gaussian_renderer as create_vanilla_renderer 
 from mission.config.env import get_env_config
 import matplotlib.pyplot as plt

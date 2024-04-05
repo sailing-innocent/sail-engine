@@ -4,7 +4,7 @@ from module.model.gaussian.vanilla import GaussianModel
 import numpy as np 
 import torch 
 import pytest 
-from app.diff_renderer.gaussian_rasterizer.inno_reprod import create_gaussian_renderer as create_reprod_renderer
+# from app.diff_renderer.gaussian_rasterizer.inno_reprod import create_gaussian_renderer as create_inno_reprod_renderer
 from app.diff_renderer.gaussian_rasterizer.vanilla import create_gaussian_renderer as create_vanilla_renderer 
 from mission.config.env import get_env_config
 import matplotlib.pyplot as plt
@@ -49,7 +49,7 @@ def test_backward_inno_reprod_color():
     cam.lookat(2 * np.array([1, 0, 1]), np.array([0, 0, 0]))
 
     vanilla_renderer = create_vanilla_renderer(env_config)
-    reprod_renderer = create_reprod_renderer(env_config)
+    # inno_reprod_renderer = create_inno_reprod_renderer(env_config)
     target_img = vanilla_renderer.render(cam, source_gs)["render"]
     target_img = target_img.detach()
     target_img_np = target_img.cpu().numpy().transpose(1, 2, 0)
@@ -70,12 +70,10 @@ def test_backward_inno_reprod_color():
         gs.update_learning_rate(i)
         if i % 1000 == 0:
             gs.oneupSHdegree()
-        result_img = reprod_renderer.render(cam, gs)["render"]
-        # result_img = vanilla_renderer.render(cam, gs)["render"]
+        # result_img = inno_reprod_renderer.render(cam, gs)["render"]
+        result_img = vanilla_renderer.render(cam, gs)["render"]
         loss = torch.mean((result_img - target_img) ** 2)
         loss.backward()
-
-        break
         with torch.no_grad():
             if i % N_LOG == 0:
                 print(f"iter {i}, loss: {loss.item():.4f}")

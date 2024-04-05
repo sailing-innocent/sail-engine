@@ -8,7 +8,6 @@
 #include "SailInno/diff_render/reprod_gs_splatter.h"
 #include <luisa/dsl/sugar.h>
 #include "SailInno/util/math/gaussian.h"
-#include "SailInno/util/math/transform.h"
 #include "luisa/core/basic_types.h"
 
 using namespace luisa;

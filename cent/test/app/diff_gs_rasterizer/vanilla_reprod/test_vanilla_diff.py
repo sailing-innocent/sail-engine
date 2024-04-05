@@ -16,8 +16,8 @@ def test_orth():
     red = [1, 0, 0]
     blue = [0, 0, 1]
     pcd = sphere_point_cloud(r, N, blue)
-    # source_gs.create_from_pcd(pcd, r)
-    source_gs.load_ply("D:/pretrained/gaussian/nerf_blender_lego_30000.ply")
+    source_gs.create_from_pcd(pcd, r)
+    # source_gs.load_ply("D:/pretrained/gaussian/nerf_blender_lego_30000.ply")
     w = 256
     h = 256
     cam = Camera("FlipY")
