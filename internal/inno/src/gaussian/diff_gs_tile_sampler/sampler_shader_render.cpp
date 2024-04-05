@@ -31,9 +31,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 		auto xy = dispatch_id().xy();
 		auto w = resolution.x;
 		auto h = resolution.y;
-
 		auto thread_idx = thread_id().x + thread_id().y * block_size().x;
-
 		Bool inside = Bool(xy.x < resolution.x) & Bool(xy.y < resolution.y);
 		Bool done = !inside;
 		auto tile_xy = block_id();
@@ -47,7 +45,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 		Int range_end = (Int)ranges.read(2 * (tile_xy.x + tile_xy.y * grids.x) + 1u);
 
 		// background color
-		Float3 color = make_float3(1.0f, 1.0f, 1.0f);
+		Float3 bg_color = make_float3(1.0f, 1.0f, 1.0f);
 		// Float3 color = make_float3(0.0f, 0.0f, 0.0f);
 		// debug grid
 		// $if((tile_xy.x + tile_xy.y) % 2 == 0) {
@@ -125,7 +123,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 		};
 
 		$if(inside) {
-			color = color * T + C;
+			auto color = bg_color * T + C;
 			$for(i, 0, 3) {
 				target_img.write(pix_id + i * h * w, min(1.0f, color[i]));
 			};
@@ -242,6 +240,7 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 			// iterate over the Gaussians of current batch
 
 			$for(j, min(round_step, todo)) {
+				$if(done) { $break; };
 				contributor = contributor - 1u;
 				$if(contributor >= last_contributor) {
 					// no contribution to color, pass
@@ -269,10 +268,8 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 
 				$for(ch, 3) {
 					Float c = collected_color->read(3 * j + ch);
-
 					accum_rec[ch] = last_alpha * last_color[ch] + (1.0f - last_alpha) * accum_rec[ch];
 					last_color[ch] = c;
-					//  Float dL_d_ch = 1.0f;
 					Float dL_d_ch = dLdpix[ch];
 					dL_dalpha += (c - accum_rec[ch]) * dL_d_ch;
 
@@ -287,11 +284,11 @@ void DiffGaussianTileSampler::compile_render_shader(Device& device) noexcept {
 
 				last_alpha = alpha;
 
-				Float bg_dot_pixel = 0;
+				Float bg_dot_dpixel = 0;
 				$for(k, 3) {
-					bg_dot_pixel += bg_color[k] * dLdpix[k];
+					bg_dot_dpixel += bg_color[k] * dLdpix[k];
 				};
-				dL_dalpha += (-T_final / (1.0f - alpha)) * bg_dot_pixel;
+				dL_dalpha += (-T_final / (1.0f - alpha)) * bg_dot_dpixel;
 				// backward for opacity
 				dL_d_opacity_features.atomic(global_id).fetch_add(G * dL_dalpha);
 

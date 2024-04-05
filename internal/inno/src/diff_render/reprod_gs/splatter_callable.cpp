@@ -178,7 +178,8 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 			BufferVar<float> shs,
 			BufferVar<float> dL_d_color_feature,
 			BufferVar<float> dL_d_feat) {
-		Int sh_idx_start = idx * (max_deg + 1) * (max_deg + 1) * 3;
+		Int feat_dim = (max_deg + 1) * (max_deg + 1);
+		Int sh_idx_start = idx * feat_dim * 3;
 		Float3 sh_00 = make_float3(
 			shs.read(sh_idx_start + 0),
 			shs.read(sh_idx_start + 1),
@@ -202,6 +203,10 @@ void ReprodGS::compile_callables(Device& device) noexcept {
 		$if(deg > -1) {
 			result = util::compute_color_from_sh_level_0(sh_00);
 			Float3 dL_d_sh00 = make_float3(0.0f);
+			// $if(idx < 10) {
+			// 	// debug dL_d_color
+			// 	device_log("dL_d_color: {}", dL_d_color);
+			// };
 			util::compute_color_from_sh_level_0_backward(dL_d_color, dL_d_sh00);
 			dL_d_feat.write(sh_idx_start + 0 * 3 + 0, dL_d_sh00[0]);
 			dL_d_feat.write(sh_idx_start + 0 * 3 + 1, dL_d_sh00[1]);

@@ -22,14 +22,14 @@ def compare_show(img_1, img_2):
 class GaussianTrainerParams:
     name: str = "dummy_params"
     percent_dense = 0.01
-    position_lr_init = 0.00016
-    position_lr_final = 0.0000016
+    position_lr_init = 0.0
+    position_lr_final = 0.0
     position_lr_delay_mult = 0.01
     position_lr_max_steps = 30000
-    opacity_lr = 0.05
-    scaling_lr = 0.005
+    opacity_lr = 0.0
+    scaling_lr = 0.0
     feature_lr = 0.0025
-    rotation_lr = 0.001
+    rotation_lr = 0.0
     saving_iterations = [7000, 30000]
     max_iterations = 30000
 
@@ -75,7 +75,6 @@ def test_backward_inno_reprod_color():
         loss = torch.mean((result_img - target_img) ** 2)
         loss.backward()
 
-        break
         with torch.no_grad():
             if i % N_LOG == 0:
                 print(f"iter {i}, loss: {loss.item():.4f}")

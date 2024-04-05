@@ -22,32 +22,32 @@ def compare_show(imgs):
 class GaussianTrainerParams:
     name: str = "dummy_params"
     percent_dense = 0.01
-    position_lr_init = 0.0
-    position_lr_final = 0.0
+    position_lr_init = 0.001
+    position_lr_final = 0.001
     position_lr_delay_mult = 0.01
     position_lr_max_steps = 30000
     opacity_lr = 0.0
     scaling_lr = 0.0
-    feature_lr = 0.25
+    feature_lr = 0.0
     rotation_lr = 0.0
     saving_iterations = [7000, 30000]
     max_iterations = 30000
 
-@pytest.mark.app 
-def test_backward_inno_reprod_color():
+@pytest.mark.current
+def test_backward_inno_reprod_pos():
     env_config = get_env_config()
-    source_gs = GaussianModel(0)
+    source_gs = GaussianModel(3)
     r = 1.0
-    N = 100
-    red = [1, 0, 0]
+    N = 1000
     blue = [0, 0, 1]
-    pcd = sphere_point_cloud(r, N, blue)
+    pcd = sphere_point_cloud(r, N, blue, [-1,-1,-1])
     cam = Camera("FlipY")
 
-    source_gs.create_from_pcd(pcd, r, 10.0)
+    source_gs.create_from_pcd(pcd, r)
+
     cam.lookat(2 * np.array([1, 0, 1]), np.array([0, 0, 0]))
-    cam.set_res(16, 16)
-    
+    cam.set_res(32, 32)
+
     vanilla_renderer = create_vanilla_renderer(env_config)
     reprod_renderer = create_reprod_renderer(env_config)
     target_img = vanilla_renderer.render(cam, source_gs)["render"]
@@ -59,16 +59,16 @@ def test_backward_inno_reprod_color():
     # plt.imshow(target_img_np)
     # plt.show()
 
-    N_TRAIN = 20
-    N_LOG = 2
-    pcd = sphere_point_cloud(r, N, red)
-    gs = GaussianModel(0)
-    gs.create_from_pcd(pcd, r, 10.0)
+    N_TRAIN = 2000
+    N_LOG = 200
+    gs = GaussianModel(3)
+    pcd = sphere_point_cloud(r, N, blue)
+    gs.create_from_pcd(pcd, r)
     params = GaussianTrainerParams()
     gs.training_setup(params)
 
-    vanilla_gs = GaussianModel(0)
-    vanilla_gs.create_from_pcd(pcd, r, 10.0)
+    vanilla_gs = GaussianModel(3)
+    vanilla_gs.create_from_pcd(pcd, r)
     vanilla_gs.training_setup(params)
 
     for i in range(1, N_TRAIN+1):
@@ -92,8 +92,6 @@ def test_backward_inno_reprod_color():
                 result_img_np = result_img_np.clip(0, 1)
                 vanilla_result_img_np = vanilla_result.detach().cpu().numpy().transpose(1, 2, 0)[::-1, :, :].clip(0, 1) 
                 compare_show([target_img_np, result_img_np, vanilla_result_img_np])
-                # compare_show([target_img_np, result_img_np])
-                print("gausssian features: ", gs.get_features[:10])
 
             gs.optimizer.step()
             gs.optimizer.zero_grad()

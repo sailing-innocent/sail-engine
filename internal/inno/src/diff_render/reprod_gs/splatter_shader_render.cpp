@@ -34,10 +34,7 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 		auto xy = dispatch_id().xy();
 		auto w = resolution.x;
 		auto h = resolution.y;
-
 		auto thread_idx = thread_id().x + thread_id().y * block_size().x;
-		// auto thread_idx = thread_id().y + thread_id().x * block_size().y;
-
 		Bool inside = Bool(xy.x < resolution.x) & Bool(xy.y < resolution.y);
 		Bool done = !inside;
 		auto tile_xy = block_id();
@@ -196,9 +193,6 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 
 		// background color
 		Float3 bg_color = make_float3(1.0f, 1.0f, 1.0f);
-		$if((tile_xy.x + tile_xy.y) % 2 == 0) {
-			bg_color = make_float3(0.0f, 0.0f, 0.0f);
-		};
 		// make rounds
 		// round step = shared_mem_size = block_size = block_x * block_y
 		const Int round_step = Int(m_shared_mem_size);
@@ -286,7 +280,6 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 					Float c = collected_color->read(ch * m_shared_mem_size + j);
 					accum_rec[ch] = last_alpha * last_color[ch] + (1.0f - last_alpha) * accum_rec[ch];
 					last_color[ch] = c;
-					//  Float dL_d_ch = 1.0f;
 					Float dL_d_ch = dLdpix[ch];
 					dL_dalpha += (c - accum_rec[ch]) * dL_d_ch;
 					// atomic add to dL_dcolor
@@ -297,7 +290,7 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 				};
 
 				dL_dalpha = dL_dalpha * T;
-				// $if(pix_id > 0.504f * w * h & pix_id < 0.505f * w * h) {
+				// $if(pix_id > 0.5f * w * h & pix_id < 0.505f * w * h) {
 				// 	device_log("{}, {}", dL_dalpha, range_end - range_start);
 				// };
 

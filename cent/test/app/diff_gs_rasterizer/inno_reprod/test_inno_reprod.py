@@ -11,15 +11,9 @@ import matplotlib.pyplot as plt
 def test_orth():
     env_config = get_env_config()
     source_gs = GaussianModel(3)
-    r = 1.0
-    N = 100
-    red = [1, 0, 0]
-    blue = [0, 0, 1]
-    pcd = sphere_point_cloud(r, N, blue)
-    source_gs.create_from_pcd(pcd, r)
-    # source_gs.load_ply("D:/pretrained/gaussian/nerf_blender_lego_30000.ply")
-    w = 256
-    h = 256
+    source_gs.load_ply("D:/pretrained/gaussian/nerf_blender_lego_30000.ply")
+    w = 16
+    h = 16
     cam = Camera("FlipY")
     cam.lookat(2 * np.array([1, 0, 1]), np.array([0, 0, 0]))
     cam.set_res(w, h)

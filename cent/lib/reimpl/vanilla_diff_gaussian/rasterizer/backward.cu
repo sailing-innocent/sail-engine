@@ -528,8 +528,9 @@ __global__ void __launch_bounds__(BLOCK_X* BLOCK_Y)
 			}
 
 			dL_dalpha *= T;
-			// if (block.thread_rank() == 0) {
-			// 	printf("%f\n", dL_dalpha);
+
+			// if (pix_id > 0.5f * W * H && pix_id < 0.505f * W * H) {
+			// 	printf("%f,  %d\n", dL_dalpha, range.y - range.x);
 			// }
 
 			// Update last alpha (to be used in the next iteration)

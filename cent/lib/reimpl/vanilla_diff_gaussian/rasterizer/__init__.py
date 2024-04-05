@@ -115,7 +115,7 @@ class _RasterizeGaussians(torch.autograd.Function):
     @staticmethod
     def backward(ctx, grad_out_color, _):
         # print(grad_out_color[:10,:10])
-        psedo_grad = torch.ones_like(grad_out_color, dtype=torch.float32, device="cuda")
+        # psedo_grad = - torch.ones_like(grad_out_color, dtype=torch.float32, device="cuda")
 
         # Restore necessary values from context
         num_rendered = ctx.num_rendered
@@ -135,8 +135,8 @@ class _RasterizeGaussians(torch.autograd.Function):
                 raster_settings.projmatrix, 
                 raster_settings.tanfovx, 
                 raster_settings.tanfovy, 
-                # grad_out_color, 
-                psedo_grad,
+                grad_out_color, 
+                # psedo_grad,
                 sh, 
                 raster_settings.sh_degree, 
                 raster_settings.campos,
@@ -159,7 +159,7 @@ class _RasterizeGaussians(torch.autograd.Function):
              grad_means2D, grad_colors_precomp, grad_opacities, grad_means3D, grad_cov3Ds_precomp, grad_sh, grad_scales, grad_rotations = _C.backward(*args)
 
         # print(grad_sh[:10])
-        print(grad_opacities[:10])
+        # print(grad_opacities[:10])
         # print(grad_means2D[:10])
         # print(grad_means3D[:10])
         # print(grad_scales[:10])

@@ -36,6 +36,7 @@ void DiffGaussianTileSampler::compile_tile_split_shader(Device& device) noexcept
 		$if(idx >= static_cast<$uint>(P)) { return; };
 		// -----------------------------
 		// allocate to tile space
+		// TODO: Culling
 		// -----------------------------
 		// invert covariance
 		// det(M) = M[0][0] * M[1][1] - M[0][1] * M[1][0]
