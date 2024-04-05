@@ -5,9 +5,6 @@
     "benchmarks": [
         "psnr"
     ],
-    "objects": [
-        "lego"
-    ],
     "init_scene": {
         "type": "ckpt",
         "dataset_name": "nerf_blender",
@@ -15,13 +12,16 @@
         "ckpt_path": "gaussian_init",
         "postfix": "random"
     },
+    "objects": [
+        "lego"
+    ],
     "trainer_name": "basic",
     "render_name": "inno_reprod",
     "loss_name": "l1",
     "train_params": {
         "saving_iterations": [
-            700,
-            3000
+            3000,
+            7000
         ]
     }
 }
