@@ -38,9 +38,12 @@ void ReprodGS::GeometryState::allocate(Device& device, size_t size) {
 	opacity_features = device.create_buffer<float>(size);
 	color_features = device.create_buffer<float>(3 * size);
 	conic = device.create_buffer<float>(size * 3);
-
 	tiles_touched = device.create_buffer<uint>(size);
 	point_offsets = device.create_buffer<uint>(size);
+
+	// backward
+	dL_d_conic = device.create_buffer<float>(size * 3);
+	dL_d_color_feature = device.create_buffer<float>(3 * size);
 	// allocate scan temp storage
 	luisa::compute::cuda::lcub::DeviceScan::InclusiveSum(scan_temp_storage_size, tiles_touched, point_offsets, size);
 	scan_temp_storage = device.create_buffer<int>(scan_temp_storage_size);

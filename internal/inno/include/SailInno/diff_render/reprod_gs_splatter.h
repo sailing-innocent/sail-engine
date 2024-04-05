@@ -66,13 +66,15 @@ public:
 	struct GeometryState {
 		size_t scan_temp_storage_size;
 		Buffer<int> scan_temp_storage;
-		Buffer<float> means_2d;		   // 2 * P
-		Buffer<float> depth_features;  // P
-		Buffer<float> color_features;  // 3 * P
-		Buffer<float> opacity_features;// P
-		Buffer<float> conic;		   // 3 * P
-		Buffer<uint> tiles_touched;	   // P
-		Buffer<uint> point_offsets;	   // P
+		Buffer<float> means_2d;			 // 2 * P
+		Buffer<float> depth_features;	 // P
+		Buffer<float> color_features;	 // 3 * P
+		Buffer<float> opacity_features;	 // P
+		Buffer<float> conic;			 // 3 * P
+		Buffer<uint> tiles_touched;		 // P
+		Buffer<uint> point_offsets;		 // P
+		Buffer<float> dL_d_color_feature;// 3 * P
+		Buffer<float> dL_d_conic;		 // 3 * P
 		// method
 		void allocate(Device& device, size_t size);
 		void clear(Device& device, CommandList& cmdlist, BufferFiller& filler);
@@ -113,6 +115,10 @@ protected:
 	U<TileState> tile_state;
 	U<ImageState> img_state;
 	S<Camera> mp_camera;
+
+	// backward buffer holder
+	U<Buffer<float>> mp_dL_d_color_feature;
+	U<Buffer<float>> mp_dL_d_conic;
 
 	int m_num_gaussians;
 	uint2 m_blocks = {16u, 16u};

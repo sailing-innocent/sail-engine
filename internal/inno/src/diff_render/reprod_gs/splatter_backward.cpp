@@ -38,19 +38,16 @@ void ReprodGS::backward_impl(
 
 	CommandList cmdlist;
 
-	auto dL_d_color_feature = device.create_buffer<float>(m_num_gaussians * 3);
-	auto dL_d_conic = device.create_buffer<float>(m_num_gaussians * 3);
-	// clear grad
-	cmdlist << mp_buffer_filler->fill(device, dL_d_color_feature, 0.0f);
-	cmdlist << mp_buffer_filler->fill(device, dL_d_conic, 0.0f);
+	mp_buffer_filler->fill(device, geom_state->dL_d_color_feature, 0.0f);
+	mp_buffer_filler->fill(device, geom_state->dL_d_conic, 0.0f);
 
 	cmdlist << (*m_backward_render_shader)(
 				   // input
 				   dL_d_pix,
 				   // output
 				   dL_d_means_2d,
-				   dL_d_conic,
-				   dL_d_color_feature,
+				   geom_state->dL_d_conic,
+				   geom_state->dL_d_color_feature,
 				   dL_d_opacity,
 				   // params
 				   m_resolution,
@@ -70,8 +67,8 @@ void ReprodGS::backward_impl(
 	cmdlist << (*m_backward_preprocess_shader)(
 				   // input
 				   dL_d_means_2d,
-				   dL_d_conic,
-				   dL_d_color_feature,
+				   geom_state->dL_d_conic,
+				   geom_state->dL_d_color_feature,
 				   // output
 				   dL_d_xyz,
 				   dL_d_feature,
