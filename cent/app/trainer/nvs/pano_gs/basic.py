@@ -61,7 +61,7 @@ class GaussianTrainer:
             camera = Camera()
             camera.from_info(pair.cam) # flip z
             camera.flip() # to flip y
-            render_pkg = renderer.render(camera, gaussians)
+            render_pkg = renderer.render(camera, gaussians, pano)
             image = render_pkg["render"]
             
             gt_image = torch.tensor(pair.img.data.transpose(2, 0, 1)).float().cuda()
