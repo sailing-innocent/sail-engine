@@ -1,0 +1,27 @@
+{
+    "name": "train_gs_pano_vanilla",
+    "dataset_name": "nerf_blender",
+    "usage": "train",
+    "benchmarks": [
+        "psnr"
+    ],
+    "init_scene": {
+        "type": "ckpt",
+        "dataset_name": "nerf_blender",
+        "obj_name": "dummy",
+        "ckpt_path": "gaussian_init",
+        "postfix": "random"
+    },
+    "objects": [
+        "lego"
+    ],
+    "trainer_name": "vanilla",
+    "render_name": "pano",
+    "loss_name": "l1",
+    "train_params": {
+        "saving_iterations": [
+            7000,
+            30000
+        ]
+    }
+}
