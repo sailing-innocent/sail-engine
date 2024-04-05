@@ -46,6 +46,8 @@ class GaussianTrainer:
         logger.info(f"Training with {params.name}")
         # train steup
         gaussians.training_setup(params)
+        pano.requires_grad = True
+        pano_optimizer = torch.optim.AdamW([pano], lr=0.0001)
 
         for iteration in range(first_iter, iterations + 1):
             gaussians.update_learning_rate(iteration)
@@ -80,6 +82,9 @@ class GaussianTrainer:
                     # scene.save(iteration)
                     point_cloud_name = f"{params.name}_{iteration}.ply"
                     gaussians.save_ply(os.path.join(self.config.target_path, point_cloud_name))
+                    pano_img_np = pano.detach().cpu().numpy().transpose(1, 2, 0)
+                    # save
+                    plt.imsave(os.path.join(self.config.target_path, f"pano_{iteration}.png"), pano_img_np)
 
                 # densification
 
@@ -87,6 +92,8 @@ class GaussianTrainer:
                 if iteration < iterations:
                     gaussians.optimizer.step()
                     gaussians.optimizer.zero_grad(set_to_none=True)
+                    pano_optimizer.step()
+                    pano_optimizer.zero_grad(set_to_none=True)
 
 def create_trainer(env_config, target_path):
     trainer_config = GaussianTrainerConfig(env_config)
