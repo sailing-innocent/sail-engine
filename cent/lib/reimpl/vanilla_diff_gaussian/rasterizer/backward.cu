@@ -202,6 +202,10 @@ __global__ void computeCov2DCUDA(int P,
 		dL_dc = denom2inv * (-a * a * dL_dconic.z + 2 * a * b * dL_dconic.y + (denom - a * c) * dL_dconic.x);
 		dL_db = denom2inv * 2 * (b * c * dL_dconic.x - (denom + 2 * b * b) * dL_dconic.y + a * b * dL_dconic.z);
 
+		// if (idx < 10) {
+		// 	printf("dL_da: %f, dL_db: %f, dL_dc: %f\n", dL_da, dL_db, dL_dc);
+		// }
+
 		// Gradients of loss L w.r.t. each 3D covariance matrix (Vrk) entry,
 		// given gradients w.r.t. 2D covariance matrix (diagonal).
 		// cov2D = transpose(T) * transpose(Vrk) * T;
@@ -220,6 +224,11 @@ __global__ void computeCov2DCUDA(int P,
 		for (int i = 0; i < 6; i++)
 			dL_dcov[6 * idx + i] = 0;
 	}
+
+	// debug dL_dcov
+	// if (idx < 10) {
+	// 	printf("dL_dcov: %f, %f, %f, %f, %f, %f\n", dL_dcov[6 * idx + 0], dL_dcov[6 * idx + 1], dL_dcov[6 * idx + 2], dL_dcov[6 * idx + 3], dL_dcov[6 * idx + 4], dL_dcov[6 * idx + 5]);
+	// }
 
 	// Gradients of loss w.r.t. upper 2x3 portion of intermediate matrix T
 	// cov2D = transpose(T) * transpose(Vrk) * T;
@@ -272,10 +281,21 @@ __device__ void computeCov3D(int idx, const glm::vec3 scale, float mod, const gl
 	float y = q.z;
 	float z = q.w;
 
+	// debug scale and qvec
+	// if (idx < 10) {
+	// 	printf("scale: %f, %f, %f\n", scale.x, scale.y, scale.z);
+	// 	printf("qvec: %f, %f, %f, %f\n", r, x, y, z);
+	// }
+
 	glm::mat3 R = glm::mat3(
 		1.f - 2.f * (y * y + z * z), 2.f * (x * y - r * z), 2.f * (x * z + r * y),
 		2.f * (x * y + r * z), 1.f - 2.f * (x * x + z * z), 2.f * (y * z - r * x),
 		2.f * (x * z - r * y), 2.f * (y * z + r * x), 1.f - 2.f * (x * x + y * y));
+
+	// debug R
+	// if (idx < 10) {
+	// 	printf("R: %f, %f, %f\n%f, %f, %f\n%f, %f, %f\n", R[0][0], R[0][1], R[0][2], R[1][0], R[1][1], R[1][2], R[2][0], R[2][1], R[2][2]);
+	// }
 
 	glm::mat3 S = glm::mat3(1.0f);
 
