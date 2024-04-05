@@ -28,7 +28,7 @@ __global__ void sample_backward_kernel(int W, int H, float* dL_dtpix, float* dL_
 
 	int i = y * W + x;
 	for (int c = 0; c < 3; ++c) {
-		printf("dL_dtpix[%d] = %f\n", i + c * W * H, dL_dtpix[i + c * W * H]);
+		// printf("dL_dtpix[%d] = %f\n", i + c * W * H, dL_dtpix[i + c * W * H]);
 		dL_dspix[i + c * W * H] = -dL_dtpix[i + c * W * H];
 	}
 }

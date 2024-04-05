@@ -1,6 +1,6 @@
 import pytest 
 
-from lib.ing.dummy_diff_render import DummyDiffRender
+from lib.ing.diff_pano_sampler import DiffPanoSampler
 import torch 
 import numpy as np 
 import matplotlib.pyplot as plt 
@@ -28,7 +28,7 @@ def test_dummy_diff_render():
     target_img[0, h//4+1:3*h//4-1, w//4+1:3*w//4-1] = 1.0
     target_img = target_img.detach()
 
-    render = DummyDiffRender()
+    render = DiffPanoSampler()
     result_img = render(source_img, h, w)
 
     source_img_np = source_img.detach().cpu().numpy().transpose(1, 2, 0)
@@ -36,8 +36,6 @@ def test_dummy_diff_render():
     result_img_np = result_img.detach().cpu().numpy().transpose(1, 2, 0)
     
     show_compare_imgs([source_img_np, target_img_np, result_img_np])
-
-
     N_ITERS = 30
     N_SHOW = 10
     optimizer = torch.optim.SGD([source_img], lr=0.1)
