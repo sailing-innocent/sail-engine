@@ -67,6 +67,12 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 		Shared<float2>* collected_means = new Shared<float2>(m_shared_mem_size);
 		Shared<float4>* collected_conic_opacity = new Shared<float4>(m_shared_mem_size);
 
+		// for done
+		// Shared<uint>* done_arr = new Shared<uint>(1);
+		// $if(thread_idx == 0) {
+		// 	done_arr->write(0, 0u);
+		// };
+
 		Float T = 1.0f;
 		Float3 C = make_float3(0.0f, 0.0f, 0.0f);
 		UInt contributor = 0u;
@@ -74,10 +80,13 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 
 		$for(i, rounds) {
 			// require __syncthreads_count(done) to accelerate
-			// $if(done) {
-			// 	$continue;
-			// };
 			sync_block();
+			// $if(done) {
+			// 	done_arr->atomic(0).fetch_add(1u);
+			// };
+			// $if(done_arr->read(0) == m_shared_mem_size) {
+			// 	$break;
+			// };
 
 			Int progress = i * round_step + thread_idx;
 
@@ -101,7 +110,7 @@ void ReprodGS::compile_forward_render_shader(Device& device) noexcept {
 			// iterate over the current batch
 
 			$for(j, min(round_step, todo)) {
-				// $if(done) { $break; };
+				$if(done) { $break; };
 				contributor = contributor + 1u;
 
 				Float2 mean = collected_means->read(j);
@@ -242,18 +251,20 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 
 				$for(ch, 3) {
 					auto n = color_features.read(3 * coll_id + ch);
-					collected_color->write(3 * thread_idx + ch, n);
+					collected_color->write(ch * m_shared_mem_size + thread_idx, n);
 				};
 			};
 			sync_block();
 			// iterate over the Gaussians of current batch
 
 			$for(j, min(round_step, todo)) {
+				$if(done) { $break; };
 				contributor = contributor - 1u;
 				$if(contributor >= last_contributor) {
 					// no contribution to color, pass
 					$continue;
 				};
+
 				// forward params
 				Float2 mean = collected_means->read(j);
 				Float2 d = mean - pix_f;
@@ -265,12 +276,14 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 				$if(alpha < 1.0f / 255.0f) { $continue; };
 				// T_j
 				T = T / (1.0f - alpha);
+
 				Float d_ch_d_color = alpha * T;
+
+				// propagate gradients
 				Float dL_dalpha = 0.0f;
 				UInt global_id = collected_ids->read(j);
-
 				$for(ch, 3) {
-					Float c = collected_color->read(3 * j + ch);
+					Float c = collected_color->read(ch * m_shared_mem_size + j);
 					accum_rec[ch] = last_alpha * last_color[ch] + (1.0f - last_alpha) * accum_rec[ch];
 					last_color[ch] = c;
 					//  Float dL_d_ch = 1.0f;
@@ -284,13 +297,18 @@ void ReprodGS::compile_backward_render_shader(Device& device) noexcept {
 				};
 
 				dL_dalpha = dL_dalpha * T;
+				// $if(pix_id > 0.504f * w * h & pix_id < 0.505f * w * h) {
+				// 	device_log("{}, {}", dL_dalpha, range_end - range_start);
+				// };
+
 				last_alpha = alpha;
 
-				Float bg_dot_pixel = 0;
+				Float bg_dot_dpixel = 0.0f;
 				$for(k, 3) {
-					bg_dot_pixel += bg_color[k] * dLdpix[k];
+					bg_dot_dpixel += bg_color[k] * dLdpix[k];
 				};
-				dL_dalpha += (-T_final / (1.0f - alpha)) * bg_dot_pixel;
+				dL_dalpha += (-T_final / (1.0f - alpha)) * bg_dot_dpixel;
+
 				// backward for opacity
 				dL_d_opacity.atomic(global_id).fetch_add(G * dL_dalpha);
 
