@@ -12,6 +12,7 @@ from module.model.gaussian.sparse import GaussianModel
 # renderer
 from app.diff_renderer.gaussian_rasterizer.vanilla import create_gaussian_renderer as create_vanilla_renderer 
 from app.diff_renderer.gaussian_rasterizer.inno_reprod import create_gaussian_renderer as create_inno_reprod_renderer
+from app.diff_renderer.gaussian_rasterizer.sparse import create_gaussian_renderer as create_sparse_renderer
 
 import torch 
 import gc
@@ -38,6 +39,7 @@ class TrainGaussianProject(ProjectBase):
         super().__init__(config)
         self.create_renderer = {
             'vanilla': create_vanilla_renderer,
+            "sparse": create_sparse_renderer,
             "inno_reprod": create_inno_reprod_renderer,
         }
     
@@ -87,16 +89,14 @@ class TrainGaussianProject(ProjectBase):
             logger.info("Train Finished, start Eval")
 
         # eval after train
-        # eval_config.dataset_name = params.dataset_name
-        # eval_config.obj_name = params.obj_name
-        # eval_config.proj_name = self.config.name
-        # eval_config.metric_types = params.metric_types
-        # eval_config.name = f"{params.dataset_name}_{params.obj_name}_{params.trainer_name}_{params.loss_name}_{init_scene['postfix']}_eval_pipeline"
-        # eval_config.output_name = f"{params.dataset_name}_{params.obj_name}_{params.trainer_name}_{params.loss_name}_{params.train_params.name}"
-        # eval_pipeline = NVSEvalPipeline(eval_config)
-        # result = eval_pipeline.run(self.model, renderer)
-        
+        eval_config.dataset_name = params.dataset_name
+        eval_config.obj_name = params.obj_name
+        eval_config.proj_name = self.config.name
+        eval_config.metric_types = params.metric_types
+        eval_config.name = f"{params.dataset_name}_{params.obj_name}_{params.trainer_name}_{params.loss_name}_{init_scene['postfix']}_eval_pipeline"
+        eval_config.output_name = f"{params.dataset_name}_{params.obj_name}_{params.trainer_name}_{params.loss_name}_{params.train_params.name}"
+        eval_pipeline = NVSEvalPipeline(eval_config)
+        result = eval_pipeline.run(self.model, renderer)
         torch.cuda.empty_cache()
         gc.collect()
-
         return result 
