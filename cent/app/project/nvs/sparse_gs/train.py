@@ -87,15 +87,16 @@ class TrainGaussianProject(ProjectBase):
             logger.info("Train Finished, start Eval")
 
         # eval after train
-        eval_config.dataset_name = params.dataset_name
-        eval_config.obj_name = params.obj_name
-        eval_config.proj_name = self.config.name
-        eval_config.metric_types = params.metric_types
-        eval_config.name = f"{params.dataset_name}_{params.obj_name}_{params.trainer_name}_{params.loss_name}_{init_scene['postfix']}_eval_pipeline"
-        eval_config.output_name = f"{params.dataset_name}_{params.obj_name}_{params.trainer_name}_{params.loss_name}_{params.train_params.name}"
-        eval_pipeline = NVSEvalPipeline(eval_config)
-        result = eval_pipeline.run(self.model, renderer)
+        # eval_config.dataset_name = params.dataset_name
+        # eval_config.obj_name = params.obj_name
+        # eval_config.proj_name = self.config.name
+        # eval_config.metric_types = params.metric_types
+        # eval_config.name = f"{params.dataset_name}_{params.obj_name}_{params.trainer_name}_{params.loss_name}_{init_scene['postfix']}_eval_pipeline"
+        # eval_config.output_name = f"{params.dataset_name}_{params.obj_name}_{params.trainer_name}_{params.loss_name}_{params.train_params.name}"
+        # eval_pipeline = NVSEvalPipeline(eval_config)
+        # result = eval_pipeline.run(self.model, renderer)
         
         torch.cuda.empty_cache()
         gc.collect()
+
         return result 

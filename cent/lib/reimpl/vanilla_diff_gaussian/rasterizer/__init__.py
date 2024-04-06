@@ -23,7 +23,7 @@ _C = load(
         "lib/reimpl/vanilla_diff_gaussian/rasterizer/backward.cu"
     ],
     verbose=False,
-    extra_include_paths=["lib/reimpl"]
+    extra_include_paths=["lib/ext"]
 )
 
 def cpu_deep_copy_tuple(input_tuple):

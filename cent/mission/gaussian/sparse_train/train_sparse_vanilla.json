@@ -1,0 +1,29 @@
+{
+    "name": "train_sparse_gs_sparse_vanilla",
+    "dataset_name": "nerf_blender",
+    "usage": "train",
+    "objects": [
+        "lego"
+    ],
+    "init_scene": {
+        "type": "ckpt",
+        "dataset_name": "nerf_blender",
+        "obj_name": "lego",
+        "ckpt_path": "gaussian_init",
+        "postfix": "random"
+    },
+    "benchmarks": [
+        "psnr"
+    ],
+    "trainer_name": "vanilla",
+    "render_name": "sparse",
+    "loss_name": "l1+ssim",
+    "train_params": {
+        "data_limit": 5,
+        "data_shuffle": false,
+        "saving_iterations": [
+            7000,
+            30000
+        ]
+    }
+}

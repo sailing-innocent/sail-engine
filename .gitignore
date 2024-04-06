@@ -7,3 +7,4 @@ __pycache__
 .pytest_cache
 output
 config.json
+.vscode
