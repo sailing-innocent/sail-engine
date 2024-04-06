@@ -8,12 +8,6 @@ from module.dataset.nvs.tank_temple.dataset import create_dataset as create_tank
 # trainer 
 from app.trainer.nvs.gs.basic import create_trainer as create_basic_trainer
 from app.trainer.nvs.gs.vanilla import create_trainer as create_vanilla_trainer
-# ## panorama
-# from app.trainer.nvs.gaussian.panorama import create_trainer as create_panorama_trainer
-# from app.trainer.nvs.gaussian.panorama import GaussianTrainerParams as PanoramaTrainerParams 
-# # pano
-# from app.trainer.nvs.gaussian.pano import create_trainer as create_pano_trainer
-# from app.trainer.nvs.gaussian.pano import GaussianTrainerParams as PanoTrainerParams 
 
 # loss
 from lib.reimpl.vanilla_diff_gaussian.utils.loss_utils import l1_loss, ssim
@@ -59,6 +53,7 @@ class GaussianTrainPipeline(NVSPipeline):
         loss_fn = self.create_loss[self.config.loss_name]
         trainer = self.create_trainer[self.config.trainer_name](self.config.env_config, self.target_path)
         # init model
-        # init_pcd = dataset.get_point_cloud()
-        # model.create_from_pcd(init_pcd, 1.0) 
+        if len(model.get_xyz) == 0:
+            init_pcd = dataset.get_point_cloud()
+            model.create_from_pcd(init_pcd, 1.0) 
         trainer.train(model, dataset, renderer, loss_fn, train_params)

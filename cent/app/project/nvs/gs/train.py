@@ -55,19 +55,21 @@ class TrainGaussianProject(ProjectBase):
                 init_scene["ckpt_path"],
                 "_".join([init_scene["dataset_name"],
                     init_scene["obj_name"],
-                    init_scene["postfix"]]) + ".ply")
+                    init_scene["name"]]) + ".ply")
             if not os.path.exists(ckpt_path):
                 logger.error(f"ckpt {ckpt_path} not exists, use random by default")
                 ckpt_path = os.path.join(self.config.env_config.pretrained_path, "random.ply")
             else:
                 logger.info(f"loading ckpt from {ckpt_path}")
             self.model.load_ply(ckpt_path)
+        elif init_scene["type"] == "pcd":
+            pass
 
         # init render
         renderer = self.create_renderer[params.render_name](self.config.env_config)
         train_config = GaussianTrainPipelineConfig(self.config.env_config)
         train_config.proj_name = self.config.name
-        train_config.name = f"{params.dataset_name}_{params.obj_name}_{params.trainer_name}_{params.loss_name}_{init_scene['postfix']}_train_pipeline"
+        train_config.name = f"{params.dataset_name}_{params.obj_name}_{params.trainer_name}_{params.loss_name}_{init_scene['name']}_train_pipeline"
         train_config.dataset_name = params.dataset_name 
         train_config.obj_name = params.obj_name
         train_config.trainer_name = params.trainer_name 
@@ -93,7 +95,7 @@ class TrainGaussianProject(ProjectBase):
         eval_config.obj_name = params.obj_name
         eval_config.proj_name = self.config.name
         eval_config.metric_types = params.metric_types
-        eval_config.name = f"{params.dataset_name}_{params.obj_name}_{params.trainer_name}_{params.loss_name}_{init_scene['postfix']}_eval_pipeline"
+        eval_config.name = f"{params.dataset_name}_{params.obj_name}_{params.trainer_name}_{params.loss_name}_{init_scene['name']}_eval_pipeline"
         eval_config.output_name = f"{params.dataset_name}_{params.obj_name}_{params.trainer_name}_{params.loss_name}_{params.train_params.name}"
         eval_pipeline = NVSEvalPipeline(eval_config)
         result = eval_pipeline.run(self.model, renderer)

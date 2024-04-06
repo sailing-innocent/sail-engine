@@ -63,7 +63,7 @@
     "result_template": {
         "name": "tab_3dgs_profile_{benchmark}_result",
         "type": "tab_json",
-        "template": "3dgs_paper_{benchmark}",
+        "template": "3dgs_paper_nerf_blender_{benchmark}",
         "path": "../doc/latex/table/result/3dgs_profile/"
     }
 }

@@ -1,0 +1,29 @@
+{
+    "data": [
+        [
+            "25.246",
+            "31.98",
+            "28.7",
+            "27.41",
+            "30.31",
+            "30.63",
+            "26.55",
+            "28.69"
+        ]
+    ],
+    "cols": [
+        "bicycle",
+        "bonsai",
+        "counter",
+        "garden",
+        "kitchen",
+        "room",
+        "stump",
+        "Average"
+    ],
+    "rows": [
+        "vanilla_3dgs_paper"
+    ],
+    "caption": "Mip360 PSNR",
+    "label": ""
+}

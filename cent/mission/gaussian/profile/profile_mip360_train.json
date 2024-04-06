@@ -1,0 +1,52 @@
+{
+    "name": "profile_gaussian_mip360",
+    "dataset_name": "mip360",
+    "usage": "train",
+    "objects": [
+        "bicycle",
+        "bonsai",
+        "counter",
+        "garden",
+        "kitchen",
+        "room",
+        "stump"
+    ],
+    "init_scenes": [
+        {
+            "type": "pcd",
+            "name": "colmap",
+            "dataset_name": "mip360"
+        }
+    ],
+    "benchmarks": [
+        {
+            "name": "psnr",
+            "use_template": true
+        }
+    ],
+    "render_names": [
+        "vanilla",
+        "vanilla_reprod"
+    ],
+    "trainer_names": [
+        "vanilla"
+    ],
+    "train_params_list": [
+        {
+            "name": "default",
+            "saving_iterations": [
+                7000,
+                30000
+            ]
+        }
+    ],
+    "loss_names": [
+        "l1+ssim"
+    ],
+    "result_template": {
+        "name": "tab_3dgs_profile_{benchmark}_result",
+        "type": "tab_json",
+        "template": "3dgs_paper_mip360_{benchmark}",
+        "path": "../doc/latex/table/result/3dgs_profile/"
+    }
+}

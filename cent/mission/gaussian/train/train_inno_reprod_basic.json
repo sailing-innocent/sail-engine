@@ -10,7 +10,7 @@
         "dataset_name": "nerf_blender",
         "obj_name": "dummy",
         "ckpt_path": "gaussian_init",
-        "postfix": "random"
+        "name": "random"
     },
     "objects": [
         "lego"

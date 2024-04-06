@@ -35,7 +35,7 @@ class Mission(MissionBase):
         proj_config.usage = self.usage 
         # proj_config.sh_deg = 0
         self.project = TrainGaussianProject(proj_config)
-        results = self.run_project()
+        self.run_project()
         
     def run_through_objects(self, trainer_name, render_name, train_params, loss_name, init_scene):
         for obj_name in self.objects:
@@ -73,15 +73,8 @@ class Mission(MissionBase):
                 template_tab.from_json_file(template_file_name)
                 full_result_tabs[benchmark].append_rows(template_tab)
         
-        for render_name, trainer_name, _train_params, loss_name, init_scene_json in itertools.product(
+        for render_name, trainer_name, _train_params, loss_name, init_scene in itertools.product(
             self.render_names, self.trainer_names, self.train_params_list, self.loss_names, self.init_scenes):
-            init_scene = {
-                "type": init_scene_json["type"],
-                "ckpt_path": init_scene_json["ckpt_path"],
-                "dataset_name": self.dataset_name,
-                "obj_name": "",
-                "postfix": init_scene_json["postfix"]
-            }
             print(f"render_name: {render_name}, trainer_name: {trainer_name}, train_params: {_train_params}, loss_name: {loss_name}")
             train_params = self.create_train_params[trainer_name]()
             for key in _train_params:
@@ -104,7 +97,7 @@ class Mission(MissionBase):
                     trainer_name if len(self.trainer_names) > 1 else "",
                     loss_name if len(self.loss_names) > 1 else "",
                     train_params.name if len(self.train_params_list) > 1 else "",
-                    init_scene["postfix"] if len(self.init_scenes) > 1 else ""])
+                    init_scene["name"] if len(self.init_scenes) > 1 else ""])
             
                 for result in results:
                     result_data = result[benchmark]

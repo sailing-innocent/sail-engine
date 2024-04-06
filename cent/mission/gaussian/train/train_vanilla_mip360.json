@@ -9,11 +9,9 @@
         "psnr"
     ],
     "init_scene": {
-        "type": "ckpt",
-        "dataset_name": "mip360",
-        "obj_name": "dummy",
-        "ckpt_path": "gaussian_init",
-        "postfix": "random"
+        "type": "pcd",
+        "name": "colmap",
+        "dataset_name": "mip360"
     },
     "trainer_name": "vanilla",
     "render_name": "vanilla",
