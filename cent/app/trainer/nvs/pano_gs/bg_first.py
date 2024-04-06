@@ -7,6 +7,7 @@ import os
 from loguru import logger 
 import gc
 import matplotlib.pyplot as plt
+
 from .basic import GaussianTrainerParams
 
 class GaussianTrainerConfig(TrainerConfigBase):
@@ -31,7 +32,7 @@ class GaussianVanillaTrainerParams(GaussianTrainerParams):
         self.name = "vanilla_params"
         self.opacity_reset_interval = 3000
         self.densify_interval = 100
-        self.densify_from_iter = 500
+        self.densify_from_iter = 1500
         self.densify_until_iter = 15_000
         self.densify_grad_threshold = 0.0002
         self.size_threshold = 20
@@ -129,6 +130,11 @@ class GaussianTrainer(TrainerBase):
                     # todo white
                     if iteration % params.opacity_reset_interval == 0 or (iteration == params.densify_from_iter):
                         gaussians.reset_opacity()
+                        # decay learn rate
+                        for param_group in pano_optimizer.param_groups:
+                            next_lr = param_group['lr'] / 10
+                            param_group['lr'] = next_lr
+                        logger.info(f"Decaying learn rate to {next_lr}")
 
                 # optimize
                 if iteration < iterations:

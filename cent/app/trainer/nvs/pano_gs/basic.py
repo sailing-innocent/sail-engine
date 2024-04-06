@@ -25,7 +25,7 @@ class GaussianTrainerParams:
     position_lr_final = 0.0000016
     position_lr_delay_mult = 0.01
     position_lr_max_steps = 30000
-    pano_lr = 0.01
+    pano_lr = 0.001
     opacity_lr = 0.05
     scaling_lr = 0.005
     feature_lr = 0.0025
