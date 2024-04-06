@@ -1,6 +1,9 @@
 from ...base import TrainerConfigBase, TrainProcessLogBase, TrainerBase
 from module.utils.camera.basic import Camera
 import torch
+import numpy as np
+from lib.ext.unidepth.utils import colorize, image_grid
+
 from tqdm import tqdm
 from random import randint
 import os 
@@ -24,7 +27,7 @@ class GaussianTrainerProcessLog(TrainProcessLogBase):
     def save(self):
         pass 
 
-class GaussianVanillaTrainerParams(GaussianTrainerParams):
+class GaussianDepthTrainerParams(GaussianTrainerParams):
     def __init__(self):
         super().__init__()
         self.name = "vanilla_params"
@@ -56,8 +59,24 @@ class GaussianTrainer(TrainerBase):
         # the sparse selected pairs
         pairs = dataset.pairs(params.data_limit, params.data_shuffle)
         # saved the pair to train
-
         logger.info(f"Training with {params.name}")
+        model = torch.hub.load(
+            "lpiccinelli-eth/unidepth",
+            "UniDepthV1_ViTL14",
+            pretrained=True,
+            trust_repo=True,
+            force_reload=True,
+        ).to("cuda")
+        model.eval()
+        for pair in pairs:
+            intr = torch.from_numpy(pair.cam.K).float().cuda()
+            img = torch.from_numpy(pair.img.data).float().cuda().permute(2, 0, 1) # C x H x W
+            assert intr.shape == torch.Size([3, 3])
+            assert img.shape == torch.Size([3, 800, 800])
+            xyz = model.infer(img, intr)["points"]
+            print(xyz.shape)
+            break
+
         # train steup
         # gaussians.training_setup(params)
 

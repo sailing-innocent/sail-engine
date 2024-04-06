@@ -21,3 +21,11 @@ class CameraInfo:
             "ResW": self.ResW,
             "ResH": self.ResH
         }
+    
+    @property 
+    def K(self):
+        return np.array([
+            [self.ResW / np.tan(self.FovX / 2) / 2, 0, 0],
+            [0, self.ResH / np.tan(self.FovY / 2) / 2, 0],
+            [0, 0, 1]
+        ])

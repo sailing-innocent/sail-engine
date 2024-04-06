@@ -35,4 +35,14 @@ def demo(model):
 
 @pytest.mark.current
 def test_check():
-    assert True 
+    print("Torch version:", torch.__version__)
+    model = torch.hub.load(
+        "lpiccinelli-eth/unidepth",
+        "UniDepthV1_ViTL14",
+        pretrained=True,
+        trust_repo=True,
+        force_reload=True,
+    )
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = model.to(device)
+    demo(model)
