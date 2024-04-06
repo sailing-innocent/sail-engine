@@ -26,7 +26,7 @@ class GaussianTrainerProcessLog(TrainProcessLogBase):
     def save(self):
         pass 
 
-class GaussianVanillaTrainerParams(GaussianTrainerParams):
+class GaussianBGFirstTrainerParams(GaussianTrainerParams):
     def __init__(self):
         super().__init__()
         self.name = "vanilla_params"

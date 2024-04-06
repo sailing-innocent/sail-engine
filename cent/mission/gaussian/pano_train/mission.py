@@ -1,8 +1,10 @@
 from mission.base import MissionBase
 import itertools 
 from app.project.nvs.pano_gs.train import TrainGaussianProjectConfig, TrainGaussianProjectParams, TrainGaussianProject
+# Trainer Params
 from app.trainer.nvs.pano_gs.basic import GaussianTrainerParams
 from app.trainer.nvs.pano_gs.vanilla import GaussianVanillaTrainerParams
+from app.trainer.nvs.pano_gs.bg_first import GaussianBGFirstTrainerParams
 
 class Mission(MissionBase):
     def __init__(self, config_json_file):
@@ -23,7 +25,8 @@ class Mission(MissionBase):
 
         self.create_trainer_params = {
             "vanilla": GaussianVanillaTrainerParams,
-            "basic": GaussianTrainerParams
+            "basic": GaussianTrainerParams,
+            "bg_first": GaussianBGFirstTrainerParams
         }
 
     def exec(self):
