@@ -1,7 +1,7 @@
 {
     "name": "profile_gaussian_mip360",
     "dataset_name": "mip360",
-    "usage": "train",
+    "usage": "eval",
     "objects": [
         "bicycle",
         "bonsai",
