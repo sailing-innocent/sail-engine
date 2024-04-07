@@ -93,6 +93,9 @@ class GaussianTrainer(TrainerBase):
                 pass 
             # load ground truth
             gt_image = torch.tensor(pair.img.data.transpose(2, 0, 1)).float().cuda()
+            # normalize for depth
+            gt_image[3] = gt_image[3] / 10
+            image[3] = image[3] / 10
             loss = loss_fn(image, gt_image)
             loss.backward()
             

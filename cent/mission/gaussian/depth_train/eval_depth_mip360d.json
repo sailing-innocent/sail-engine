@@ -1,0 +1,26 @@
+{
+    "name": "train_gs_depth_mip360d",
+    "dataset_name": "mip360d",
+    "usage": "eval",
+    "objects": [
+        "bicycle"
+    ],
+    "benchmarks": [
+        "psnr"
+    ],
+    "init_scene": {
+        "type": "pcd",
+        "name": "colmap",
+        "dataset_name": "mip360"
+    },
+    "trainer_name": "vanilla",
+    "render_name": "depth",
+    "loss_name": "l1+ssim",
+    "train_params": {
+        "saving_iterations": [
+            3000,
+            7000,
+            30000
+        ]
+    }
+}

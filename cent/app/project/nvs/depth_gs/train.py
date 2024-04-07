@@ -6,7 +6,7 @@ from typing import NamedTuple
 from app.trainer.nvs.gs.basic import GaussianTrainerParams
 # train and eval pipeline
 from app.pipeline.nvs.depth_gs.train import GaussianTrainPipelineConfig, GaussianTrainPipeline
-from app.pipeline.nvs.eval import NVSEvalPipelineConfig, NVSEvalPipeline 
+from app.pipeline.nvs.depth_gs.eval import NVSEvalPipelineConfig, NVSEvalPipeline 
 # model
 from module.model.gaussian.vanilla import GaussianModel 
 # renderer

@@ -4,8 +4,8 @@ from ..base import NVSPipelineConfig, NVSPipeline
 # from module.dataset.nvs.blender.dataset import create_dataset as create_nerf_blender_dataset
 from module.dataset.nvs.mip360d.dataset import create_dataset as create_mip360d_dataset
 # trainer 
-from app.trainer.nvs.gs.basic import create_trainer as create_basic_trainer
-from app.trainer.nvs.gs.vanilla import create_trainer as create_vanilla_trainer
+from app.trainer.nvs.depth_gs.basic import create_trainer as create_basic_trainer
+from app.trainer.nvs.depth_gs.vanilla import create_trainer as create_vanilla_trainer
 
 # loss
 from lib.reimpl.vanilla_diff_gaussian.utils.loss_utils import l1_loss, ssim

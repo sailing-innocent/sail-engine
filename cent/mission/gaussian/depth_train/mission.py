@@ -2,8 +2,8 @@ from mission.base import MissionBase
 import itertools 
 from app.project.nvs.depth_gs.train import TrainGaussianProjectConfig, TrainGaussianProjectParams, TrainGaussianProject
 
-from app.trainer.nvs.gs.basic import GaussianTrainerParams
-from app.trainer.nvs.gs.vanilla import GaussianVanillaTrainerParams
+from app.trainer.nvs.depth_gs.basic import GaussianTrainerParams
+from app.trainer.nvs.depth_gs.vanilla import GaussianVanillaTrainerParams
 
 class Mission(MissionBase):
     def __init__(self, config_json_file):
@@ -11,9 +11,7 @@ class Mission(MissionBase):
         # parse the compenent
         self.name = self.config_json["name"]
         self.dataset_name = self.config_json["dataset_name"]
-        
         self.init_scene = self.config_json["init_scene"]
-        
         self.train_params = self.config_json["train_params"]
         self.loss_name = self.config_json["loss_name"]
         self.trainer_name = self.config_json["trainer_name"]
