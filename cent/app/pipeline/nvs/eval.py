@@ -26,6 +26,7 @@ class NVSEvalPipeline(NVSPipeline):
         create_dataset = {
             "nerf_blender": create_nerf_blender_dataset,
             "mip360": create_mip360_dataset,
+            "mip360d": create_mip360_dataset, # for eval only RGB
             "tank_temple": create_tank_temple_dataset
         }
         self.dataset = create_dataset[config.dataset_name](config.env_config, config.obj_name, "test")
