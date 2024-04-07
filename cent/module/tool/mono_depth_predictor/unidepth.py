@@ -6,7 +6,7 @@ class MonoDepthPredictor:
             "lpiccinelli-eth/unidepth",
             "UniDepthV1_ViTL14",
             pretrained=True,
-            # trust_repo=True,
+            trust_repo=True,
             # force_reload=True,
         )
         self.model = self.model.to(device)
