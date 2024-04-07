@@ -46,7 +46,7 @@ class ColmapDataset(NVSDataset):
     """ 
     def __init__(self, config: ColmapDatasetConfig):
         super().__init__(config)
-        self.depth_predictor = MonoDepthPredictor()
+        self.depth_predictor = None 
         
     def _load_dataset(self):
         dataset_path = self.config.dataset_root()
@@ -129,6 +129,9 @@ class ColmapDataset(NVSDataset):
                 os.makedirs(depth_folder, exist_ok=True)
                 depth_path = os.path.join(depth_folder, os.path.basename(extr.name).replace("JPG", "npy"))
                 if not os.path.exists(depth_path):
+                    # instantiate when required
+                    if self.depth_predictor is None:
+                        self.depth_predictor = MonoDepthPredictor()
                     # prepropose
                     img_torch = torch.from_numpy(img.data).permute(2, 0, 1).unsqueeze(0).float().cuda()
                     intr_torch = torch.from_numpy(cam_info.K).float().cuda()
