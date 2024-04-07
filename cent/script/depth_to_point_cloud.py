@@ -34,7 +34,25 @@ if __name__ == "__main__":
     print(points_np[points_np > 0])
 
     color_img_path = "asset/image/rgb.png"
-    color = np.array(Image.open(color_img_path)) / 255.0
-    color = color.reshape(-1, 3)
+    rgb = np.array(Image.open(color_img_path)) / 255.0
+    color = rgb.reshape(-1, 3)
     ply_path = "D:/temp/depth.ply"
     storePly(ply_path, points_np, color)
+
+    model = torch.hub.load(
+        "lpiccinelli-eth/unidepth",
+        "UniDepthV1_ViTL14",
+        pretrained=True,
+        # trust_repo=True,
+        # force_reload=True,
+    )
+    model = model.to("cuda")
+    model.eval()
+    # H, W, C -> C H W
+    rgb_torch = torch.from_numpy(rgb).permute(2, 0, 1).float().cuda()
+    predictions = model.infer(rgb_torch, intr.cuda())
+    depth_pred = predictions["depth"].squeeze().detach()
+    points_pred = DK2Points(depth_pred, intr.cuda())
+    points_pred_np = points_pred.reshape(-1, 3).cpu().numpy()
+    ply_path = "D:/temp/depth_pred.ply"
+    storePly(ply_path, points_pred_np, color)

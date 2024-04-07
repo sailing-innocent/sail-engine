@@ -66,7 +66,7 @@ class Camera:
     def proj_matrix(self):
         tanfovx = np.tan(0.5 * self.info.FovX)
         tanfovy = np.tan(0.5 * self.info.FovY)
-        znear = 0.1
+        znear = 0.01
         zfar = 100
         top = tanfovy * znear
         bottom = -top

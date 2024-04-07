@@ -67,7 +67,8 @@ class NeRFBlenderDataset(NVSDataset):
 
             T = T * self.config.scene_scale
             cam_info = CameraInfo(
-                FovY=fov_x,
+                FovY= fov_x, # same here
+                FovX= fov_x,
                 R=R,
                 T=T,
                 ResW=img.W,

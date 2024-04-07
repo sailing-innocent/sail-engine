@@ -5,14 +5,11 @@ from dataclasses import dataclass
 class CameraInfo:
     R: np.array = np.eye(3)
     T: np.array = np.zeros(3)
-    FovY: float = 60 / 180 * np.pi
-    ResW: int = 400
-    ResH: int = 400
+    FovY: float = 0.6911112070083618
+    FovX: float = 0.6911112070083618
+    ResW: int = 800
+    ResH: int = 800
 
-    @property 
-    def FovX(self):
-        return 2 * np.arctan(np.tan(0.5 * self.FovY) * self.ResW / self.ResH)   
-    
     def to_dict(self):
         return {
             "R": self.R.flatten().tolist(),
@@ -25,7 +22,7 @@ class CameraInfo:
     @property 
     def K(self):
         return np.array([
-            [self.ResW / np.tan(self.FovX / 2) / 2, 0, 0],
-            [0, self.ResH / np.tan(self.FovY / 2) / 2, 0],
+            [self.ResW / np.tan(self.FovX / 2) / 2, 0, self.ResW/2],
+            [0, self.ResH / np.tan(self.FovY / 2) / 2, self.ResH/2],
             [0, 0, 1]
         ])

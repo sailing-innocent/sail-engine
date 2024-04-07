@@ -106,9 +106,10 @@ class ColmapDataset(NVSDataset):
             img = Image()
             img.load_from_file(image_path)
             img.to_float32()
-            img.flip_y()
+            img.flip_y() # for flip-y coordinate system
             cam_info = CameraInfo(
                 FovY = FovY,
+                FovX = FovX,
                 R = R,
                 T = T,
                 ResW = img.W,
