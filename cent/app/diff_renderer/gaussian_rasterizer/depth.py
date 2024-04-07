@@ -1,5 +1,5 @@
 from module.utils.camera.basic import Camera
-from lib.torch_ext.sparse_gs import GaussianRasterizationSettings, GaussianRasterizer
+from lib.torch_ext.depth_gs import GaussianRasterizationSettings, GaussianRasterizer
 import numpy as np
 import torch 
 

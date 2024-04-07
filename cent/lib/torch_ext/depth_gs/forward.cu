@@ -152,7 +152,7 @@ __device__ void computeCov3D(const glm::vec3 scale, float mod, const glm::vec4 r
 }
 
 // Perform initial steps for each Gaussian prior to rasterization.
-template<int C>
+template<int F_DIM>
 __global__ void preprocessCUDA(int P, int D, int M,
 	const float* orig_points,
 	const glm::vec3* scales,
@@ -173,7 +173,8 @@ __global__ void preprocessCUDA(int P, int D, int M,
 	float2* points_xy_image,
 	float* depths,
 	float* cov3Ds,
-	float* rgb,
+	// float* rgb,
+	float* feature, // rgbd
 	float4* conic_opacity,
 	const dim3 grid,
 	uint32_t* tiles_touched,
@@ -241,13 +242,19 @@ __global__ void preprocessCUDA(int P, int D, int M,
 	if (colors_precomp == nullptr)
 	{
 		glm::vec3 result = computeColorFromSH(idx, D, M, (glm::vec3*)orig_points, *cam_pos, shs, clamped);
-		rgb[idx * C + 0] = result.x;
-		rgb[idx * C + 1] = result.y;
-		rgb[idx * C + 2] = result.z;
+		// rgb[idx * C + 0] = result.x;
+		// rgb[idx * C + 1] = result.y;
+		// rgb[idx * C + 2] = result.z;
+		feature[idx * F_DIM + 0] = result.x;
+		feature[idx * F_DIM + 1] = result.y;
+		feature[idx * F_DIM + 2] = result.z;
 	}
 
 	// Store some useful helper data for the next steps.
 	depths[idx] = p_view.z;
+	// store the feature
+	feature[idx * F_DIM + 3] = p_view.z;
+
 	radii[idx] = my_radius;
 	points_xy_image[idx] = point_image;
 	// Inverse 2D covariance and opacity neatly pack into one float4
