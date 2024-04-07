@@ -21,7 +21,7 @@ class GaussianTrainerConfig(TrainerConfigBase):
 class GaussianTrainerParams:
     name: str = "dummy_params"
     percent_dense = 0.01
-    position_lr_init = 0.00016
+    position_lr_init = 0.0016
     position_lr_final = 0.0000016
     position_lr_delay_mult = 0.01
     position_lr_max_steps = 30000
@@ -61,9 +61,10 @@ class GaussianTrainer:
             camera.flip() # to flip y
             render_pkg = renderer.render(camera, gaussians)
             image = render_pkg["render"]
-            
             gt_image = torch.tensor(pair.img.data.transpose(2, 0, 1)).float().cuda()
-            
+            max_depth = torch.max(gt_image[3])
+            gt_image[3] = gt_image[3] / max_depth
+            image[3] = image[3] / max_depth
             loss = loss_fn(image, gt_image)
             loss.backward()
             
@@ -75,17 +76,6 @@ class GaussianTrainer:
                 if iteration == iterations:
                     progress_bar.close()
 
-                # if iteration % 100 == 0:
-                #     image_np = image.detach().cpu().numpy().transpose(1, 2, 0)
-                #     gt_image_np = gt_image.detach().cpu().numpy().transpose(1, 2, 0)
-                #     # compare show
-                #     plt.figure()
-                #     plt.subplot(1, 2, 1)
-                #     plt.imshow(image_np)
-                #     plt.subplot(1, 2, 2)
-                #     plt.imshow(gt_image_np)
-                #     plt.show()
-                
                 # save
                 if (iteration in params.saving_iterations):
                     logger.info(f"\n[ITER {iteration}] Saving Gaussians")
@@ -94,7 +84,6 @@ class GaussianTrainer:
                     gaussians.save_ply(os.path.join(self.config.target_path, point_cloud_name))
 
                 # densification
-
                 # optimize
                 if iteration < iterations:
                     gaussians.optimizer.step()
