@@ -57,7 +57,7 @@ class NVSEvaluator:
             else:
                 raise NotImplementedError()
 
-            pred = renderer.render(camera, model)["render"].detach().cpu()
+            pred = renderer.render(camera, model)["render"].detach().cpu()[0:3]
             gt = torch.from_numpy(img_info.data.transpose(2, 0, 1)).float()
             
             if (params.save):

@@ -1,6 +1,7 @@
 from module.data.image_info import ImageInfo
 import numpy as np 
 import matplotlib.pyplot as plt 
+from loguru import logger
 
 class Image:
     def __init__(self,
@@ -20,7 +21,13 @@ class Image:
             self.data_type = "UINT8"
 
     def load_from_file(self, path: str):
+        # logger.info(f"Loading image from {path}")
         self.info.data = np.array(plt.imread(path))
+        # logger.info(f"Image shape: {self.info.data.shape}")
+        if (len(self.info.data.shape) == 2):
+            # grayscale, unsqueeze
+            # H, W -> H, W, 1
+            self.info.data = self.info.data[:, :, np.newaxis]
         self.data_type = "FLOAT32"
         if (self.info.data.dtype == np.uint8):
             self.data_type = "UINT8"
@@ -59,16 +66,36 @@ class Image:
     @property
     def C(self):
         return self.info.C
-    
+
     @property 
     def shape(self):
         return self.info.data.shape
+
+    @property 
+    def data(self):
+        return self.info.data
 
     def blend(self, color: np.array):
         assert color.shape == (3,)
         assert self.C == 4
         alpha = self.info.data[:, :, 3:]
         self.info.data = (self.info.data[:, :, :3] * alpha) + (color * (1 - alpha))
+
+    def concat(self, img):
+        assert self.W == img.W
+        assert self.C == img.C
+        self.info.data = np.concatenate((self.info.data, img.info.data), axis=1)
+        self.info.H = self.info.data.shape[0]
+
+    def merge(self, img):
+        assert self.H == img.H
+        assert self.W == img.W
+        self.info.data = np.concatenate((self.info.data, img.info.data), axis=2)
+        self.info.C = self.C + img.C
+
+    def merge_data(self, data: np.array):
+        self.info.data = np.concatenate((self.info.data, data), axis=2)
+        self.info.C = self.info.data.shape[2] + data.shape[2]
 
     def flip_y(self):
         np.flip(self.info.data, axis=0)
