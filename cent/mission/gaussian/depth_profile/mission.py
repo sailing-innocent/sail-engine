@@ -3,6 +3,7 @@ import itertools
 from app.project.nvs.depth_gs.train import TrainGaussianProjectConfig, TrainGaussianProjectParams, TrainGaussianProject
 from app.trainer.nvs.depth_gs.basic import GaussianTrainerParams
 from app.trainer.nvs.depth_gs.vanilla import GaussianVanillaTrainerParams
+from app.trainer.nvs.depth_gs.zzh import GaussianZZHTrainerParams
 
 from module.utils.tex.table import TexTable 
 import os 
@@ -26,7 +27,8 @@ class Mission(MissionBase):
 
         self.create_train_params = {
             "vanilla": GaussianVanillaTrainerParams,
-            "basic": GaussianTrainerParams
+            "basic": GaussianTrainerParams,
+            "zzh": GaussianZZHTrainerParams
         }
 
     def exec(self):
