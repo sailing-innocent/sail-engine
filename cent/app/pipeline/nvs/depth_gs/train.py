@@ -6,6 +6,7 @@ from module.dataset.nvs.mip360d.dataset import create_dataset as create_mip360d_
 # trainer 
 from app.trainer.nvs.depth_gs.basic import create_trainer as create_basic_trainer
 from app.trainer.nvs.depth_gs.vanilla import create_trainer as create_vanilla_trainer
+from app.trainer.nvs.depth_gs.zzh import create_trainer as create_zzh_trainer
 
 # loss
 from lib.reimpl.vanilla_diff_gaussian.utils.loss_utils import l1_loss, ssim
@@ -32,7 +33,8 @@ class GaussianTrainPipeline(NVSPipeline):
         # trainer
         self.create_trainer = {
             "basic": create_basic_trainer,
-            "vanilla": create_vanilla_trainer
+            "vanilla": create_vanilla_trainer,
+            "zzh": create_zzh_trainer
         }
         logger.info(f"setup trainer with {config.trainer_name}")
         # loss

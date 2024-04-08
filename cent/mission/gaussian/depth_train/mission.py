@@ -4,6 +4,7 @@ from app.project.nvs.depth_gs.train import TrainGaussianProjectConfig, TrainGaus
 
 from app.trainer.nvs.depth_gs.basic import GaussianTrainerParams
 from app.trainer.nvs.depth_gs.vanilla import GaussianVanillaTrainerParams
+from app.trainer.nvs.depth_gs.zzh import GaussianZZHTrainerParams
 
 class Mission(MissionBase):
     def __init__(self, config_json_file):
@@ -22,7 +23,8 @@ class Mission(MissionBase):
 
         self.create_trainer_params = {
             "vanilla": GaussianVanillaTrainerParams,
-            "basic": GaussianTrainerParams
+            "basic": GaussianTrainerParams,
+            "zzh": GaussianZZHTrainerParams
         }
 
     def exec(self):
