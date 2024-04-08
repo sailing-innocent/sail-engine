@@ -3,7 +3,8 @@ import itertools
 from app.project.nvs.pano_gs.train import TrainGaussianProjectConfig, TrainGaussianProjectParams, TrainGaussianProject
 from app.trainer.nvs.pano_gs.basic import GaussianTrainerParams
 from app.trainer.nvs.pano_gs.vanilla import GaussianVanillaTrainerParams
-from app.trainer.nvs.pano_gs.bg_first import GaussianBGFirstTrainerPapano
+from app.trainer.nvs.pano_gs.bg_first import GaussianBGFirstTrainerParams
+
 from module.utils.tex.table import TexTable 
 import os 
 

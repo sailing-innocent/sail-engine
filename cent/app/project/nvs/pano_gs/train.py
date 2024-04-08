@@ -36,16 +36,16 @@ class TrainGaussianProjectParams(NamedTuple):
 class TrainGaussianProject(ProjectBase):
     def __init__(self, config: TrainGaussianProjectConfig):
         super().__init__(config)
-        self.pano_h = 128
-        self.pano_w = 2 * self.pano_h
-        self.pano = torch.zeros(3, self.pano_h, self.pano_w).float().cuda()
-
         self.create_renderer = {
             "pano": create_pano_renderer,
             'vanilla': create_vanilla_renderer
         }
     
     def run(self, params: TrainGaussianProjectParams):
+        pano_h = params.train_params.pano_h
+        pano_w = 2 * pano_h
+        pano = torch.zeros(3, pano_h, pano_w).float().cuda()
+
         init_scene = params.init_scene
         self.model = GaussianModel(self.config.sh_deg)
         if init_scene["type"] == "ckpt":
@@ -85,7 +85,7 @@ class TrainGaussianProject(ProjectBase):
         # run train_pipeline
         if self.config.usage == "train":
             logger.info(f"training on {params.dataset_name} {params.obj_name} with {params.render_name} renderer, {params.trainer_name} strategy, {params.loss_name} loss and {params.train_params.name} params")
-            train_pipeline.run(self.model, self.pano, renderer, params.train_params)
+            train_pipeline.run(self.model, pano, renderer, params.train_params)
             logger.info("Train Finished, start Eval")
         
         # eval after train
@@ -96,5 +96,5 @@ class TrainGaussianProject(ProjectBase):
         eval_config.name = f"{params.dataset_name}_{params.obj_name}_{params.trainer_name}_{params.loss_name}_{init_scene['name']}_eval_pipeline"
         eval_config.output_name = f"{params.dataset_name}_{params.obj_name}_{params.trainer_name}_{params.loss_name}_{params.train_params.name}"
         eval_pipeline = NVSEvalPipeline(eval_config)
-        result = eval_pipeline.run(self.model, self.pano, renderer)
+        result = eval_pipeline.run(self.model, pano, renderer)
         return result 

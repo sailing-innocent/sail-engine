@@ -32,7 +32,17 @@
     ],
     "train_params_list": [
         {
+            "name": "high_bg_res",
+            "pano_h": 256,
+            "saving_iterations": [
+                7000,
+                15000,
+                30000
+            ]
+        },
+        {
             "name": "default",
+            "pano_h": 128,
             "saving_iterations": [
                 7000,
                 15000,
@@ -44,7 +54,7 @@
         "l1+ssim"
     ],
     "result_template": {
-        "name": "tab_3dgs_profile_diff_pram_zzh_depth_{benchmark}_result",
+        "name": "tab_3dgs_profile_diff_param_pano_{benchmark}_result",
         "type": "tab_json",
         "template": "3dgs_paper_mip360_{benchmark}",
         "path": "../doc/table/result/3dgs_profile/"
