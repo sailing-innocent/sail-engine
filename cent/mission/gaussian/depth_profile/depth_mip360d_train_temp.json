@@ -45,6 +45,6 @@
         "name": "tab_3dgs_profile_depth_{benchmark}_result",
         "type": "tab_json",
         "template": "3dgs_paper_mip360_{benchmark}",
-        "path": "../doc/latex/table/result/3dgs_profile/"
+        "path": "../doc/table/result/3dgs_profile/"
     }
 }

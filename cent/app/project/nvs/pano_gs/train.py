@@ -48,7 +48,6 @@ class TrainGaussianProject(ProjectBase):
     def run(self, params: TrainGaussianProjectParams):
         init_scene = params.init_scene
         self.model = GaussianModel(self.config.sh_deg)
-        
         if init_scene["type"] == "ckpt":
             ckpt_path = os.path.join(
                 self.config.env_config.pretrained_path,
@@ -65,6 +64,7 @@ class TrainGaussianProject(ProjectBase):
 
         # init render
         renderer = self.create_renderer[params.render_name](self.config.env_config)
+        # TRAIN PIPELINE
         train_config = GaussianTrainPipelineConfig(self.config.env_config)
         train_config.proj_name = self.config.name
         train_config.name = f"{params.dataset_name}_{params.obj_name}_{params.trainer_name}_{params.loss_name}_{init_scene['name']}_train_pipeline"

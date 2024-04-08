@@ -1,0 +1,28 @@
+{
+    "name": "train_gs_pano_bg_first_mip360",
+    "dataset_name": "mip360",
+    "usage": "train",
+    "benchmarks": [
+        "psnr"
+    ],
+    "init_scene": {
+        "type": "pcd",
+        "name": "colmap",
+        "dataset_name": "mip360"
+    },
+    "objects": [
+        "bicycle"
+    ],
+    "trainer_name": "bg_first",
+    "render_name": "pano",
+    "loss_name": "l1+ssim",
+    "train_params": {
+        "saving_iterations": [
+            1000,
+            3000,
+            7000,
+            15000,
+            30000
+        ]
+    }
+}

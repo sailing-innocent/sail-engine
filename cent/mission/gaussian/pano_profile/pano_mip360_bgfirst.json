@@ -1,5 +1,5 @@
 {
-    "name": "profile_gaussian_mip360",
+    "name": "profile_gaussian_pano_mip360_bg_first",
     "dataset_name": "mip360",
     "usage": "train",
     "objects": [
@@ -21,20 +21,21 @@
     "benchmarks": [
         {
             "name": "psnr",
-            "use_template": true
+            "use_template": false
         }
     ],
     "render_names": [
-        "vanilla"
+        "pano"
     ],
     "trainer_names": [
-        "vanilla"
+        "bg_first"
     ],
     "train_params_list": [
         {
             "name": "default",
             "saving_iterations": [
                 7000,
+                15000,
                 30000
             ]
         }
@@ -43,7 +44,7 @@
         "l1+ssim"
     ],
     "result_template": {
-        "name": "tab_3dgs_profile_{benchmark}_result",
+        "name": "tab_3dgs_profile_diff_pram_zzh_depth_{benchmark}_result",
         "type": "tab_json",
         "template": "3dgs_paper_mip360_{benchmark}",
         "path": "../doc/table/result/3dgs_profile/"

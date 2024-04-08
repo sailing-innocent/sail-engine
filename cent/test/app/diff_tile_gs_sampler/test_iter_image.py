@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 def test_sampler_2d():
     sampler = GaussianSampler()
     save_dir = "D:/workspace/data/result/tile_gs_sampler"
-    img_path = '../doc/latex/figure/asset/asset_zzh_logo.png'
+    img_path = '../doc/figure/asset/asset_zzh_logo.png'
     # read image
     target_img_np = cv.imread(img_path, cv.IMREAD_COLOR)
     # BGR -> RGB
