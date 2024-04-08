@@ -1,0 +1,25 @@
+@import '../styles/index.scss';
+
+
+.container {
+    @include my-font($normal-size);
+    margin: 0;
+    padding: 0;
+    padding-left: 0.20 * $paper-width;
+    padding-right: 0.05 * $paper-width;
+    display: flex;
+    align-items: center;
+
+    .avatar {
+        padding: 0;
+        flex-shrink: 1;
+        flex-grow: 0;
+    }
+
+    .description {
+        padding: 0;
+        flex-grow: 1;
+        flex-shrink: 0;
+        width: 450px;
+    }
+}

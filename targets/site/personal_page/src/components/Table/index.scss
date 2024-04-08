@@ -1,0 +1,8 @@
+@import '../styles/index.scss';
+
+.container {
+    .title {
+        @include my-font($h1-size);
+        font-weight: 600;
+    }
+}

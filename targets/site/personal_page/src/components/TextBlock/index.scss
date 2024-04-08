@@ -1,0 +1,24 @@
+@import '../styles/index.scss';
+
+.container {
+    @include my-font($normal-size);
+    margin: 0;
+    padding: 0;
+}
+
+.passage {
+    padding: 0;
+}
+
+.abstract {
+    @include abs-font($abs-size);
+    text-indent: 2em;
+    padding: 0;
+    padding-left: 0.12 * $paper-width;
+    padding-right: 0.12 * $paper-width;
+}
+
+.comment {
+    @include my-font($tag-size);
+    padding: 0;
+}

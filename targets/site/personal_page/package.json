@@ -1,27 +1,46 @@
 {
-  "name": "personal_page",
+  "name": "personal_page_dev_next",
   "version": "1.0.0",
-  "description": "My Personal Page Development",
-  "author": "ssailing-innocent",
+  "description": "",
+  "repository": "",
+  "author": "sailing-innocents",
   "license": "MIT",
-  "mode": "dev",
+  "mode": "development",
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server"
   },
-  "keywords": [],
-  "dependencies": {
-    "@types/react": "^18.2.74",
-    "classnames": "^2.5.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "sass-loader": "^14.1.1",
-    "style-loader": "^3.3.4",
-    "ts-loader": "^9.5.1",
-    "typescript": "^5.4.4",
-    "webpack": "^5.91.0",
+  "devDependencies": {
+    "@teamsupercell/typings-for-css-modules-loader": "^2.5.2",
+    "@types/node": "^20.4.8",
+    "@types/react": "^18.2.18",
+    "@types/react-dom": "^18.2.7",
+    "@types/react-router-dom": "^5.3.3",
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.8.1",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.3",
+    "node-sass": "^9.0.0",
+    "sass-loader": "^13.3.2",
+    "style-loader": "^3.3.3",
+    "ts-loader": "^9.4.4",
+    "typescript": "^5.1.6",
+    "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.0.4",
-    "zustand": "^4.5.2"
+    "webpack-dev-server": "^4.15.1",
+    "worker-loader": "^3.0.8"
+  },
+  "dependencies": {
+    "@webgpu/types": "^0.1.40",
+    "classnames": "^2.3.2",
+    "react": "^18.2.0",
+    "react-babylonjs": "^3.1.17",
+    "react-dom": "^18.2.0",
+    "react-katex": "^3.0.1",
+    "react-markdown": "^8.0.7",
+    "react-router-dom": "^6.14.2",
+    "remark-gfm": "^3.0.1",
+    "zustand": "^4.4.0"
   }
 }

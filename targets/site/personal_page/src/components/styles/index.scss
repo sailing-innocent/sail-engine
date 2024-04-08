@@ -1,0 +1,53 @@
+$bg-color: transparent;
+$font-color: rgba(50, 47, 59, 1.0);
+$paper-color: rgba(255, 254, 249, 0.6);
+$link-color: rgba(19, 72, 87, 1.0);
+$paper-width: 500px;
+$paper-height: $paper-width / 210px * 297px;
+$paper-gap: $paper-width / 10;
+$paper-padding: $paper-width / 20;
+$showcase-width: 800px;
+
+$tag-size: $paper-width / 100;
+$title-size: 3.5 * $tag-size;
+$h1-size: 3 * $tag-size;
+$h2-size: 2.5 * $tag-size;
+$abs-size: 2.2 * $tag-size;
+$normal-size: 2 * $tag-size;
+
+@mixin my-font($size: $normal-size) {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: $size;
+    font-weight: 400;
+    color: $font-color;
+}
+
+@mixin abs-font($size: $abs-size) {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: $size;
+    font-weight: 600;
+    color: $font-color;
+}
+
+@mixin code-font($size: $normal-size) {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: $size;
+    font-weight: 400;
+    color: $font-color;
+}
+
+@mixin link-font($size: $normal-size) {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: $size;
+    font-weight: 400;
+    font-stretch: narrower;
+    color: $link-color;
+}
+
+@mixin paper-element($height: 0.5 * $paper-width) {
+    flex-grow: 0;
+    flex-shrink: 0;
+    height: $height;
+    padding: $paper-padding;
+    background-color: $paper-color;
+}

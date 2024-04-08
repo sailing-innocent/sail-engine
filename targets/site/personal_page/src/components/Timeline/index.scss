@@ -1,0 +1,138 @@
+@import '../styles/index.scss';
+
+.container {
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+
+    .title {
+        @include my-font($h1-size);
+        font-weight: 600;
+    }
+
+    &.horizontal {
+        width: 100%;
+        height: 0.21 * $paper-height;
+        display: flex;
+        flex-direction: column;
+
+        .figure {
+            width: 100%;
+            flex-grow: 1;
+            flex-shrink: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+
+            .timeline {
+                width: 100%;
+                height: 0.02 * $paper-height;
+                z-index: 1;
+            }
+
+            .nodes {
+                position: relative;
+                flex-grow: 1;
+                flex-shrink: 1;
+                overflow: hidden;
+                z-index: 2;
+
+                .node {
+                    @include my-font($tag-size);
+                    position: absolute;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+
+                    .indicator {
+                        width: 2px;
+                        flex-grow: 1;
+                        flex-shrink: 1;
+                        background-color: black;
+                    }
+
+                    &.t {
+                        height: 60px;
+                    }
+
+                    &.b {
+                        height: 120px;
+                    }
+
+                    .content {
+                        text-align: center;
+                    }
+                }
+            }
+        }
+
+    }
+
+    &.vertical {
+        width: 100%;
+        height: $paper-height;
+
+        // background-color: brown;        
+        .figure {
+            @include my-font($tag-size);
+            width: 0.3 * $paper-width;
+            height: 0.9 * $paper-height;
+            display: flex;
+            flex-direction: row;
+
+            // background-color: gray;
+            .timeline {
+                // background-color: green;
+                height: 100%;
+                width: 0.03 * $paper-width;
+                z-index: 1;
+            }
+
+            .nodes {
+                position: relative;
+                flex-grow: 1;
+                flex-shrink: 1;
+                overflow: hidden;
+                z-index: 2;
+
+                .node {
+                    @include my-font($tag-size);
+                    position: absolute;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+
+                    // background-color: khaki;
+                    .indicator {
+                        height: 2px;
+                        width: 20px;
+                        flex-grow: 1;
+                        flex-shrink: 1;
+                        background-color: black;
+                    }
+
+                    &.r {
+                        width: 160px;
+                    }
+
+                    &.l {
+                        width: 80px;
+                    }
+
+                    .content {
+                        width: 80px;
+                        flex-grow: 0;
+                        flex-shrink: 0;
+                        text-align: center;
+                        padding: 80px 1px 80px 1px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                }
+            }
+        }
+    }
+}
