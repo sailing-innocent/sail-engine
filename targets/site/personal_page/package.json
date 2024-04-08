@@ -1,0 +1,27 @@
+{
+  "name": "personal_page",
+  "version": "1.0.0",
+  "description": "My Personal Page Development",
+  "author": "ssailing-innocent",
+  "license": "MIT",
+  "mode": "dev",
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack-dev-server"
+  },
+  "keywords": [],
+  "dependencies": {
+    "@types/react": "^18.2.74",
+    "classnames": "^2.5.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "sass-loader": "^14.1.1",
+    "style-loader": "^3.3.4",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.4",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4",
+    "zustand": "^4.5.2"
+  }
+}

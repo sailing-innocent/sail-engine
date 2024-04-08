@@ -1,2 +1,3 @@
-add_json_table("tab_3dgs_profile_psnr_result_nerf_blender")
+add_json_table("tab_3dgs_profile_diff_param_psnr_result_nerf_blender")
+add_json_table("tab_3dgs_profile_diff_train_psnr_result_mip360")
 -- add_json_table("tab_3dgs_profile_xyz_grad_psnr_result_nerf_blender")
