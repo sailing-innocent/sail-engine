@@ -50,7 +50,7 @@ class GaussianTrainer(TrainerBase):
         config: GaussianTrainerConfig):
         super().__init__(config)
 
-    def train(self, gaussians, dataset, renderer, loss_fn, params: GaussianVanillaTrainerParams):
+    def train(self, gaussians, dataset, renderer, loss_fn, params: GaussianZZHTrainerParams):
         process_log = GaussianTrainerProcessLog()
         iterations = params.max_iterations
         first_iter = 0
