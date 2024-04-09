@@ -13,4 +13,4 @@ class GaussianSHProcessor:
         campos = torch.from_numpy(camera.info.T.flatten()).float().cuda()
         dirs = gaussians.get_xyz - campos
         dirs = dirs / torch.norm(dirs, dim = -1, keepdim = True)
-        return eval_sh(gaussians.max_sh_degree, gaussians.get_features, dirs)
+        return eval_sh(gaussians.max_sh_degree, gaussians.get_features.transpose(1,2), dirs)
