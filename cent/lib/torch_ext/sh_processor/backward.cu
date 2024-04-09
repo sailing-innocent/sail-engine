@@ -3,6 +3,8 @@
 #include "config.h"
 #include <cooperative_groups.h>
 #include <cooperative_groups/reduce.h>
+
+#include <cstdio>
 namespace cg = cooperative_groups;
 
 // Backward pass for conversion of spherical harmonics to RGB for
@@ -16,8 +18,7 @@ __device__ void computeColorFromSH(
 	glm::vec3* dL_ddirs,
 	glm::vec3* dL_dshs) {
 	// Compute intermediate values, as it is done during forward
-	glm::vec3 dir = dirs[idx];
-	dir = dir / glm::length(dir);
+	glm::vec3 dir = dirs[idx];// dir is normalized
 	glm::vec3* sh = ((glm::vec3*)shs) + idx * max_coeffs;
 
 	// Use PyTorch rule for clamping: if clamping was applied,
@@ -151,6 +152,7 @@ void BACKWARD::eval_sh(
 	float* dL_dsh,
 	float* dL_ddir) {
 
+	// printf("P=%d, D=%d, M=%d\n", P, D, M);
 	eval_sh_CUDA<NUM_CHANNELS><<<(P + 255) / 256, 256>>>(
 		P, D, M,
 		shs,
@@ -159,4 +161,6 @@ void BACKWARD::eval_sh(
 		dL_dcolor,
 		dL_dsh,
 		dL_ddir);
+	// sync
+	cudaDeviceSynchronize();
 }

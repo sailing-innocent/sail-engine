@@ -26,6 +26,7 @@ EvalSHCUDA(
 	int P = shs.size(0);
 	auto float_opts = shs.options().dtype(torch::kFloat32);
 	torch::Tensor color = torch::full({P, 3}, 0.0, float_opts);
+
 	torch::Device device(torch::kCUDA);
 	torch::TensorOptions options(torch::kByte);
 	torch::Tensor geom_buffer = torch::empty({0}, options.device(device));

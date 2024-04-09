@@ -55,7 +55,9 @@ class _SHProcessor(torch.autograd.Function):
         return color
 
     @staticmethod
-    def backward(ctx, grad_color, _):
+    def backward(ctx, grad_color):
+        # print("backward")
+        # print(grad_color)
         settings = ctx.settings
         sh, dirs, geom_buffer = ctx.saved_tensors
 
@@ -66,7 +68,8 @@ class _SHProcessor(torch.autograd.Function):
             dirs,
             geom_buffer
         )
-
+        # print(dL_d_sh)
+        # print(dL_d_dirs)
         grads = (
             dL_d_sh,
             dL_d_dirs,

@@ -11,11 +11,10 @@ __device__ glm::vec3 computeColorFromSH(int idx, int deg, int max_coeffs, const 
 	// The implementation is loosely based on code for
 	// "Differentiable Point-Based Radiance Fields for
 	// Efficient View Synthesis" by Zhang et al. (2022)
-	glm::vec3 dir = dirs[idx];
-	dir = dir / glm::length(dir);
+	glm::vec3 dir = dirs[idx];// normalized
 	glm::vec3* sh = ((glm::vec3*)shs) + idx * max_coeffs;
 	glm::vec3 result = SH_C0 * sh[0];
-
+	// printf("%d: %f %f %f\n", idx, result.x, result.y, result.z);
 	if (deg > 0) {
 		float x = dir.x;
 		float y = dir.y;
@@ -45,6 +44,8 @@ __device__ glm::vec3 computeColorFromSH(int idx, int deg, int max_coeffs, const 
 		}
 	}
 	result += 0.5f;
+
+	// printf("%d: %f %f %f\n", idx, result.x, result.y, result.z);
 	// RGB colors are clamped to positive values. If values are
 	// clamped, we need to keep track of this for the backward pass.
 	clamped[3 * idx + 0] = (result.x < 0);
@@ -61,8 +62,8 @@ __global__ void eval_sh_CUDA(int P, int D, int M,
 							 bool* clamped,
 							 float* rgb) {
 	auto idx = cg::this_grid().thread_rank();
-	if (idx >= P)
-		return;
+	if (idx >= P) return;
+	// printf("idx: %d\n", idx);
 	glm::vec3 result = computeColorFromSH(idx, D, M, (glm::vec3*)dirs, shs, clamped);
 	rgb[idx * C + 0] = result.x;
 	rgb[idx * C + 1] = result.y;
@@ -81,4 +82,5 @@ void FORWARD::eval_sh(int P, int D, int M,
 		dirs,
 		clamped,
 		colors);
+	cudaDeviceSynchronize();
 }
