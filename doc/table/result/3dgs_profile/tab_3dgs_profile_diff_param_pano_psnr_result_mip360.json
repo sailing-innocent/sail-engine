@@ -1,1 +1,40 @@
-{"rows": ["3dgs ___high_bg_res_", "3dgs ___default_"], "cols": ["bicycle", "bonsai", "counter", "garden", "kitchen", "room", "stump", "average"], "data": [["23.58", "32.07", "29.69", "28.27", "31.81", "33.33", "26.69", "29.35"], ["23.57", "32.11", "29.75", "28.22", "31.75", "33.36", "26.57", "29.33"]], "caption": "3DGS Profile Results (psnr)", "label": ""}
+{
+    "rows": [
+        "3dgs ___high_bg_res_",
+        "3dgs ___default_"
+    ],
+    "cols": [
+        "bicycle",
+        "bonsai",
+        "counter",
+        "garden",
+        "kitchen",
+        "room",
+        "stump",
+        "average"
+    ],
+    "data": [
+        [
+            "23.58",
+            "32.07",
+            "29.69",
+            "28.27",
+            "31.81",
+            "33.33",
+            "26.69",
+            "29.35"
+        ],
+        [
+            "23.57",
+            "32.11",
+            "29.75",
+            "28.22",
+            "31.75",
+            "33.36",
+            "26.57",
+            "29.33"
+        ]
+    ],
+    "caption": "3DGS Profile Results (psnr)",
+    "label": ""
+}
