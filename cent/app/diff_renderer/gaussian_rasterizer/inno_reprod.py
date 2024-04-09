@@ -43,10 +43,10 @@ class GaussianRenderer:
         P = means_3d.shape[0]
         # just a place holder, requires its grad for trick
         screenspace_points = torch.zeros((P, 2), dtype=torch.float32, requires_grad=True, device="cuda")
-        try:
-            screenspace_points.retain_grad()
-        except:
-            pass
+        # try:
+        #     screenspace_points.retain_grad()
+        # except:
+        #     pass
         opacity = gaussians.get_opacity
         scales = gaussians.get_scaling
         rotations = gaussians.get_rotation
