@@ -9,6 +9,7 @@ def test_train():
     # f = "train_inno_reprod_vanilla"
     # f = "train_inno_torch_basic"
     # f = "train_inno_torch_vanilla"
-    f = "train_vanilla_mip360"
+    # f = "train_vanilla_mip360"
+    f = "train_split_vanilla"
     mission = Mission(f + ".json")
     mission.exec()

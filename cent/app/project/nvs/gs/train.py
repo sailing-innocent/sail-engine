@@ -14,6 +14,7 @@ from module.model.gaussian.vanilla import GaussianModel
 from app.diff_renderer.gaussian_rasterizer.vanilla import create_gaussian_renderer as create_vanilla_renderer 
 from app.diff_renderer.gaussian_rasterizer.inno_reprod import create_gaussian_renderer as create_inno_reprod_renderer
 from app.diff_renderer.gaussian_rasterizer.inno_torch import create_gaussian_renderer as create_inno_torch_renderer
+from app.diff_renderer.gaussian_rasterizer.split import create_gaussian_renderer as create_split_renderer
 
 class TrainGaussianProjectConfig(ProjectConfigBase):
     def __init__(self, env_config):
@@ -40,6 +41,7 @@ class TrainGaussianProject(ProjectBase):
             'vanilla': create_vanilla_renderer,
             # 'vanilla_ing': create_vanilla_ing_renderer,
             # 'reprod': create_reprod_renderer,
+            "split": create_split_renderer,
             "inno_reprod": create_inno_reprod_renderer,
             "inno_torch": create_inno_torch_renderer,
             # "reprod_noxyz": create_reprod_noxyz_renderer,
