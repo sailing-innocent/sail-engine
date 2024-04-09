@@ -67,11 +67,11 @@ class NVSDataset(BaseDataset):
         if self.indices is None:
             # init indices for first time
             self.indices = list(range(self.N))
+            shuffle_expr = "random" if shuffle else "sequential"
+            logger.info(f"returning {limit} pairs with {shuffle_expr}")
             if shuffle:
                 import random
                 random.shuffle(self.indices)
-        shuffle_expr = "random" if shuffle else "sequential"
-        logger.info(f"returning {limit} pairs with {shuffle_expr}")
         _pairs = self._cam_img_pairs.copy()
         return [_pairs[i] for i in self.indices[:limit]]
     
