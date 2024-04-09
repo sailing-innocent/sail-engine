@@ -10,9 +10,9 @@ std::tuple<
 EvalSHCUDA(
 	// input
 	const torch::Tensor& shs,
+	const torch::Tensor& dirs,
 	// params
-	const int P, int D, int M,
-	const torch::Tensor& dirs);
+	const int D);
 
 std::tuple<
 	torch::Tensor// dL_dsh

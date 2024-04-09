@@ -7,7 +7,7 @@ from torch.utils.cpp_extension import load
 _C = load(
     "sample_gaussians", [
         "lib/torch_ext/sh_processor/processor_wrapper.cpp",
-        "lib/torch_ext/sh_processor/processor.cu",
+        "lib/torch_ext/sh_processor/processor_wrapper.cu",
         "lib/torch_ext/sh_processor/processor_impl.cu",
         "lib/torch_ext/sh_processor/forward.cu",
         "lib/torch_ext/sh_processor/backward.cu"
@@ -40,6 +40,7 @@ class _SHProcessor(torch.autograd.Function):
         # Restructure arguments the way that the C++ lib expects them
         args = (
             sh,
+            settings.dirs,
             settings.sh_degree
         )
 
@@ -63,6 +64,7 @@ class _SHProcessor(torch.autograd.Function):
 
 class SHProcessorSettings(NamedTuple):
     sh_degree : int
+    dirs: torch.Tensor 
 
 class SHProcessor(nn.Module):
     def __init__(self, settings):

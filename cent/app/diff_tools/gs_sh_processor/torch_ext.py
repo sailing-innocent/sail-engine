@@ -1,0 +1,19 @@
+from lib.torch_ext.sh_processor import SHProcessor, SHProcessorSettings
+from module.utils.camera.basic import Camera
+
+import torch 
+
+class GaussianSHProcessor:
+    def __init__(self):
+        pass
+
+    def process(self, gaussians, camera: Camera):
+        sh = gaussians.get_sh
+        campos = torch.from_numpy(camera.info.T.flatten()).float().cuda()
+        dirs = gaussians.get_xyz - campos
+        sh_settings = SHProcessorSettings(
+            sh_degree = gaussians.active_sh_degree,
+            dirs = dirs
+        )
+        sh_processor = SHProcessor(sh_settings)
+        return sh_processor(sh)

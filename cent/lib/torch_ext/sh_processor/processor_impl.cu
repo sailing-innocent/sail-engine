@@ -27,10 +27,13 @@ CudaSHProcessor::GeometryState CudaSHProcessor::GeometryState::fromChunk(char*& 
 
 void CudaSHProcessor::SHProcessor::forward(
 	std::function<char*(size_t)> geom_buffer,
-	const int P, int D, int M,
+	// input
 	const float* shs,
 	const float* dirs,
-	float* color) {
+	// params
+	const int P, int D, int M,
+	// output
+	float* colors) {
 	size_t chunk_size = required<GeometryState>(P);
 	char* chunkptr = geom_buffer(chunk_size);
 	GeometryState geom_state = GeometryState::fromChunk(chunkptr, P);
@@ -51,7 +54,7 @@ void CudaSHProcessor::SHProcessor::backward(
 	const int P, int D, int M, int R,
 	const float* shs,
 	const float* dirs,
-	const float* color,
+	const float* colors,
 	// output
 	float* dL_dshs) {
 }

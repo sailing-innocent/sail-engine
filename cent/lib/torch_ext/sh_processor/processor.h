@@ -1,3 +1,4 @@
+#pragma once
 #ifndef CUDA_SH_PROCESSOR_H_INCLUDED
 #define CUDA_SH_PROCESSOR_H_INCLUDED
 
@@ -14,7 +15,7 @@ public:
 		// params
 		const int P, int D, int M,
 		// output
-		float* color);
+		float* colors);
 
 	static void backward(
 		char* geom_buffer,
@@ -24,8 +25,10 @@ public:
 		const int P, int D, int M, int R,
 		const float* shs,
 		const float* dirs,
-		const float* color,
+		const float* colors,
 		// output
 		float* dL_dshs);
-}
+};
 }// namespace CudaSHProcessor
+
+#endif// CUDA_SH_PROCESSOR_H_INCLUDED

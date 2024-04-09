@@ -16,4 +16,10 @@ struct GeometryState {
 	bool* clamped;
 	static GeometryState fromChunk(char*& chunk, size_t P);
 };
-};// namespace CudaSHProcessor
+template<typename T>
+size_t required(size_t P) {
+	char* size = nullptr;
+	T::fromChunk(size, P);
+	return ((size_t)size) + 128;
+}
+}// namespace CudaSHProcessor

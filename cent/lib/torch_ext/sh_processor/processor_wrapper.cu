@@ -20,28 +20,27 @@ std::tuple<
 EvalSHCUDA(
 	// input
 	const torch::Tensor& shs,
+	const torch::Tensor& dirs,
 	// params
-	const int P, int D, int M,
-	const torch::Tensor& dirs) {
+	const int D) {
+	int P = shs.size(0);
 	auto float_opts = shs.options().dtype(torch::kFloat32);
 	torch::Tensor color = torch::full({P, 3}, 0.0, float_opts);
 	torch::Device device(torch::kCUDA);
 	torch::TensorOptions options(torch::kByte);
 	torch::Tensor geom_buffer = torch::empty({0}, options.device(device));
 	std::function<char*(size_t)> geom_func = resizeFunctional(geom_buffer);
-
 	if (P != 0) {
 		int M = 0;
 		if (shs.size(0) != 0) {
 			M = shs.size(1);
 		}
-
 		CudaSHProcessor::SHProcessor::forward(
 			geom_func,
-			P, D, M,
 			shs.data_ptr<float>(),
-			color.data_ptr<float>(),
-			dirs.data_ptr<float>());
+			dirs.data_ptr<float>(),
+			P, D, M,
+			color.data_ptr<float>());
 	}
 
 	return std::make_tuple(color, geom_buffer);
@@ -58,4 +57,8 @@ EvalSHBackwardCUDA(
 	const torch::Tensor& shs,
 	const torch::Tensor& colors,
 	const torch::Tensor& dirs) {
+	auto float_opts = shs.options().dtype(torch::kFloat32);
+	torch::Tensor dL_dsh = torch::full({P, D, M}, 0.0, float_opts);
+
+	return std::make_tuple(dL_dsh);
 }

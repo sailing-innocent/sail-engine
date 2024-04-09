@@ -1,5 +1,6 @@
 #include "forward.h"
 #include "auxiliary.h"
+#include "config.h"
 #include <cooperative_groups.h>
 #include <cooperative_groups/reduce.h>
 namespace cg = cooperative_groups;
@@ -71,9 +72,9 @@ __global__ void eval_sh_CUDA(int P, int D, int M,
 void FORWARD::eval_sh(int P, int D, int M,
 					  const float* shs,
 					  const float* dirs,
-					  float* colors,
-					  bool* clamped) {
-	eval_sh_CUDA<<<(P + 255) / 256, 256>>>(
+					  bool* clamped,
+					  float* colors) {
+	eval_sh_CUDA<NUM_CHANNELS><<<(P + 255) / 256, 256>>>(
 		P, D, M,
 		shs,
 		dirs,

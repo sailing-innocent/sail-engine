@@ -23,7 +23,7 @@ namespace FORWARD {
 void eval_sh(int P, int D, int M,
 			 const float* shs,
 			 const float* dirs,
-			 float* colors,
-			 bool* clamped);
+			 bool* clamped,
+			 float* colors);
 }// namespace FORWARD
 #endif
