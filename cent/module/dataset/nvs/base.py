@@ -6,6 +6,7 @@ from typing import List
 
 from dataclasses import dataclass 
 import numpy as np 
+from loguru import logger 
 
 @dataclass 
 class CameraImagePair:
@@ -69,6 +70,7 @@ class NVSDataset(BaseDataset):
             if shuffle:
                 import random
                 random.shuffle(self.indices)
+        logger.info(f"returning {limit} pairs with {"random" if shuffle else "sequential"}")
         _pairs = self._cam_img_pairs.copy()
         return [_pairs[i] for i in self.indices[:limit]]
     
