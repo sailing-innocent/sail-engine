@@ -121,6 +121,8 @@ class _RasterizeGaussians(torch.autograd.Function):
             scales.contiguous().data_ptr(),
             rotations.contiguous().data_ptr()
         )
+        # clear ctx app
+        ctx.app = None 
 
         # for i in range(grad_out_color.shape[1]):
         #     for j in range(grad_out_color.shape[2]):
