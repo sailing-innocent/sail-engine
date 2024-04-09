@@ -39,5 +39,6 @@ class NVSEvalPipeline(NVSPipeline):
             save_dir = os.path.join(self.target_path, self.config.output_name)
         )
         result = self.evaluator.eval(self.dataset, model, renderer, params)
-        logger.info("eval result: ", result)
+        for metric_type in self.config.metric_types:
+            logger.info(f"{metric_type}: {result[metric_type]}")
         return result 
