@@ -3,6 +3,8 @@ from lib.inno.reprod_gs import GaussianRasterizationSettings, GaussianRasterizer
 
 import torch 
 
+rasterizer = GaussianRasterizer() 
+
 def create_gaussian_renderer(env_config):
     config = GaussianRendererConfig(env_config)
     return GaussianRenderer(config)
@@ -14,7 +16,6 @@ class GaussianRendererConfig:
 class GaussianRenderer:
     def __init__(self, config: GaussianRendererConfig):
         self.config = config
-        self.rasterizer = GaussianRasterizer() 
 
     def render(self, camera: Camera, gaussians, scale_modifier=1.0):
         # LC is col-major but numpy is row-major
@@ -52,7 +53,7 @@ class GaussianRenderer:
         rotations = gaussians.get_rotation
         features = gaussians.get_features
 
-        rendered_image, radii = self.rasterizer(
+        rendered_image, radii = rasterizer(
             means_3d = means_3d,
             means_2d = screenspace_points,
             features = features,
