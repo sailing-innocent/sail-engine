@@ -75,7 +75,6 @@ void FORWARD::eval_sh(int P, int D, int M,
 					  const float* dirs,
 					  bool* clamped,
 					  float* colors) {
-
 	eval_sh_CUDA<NUM_CHANNELS><<<(P + 255) / 256, 256>>>(
 		P, D, M,
 		shs,

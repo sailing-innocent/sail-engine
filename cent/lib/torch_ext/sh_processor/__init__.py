@@ -68,8 +68,6 @@ class _SHProcessor(torch.autograd.Function):
             dirs,
             geom_buffer
         )
-        # print(dL_d_sh)
-        # print(dL_d_dirs)
         grads = (
             dL_d_sh,
             dL_d_dirs,
