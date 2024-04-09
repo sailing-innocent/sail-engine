@@ -22,10 +22,12 @@ def cpu_deep_copy_tuple(input_tuple):
 
 def process_sh(
     sh,
+    dirs,
     settings,
 ):
     return _SHProcessor.apply(
         sh,
+        dirs,
         settings
     )
 
@@ -34,13 +36,14 @@ class _SHProcessor(torch.autograd.Function):
     def forward(
         ctx,
         sh,
+        dirs,
         settings,
     ):
 
         # Restructure arguments the way that the C++ lib expects them
         args = (
             sh,
-            settings.dirs,
+            dirs,
             settings.sh_degree
         )
 
@@ -48,15 +51,25 @@ class _SHProcessor(torch.autograd.Function):
         # Keep relevant tensors for backward
         ctx.settings = settings 
         ctx.save_for_backward(
-            sh, geom_buffer)
+            sh, dirs, geom_buffer)
         return color
 
     @staticmethod
     def backward(ctx, grad_color, _):
         settings = ctx.settings
-        sh, geom_buffer = ctx.saved_tensors
+        sh, dirs, geom_buffer = ctx.saved_tensors
+
+        dL_d_sh, dL_d_dirs = _C.backward(
+            grad_color,
+            settings.sh_degree,
+            sh,
+            dirs,
+            geom_buffer
+        )
+
         grads = (
-            None,
+            dL_d_sh,
+            dL_d_dirs,
             None,
         )
 
@@ -64,17 +77,17 @@ class _SHProcessor(torch.autograd.Function):
 
 class SHProcessorSettings(NamedTuple):
     sh_degree : int
-    dirs: torch.Tensor 
 
 class SHProcessor(nn.Module):
     def __init__(self, settings):
         super().__init__()
         self.settings = settings
 
-    def forward(self, shs):
+    def forward(self, shs, dirs):
         settings = self.settings
         # Invoke C++/CUDA sampleization routine
         return process_sh(
             shs,
+            dirs,
             settings
         )

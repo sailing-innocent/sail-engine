@@ -30,6 +30,7 @@ EvalSHCUDA(
 	torch::TensorOptions options(torch::kByte);
 	torch::Tensor geom_buffer = torch::empty({0}, options.device(device));
 	std::function<char*(size_t)> geom_func = resizeFunctional(geom_buffer);
+
 	if (P != 0) {
 		int M = 0;
 		if (shs.size(0) != 0) {
@@ -64,7 +65,7 @@ EvalSHBackwardCUDA(
 		M = shs.size(1);
 	}
 	auto float_opts = shs.options().dtype(torch::kFloat32);
-	torch::Tensor dL_dsh = torch::full({P, D, M}, 0.0, float_opts);
+	torch::Tensor dL_dsh = torch::full({P, M, 3}, 0.0, float_opts);
 	torch::Tensor dL_ddir = torch::full({P, 3}, 0.0, float_opts);
 	if (P != 0) {
 		CudaSHProcessor::SHProcessor::backward(
@@ -76,6 +77,5 @@ EvalSHBackwardCUDA(
 			dL_dsh.contiguous().data_ptr<float>(),
 			dL_ddir.contiguous().data_ptr<float>());
 	}
-
 	return std::make_tuple(dL_dsh, dL_ddir);
 }

@@ -13,7 +13,6 @@ class GaussianSHProcessor:
         dirs = gaussians.get_xyz - campos
         sh_settings = SHProcessorSettings(
             sh_degree = gaussians.active_sh_degree,
-            dirs = dirs
         )
         sh_processor = SHProcessor(sh_settings)
-        return sh_processor(sh)
+        return sh_processor(sh, dirs)

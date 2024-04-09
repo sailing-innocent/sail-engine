@@ -34,10 +34,12 @@ void CudaSHProcessor::SHProcessor::forward(
 	const int P, int D, int M,
 	// output
 	float* colors) {
+
 	size_t chunk_size = required<GeometryState>(P);
 	char* chunkptr = geom_buffer(chunk_size);
 	GeometryState geom_state = GeometryState::fromChunk(chunkptr, P);
 	// Run preprocessing per-Gaussian (transformation, bounding, conversion of SHs to RGB)
+
 	FORWARD::eval_sh(
 		P, D, M,
 		shs,
