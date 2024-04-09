@@ -8,10 +8,7 @@ from app.diff_renderer.gaussian_rasterizer.vanilla import create_gaussian_render
 from app.diff_renderer.gaussian_rasterizer.inno_reprod import create_gaussian_renderer as create_inno_reprod_renderer
 from app.diff_renderer.gaussian_rasterizer.inno_split import create_gaussian_renderer as create_inno_split_renderer
 from app.diff_renderer.gaussian_rasterizer.inno_torch import create_gaussian_renderer as create_inno_torch_renderer
-from app.diff_renderer.gaussian_rasterizer.pano import create_gaussian_renderer as create_pano_renderer
-
-# from app.renderer.gaussian_rasterizer.inno_zzh import create_gaussian_renderer as 
-# from app.renderer.gaussian_rasterizer.inno_split import create_gaussian_renderer as create_inno_split_renderer
+from app.diff_renderer.gaussian_rasterizer.split import create_gaussian_renderer as create_split_renderer
 
 # scene
 from module.data.point_cloud import sphere_point_cloud
@@ -50,7 +47,7 @@ class EvalGaussianProject(ProjectBase):
             "inno_reprod": create_inno_reprod_renderer,
             "inno_split": create_inno_split_renderer,
             "inno_torch": create_inno_torch_renderer,
-            "pano": create_pano_renderer,
+            "split": create_split_renderer,
             'vanilla': create_vanilla_renderer
         }
 
@@ -92,7 +89,7 @@ class EvalGaussianProject(ProjectBase):
         params = self.params
         theta = 2 * np.pi / 180 * 0
         camera = Camera("FlipY")
-        camera.lookat(2 * np.array([np.cos(theta), np.sin(theta), 1]), np.array([0, 0, 0]))
+        camera.lookat(3 * np.array([np.cos(theta), np.sin(theta), 1]), np.array([0, 0, 0]))
         if params.scene["type"] == "ckpt":
             ckpt = params.scene["ckpt_path"]
             self.model.load_ply(ckpt)

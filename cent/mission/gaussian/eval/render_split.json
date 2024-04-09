@@ -1,0 +1,14 @@
+{
+    "name": "gaussian_eval_split",
+    "render_name": "split",
+    "usage": "render",
+    "scenes": [
+        {
+            "type": "ckpt",
+            "dataset_name": "nerf_blender",
+            "obj_name": "lego",
+            "ckpt_path": "gaussian",
+            "iter": 30000
+        }
+    ]
+}

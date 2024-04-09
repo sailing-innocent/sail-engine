@@ -10,7 +10,7 @@
  */
 
 #include "config.h"
-#include "rasterizer.h"
+#include "sampler.h"
 #include <cstdio>
 #include <cuda_runtime_api.h>
 #include <fstream>
@@ -34,7 +34,7 @@ std::function<char*(size_t N)> resizeFunctional(torch::Tensor& t) {
 
 std::tuple<int, torch::Tensor, torch::Tensor, torch::Tensor, torch::Tensor,
 		   torch::Tensor>
-RasterizeGaussiansCUDA(
+SampleGaussiansCUDA(
 	const torch::Tensor& background, const torch::Tensor& means3D,
 	const torch::Tensor& colors, const torch::Tensor& opacity,
 	const torch::Tensor& scales, const torch::Tensor& rotations,
@@ -94,7 +94,7 @@ RasterizeGaussiansCUDA(
 
 std::tuple<torch::Tensor, torch::Tensor, torch::Tensor, torch::Tensor,
 		   torch::Tensor, torch::Tensor, torch::Tensor, torch::Tensor>
-RasterizeGaussiansBackwardCUDA(
+SampleGaussiansBackwardCUDA(
 	const torch::Tensor& background, const torch::Tensor& means3D,
 	const torch::Tensor& radii, const torch::Tensor& colors,
 	const torch::Tensor& scales, const torch::Tensor& rotations,

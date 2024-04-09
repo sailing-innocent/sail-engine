@@ -29,7 +29,7 @@ def sample_gaussians(
     scales,
     rotations,
     cov3Ds_precomp,
-    raster_settings,
+    sample_settings,
 ):
     return _SampleGaussians.apply(
         means3D,
@@ -40,7 +40,7 @@ def sample_gaussians(
         scales,
         rotations,
         cov3Ds_precomp,
-        raster_settings,
+        sample_settings,
     )
 
 class _SampleGaussians(torch.autograd.Function):
@@ -55,34 +55,34 @@ class _SampleGaussians(torch.autograd.Function):
         scales,
         rotations,
         cov3Ds_precomp,
-        raster_settings,
+        sample_settings,
     ):
 
         # Restructure arguments the way that the C++ lib expects them
         args = (
-            raster_settings.bg, 
+            sample_settings.bg, 
             means3D,
             colors_precomp,
             opacities,
             scales,
             rotations,
-            raster_settings.scale_modifier,
+            sample_settings.scale_modifier,
             cov3Ds_precomp,
-            raster_settings.viewmatrix,
-            raster_settings.projmatrix,
-            raster_settings.tanfovx,
-            raster_settings.tanfovy,
-            raster_settings.image_height,
-            raster_settings.image_width,
+            sample_settings.viewmatrix,
+            sample_settings.projmatrix,
+            sample_settings.tanfovx,
+            sample_settings.tanfovy,
+            sample_settings.image_height,
+            sample_settings.image_width,
             sh,
-            raster_settings.sh_degree,
-            raster_settings.campos,
-            raster_settings.prefiltered,
-            raster_settings.debug
+            sample_settings.sh_degree,
+            sample_settings.campos,
+            sample_settings.prefiltered,
+            sample_settings.debug
         )
 
         # Invoke C++/CUDA sampler
-        if raster_settings.debug:
+        if sample_settings.debug:
             cpu_args = cpu_deep_copy_tuple(args) # Copy them before they can be corrupted
             try:
                 num_rendered, color, radii, geomBuffer, binningBuffer, imgBuffer = _C.forward(*args)
@@ -94,7 +94,7 @@ class _SampleGaussians(torch.autograd.Function):
             num_rendered, color, radii, geomBuffer, binningBuffer, imgBuffer = _C.forward(*args)
 
         # Keep relevant tensors for backward
-        ctx.raster_settings = raster_settings
+        ctx.sample_settings = sample_settings
         ctx.num_rendered = num_rendered
         ctx.save_for_backward(
             colors_precomp, means3D, scales, 
@@ -109,35 +109,35 @@ class _SampleGaussians(torch.autograd.Function):
 
         # Restore necessary values from context
         num_rendered = ctx.num_rendered
-        raster_settings = ctx.raster_settings
+        sample_settings = ctx.sample_settings
         colors_precomp, means3D, scales, rotations, cov3Ds_precomp, radii, sh, geomBuffer, binningBuffer, imgBuffer = ctx.saved_tensors
 
         # Restructure args as C++ method expects them
-        args = (raster_settings.bg,
+        args = (sample_settings.bg,
                 means3D, 
                 radii, 
                 colors_precomp, 
                 scales, 
                 rotations, 
-                raster_settings.scale_modifier, 
+                sample_settings.scale_modifier, 
                 cov3Ds_precomp, 
-                raster_settings.viewmatrix, 
-                raster_settings.projmatrix, 
-                raster_settings.tanfovx, 
-                raster_settings.tanfovy, 
+                sample_settings.viewmatrix, 
+                sample_settings.projmatrix, 
+                sample_settings.tanfovx, 
+                sample_settings.tanfovy, 
                 grad_out_color, 
                 # psedo_grad,
                 sh, 
-                raster_settings.sh_degree, 
-                raster_settings.campos,
+                sample_settings.sh_degree, 
+                sample_settings.campos,
                 geomBuffer,
                 num_rendered,
                 binningBuffer,
                 imgBuffer,
-                raster_settings.debug)
+                sample_settings.debug)
 
         # Compute gradients for relevant tensors by invoking backward method
-        if raster_settings.debug:
+        if sample_settings.debug:
             cpu_args = cpu_deep_copy_tuple(args) # Copy them before they can be corrupted
             try:
                 grad_means2D, grad_colors_precomp, grad_opacities, grad_means3D, grad_cov3Ds_precomp, grad_sh, grad_scales, grad_rotations = _C.backward(*args)
@@ -169,7 +169,7 @@ class _SampleGaussians(torch.autograd.Function):
 
         return grads
 
-class GaussianRasterizationSettings(NamedTuple):
+class GaussianSampleSettings(NamedTuple):
     image_height: int
     image_width: int 
     tanfovx : float
@@ -184,24 +184,24 @@ class GaussianRasterizationSettings(NamedTuple):
     debug : bool
 
 class GaussianSampler(nn.Module):
-    def __init__(self, raster_settings):
+    def __init__(self, sample_settings):
         super().__init__()
-        self.raster_settings = raster_settings
+        self.sample_settings = sample_settings
 
     def markVisible(self, positions):
         # Mark visible points (based on frustum culling for camera) with a boolean 
         with torch.no_grad():
-            raster_settings = self.raster_settings
+            sample_settings = self.sample_settings
             visible = _C.mark_visible(
                 positions,
-                raster_settings.viewmatrix,
-                raster_settings.projmatrix)
+                sample_settings.viewmatrix,
+                sample_settings.projmatrix)
             
         return visible
 
     def forward(self, means3D, means2D, opacities, shs = None, colors_precomp = None, scales = None, rotations = None, cov3D_precomp = None):
         
-        raster_settings = self.raster_settings
+        sample_settings = self.sample_settings
 
         if (shs is None and colors_precomp is None) or (shs is not None and colors_precomp is not None):
             raise Exception('Please provide excatly one of either SHs or precomputed colors!')
@@ -221,7 +221,7 @@ class GaussianSampler(nn.Module):
         if cov3D_precomp is None:
             cov3D_precomp = torch.Tensor([])
 
-        # Invoke C++/CUDA rasterization routine
+        # Invoke C++/CUDA sampleization routine
         return sample_gaussians(
             means3D,
             means2D,
@@ -231,6 +231,6 @@ class GaussianSampler(nn.Module):
             scales, 
             rotations,
             cov3D_precomp,
-            raster_settings, 
+            sample_settings, 
         )
 
