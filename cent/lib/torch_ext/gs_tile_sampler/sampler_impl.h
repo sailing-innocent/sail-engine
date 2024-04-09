@@ -20,15 +20,12 @@ struct GeometryState {
 	size_t scan_size;
 	float* depths;
 	char* scanning_space;
-	bool* clamped;
 	int* internal_radii;
 	float2* means2D;
 	float* cov3D;
 	float4* conic_opacity;
-	float* rgb;
 	uint32_t* point_offsets;
 	uint32_t* tiles_touched;
-
 	static GeometryState fromChunk(char*& chunk, size_t P);
 };
 

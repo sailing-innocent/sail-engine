@@ -133,12 +133,10 @@ void CudaSampler::Sampler::markVisible(
 CudaSampler::GeometryState CudaSampler::GeometryState::fromChunk(char*& chunk, size_t P) {
 	GeometryState geom;
 	obtain(chunk, geom.depths, P, 128);
-	obtain(chunk, geom.clamped, P * 3, 128);
 	obtain(chunk, geom.internal_radii, P, 128);
 	obtain(chunk, geom.means2D, P, 128);
 	obtain(chunk, geom.cov3D, P * 6, 128);
 	obtain(chunk, geom.conic_opacity, P, 128);
-	obtain(chunk, geom.rgb, P * 3, 128);
 	obtain(chunk, geom.tiles_touched, P, 128);
 	cub::DeviceScan::InclusiveSum(nullptr, geom.scan_size, geom.tiles_touched, geom.tiles_touched, P);
 	obtain(chunk, geom.scanning_space, geom.scan_size, 128);
@@ -174,12 +172,11 @@ int CudaSampler::Sampler::forward(
 	std::function<char*(size_t)> geometryBuffer,
 	std::function<char*(size_t)> binningBuffer,
 	std::function<char*(size_t)> imageBuffer,
-	const int P, int D, int M,
+	const int P,
 	const float* background,
 	const int width, int height,
 	const float* means3D,
-	const float* shs,
-	const float* colors_precomp,
+	const float* colors,
 	const float* opacities,
 	const float* scales,
 	const float scale_modifier,
@@ -187,7 +184,6 @@ int CudaSampler::Sampler::forward(
 	const float* cov3D_precomp,
 	const float* viewmatrix,
 	const float* projmatrix,
-	const float* cam_pos,
 	const float tan_fovx, float tan_fovy,
 	const bool prefiltered,
 	float* out_color,
@@ -211,25 +207,16 @@ int CudaSampler::Sampler::forward(
 	size_t img_chunk_size = required<ImageState>(width * height);
 	char* img_chunkptr = imageBuffer(img_chunk_size);
 	ImageState imgState = ImageState::fromChunk(img_chunkptr, width * height);
-
-	if (NUM_CHANNELS != 3 && colors_precomp == nullptr) {
-		throw std::runtime_error("For non-RGB, provide precomputed Gaussian colors!");
-	}
-
 	// Run preprocessing per-Gaussian (transformation, bounding, conversion of SHs to RGB)
 	CHECK_CUDA(FORWARD::preprocess(
-				   P, D, M,
+				   P,
 				   means3D,
 				   (glm::vec3*)scales,
 				   scale_modifier,
 				   (glm::vec4*)rotations,
 				   opacities,
-				   shs,
-				   geomState.clamped,
 				   cov3D_precomp,
-				   colors_precomp,
 				   viewmatrix, projmatrix,
-				   (glm::vec3*)cam_pos,
 				   width, height,
 				   focal_x, focal_y,
 				   tan_fovx, tan_fovy,
@@ -237,7 +224,6 @@ int CudaSampler::Sampler::forward(
 				   geomState.means2D,
 				   geomState.depths,
 				   geomState.cov3D,
-				   geomState.rgb,
 				   geomState.conic_opacity,
 				   tile_grid,
 				   geomState.tiles_touched,
@@ -291,7 +277,7 @@ int CudaSampler::Sampler::forward(
 	CHECK_CUDA(, debug)
 
 	// Let each tile blend its range of Gaussians independently in parallel
-	const float* feature_ptr = colors_precomp != nullptr ? colors_precomp : geomState.rgb;
+	const float* feature_ptr = colors;
 	CHECK_CUDA(FORWARD::render(
 				   tile_grid, block,
 				   imgState.ranges,
@@ -312,19 +298,17 @@ int CudaSampler::Sampler::forward(
 // Produce necessary gradients for optimization, corresponding
 // to forward render pass
 void CudaSampler::Sampler::backward(
-	const int P, int D, int M, int R,
+	const int P, int R,
 	const float* background,
 	const int width, int height,
 	const float* means3D,
-	const float* shs,
-	const float* colors_precomp,
+	const float* colors,
 	const float* scales,
 	const float scale_modifier,
 	const float* rotations,
 	const float* cov3D_precomp,
 	const float* viewmatrix,
 	const float* projmatrix,
-	const float* campos,
 	const float tan_fovx, float tan_fovy,
 	const int* radii,
 	char* geom_buffer,
@@ -337,7 +321,6 @@ void CudaSampler::Sampler::backward(
 	float* dL_dcolor,
 	float* dL_dmean3D,
 	float* dL_dcov3D,
-	float* dL_dsh,
 	float* dL_dscale,
 	float* dL_drot,
 	bool debug) {
@@ -357,8 +340,7 @@ void CudaSampler::Sampler::backward(
 
 	// Compute loss gradients w.r.t. 2D mean position, conic matrix,
 	// opacity and RGB of Gaussians from per-pixel loss gradients.
-	// If we were given precomputed colors and not SHs, use them.
-	const float* color_ptr = (colors_precomp != nullptr) ? colors_precomp : geomState.rgb;
+	const float* color_ptr = colors;
 	CHECK_CUDA(BACKWARD::render(
 				   tile_grid,
 				   block,
@@ -382,11 +364,9 @@ void CudaSampler::Sampler::backward(
 	// given to us or a scales/rot pair? If precomputed, pass that. If not,
 	// use the one we computed ourselves.
 	const float* cov3D_ptr = (cov3D_precomp != nullptr) ? cov3D_precomp : geomState.cov3D;
-	CHECK_CUDA(BACKWARD::preprocess(P, D, M,
+	CHECK_CUDA(BACKWARD::preprocess(P,
 									(float3*)means3D,
 									radii,
-									shs,
-									geomState.clamped,
 									(glm::vec3*)scales,
 									(glm::vec4*)rotations,
 									scale_modifier,
@@ -395,13 +375,11 @@ void CudaSampler::Sampler::backward(
 									projmatrix,
 									focal_x, focal_y,
 									tan_fovx, tan_fovy,
-									(glm::vec3*)campos,
 									(float3*)dL_dmean2D,
 									dL_dconic,
 									(glm::vec3*)dL_dmean3D,
 									dL_dcolor,
 									dL_dcov3D,
-									dL_dsh,
 									(glm::vec3*)dL_dscale,
 									(glm::vec4*)dL_drot),
 			   debug)

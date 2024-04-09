@@ -23,7 +23,6 @@ def cpu_deep_copy_tuple(input_tuple):
 def sample_gaussians(
     means3D,
     means2D,
-    sh,
     colors_precomp,
     opacities,
     scales,
@@ -34,7 +33,6 @@ def sample_gaussians(
     return _SampleGaussians.apply(
         means3D,
         means2D,
-        sh,
         colors_precomp,
         opacities,
         scales,
@@ -49,7 +47,6 @@ class _SampleGaussians(torch.autograd.Function):
         ctx,
         means3D,
         means2D,
-        sh,
         colors_precomp,
         opacities,
         scales,
@@ -74,9 +71,6 @@ class _SampleGaussians(torch.autograd.Function):
             sample_settings.tanfovy,
             sample_settings.image_height,
             sample_settings.image_width,
-            sh,
-            sample_settings.sh_degree,
-            sample_settings.campos,
             sample_settings.prefiltered,
             sample_settings.debug
         )
@@ -99,7 +93,7 @@ class _SampleGaussians(torch.autograd.Function):
         ctx.save_for_backward(
             colors_precomp, means3D, scales, 
             rotations, cov3Ds_precomp, radii, 
-            sh, geomBuffer, binningBuffer, imgBuffer)
+            geomBuffer, binningBuffer, imgBuffer)
         return color, radii
 
     @staticmethod
@@ -110,7 +104,7 @@ class _SampleGaussians(torch.autograd.Function):
         # Restore necessary values from context
         num_rendered = ctx.num_rendered
         sample_settings = ctx.sample_settings
-        colors_precomp, means3D, scales, rotations, cov3Ds_precomp, radii, sh, geomBuffer, binningBuffer, imgBuffer = ctx.saved_tensors
+        colors_precomp, means3D, scales, rotations, cov3Ds_precomp, radii, geomBuffer, binningBuffer, imgBuffer = ctx.saved_tensors
 
         # Restructure args as C++ method expects them
         args = (sample_settings.bg,
@@ -126,10 +120,6 @@ class _SampleGaussians(torch.autograd.Function):
                 sample_settings.tanfovx, 
                 sample_settings.tanfovy, 
                 grad_out_color, 
-                # psedo_grad,
-                sh, 
-                sample_settings.sh_degree, 
-                sample_settings.campos,
                 geomBuffer,
                 num_rendered,
                 binningBuffer,
@@ -140,25 +130,17 @@ class _SampleGaussians(torch.autograd.Function):
         if sample_settings.debug:
             cpu_args = cpu_deep_copy_tuple(args) # Copy them before they can be corrupted
             try:
-                grad_means2D, grad_colors_precomp, grad_opacities, grad_means3D, grad_cov3Ds_precomp, grad_sh, grad_scales, grad_rotations = _C.backward(*args)
+                grad_means2D, grad_colors_precomp, grad_opacities, grad_means3D, grad_cov3Ds_precomp, grad_scales, grad_rotations = _C.backward(*args)
             except Exception as ex:
                 torch.save(cpu_args, "snapshot_bw.dump")
                 print("\nAn error occured in backward. Writing snapshot_bw.dump for debugging.\n")
                 raise ex
         else:
-             grad_means2D, grad_colors_precomp, grad_opacities, grad_means3D, grad_cov3Ds_precomp, grad_sh, grad_scales, grad_rotations = _C.backward(*args)
-
-        # print(grad_sh[:10])
-        # print(grad_opacities[:10])
-        # print(grad_means2D[:10])
-        # print(grad_means3D[:10])
-        # print(grad_scales[:10])
-        # print(grad_rotations[:10])
+             grad_means2D, grad_colors_precomp, grad_opacities, grad_means3D, grad_cov3Ds_precomp, grad_scales, grad_rotations = _C.backward(*args)
 
         grads = (
             grad_means3D,
             grad_means2D,
-            grad_sh,
             grad_colors_precomp,
             grad_opacities,
             grad_scales,
@@ -178,8 +160,6 @@ class GaussianSampleSettings(NamedTuple):
     scale_modifier : float
     viewmatrix : torch.Tensor
     projmatrix : torch.Tensor
-    sh_degree : int
-    campos : torch.Tensor
     prefiltered : bool
     debug : bool
 
@@ -199,21 +179,13 @@ class GaussianSampler(nn.Module):
             
         return visible
 
-    def forward(self, means3D, means2D, opacities, shs = None, colors_precomp = None, scales = None, rotations = None, cov3D_precomp = None):
+    def forward(self, means3D, means2D, opacities, colors_precomp = None, scales = None, rotations = None, cov3D_precomp = None):
         
         sample_settings = self.sample_settings
 
-        if (shs is None and colors_precomp is None) or (shs is not None and colors_precomp is not None):
-            raise Exception('Please provide excatly one of either SHs or precomputed colors!')
-        
         if ((scales is None or rotations is None) and cov3D_precomp is None) or ((scales is not None or rotations is not None) and cov3D_precomp is not None):
             raise Exception('Please provide exactly one of either scale/rotation pair or precomputed 3D covariance!')
         
-        if shs is None:
-            shs = torch.Tensor([])
-        if colors_precomp is None:
-            colors_precomp = torch.Tensor([])
-
         if scales is None:
             scales = torch.Tensor([])
         if rotations is None:
@@ -225,7 +197,6 @@ class GaussianSampler(nn.Module):
         return sample_gaussians(
             means3D,
             means2D,
-            shs,
             colors_precomp,
             opacities,
             scales, 

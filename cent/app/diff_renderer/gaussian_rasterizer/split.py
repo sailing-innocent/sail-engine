@@ -34,8 +34,6 @@ class GaussianRenderer:
         fovy = camera.info.FovY
         tanfovx = np.tan(0.5 * fovx)
         tanfovy = np.tan(0.5 * fovy)
-        campos = torch.from_numpy(camera.info.T).float().cuda()
-        
         if self.config.white_bkgd:
             bg_color = torch.tensor([1, 1, 1], dtype=torch.float32, device="cuda")
         else:
@@ -50,15 +48,12 @@ class GaussianRenderer:
             scale_modifier = 1,
             viewmatrix = view_mat,
             projmatrix = proj_mat,
-            sh_degree = gaussians.active_sh_degree,
-            campos = campos,
             prefiltered = False,
             debug = False
         )
 
         rasterizer = GaussianSampler(sample_settings=settings)
         sh_processor = GaussianSHProcessor()
-
         means_3d = gaussians.get_xyz
         screenspace_points = torch.zeros_like(gaussians.get_xyz, dtype=gaussians.get_xyz.dtype, requires_grad=True, device="cuda") + 0
         try:
@@ -76,7 +71,6 @@ class GaussianRenderer:
         rendered_image, radii = rasterizer(
             means3D = means_3d,
             means2D = means_2d,
-            shs = None,
             colors_precomp = colors_precomp,
             opacities = opacity,
             scales = scales,
