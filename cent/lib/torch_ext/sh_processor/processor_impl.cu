@@ -51,10 +51,20 @@ void CudaSHProcessor::SHProcessor::backward(
 	// input
 	const float* dL_dcolor,
 	// params
-	const int P, int D, int M, int R,
+	const int P, int D, int M,
 	const float* shs,
 	const float* dirs,
-	const float* colors,
 	// output
-	float* dL_dshs) {
+	float* dL_dshs,
+	float* dL_ddirs) {
+	GeometryState geom_state = GeometryState::fromChunk(geom_buffer, P);
+
+	BACKWARD::eval_sh(
+		P, D, M,
+		shs,
+		dirs,
+		geom_state.clamped,
+		dL_dcolor,
+		dL_dshs,
+		dL_ddirs);
 }

@@ -22,12 +22,12 @@ public:
 		// input
 		const float* dL_dcolor,
 		// params
-		const int P, int D, int M, int R,
+		const int P, int D, int M,
 		const float* shs,
 		const float* dirs,
-		const float* colors,
 		// output
-		float* dL_dshs);
+		float* dL_dshs,
+		float* dL_ddirs);
 };
 }// namespace CudaSHProcessor
 

@@ -15,16 +15,17 @@ EvalSHCUDA(
 	const int D);
 
 std::tuple<
-	torch::Tensor// dL_dsh
+	torch::Tensor,// dL_dsh
+	torch::Tensor // dL_ddir
 	>
 EvalSHBackwardCUDA(
 	// input
 	const torch::Tensor& dL_dcolor,
 	// params
-	const int P, int D, int M,
+	const int D,
 	const torch::Tensor& shs,
-	const torch::Tensor& colors,
-	const torch::Tensor& dirs);
+	const torch::Tensor& dirs,
+	const torch::Tensor& geom_buffer);
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
 	m.def("forward", &EvalSHCUDA);

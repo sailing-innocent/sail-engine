@@ -37,28 +37,45 @@ EvalSHCUDA(
 		}
 		CudaSHProcessor::SHProcessor::forward(
 			geom_func,
-			shs.data_ptr<float>(),
-			dirs.data_ptr<float>(),
+			shs.contiguous().data_ptr<float>(),
+			dirs.contiguous().data_ptr<float>(),
 			P, D, M,
-			color.data_ptr<float>());
+			color.contiguous().data_ptr<float>());
 	}
 
 	return std::make_tuple(color, geom_buffer);
 }
 
 std::tuple<
-	torch::Tensor// dL_dsh
+	torch::Tensor,// dL_dsh
+	torch::Tensor // dL_ddir
 	>
 EvalSHBackwardCUDA(
 	// input
 	const torch::Tensor& dL_dcolor,
 	// params
-	const int P, int D, int M,
+	const int D,
 	const torch::Tensor& shs,
-	const torch::Tensor& colors,
-	const torch::Tensor& dirs) {
+	const torch::Tensor& dirs,
+	const torch::Tensor& geom_buffer) {
+	const int P = shs.size(0);
+	int M = 0;
+	if (shs.size(0) != 0) {
+		M = shs.size(1);
+	}
 	auto float_opts = shs.options().dtype(torch::kFloat32);
 	torch::Tensor dL_dsh = torch::full({P, D, M}, 0.0, float_opts);
+	torch::Tensor dL_ddir = torch::full({P, 3}, 0.0, float_opts);
+	if (P != 0) {
+		CudaSHProcessor::SHProcessor::backward(
+			reinterpret_cast<char*>(geom_buffer.contiguous().data_ptr()),
+			dL_dcolor.contiguous().data_ptr<float>(),
+			P, D, M,
+			shs.contiguous().data_ptr<float>(),
+			dirs.contiguous().data_ptr<float>(),
+			dL_dsh.contiguous().data_ptr<float>(),
+			dL_ddir.contiguous().data_ptr<float>());
+	}
 
-	return std::make_tuple(dL_dsh);
+	return std::make_tuple(dL_dsh, dL_ddir);
 }

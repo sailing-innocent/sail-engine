@@ -1,5 +1,7 @@
 from module.utils.camera.basic import Camera
 from lib.torch_ext.gs_tile_sampler import GaussianSampleSettings, GaussianSampler
+
+from app.diff_tools.gs_sh_processor.torch_ext import GaussianSHProcessor
 import numpy as np
 import torch 
 
@@ -55,6 +57,7 @@ class GaussianRenderer:
         )
 
         rasterizer = GaussianSampler(sample_settings=settings)
+        sh_processor = GaussianSHProcessor()
 
         means_3d = gaussians.get_xyz
         screenspace_points = torch.zeros_like(gaussians.get_xyz, dtype=gaussians.get_xyz.dtype, requires_grad=True, device="cuda") + 0
@@ -67,15 +70,13 @@ class GaussianRenderer:
         opacity = gaussians.get_opacity
         scales = gaussians.get_scaling
         rotations = gaussians.get_rotation
-        shs = gaussians.get_features
-        # print(shs.shape)
-
-        colors_precomp = None
         
+        colors_precomp = sh_processor.process(gaussians, camera)
+
         rendered_image, radii = rasterizer(
             means3D = means_3d,
             means2D = means_2d,
-            shs = shs,
+            shs = None,
             colors_precomp = colors_precomp,
             opacities = opacity,
             scales = scales,

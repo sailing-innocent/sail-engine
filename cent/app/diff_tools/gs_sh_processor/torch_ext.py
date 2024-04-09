@@ -8,7 +8,7 @@ class GaussianSHProcessor:
         pass
 
     def process(self, gaussians, camera: Camera):
-        sh = gaussians.get_sh
+        sh = gaussians.get_features
         campos = torch.from_numpy(camera.info.T.flatten()).float().cuda()
         dirs = gaussians.get_xyz - campos
         sh_settings = SHProcessorSettings(
