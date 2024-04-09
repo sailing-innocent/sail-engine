@@ -165,9 +165,6 @@ void ReprodGS::compile_backward_preprocess_shader(Device& device) noexcept {
 		dL_d_cov2d.x = det_inv_2 * (-c * c * dL_d_con.x + 2 * b * c * dL_d_con.y - b * b * dL_d_con.z);
 		dL_d_cov2d.z = det_inv_2 * (-b * b * dL_d_con.x + 2 * a * b * dL_d_con.y - a * a * dL_d_con.z);
 		dL_d_cov2d.y = det_inv_2 * 2 * (b * c * dL_d_con.x - (a * c + b * b) * dL_d_con.y + a * b * dL_d_con.z);
-		// $if(idx < 10) {
-		// 	device_log("dL_d_cov2d: {}", dL_d_cov2d);
-		// };
 
 		// dL_d_cov_3d -> dL_d_cov3d
 		Float3x3 dL_d_cov3d = make_float3x3(0.0f);
@@ -203,7 +200,6 @@ void ReprodGS::compile_backward_preprocess_shader(Device& device) noexcept {
 		// $if(idx < 10) {
 		// 	device_log("R: {}", R);
 		// };
-
 		// write out
 		dL_d_scale.write(3 * idx + 0, dL_ds.x);
 		dL_d_scale.write(3 * idx + 1, dL_ds.y);
@@ -214,9 +210,6 @@ void ReprodGS::compile_backward_preprocess_shader(Device& device) noexcept {
 		dL_d_rotq.write(4 * idx + 1, dL_dqvec.x);
 		dL_d_rotq.write(4 * idx + 2, dL_dqvec.y);
 		dL_d_rotq.write(4 * idx + 3, dL_dqvec.z);
-		// dL_d_xyz.write(3 * idx + 0, dL_d_cov3d[0][0]);
-		// dL_d_xyz.write(3 * idx + 1, dL_d_cov3d[1][1]);
-		// dL_d_xyz.write(3 * idx + 2, dL_d_cov3d[2][2]);
 	});
 }
 
