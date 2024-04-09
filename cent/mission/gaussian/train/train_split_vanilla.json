@@ -1,7 +1,7 @@
 {
     "name": "train_gs_vanilla_vanilla",
     "dataset_name": "nerf_blender",
-    "usage": "eval",
+    "usage": "train",
     "objects": [
         "lego"
     ],
