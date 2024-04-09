@@ -1,4 +1,5 @@
-# modify from gaussian rasterizer
+# project 3D Gaussians to different View
+
 from typing import NamedTuple
 import torch.nn as nn
 import torch

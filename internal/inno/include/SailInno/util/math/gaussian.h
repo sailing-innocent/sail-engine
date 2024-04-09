@@ -116,8 +116,8 @@ Float3_T proj_cov3d_to_cov2d_screen(Float3_T p_view, Float3x3_T cov3d, Float4x4_
 	Float3x3_T T = J * W;
 	Float3x3_T cov = T * cov3d * transpose(T);
 	// low pass filter
-	cov[0][0] += 1e-5f;
-	cov[1][1] += 1e-5f;
+	cov[0][0] += 0.3f / 1600 / 1600 * 4;
+	cov[1][1] += 0.3f / 1600 / 1600 * 4;
 	return make_float3(cov[0][0], cov[0][1], cov[1][1]);
 }
 

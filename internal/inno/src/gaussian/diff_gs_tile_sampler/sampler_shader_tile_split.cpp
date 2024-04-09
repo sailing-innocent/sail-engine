@@ -54,7 +54,6 @@ void DiffGaussianTileSampler::compile_tile_split_shader(Device& device) noexcept
 		auto point_image_ndc = make_float2(
 			point_image_2d.x * fx,
 			point_image_2d.y * fy);
-
 		// zoom to pixel
 		auto point_image = make_float2(util::ndc2pix<Float>(point_image_ndc.x, resolution.x), util::ndc2pix<Float>(point_image_ndc.y, resolution.y));
 		// device_log("point_image: {} {}", point_image.x, point_image.y);
@@ -64,11 +63,10 @@ void DiffGaussianTileSampler::compile_tile_split_shader(Device& device) noexcept
 			covs_2d.read(3 * idx + 1),
 			covs_2d.read(3 * idx + 2));
 
-		// zoom to NDC
-		cov_2d = make_float3(cov_2d.x * fx * fx, cov_2d.y * fx * fy, cov_2d.z * fy * fy);
 		// zoom to pixel
-		cov_2d = make_float3(cov_2d.x * wf * wf / 4.0f, cov_2d.y * wf * hf / 4.0f, cov_2d.z * hf * hf / 4.0f);
-
+		fx = wf * fx / 2.0f / 2.0f;
+		fy = hf * fy / 2.0f / 2.0f;
+		cov_2d = make_float3(cov_2d.x * fx * fx, cov_2d.y * fx * fy, cov_2d.z * fy * fy);
 		// get radius = 3 \sigma
 		Float det = cov_2d.x * cov_2d.z - cov_2d.y * cov_2d.y;
 		Float inv_det = 1.0f / det;
@@ -115,18 +113,14 @@ void DiffGaussianTileSampler::compile_tile_split_shader(Device& device) noexcept
 
 		auto wf = Float(resolution.x);
 		auto hf = Float(resolution.y);
-		auto fy = 1.0f / tan(fov_rad * 0.5f);
+		auto fy = hf / tan(fov_rad * 0.5f) / 2.0f;
 		auto fx = fy * wf / hf;
-
+		// J
 		Float3 cov_2d = make_float3(
-			covs_2d.read(3 * idx + 0) * resolution.x * resolution.x * 0.25f * fx * fx,
-			covs_2d.read(3 * idx + 1) * resolution.x * resolution.y * 0.25f * fx * fy,
-			covs_2d.read(3 * idx + 2) * resolution.y * resolution.y * 0.25f * fy * fy);
+			covs_2d.read(3 * idx + 0) * fx * fx,
+			covs_2d.read(3 * idx + 1) * fx * fy,
+			covs_2d.read(3 * idx + 2) * fy * fy);
 
-		// Float3 cov_2d = make_float3(
-		// 	covs_2d.read(3 * idx + 0),
-		// 	covs_2d.read(3 * idx + 1),
-		// 	covs_2d.read(3 * idx + 2));
 		Float det = cov_2d.x * cov_2d.z - cov_2d.y * cov_2d.y;
 		// Float det_inv = conic.x * conic.z - conic.y * conic.y;
 		Float det_inv_2 = 1 / (det * det + 1e-6f);
@@ -138,18 +132,16 @@ void DiffGaussianTileSampler::compile_tile_split_shader(Device& device) noexcept
 		// dc_a/da= - c * c
 		// dc_b/da= + c * b
 		// dc_c/da= - b * b
-
 		// dc_a / dc = - b * b
 		// dc_b / dc =  a * b
 		// dc_c / dc = - a * a
-
 		dL_d_cov2d.x = det_inv_2 * (-c * c * dL_d_con.x + b * c * dL_d_con.y - b * b * dL_d_con.z);
 		dL_d_cov2d.z = det_inv_2 * (-b * b * dL_d_con.x + a * b * dL_d_con.y - a * a * dL_d_con.z);
 		dL_d_cov2d.y = det_inv_2 * 2 * (b * c * dL_d_con.x - (a * c + b * b) * dL_d_con.y + a * b * dL_d_con.z);
 		// dL_d_cov2d = dL_d_con;
-		dL_d_cov_2d.write(3 * idx + 0, dL_d_cov2d.x * resolution.x * resolution.x * 0.25f * fx * fx);
-		// dL_d_cov_2d.write(3 * idx + 1, dL_d_cov2d.y * resolution.x * resolution.y * 0.25f * fx * fy);
-		dL_d_cov_2d.write(3 * idx + 2, dL_d_cov2d.z * resolution.y * resolution.y * 0.25f * fy * fy);
+		dL_d_cov_2d.write(3 * idx + 0, dL_d_cov2d.x * fx * fx);
+		dL_d_cov_2d.write(3 * idx + 1, dL_d_cov2d.y * fx * fy);
+		dL_d_cov_2d.write(3 * idx + 2, dL_d_cov2d.z * fy * fy);
 		// dL_d_cov_2d.write(3 * idx + 0, dL_d_cov2d.x);
 		// dL_d_cov_2d.write(3 * idx + 2, dL_d_cov2d.z);
 		// dL_d_cov_2d.write(3 * idx + 1, dL_d_cov2d.y);
