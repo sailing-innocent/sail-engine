@@ -15,6 +15,7 @@ from innopy import DiffGSTileSamplerApp
 
 import torch 
 import torch.nn as nn 
+import math 
 
 from typing import NamedTuple
 
@@ -27,6 +28,7 @@ class _DiffGSTileSampler(torch.autograd.Function):
     @staticmethod
     def forward(ctx, 
                 means_2d, covs_2d, depth_features, opacity_features, color_features, 
+                screen_space_points, # noting to do, but use its grad
                 settings, app):
         width = settings.width
         height = settings.height
@@ -52,6 +54,7 @@ class _DiffGSTileSampler(torch.autograd.Function):
         ctx.width = width
         ctx.height = height
         ctx.num_gaussians = P
+        ctx.fov_rad = fov_rad
         ctx.save_for_backward(covs_2d, opacity_features, color_features)  
 
         return result_img
@@ -59,6 +62,9 @@ class _DiffGSTileSampler(torch.autograd.Function):
     @staticmethod
     def backward(ctx, dL_dtpix):
         P = ctx.num_gaussians
+        fov_rad = ctx.fov_rad
+        width = ctx.width
+        height = ctx.height
         # print(f"P: {P}")
         # print(f"dL_dtpix: {dL_dtpix.shape}")
         covs_2d, opacity_features, color_features = ctx.saved_tensors
@@ -67,6 +73,8 @@ class _DiffGSTileSampler(torch.autograd.Function):
         dL_dcovs_2d = torch.zeros((P, 3), dtype=torch.float32).cuda()
         dL_d_opacity_features = torch.zeros((P, 1), dtype=torch.float32).cuda()
         dL_d_color_features = torch.zeros((P, 3), dtype=torch.float32).cuda()
+
+        dL_dscreen_space_points = torch.zeros((P, 3), dtype=torch.float32).cuda()
 
         ctx.app.backward(dL_dtpix.contiguous().data_ptr(), 
                          covs_2d.contiguous().data_ptr(),
@@ -82,12 +90,18 @@ class _DiffGSTileSampler(torch.autograd.Function):
         # print(dL_dcovs_2d)
         # print(dL_d_opacity_features)
         # print(dL_dmeans_2d)
+        fy = height / math.tan(0.5 * fov_rad) / 2
+        fx = fy * width / height
+        dL_dscreen_space_points[:, 0] = dL_dmeans_2d[:, 0] * fx
+        dL_dscreen_space_points[:, 1] = dL_dmeans_2d[:, 1] * fy
+        
         grads = (
             dL_dmeans_2d,
             dL_dcovs_2d,
             None, # not for depth
             dL_d_opacity_features,
             dL_d_color_features,
+            dL_dscreen_space_points,
             None, # settings
             None # app
         )
@@ -99,5 +113,13 @@ class DiffGSTileSampler(nn.Module):
         self.app = DiffGSTileSamplerApp()
         self.app.create(sys.path[-1], "cuda")
 
-    def forward(self, means_2d, covs_2d, depth_features, opacity_features, color_features, settings):
-        return _DiffGSTileSampler.apply(means_2d, covs_2d, depth_features, opacity_features, color_features, settings, self.app)
+    def forward(self, means_2d, covs_2d, depth_features, opacity_features, color_features, screen_space_points, settings):
+        return _DiffGSTileSampler.apply(
+            means_2d, 
+            covs_2d, 
+            depth_features, 
+            opacity_features, 
+            color_features, 
+            screen_space_points, 
+            settings, 
+            self.app)

@@ -17,17 +17,25 @@ class GaussianRenderer:
     def render(self, camera: Camera, gaussians, scale_modifier=1.0):
         gaussians_2d, radii, mask = self.projector.project(
             gaussians, camera, scale_modifier)
+        
+        screenspace_points = torch.zeros_like(gaussians.get_xyz, dtype=gaussians.get_xyz.dtype, requires_grad=True, device="cuda") + 0
+        try:
+            screenspace_points.retain_grad()
+        except:
+            pass
+        
         img = self.sampler.sample(
             gaussians_2d, 
             camera.info.ResW, 
             camera.info.ResH,
-            camera.info.FovY)
+            camera.info.FovY,
+            screenspace_points)
 
         # print(torch.max(radii))
 
         return {
             "render": img,
-            "viewspace_points": gaussians_2d.means_2d,
+            "viewspace_points": screenspace_points,
             "visibility_filter": mask,
             "radii": radii
         }

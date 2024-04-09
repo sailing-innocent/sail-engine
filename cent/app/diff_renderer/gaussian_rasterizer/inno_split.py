@@ -22,6 +22,7 @@ class GaussianRenderer:
             camera.info.ResW, 
             camera.info.ResH,
             camera.info.FovY)
+
         return {
             "render": img
         }

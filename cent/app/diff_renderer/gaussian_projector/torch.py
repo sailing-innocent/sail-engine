@@ -39,8 +39,8 @@ class GaussianProjector:
         det = covs_2d[:, 0, 0] * covs_2d[:, 1, 1] - covs_2d[:, 0, 1] * covs_2d[:, 0, 1]
         mid = (covs_2d[:, 0, 0] + covs_2d[:, 1, 1]) / 2.0
         mask = mask & (det > 0.0)
-        radii = mid + torch.sqrt(mid * mid - det)
-        radii[~mask] = 0.0
+        radii = torch.ceil(3 * (mid + torch.sqrt(mid * mid - det)))
+        radii[~mask] = 0
         result.depth_features = p_view[:, 2].clone()
         cam_pos = torch.from_numpy(cam.info.T).float().cuda()
         dirs = p_view - cam_pos
