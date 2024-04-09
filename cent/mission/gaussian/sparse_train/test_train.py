@@ -6,6 +6,6 @@ def test_train():
     # f = "train_vanilla_vanilla"
     # f = "train_vanilla_epipolar"
     # f = "train_sparse_vanilla"
-    f = "test_sparse_depth"
+    f = "train_vv_mip360"
     mission = Mission(f + ".json")
     mission.exec()

@@ -1,0 +1,27 @@
+{
+    "name": "train_sparse_gs_vv_mip360",
+    "dataset_name": "mip360",
+    "usage": "train",
+    "objects": [
+        "bicycle"
+    ],
+    "init_scene": {
+        "type": "pcd",
+        "name": "colmap",
+        "dataset_name": "mip360"
+    },
+    "benchmarks": [
+        "psnr"
+    ],
+    "trainer_name": "vanilla",
+    "render_name": "vanilla",
+    "loss_name": "l1+ssim",
+    "train_params": {
+        "data_limit": 5,
+        "data_shuffle": false,
+        "saving_iterations": [
+            7000,
+            30000
+        ]
+    }
+}

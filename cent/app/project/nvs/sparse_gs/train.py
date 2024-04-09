@@ -12,8 +12,6 @@ from module.model.gaussian.sparse import GaussianModel
 # renderer
 from app.diff_renderer.gaussian_rasterizer.vanilla import create_gaussian_renderer as create_vanilla_renderer 
 from app.diff_renderer.gaussian_rasterizer.inno_reprod import create_gaussian_renderer as create_inno_reprod_renderer
-from app.diff_renderer.gaussian_rasterizer.depth import create_gaussian_renderer as create_depth_renderer
-
 import torch 
 import gc
 
@@ -39,7 +37,6 @@ class TrainGaussianProject(ProjectBase):
         super().__init__(config)
         self.create_renderer = {
             'vanilla': create_vanilla_renderer,
-            "sparse": create_depth_renderer,
             "inno_reprod": create_inno_reprod_renderer,
         }
     
