@@ -4,11 +4,11 @@ from .mission import Mission
 @pytest.mark.current 
 def test_gaussian_reprod_render():
     # f = "render_vanilla"
-    # f = "render_split"
+    f = "render_split"
     # f = "eval_vanilla"
     # f = "render_inno_reprod"
     # f = "render_inno_reprod_sphere"
-    f = "render_inno_split"
+    # f = "render_inno_split"
     # f = "render_inno_torch"
     # f = "render_pano"
     # f = "demo_inno_torch"

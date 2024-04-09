@@ -1,5 +1,5 @@
 from module.utils.camera.basic import Camera
-from lib.torch_ext.gs_tile_sampler import GaussianSampleSettings, GaussianSampler
+from lib.torch_ext.gs_cam_sampler import GaussianSampleSettings, GaussianSampler
 
 # from app.diff_tools.gs_sh_processor.torch_ext import GaussianSHProcessor
 from app.diff_tools.gs_sh_processor.torch import GaussianSHProcessor

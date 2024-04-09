@@ -109,7 +109,7 @@ def eval_sh(deg, sh, dirs):
                             C4[6] * (xx - yy) * (7 * zz - 1) * sh[..., 22] +
                             C4[7] * xz * (xx - 3 * yy) * sh[..., 23] +
                             C4[8] * (xx * (xx - 3 * yy) - yy * (3 * xx - yy)) * sh[..., 24])
-    return result
+    return result + 0.5
 
 def RGB2SH(rgb):
     return (rgb - 0.5) / C0
