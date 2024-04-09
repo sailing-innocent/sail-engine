@@ -1,14 +1,14 @@
-# modify from gaussian rasterizer
+# modify from gaussian sampler
 from typing import NamedTuple
 import torch.nn as nn
 import torch
 from torch.utils.cpp_extension import load 
 
 _C = load(
-    "rasterize_gaussians", [
-        "lib/torch_ext/gs_tile_sampler/rasterize_wrapper.cpp",
-        "lib/torch_ext/gs_tile_sampler/rasterize_points.cu",
-        "lib/torch_ext/gs_tile_sampler/rasterizer_impl.cu",
+    "sample_gaussians", [
+        "lib/torch_ext/gs_tile_sampler/sampler_wrapper.cpp",
+        "lib/torch_ext/gs_tile_sampler/sampler_points.cu",
+        "lib/torch_ext/gs_tile_sampler/sampler_impl.cu",
         "lib/torch_ext/gs_tile_sampler/forward.cu",
         "lib/torch_ext/gs_tile_sampler/backward.cu"
     ],
@@ -20,7 +20,7 @@ def cpu_deep_copy_tuple(input_tuple):
     copied_tensors = [item.cpu().clone() if isinstance(item, torch.Tensor) else item for item in input_tuple]
     return tuple(copied_tensors)
 
-def rasterize_gaussians(
+def sample_gaussians(
     means3D,
     means2D,
     sh,
@@ -31,7 +31,7 @@ def rasterize_gaussians(
     cov3Ds_precomp,
     raster_settings,
 ):
-    return _RasterizeGaussians.apply(
+    return _SampleGaussians.apply(
         means3D,
         means2D,
         sh,
@@ -43,7 +43,7 @@ def rasterize_gaussians(
         raster_settings,
     )
 
-class _RasterizeGaussians(torch.autograd.Function):
+class _SampleGaussians(torch.autograd.Function):
     @staticmethod
     def forward(
         ctx,
@@ -81,7 +81,7 @@ class _RasterizeGaussians(torch.autograd.Function):
             raster_settings.debug
         )
 
-        # Invoke C++/CUDA rasterizer
+        # Invoke C++/CUDA sampler
         if raster_settings.debug:
             cpu_args = cpu_deep_copy_tuple(args) # Copy them before they can be corrupted
             try:
@@ -183,7 +183,7 @@ class GaussianRasterizationSettings(NamedTuple):
     prefiltered : bool
     debug : bool
 
-class GaussianRasterizer(nn.Module):
+class GaussianSampler(nn.Module):
     def __init__(self, raster_settings):
         super().__init__()
         self.raster_settings = raster_settings
@@ -222,7 +222,7 @@ class GaussianRasterizer(nn.Module):
             cov3D_precomp = torch.Tensor([])
 
         # Invoke C++/CUDA rasterization routine
-        return rasterize_gaussians(
+        return sample_gaussians(
             means3D,
             means2D,
             shs,
