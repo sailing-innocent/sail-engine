@@ -91,9 +91,6 @@ void ReprodGS::backward_impl(
 				   .dispatch(m_num_gaussians);
 
 	// clear state
-	geom_state = luisa::make_unique<GeometryState>();
-	tile_state = luisa::make_unique<TileState>();
-	img_state = luisa::make_unique<ImageState>();
 	stream << cmdlist.commit() << synchronize();
 }
 

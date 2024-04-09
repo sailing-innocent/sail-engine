@@ -45,17 +45,12 @@ void ReprodGS::forward_impl(
 	m_sh_deg = sh_deg;
 	m_max_sh_deg = max_sh_deg;
 	m_scale_modifier = scale_modifier;
-	if (m_num_gaussians != num_gaussians) {
-		// if num_gaussians changed, reallocate buffer
-		geom_state->allocate(device, static_cast<size_t>(num_gaussians));
-		m_num_gaussians = num_gaussians;
-	}
-	if ((m_resolution.x != width) || (m_resolution.y != height)) {
-		// resolution changed, reallocate image buffer
-		img_state->allocate(device, width * height);
-		m_resolution = luisa::make_uint2(width, height);
-	}
 
+	// if num_gaussians changed, reallocate buffer
+	geom_state->allocate(device, static_cast<size_t>(num_gaussians));
+	m_num_gaussians = num_gaussians;
+	img_state->allocate(device, width * height);
+	m_resolution = luisa::make_uint2(width, height);
 	CommandList cmdlist;
 
 	// clear geometry state
