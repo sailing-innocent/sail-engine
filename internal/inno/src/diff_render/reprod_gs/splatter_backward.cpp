@@ -90,6 +90,10 @@ void ReprodGS::backward_impl(
 				   mp_camera->view_matrix())
 				   .dispatch(m_num_gaussians);
 
+	// clear state
+	geom_state->clear(device, cmdlist, *mp_buffer_filler);
+	tile_state->clear(device, cmdlist, *mp_buffer_filler);
+	img_state->clear(device, cmdlist, *mp_buffer_filler);
 	stream << cmdlist.commit() << synchronize();
 }
 
