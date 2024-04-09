@@ -18,7 +18,7 @@
     "loss_name": "l1+ssim",
     "train_params": {
         "data_limit": 5,
-        "data_shuffle": false,
+        "data_shuffle": true,
         "saving_iterations": [
             3000,
             7000,
