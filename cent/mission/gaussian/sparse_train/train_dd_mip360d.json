@@ -1,5 +1,5 @@
 {
-    "name": "train_gs_depth_zzh_mip360d",
+    "name": "train_sparse_gs_zzh_mip360d",
     "dataset_name": "mip360d",
     "usage": "train",
     "objects": [
