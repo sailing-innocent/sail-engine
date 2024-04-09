@@ -39,6 +39,7 @@ class _RasterizeGaussians(torch.autograd.Function):
         raster_settings,
         app
     ):
+        app.create(cwd, "cuda")
         w = raster_settings.image_width
         h = raster_settings.image_height
 
@@ -121,9 +122,6 @@ class _RasterizeGaussians(torch.autograd.Function):
             scales.contiguous().data_ptr(),
             rotations.contiguous().data_ptr()
         )
-        # clear ctx app
-        ctx.app = None 
-
         # for i in range(grad_out_color.shape[1]):
         #     for j in range(grad_out_color.shape[2]):
         #         print(grad_out_color[:, i, j])
@@ -150,7 +148,6 @@ class GaussianRasterizer(nn.Module):
     def __init__(self):
         super().__init__()
         self._app = ReprodGSApp()
-        self._app.create(cwd, "cuda")
 
     def forward(self,
         means_3d,
