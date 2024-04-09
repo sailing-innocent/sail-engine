@@ -37,13 +37,14 @@ class GaussianProjector:
         covs_2d = T @ cov3d @ T.transpose(1, 2) 
         result.covs_2d = torch.stack([covs_2d[:, 0, 0], covs_2d[:, 0, 1], covs_2d[:, 1, 1]], dim=1).reshape(N, 3)
         det = covs_2d[:, 0, 0] * covs_2d[:, 1, 1] - covs_2d[:, 0, 1] * covs_2d[:, 0, 1]
+        mid = (covs_2d[:, 0, 0] + covs_2d[:, 1, 1]) / 2.0
         mask = mask & (det > 0.0)
-        radii = torch.sqrt(det) * 3.0
+        radii = mid + torch.sqrt(mid * mid - det)
         radii[~mask] = 0.0
         result.depth_features = p_view[:, 2].clone()
         cam_pos = torch.from_numpy(cam.info.T).float().cuda()
-        dirs =  p_view - cam_pos
-        dirs = - dirs / (torch.norm(dirs, dim=1).unsqueeze(1) + 1e-6)
-        result.color_features = eval_sh(3, gaussians.get_features.transpose(1,2), dirs) + 0.5
+        dirs = p_view - cam_pos
+        dirs = dirs / (torch.norm(dirs, dim=-1, keepdim=True)+ 1e-6)
+        result.color_features = eval_sh(3, gaussians.get_features.transpose(1,2), dirs)
         result.opacity_features = gaussians.get_opacity
         return result, radii, mask
