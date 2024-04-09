@@ -4,6 +4,7 @@ from app.project.nvs.sparse_gs.train import TrainGaussianProjectConfig, TrainGau
 from app.trainer.nvs.sparse_gs.basic import GaussianTrainerParams
 from app.trainer.nvs.sparse_gs.vanilla import GaussianVanillaTrainerParams
 from app.trainer.nvs.sparse_gs.epipolar import  GaussianEpipolarTrainerParams
+from app.trainer.nvs.sparse_gs.zzh import GaussianZZHTrainerParams
 
 class Mission(MissionBase):
     def __init__(self, config_json_file):
@@ -22,7 +23,8 @@ class Mission(MissionBase):
         self.create_trainer_params = {
             "vanilla": GaussianVanillaTrainerParams,
             "basic": GaussianTrainerParams,
-            "epipolar": GaussianEpipolarTrainerParams
+            "epipolar": GaussianEpipolarTrainerParams,
+            "zzh": GaussianZZHTrainerParams
         }
 
     def exec(self):
