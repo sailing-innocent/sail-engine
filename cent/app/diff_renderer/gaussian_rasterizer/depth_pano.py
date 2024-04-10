@@ -1,18 +1,17 @@
 from module.utils.camera.basic import Camera
-from lib.torch_ext.depth_gs import GaussianRasterizationSettings, GaussianRasterizer
+from lib.torch_ext.pano_gs import GaussianRasterizationSettings, GaussianRasterizer
+
 import numpy as np
 import torch 
+from loguru import logger 
 
-def create_gaussian_renderer(env_config, config_settings: dict = {}):
+def create_gaussian_renderer(env_config):
     config = GaussianRendererConfig(env_config)
-    for key, value in config_settings.items():
-        setattr(config, key, value)
     return GaussianRenderer(config)
 
 class GaussianRendererConfig:
     def __init__(self, env_config):
         self._env_config = env_config
-        self.white_bkgd = True 
 
     @property
     def env_config(self):
@@ -21,11 +20,14 @@ class GaussianRendererConfig:
 class GaussianRenderer:
     def __init__(self, config: GaussianRendererConfig):
         self.config = config 
+        logger.info("Using Pano GS Renderer")
 
-    def render(self, camera: Camera, gaussians):
-        # logger.info("Rendering with Vanilla Renderer")
+    def render(self, camera: Camera, gaussians, pano = None):
+        _, dirs = camera.rays
+        dirs = torch.from_numpy(dirs).float().cuda()
         view_mat = torch.tensor(camera.view_matrix.T).float().cuda()
         proj_mat = torch.tensor(camera.full_proj_matrix.T).float().cuda()
+
         width = camera.info.ResW
         height = camera.info.ResH
         fovx = camera.info.FovX
@@ -34,18 +36,16 @@ class GaussianRenderer:
         tanfovy = np.tan(0.5 * fovy)
         campos = torch.from_numpy(camera.info.T).float().cuda()
         
-        if self.config.white_bkgd:
-            bg_color = torch.tensor([1, 1, 1, 0], dtype=torch.float32, device="cuda")
-        else:
-            bg_color = torch.tensor([0, 0, 0, 0], dtype=torch.float32, device="cuda")
-
+        if pano == None:
+            pano = torch.ones((4, 2048, 4096)).float().cuda()
+            
         raster_settings = GaussianRasterizationSettings(
             image_height = int(height),
             image_width = int(width),
             tanfovx = tanfovx,
             tanfovy = tanfovy,
-            bg = bg_color,
             scale_modifier = 1,
+            dirs = dirs,
             viewmatrix = view_mat,
             projmatrix = proj_mat,
             sh_degree = gaussians.active_sh_degree,
@@ -65,10 +65,11 @@ class GaussianRenderer:
         
         means_2d = screenspace_points
         opacity = gaussians.get_opacity
+
         scales = gaussians.get_scaling
         rotations = gaussians.get_rotation
+
         shs = gaussians.get_features
-        # print(shs.shape)
 
         colors_precomp = None
         
@@ -80,8 +81,10 @@ class GaussianRenderer:
             opacities = opacity,
             scales = scales,
             rotations = rotations,
+            pano = pano,
             cov3D_precomp = None 
         )
+
         return {"render": rendered_image,
                 "viewspace_points": screenspace_points,
                 "visibility_filter" : radii > 0,
