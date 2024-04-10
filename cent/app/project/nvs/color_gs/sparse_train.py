@@ -3,9 +3,9 @@ from loguru import logger
 import os 
 from typing import NamedTuple 
 
-from app.trainer.nvs.gs.basic import GaussianTrainerParams
+from app.trainer.nvs.sparse_gs.basic import GaussianTrainerParams
 # train and eval pipeline
-from app.pipeline.nvs.gs.train import GaussianTrainPipelineConfig, GaussianTrainPipeline
+from app.pipeline.nvs.sparse_gs.train import GaussianTrainPipelineConfig, GaussianTrainPipeline
 from app.pipeline.nvs.eval import NVSEvalPipelineConfig, NVSEvalPipeline 
 # model
 from module.model.gaussian.color import GaussianModel
