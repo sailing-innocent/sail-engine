@@ -1,0 +1,26 @@
+{
+    "name": "train_color_gs_vanilla_mip360",
+    "dataset_name": "mip360",
+    "usage": "train",
+    "objects": [
+        "bicycle"
+    ],
+    "benchmarks": [
+        "psnr"
+    ],
+    "init_scene": {
+        "type": "pcd",
+        "name": "colmap",
+        "dataset_name": "mip360"
+    },
+    "trainer_name": "vanilla",
+    "render_name": "color",
+    "loss_name": "l1+ssim",
+    "train_params": {
+        "saving_iterations": [
+            3000,
+            7000,
+            30000
+        ]
+    }
+}

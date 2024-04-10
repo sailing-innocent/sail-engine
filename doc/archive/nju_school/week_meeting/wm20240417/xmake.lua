@@ -1,4 +1,4 @@
-add_latex("wm_next", {
+add_latex("wm20240417", {
     -- template
     "njupre",
 }, "pre")
