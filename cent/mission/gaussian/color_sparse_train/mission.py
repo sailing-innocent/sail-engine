@@ -1,6 +1,6 @@
 from mission.base import MissionBase
 import itertools 
-from app.project.nvs.color_gs.train import TrainGaussianProjectConfig, TrainGaussianProjectParams, TrainGaussianProject
+from app.project.nvs.color_gs.sparse_train import TrainGaussianProjectConfig, TrainGaussianProjectParams, TrainGaussianProject
 from app.trainer.nvs.sparse_gs.basic import GaussianTrainerParams
 from app.trainer.nvs.sparse_gs.vanilla import GaussianVanillaTrainerParams
 
