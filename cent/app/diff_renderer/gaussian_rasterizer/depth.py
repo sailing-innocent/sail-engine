@@ -35,9 +35,9 @@ class GaussianRenderer:
         campos = torch.from_numpy(camera.info.T).float().cuda()
         
         if self.config.white_bkgd:
-            bg_color = torch.tensor([1, 1, 1, 0], dtype=torch.float32, device="cuda")
+            bg_color = torch.tensor([1, 1, 1, 10], dtype=torch.float32, device="cuda")
         else:
-            bg_color = torch.tensor([0, 0, 0, 0], dtype=torch.float32, device="cuda")
+            bg_color = torch.tensor([0, 0, 0, 10], dtype=torch.float32, device="cuda")
 
         raster_settings = GaussianRasterizationSettings(
             image_height = int(height),

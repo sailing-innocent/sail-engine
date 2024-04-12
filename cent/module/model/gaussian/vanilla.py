@@ -2,9 +2,10 @@ import torch
 from torch import nn 
 import numpy as np 
 from plyfile import PlyData, PlyElement
-from module.data.point_cloud import BasicPointCloud
+
 import os 
 
+from module.data.point_cloud import BasicPointCloud
 from module.utils.torch.math import inverse_sigmoid, strip_symmetric
 from module.utils.torch.transform import qvec2R, T2Sigma
 from module.utils.torch.sh import RGB2SH

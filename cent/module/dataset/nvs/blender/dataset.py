@@ -48,7 +48,6 @@ class NeRFBlenderDataset(NVSDataset):
             meta = json.load(f)
     
         fov_x = meta["camera_angle_x"]
-        focal = 1.0
         self.width = self.config.resw 
         self.height = self.config.resh 
 
