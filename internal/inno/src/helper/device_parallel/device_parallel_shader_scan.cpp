@@ -127,7 +127,7 @@ void DeviceParallel::compile_scan_shaders(Device& device) {
 	};
 
 	lazy_compile(device, ms_prescan_int,
-				 [&](Int storeSum, Int isNP2,
+				 [&](Int storeSum, Int isNP2,// bool actually
 					 BufferVar<IntType> g_idata,
 					 BufferVar<IntType> g_odata,
 					 BufferVar<IntType> g_blockSums,

@@ -14,22 +14,33 @@
 #include <luisa/vstl/vector.h>
 
 #include <numeric>
+#include <concepts>
+#include <type_traits>
 #include "SailInno/helper/device_parallel.h"
 
 using namespace luisa;
 using namespace luisa::compute;
 namespace sail::inno::test {
 
+template<typename T>
+static constexpr bool is_numeric_v = std::is_integral_v<T> || std::is_floating_point_v<T>;
+
+template<typename T>
+concept NumericT = is_numeric_v<T>;
+
+template<NumericT T>
 int test_exclusive_scan(Device& device, int N) {
 	int N_EXP = 100;
-	luisa::vector<int> input_array(N);
-	luisa::vector<int> gt_array(N);
+	luisa::vector<T> input_array(N);
+	luisa::vector<T> gt_array(N);
 	int init_value = 0;
 	for (auto i = 0; i < N; ++i) {
-		input_array[i] = 1;
+		input_array[i] = static_cast<T>(1);
 		gt_array[i] = i;
 	}
-	luisa::vector<int> result_array(N);
+	luisa::vector<T> result_array(N);
+	// fill 0
+	std::fill(result_array.begin(), result_array.end(), static_cast<T>(0));
 
 	Clock clk;
 	clk.tic();
@@ -39,13 +50,13 @@ int test_exclusive_scan(Device& device, int N) {
 	LUISA_INFO("CPU time: {}", clk.toc() / N_EXP);
 
 	for (auto i = 0; i < N; ++i) {
-		CHECK(result_array[i] == gt_array[i]);
-		result_array[i] = 0;// clear to 0
+		CHECK(result_array[i] == doctest::Approx(gt_array[i]));
+		result_array[i] = static_cast<T>(0);// clear to 0
 	}
 
 	auto stream = device.create_stream();
-	auto input_buf = device.create_buffer<int>(N);
-	auto result_buf = device.create_buffer<int>(N);
+	auto input_buf = device.create_buffer<T>(N);
+	auto result_buf = device.create_buffer<T>(N);
 	clk.tic();
 	// upload input data
 	stream << input_buf.copy_from(input_array.data()) << synchronize();
@@ -77,33 +88,15 @@ int test_exclusive_scan(Device& device, int N) {
 	return 0;
 }
 
-int test_inclusive_scan(Device& device, int N) {
-	luisa::vector<int> input_array(N);
-	luisa::vector<int> gt_array(N);
-	for (auto i = 0; i < N; ++i) {
-		input_array[i] = i;
-		gt_array[i] = i * (i + 1) / 2;
-	}
-	luisa::vector<int> result_array(N);
-	std::inclusive_scan(input_array.begin(), input_array.end(), result_array.begin());
-
-	for (auto i = 0; i < N; ++i) {
-		CHECK(result_array[i] == gt_array[i]);
-		result_array[i] = 0;// clear to 0
-	}
-
-	return 0;
-}
-
 }// namespace sail::inno::test
 
 TEST_SUITE("parallel") {
 	TEST_CASE("scan") {
 		Context context{sail::test::argv()[0]};
-		auto device = context.create_device("dx");
-		// REQUIRE(sail::inno::test::test_inclusive_scan(device, 10) == 0);
-		REQUIRE(sail::inno::test::test_exclusive_scan(device, 10) == 0);
-		REQUIRE(sail::inno::test::test_exclusive_scan(device, 1000) == 0);
-		REQUIRE(sail::inno::test::test_exclusive_scan(device, 1e6) == 0);
+		auto device = context.create_device("cuda");
+		REQUIRE(sail::inno::test::test_exclusive_scan<int>(device, 10) == 0);
+		REQUIRE(sail::inno::test::test_exclusive_scan<int>(device, 1000) == 0);
+		REQUIRE(sail::inno::test::test_exclusive_scan<int>(device, 1e6) == 0);
+		// REQUIRE(sail::inno::test::test_exclusive_scan<float>(device, 10) == 0);
 	}
 }

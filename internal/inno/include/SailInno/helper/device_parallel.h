@@ -55,6 +55,9 @@ public:
 							IntType init_v,
 							size_t num_item);
 
+	void reduce_sum(size_t& temp_storage_size, BufferView<IntType> d_in, BufferView<IntType> d_out, size_t num_item);
+	void reduce_sum(luisa::compute::CommandList& cmdlist, BufferView<IntType> temp_buffer, BufferView<IntType> d_in, BufferView<IntType> d_out, size_t num_item);
+
 	void scan_inclusive_sum(size_t& temp_storage_size,
 							BufferView<IntType> d_in,
 							BufferView<IntType> d_out,
@@ -79,13 +82,26 @@ private:
 		BufferView<IntType> arr_in, BufferView<IntType> arr_out,
 		size_t num_elements, int offset, int level) noexcept;
 
-private:
+	void reduce_array_recursive_int(
+		luisa::compute::CommandList& cmdlist,
+		BufferView<IntType> temp_storage,
+		BufferView<IntType> arr_in,
+		BufferView<IntType> arr_out,
+		int num_elements,
+		int offset, int level, int op) noexcept;
+
+	// void reduce_array_recursive_float(
+	// 	luisa::compute::CommandList& cmdlist,
+	// 	BufferView<FloatType> temp_buffer,
+	// 	BufferView<FloatType> outArray,
+	// 	BufferView<FloatType> inArray,
+	// 	int numElements,
+	// 	int offset, int level, int op) noexcept;
 	// shader
 	// prescan int
 	U<Shader<1, int, int, Buffer<IntType>, Buffer<IntType>, Buffer<IntType>, int, int, int>> ms_prescan_int = nullptr;
 	// uniform add int
 	U<Shader<1, Buffer<IntType>, Buffer<IntType>, int, int, int>> ms_uniform_add_int = nullptr;
-
 	U<Shader<1, Buffer<IntType>, IntType>> ms_add_int = nullptr;
 };
 
