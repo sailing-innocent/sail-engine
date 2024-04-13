@@ -1,8 +1,17 @@
 local function sail_add_test(folder, name, deps)
     target("test_" .. folder .. "_" .. name)
         set_kind("binary")
-        set_languages("c++20")
-        set_exceptions("cxx")
+        on_load(function (target)
+            target:set("languages", "c++20")
+            target:set("exceptions", "cxx")
+            if is_mode("debug") then 
+                target:set("runtimes", "MDd")
+                target:set("optimize", "none")
+            else
+                target:set("runtimes", "MD")
+                target:set("optimize", "aggressive")
+            end
+        end)
         add_deps("external_doctest")
         local match_str = path.join(name, "**.cpp")
         add_includedirs("framework")
@@ -18,10 +27,7 @@ sail_add_test("basic", "io", {
     "external_tiny_obj_loader_util"
 })
 sail_add_test("basic", "leetcode", {})
-
 sail_add_test("basic", "dummy", {"SailDummy"})
-sail_add_test("basic", "deps", {"SailDummy"})
-
 if get_config("enable_inno") then 
     sail_add_test("inno", "util", {"SailInno"})
     sail_add_test("inno", "helper", {"SailInno"})

@@ -6,6 +6,5 @@ STATIC_COMPONENT("SailGuid", "SailCore")
 
 SHARED_MODULE("SailCore", "SAIL_CORE", engine_version)
     add_includedirs("include", {public = true})
-    add_packages("marl", { public = true}) -- for multi-threads
     add_files("src/core/build.*.cpp")
     add_deps("SailBase")

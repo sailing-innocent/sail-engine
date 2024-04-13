@@ -1,6 +1,15 @@
 
 target("external_alembic")
 set_kind("shared")
+on_load(function (target)
+	if is_mode("debug") then 
+		target:set("runtimes", "MDd")
+		target:set("optimize", "none")
+	else
+		target:set("runtimes", "MD")
+		target:set("optimize", "aggressive")
+	end
+end)
 add_includedirs("lib", {public = true})
 local ale_path = "lib/Alembic/"
 add_files(path.join(ale_path, "Abc/*.cpp"), path.join(ale_path, "AbcCollection/*.cpp"),
