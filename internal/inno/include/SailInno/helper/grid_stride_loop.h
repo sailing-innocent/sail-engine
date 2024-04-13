@@ -2,12 +2,12 @@
 /**
  * @file grid_stride_loop.h
  * @author sailing-innocent
- * @brief The Grid Stride Loop Semantic from SPHere
+ * @brief The Grid Stride Loop Semantic
  * @date 2023-08-18
  */
 
 #include <luisa/dsl/sugar.h>
-#include "SailInno/core/scope.h"
+#include <concepts>
 
 namespace sail::inno {
 template<typename F>
@@ -34,38 +34,35 @@ inline void grid_stride_loop(
 	InRangeF&& f,
 	AlwaysF&& always_f = DefaultAlwaysF{},
 	OutRangeF&& out_range_f = DefaultOutRangeF{}) noexcept {
-
 	using namespace ::luisa::compute;
 
-	dsl::scope{} % [&] {
-		Int k = dispatch_x();
-		Int stride = dispatch_size_x();
-		auto iceil = [](auto num, auto denom) { return (num + denom - 1) / denom; };
+	Int k = dispatch_x();
+	Int stride = dispatch_size_x();
+	auto iceil = [](auto num, auto denom) { return (num + denom - 1) / denom; };
 
-		Int total = iceil(abs(end - begin), abs(step));
+	Int total = iceil(abs(end - begin), abs(step));
 
-		Int upper_bound = iceil(total, stride);
+	Int upper_bound = iceil(total, stride);
 
-		Int cur = 0;
+	Int cur = 0;
 
-		$while(cur < upper_bound) {
-			Int i = begin + step * k;
-			k += stride;
-			cur += 1;
-			// if i is in range
-			auto builder = $if(i < end) { f(i); };
+	$while(cur < upper_bound) {
+		Int i = begin + step * k;
+		k += stride;
+		cur += 1;
+		// if i is in range
+		auto builder = $if(i < end) { f(i); };
 
-			// when OutRangeF == DefaultOutRangeF, remove the code.
-			if constexpr (!std::is_same_v<OutRangeF, DefaultOutRangeF>) {
-				std::move(builder).else_([&] {
-					out_range_f(i);
-				});
-			}
-			// when AlwaysF == DefaultAlwaysF, remove the code.
-			if constexpr (!std::is_same_v<AlwaysF, DefaultAlwaysF>) {
-				always_f(i);
-			}
-		};
+		// when OutRangeF == DefaultOutRangeF, remove the code.
+		if constexpr (!std::is_same_v<OutRangeF, DefaultOutRangeF>) {
+			std::move(builder).else_([&] {
+				out_range_f(i);
+			});
+		}
+		// when AlwaysF == DefaultAlwaysF, remove the code.
+		if constexpr (!std::is_same_v<AlwaysF, DefaultAlwaysF>) {
+			always_f(i);
+		}
 	};
 }
 
