@@ -14,7 +14,11 @@ local function sail_add_test(folder, name, deps)
 end
 sail_add_test("basic", "semantic", {})
 sail_add_test("basic", "stl", {})
+sail_add_test("basic", "io", {
+    "external_tiny_obj_loader_util"
+})
 sail_add_test("basic", "leetcode", {})
+
 sail_add_test("basic", "dummy", {"SailDummy"})
 sail_add_test("basic", "deps", {"SailDummy"})
 

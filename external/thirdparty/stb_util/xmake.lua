@@ -1,6 +1,7 @@
 add_requires("stb")
 target("external_stb_util")
-    set_kind("static")
+    set_kind("shared")
     add_files("stb_util.cpp")
+    add_rules("utils.symbols.export_all")
     add_packages("stb", {public = true})
 target_end()

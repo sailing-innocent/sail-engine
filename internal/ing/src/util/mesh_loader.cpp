@@ -1,21 +1,19 @@
 #include "SailIng/util/mesh_loader.h"
-
-#define TINYOBJLOADER_IMPLEMENTATION
-#include "tiny_obj_loader.h"
-
 #include <stdexcept>
+// #define TINYOBJLOADER_IMPLEMENTATION
+#include "tiny_obj_loader.h"
 
 namespace sail::ing {
 
 void MeshLoader::load_obj(const std::string& file_name, MeshData& mesh) {
-	// mesh.vertices = {
-	//     -0.5f, -0.5f, 0.0f,// point A
-	//     0.0f, -0.5f, 0.0f, // point B
-	//     0.0f, 0.5f, 0.0f,  // point C
-	//     0.5f, -0.5f, 0.0f, // point D
-	// };
-	// mesh.indices = {
-	//     0, 1, 2, 1, 3, 2};
+	mesh.vertices = {
+		-0.5f, -0.5f, 0.0f,// point A
+		0.0f, -0.5f, 0.0f, // point B
+		0.0f, 0.5f, 0.0f,  // point C
+		0.5f, -0.5f, 0.0f, // point D
+	};
+	mesh.indices = {
+		0, 1, 2, 1, 3, 2};
 	tinyobj::attrib_t attrib;
 	std::vector<tinyobj::shape_t> shapes;
 	std::vector<tinyobj::material_t> materials;// TODO: use materials

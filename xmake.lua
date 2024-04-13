@@ -4,6 +4,13 @@ engine_version = "0.1.0"
 add_rules("mode.release", "mode.debug")
 set_toolchains("clang-cl")
 set_exceptions("cxx")
+add_cxflags("/GS", "/Gd", {
+    tools = {"clang_cl", "cl"}
+})
+add_cxflags("cxflags", "/Zc:preprocessor", {
+    tools = "cl"
+});
+
 if is_mode("debug") then
     set_targetdir("bin/debug")
 else

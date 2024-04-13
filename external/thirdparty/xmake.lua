@@ -5,3 +5,6 @@ end
 includes("stb_util")
 includes("pybind11")
 includes("rtm")
+includes("imath")
+includes("alembic")
+includes("tiny_obj_loader_util")
