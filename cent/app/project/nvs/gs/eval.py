@@ -143,7 +143,7 @@ class EvalGaussianProject(ProjectBase):
                 if (params.scene["dataset_name"] == "mip360"):
                     # colmap
                     camera.up = np.array([0, -1, 0])
-                    camera.lookat(2 * np.array([np.cos(theta), -1, np.sin(theta)]), np.array([0, 0, 0]))
+                    camera.lookat(3 * np.array([np.cos(theta), -0.5, np.sin(theta)]), np.array([0, 0, 0]))
 
                 img = renderer.render(camera, self.model)["render"]
                 # if i % 4 == 0:

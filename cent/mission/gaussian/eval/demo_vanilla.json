@@ -11,9 +11,11 @@
             "iter": 30000
         },
         {
-            "type": "sphere",
-            "r": 1.0,
-            "N": 1000
+            "type": "ckpt",
+            "dataset_name": "mip360",
+            "obj_name": "bicycle",
+            "ckpt_path": "gaussian",
+            "iter": 30000
         }
     ]
 }

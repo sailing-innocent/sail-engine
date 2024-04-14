@@ -16,6 +16,13 @@
             "obj_name": "chair",
             "ckpt_path": "gaussian",
             "iter": 30000
+        },
+        {
+            "type": "ckpt",
+            "dataset_name": "mip360",
+            "obj_name": "bicycle",
+            "ckpt_path": "gaussian",
+            "iter": 30000
         }
     ]
 }

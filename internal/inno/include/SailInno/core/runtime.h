@@ -7,7 +7,7 @@
  */
 
 #include "SailInno/sail_inno.h"
-#include <luisa/dsl/func.h>
+#include <luisa/dsl/sugar.h>
 #include <luisa/runtime/device.h>
 #include <luisa/core/logging.h>
 
