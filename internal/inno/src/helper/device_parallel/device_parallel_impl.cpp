@@ -24,27 +24,6 @@ void DeviceParallel::create(Device& device) {
 	compile<float>(device);
 }
 
-void DeviceParallel::reduce_sum(
-	size_t& temp_storage_size,
-	BufferView<IntType> d_in,
-	BufferView<IntType> d_out,
-	size_t num_item) {
-	get_temp_size(temp_storage_size, num_item);
-}
-
-void DeviceParallel::reduce_sum(
-	luisa::compute::CommandList& cmdlist,
-	BufferView<IntType> temp_buffer,
-	BufferView<IntType> d_in,
-	BufferView<IntType> d_out,
-	size_t num_item) {
-	size_t temp_storage_size = 0;
-	get_temp_size(temp_storage_size, num_item);
-	LUISA_ASSERT(temp_buffer.size() >= temp_storage_size, "Please resize the Temp Buffer.");
-	int op = 0;// 0 = sum, 1 = max, 2 = min
-			   // reduceArrayRecursiveInt(cmdlist, temp_buffer, d_out, d_in, num_item, 0, 0, op);
-}
-
 void DeviceParallel::scan_inclusive_sum(
 	size_t& temp_storage_size,
 	BufferView<IntType> d_in,

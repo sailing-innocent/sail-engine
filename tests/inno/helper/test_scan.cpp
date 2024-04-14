@@ -2,7 +2,7 @@
  * @file test/render/test_scan.cpp
  * @author sailing-innocent
  * @brief Test Suite for Parallel Scan
- * @date 2023-12-28
+ * @date 2024-04-14
  */
 
 #include "test_util.h"
