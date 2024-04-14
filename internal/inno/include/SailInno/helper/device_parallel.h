@@ -11,8 +11,7 @@
 #include <luisa/runtime/device.h>
 #include <luisa/runtime/stream.h>
 #include <luisa/runtime/command_list.h>
-#include "luisa/runtime/rhi/resource.h"
-
+#include <luisa/runtime/rhi/resource.h>
 #include <type_traits>
 #include "SailInno/util/math/calc.h"// for imax
 
@@ -80,35 +79,24 @@ public:
 	}
 
 	template<NumericT Type4Byte>
-	void reduce_sum(size_t& temp_storage_size,
-					BufferView<Type4Byte> d_in,
-					BufferView<Type4Byte> d_out,
-					size_t num_item) {
+	void reduce(size_t& temp_storage_size,
+				BufferView<Type4Byte> d_in,
+				BufferView<Type4Byte> d_out,
+				size_t num_item, int op = 0) {
 		get_temp_size(temp_storage_size, num_item);
 	}
 	template<NumericT Type4Byte>
-	void reduce_sum(
+	void reduce(
 		CommandList& cmdlist,
 		BufferView<Type4Byte> temp_buffer,
 		BufferView<Type4Byte> d_in,
 		BufferView<Type4Byte> d_out,
-		size_t num_item) {
+		size_t num_item, int op = 0) {
 		size_t temp_storage_size = 0;
 		get_temp_size(temp_storage_size, num_item);
 		LUISA_ASSERT(temp_buffer.size() >= temp_storage_size, "Please resize the Temp Buffer.");
-		int op = 0;// 0 = sum, 1 = max, 2 = min
 		reduce_array_recursive<Type4Byte>(cmdlist, temp_buffer, d_in, d_out, num_item, 0, 0, op);
 	}
-
-	void scan_inclusive_sum(size_t& temp_storage_size,
-							BufferView<IntType> d_in,
-							BufferView<IntType> d_out,
-							size_t num_item);
-
-	void scan_inclusive_sum(luisa::compute::CommandList& cmdlist,
-							BufferView<IntType> temp_buffer,
-							BufferView<IntType> d_in,
-							BufferView<IntType> d_out, size_t num_item);
 
 private:
 	template<NumericT Type4Byte>

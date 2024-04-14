@@ -19,31 +19,8 @@ void DeviceParallel::create(Device& device) {
 	int num_elements_per_block = m_block_size * 2;
 	int extra_space = num_elements_per_block / m_num_banks;
 	m_shared_mem_size = (num_elements_per_block + extra_space);
-	LUISA_INFO("Smem Size: {}", m_shared_mem_size);
 	compile<int>(device);
 	compile<float>(device);
-}
-
-void DeviceParallel::scan_inclusive_sum(
-	size_t& temp_storage_size,
-	BufferView<IntType> d_in,
-	BufferView<IntType> d_out,
-	size_t num_item) {
-	get_temp_size(temp_storage_size, num_item);
-}
-
-void DeviceParallel::scan_inclusive_sum(
-	CommandList& cmdlist,
-	BufferView<IntType> temp_buffer,
-	BufferView<IntType> d_in,
-	BufferView<IntType> d_out, size_t num_item) {
-	size_t temp_storage_size = 0;
-	get_temp_size(temp_storage_size, num_item);
-	LUISA_ASSERT(temp_storage_size <= temp_buffer.size(), "temp_buffer size is not enough");
-	// prescan_array_recursive_int(
-	// 	cmdlist,
-	// 	temp_buffer, d_in, d_out,
-	// 	num_item, 0, 0);
 }
 
 }// namespace sail::inno
