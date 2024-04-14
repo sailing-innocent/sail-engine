@@ -83,11 +83,11 @@ void Neighbor::create(Device& device) noexcept {
 	mp_cell_state->allocate(device, num_cells);
 	// get temp storage size
 	size_t temp_storage_size = -1;
-	solver().device_parallel().scan_exclusive_sum(temp_storage_size,
-												  mp_cell_state->particle_count_hash,
-												  mp_cell_state->particle_offset_hash,
-												  0,
-												  num_cells << 1);
+	solver().device_parallel().scan_exclusive_sum<int>(temp_storage_size,
+													   mp_cell_state->particle_count_hash,
+													   mp_cell_state->particle_offset_hash,
+													   0,
+													   num_cells << 1);
 	// allocate temp_storage
 	m_temp_storage = device.create_buffer<int>(temp_storage_size);
 }

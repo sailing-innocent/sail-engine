@@ -7,9 +7,14 @@
  */
 
 #include "SailInno/sail_inno.h"
+
 #include <luisa/dsl/sugar.h>
+#include <luisa/runtime/context.h>
 #include <luisa/runtime/device.h>
+#include <luisa/runtime/stream.h>
+#include <luisa/runtime/command_list.h>
 #include <luisa/core/logging.h>
+#include <luisa/core/stl/unordered_map.h>
 
 namespace sail::inno {
 
@@ -35,11 +40,16 @@ protected:
 	template<typename T>
 	using BufferView = luisa::compute::BufferView<T>;
 	template<typename T>
+	using SmemType = luisa::compute::Shared<T>;
+	template<typename T>
+	using SmemTypePtr = luisa::compute::Shared<T>*;
+	template<typename T>
 	using Image = luisa::compute::Image<T>;
 	template<typename T>
 	using ImageView = luisa::compute::ImageView<T>;
 	template<size_t I, typename... Ts>
 	using Shader = luisa::compute::Shader<I, Ts...>;
+
 	using Device = luisa::compute::Device;
 	using CommandList = luisa::compute::CommandList;
 	using float2 = luisa::float2;
@@ -51,6 +61,7 @@ protected:
 	using uint2 = luisa::uint2;
 	using ulong = luisa::ulong;
 	using Stream = luisa::compute::Stream;
+	using Type = luisa::compute::Type;
 };
 
 }// namespace sail::inno
