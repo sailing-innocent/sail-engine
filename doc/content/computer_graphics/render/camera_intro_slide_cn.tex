@@ -1,0 +1,48 @@
+
+\begin{frame}
+    \frametitle{相机模型：FlipY}
+    \input{fig_flip_y_camera}
+\end{frame}
+
+\begin{frame}
+    \frametitle{相机模型}
+    如图\ref{fig:flip_y_camera}所示，一个正常的右手系世界坐标系$\bf{x_w,y_w,z_w}$和原点$\bf{O}$下，
+    相机视角的局部坐标系$\bf{x_c,y_c,z_c}$和相机原点在世界坐标系下的坐标 $\bf{c}$
+    $$\left[\begin{matrix} 
+        \vec{x}_c \\ \vec{y}_c \\ \vec{z}_c 
+    \end{matrix}\right]=
+    \left[\begin{matrix} 
+        x_{c0} & x_{c1} & x_{c2} \\ 
+        y_{c0} & y_{c1} & y_{c2} \\ 
+        z_{c0} & z_{c1} & z_{c2} 
+    \end{matrix}\right]
+    \left[\begin{matrix} 
+        \vec{x} \\ \vec{y} \\ \vec{z} 
+    \end{matrix}\right]=
+    R\left[\begin{matrix} 
+        \vec{x} \\ \vec{y} \\ \vec{z} 
+    \end{matrix}\right]$$
+\end{frame}
+
+\begin{frame}
+    \frametitle{视角变换}
+
+    在相机确定之后，任意一个世界坐标$(p_{wx},p_{wy},p_{wz})$都可以经过一个旋转
+    和一个平移变换到相机坐标系$(p_{cx},p_{cy},p_{cz})$之中，我们不妨引入齐次坐标的概念
+    
+    来确定一个$4\times 4$的变换矩阵$\bf{M}$，使得
+    
+    $[p_{cx},p_{cy},p_{cz},1]=[p_{wx},p_{wy},p_{wz},1]\bf{M}$
+    
+    并且可以推导出$\bf{M}$的表达式
+    
+    $$[p_{wx},p_{wy},p_{wz},1]
+    \left[\begin{matrix} 
+        x_{c0} & y_{c0} & z_{c0} & 0 \\ 
+        x_{c1} & y_{c1} & z_{c1} & 0 \\ 
+        x_{c2} & y_{c2} & z_{c2} & 0 \\ 
+        -\vec{c}\cdot\vec{x}_c &-\vec{c}\cdot\vec{y}_c &-\vec{c}\cdot\vec{z}_c & 1 
+    \end{matrix}\right]=[p_{cx},p_{cy},p_{cz}, 1]$$
+    
+    这里的M被称为View Matrix视角矩阵。
+\end{frame}

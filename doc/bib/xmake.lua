@@ -10,6 +10,7 @@ end
 add_bib("sample")
 add_bib("tools")
 add_bib("reinforcement_learning")
+add_bib("nerf")
 add_bib("gaussian")
 add_bib("diffusion_model")
 add_bib("gan")

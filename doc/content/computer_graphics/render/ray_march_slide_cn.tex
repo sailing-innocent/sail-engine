@@ -1,0 +1,26 @@
+\begin{frame}
+    \frametitle{体渲染器}
+    \begin{figure}
+        \centering
+        \includegraphics[width=\linewidth]{fig_volume_rendering.png}
+        \caption[short]{体渲染器原理}
+    \end{figure}
+\end{frame}
+\begin{frame}
+    \frametitle{光线步进算法(Ray March)}
+    \begin{itemize}
+        \item 对于每一根射线，从初始距离$t_n$开始，到最远距离$t_f$为止，步步采样每个位置的颜色$c(t)$和密度$\sigma(t)$
+        \item 最终像素是射线上的样本加权和：$C(\mathbf{r})=\int_{t_n}^{t_f}T(t)\sigma(\mathbf{r}(t))\mathbf{c}(\mathbf{r}(t),\mathbf{d})dt$
+        \item 此处$T(t)=exp(-\int_{t_n}^{t}\sigma(\mathbf{r}(s))ds)$代表t之后的颜色依然可以残留多少
+    \end{itemize}
+    \begin{figure}
+        \begin{subfigure}{0.48\textwidth}
+            \includegraphics[width=\linewidth]{fig_ray_march.png}
+            \caption[short]{光线步进}
+        \end{subfigure}
+        \begin{subfigure}{0.48\textwidth}
+            \includegraphics[width=\linewidth]{fig_ray_march_shade.png}
+            \caption[short]{传统光估计}
+        \end{subfigure}
+    \end{figure}
+\end{frame}

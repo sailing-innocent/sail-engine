@@ -1,0 +1,13 @@
+\begin{frame}
+    \frametitle{可微渲染}
+    \begin{itemize}
+        \item 正向过程：传统渲染过程，从3D表示生成2D图片
+        \item 逆向过程：通过2D图片与目标图片之间的差值，反推3D表示与目标3D表示之间的差值（微分）
+        \item 用神经网络替代传统的计算过程
+        \item 用数值技巧直接估计微分
+    \end{itemize}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{fig_diff_render_mitsuba.png}
+    \end{figure}
+\end{frame}

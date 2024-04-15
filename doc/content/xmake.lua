@@ -1,5 +1,6 @@
 includes("ai")
 includes("algorithm")
+includes("basic")
 includes("computer_graphics")
 includes("computer_vision")
 includes("demo")
