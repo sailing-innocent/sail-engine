@@ -1,0 +1,26 @@
+\documentclass{article}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes, calc, positioning, spy, 3d}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{subcaption}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{subcaption}
+
+\begin{document}
+
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+\section{Basic Node}
+\input{fig_basic_node}
+
+\section{3d Figures}
+\input{fig_3d}
+
+\section{Basic Function Draw}
+\input{fig_func}
+
+\end{document}

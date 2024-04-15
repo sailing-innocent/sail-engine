@@ -1,0 +1,15 @@
+\begin{tikzpicture}[node distance=10pt]
+    \node[draw, rounded corners] (start) {Start};
+    \node[draw, below=of start] (step 1) {Step 1};
+    \node[draw, below=of step 1] (step 2) {Step 2};
+    \node[draw, diamond, aspect=2,below=of step 2] (choise) {Choise};
+    \node[draw, right= 30pt of choise] (step x) {Step X};
+    \node[draw, rounded corners, below=20pt of choise] (end) {End};
+    \draw[->] (start) -- (step 1);
+    \draw[->] (step 1) -- (step 2);
+    \draw[->] (step 2) -- (choise);
+    \draw[->] (choise) -- node[left]{Yes} (end);
+    \draw[->] (choise) -- node[above]{No} (step x);
+    \draw[->] (step x) -- (step x|-step 2) -> (step 2);
+    \end{tikzpicture}
+    

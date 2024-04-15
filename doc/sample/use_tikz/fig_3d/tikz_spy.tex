@@ -1,0 +1,14 @@
+\begin{tikzpicture}[y={(1cm,-0.5cm)},x={(1cm,0.5cm)}, z={(0cm,1cm)},spy using outlines={rectangle, magnification=4, size=2cm, connect spies}]
+    \coordinate (O) at (1, -1 -0.5);
+    \draw[->] (O) -- +(0.5, 0,  0) node [right] {$x$};
+    \draw[->] (O) -- +(0,  0.5, 0) node [below] {$y$};
+    \draw[->] (O) -- +(0,  0, 0.5) node [above] {$z$};
+    
+    \draw [fill=blue!20] (0,0,0) -- (3,0,0) -- (3,2,0) -- (0,2,0) -- cycle;
+    
+    \begin{scope}[canvas is yx plane at z=0,transform shape,every node/.style={scale=0.2}]
+    \node [align=center] (Text) at (1,1.5) {Make me\\ big!};
+    \end{scope}
+    
+    \spy[lens={xslant=-1,yslant=.5,scale=3}] on (Text) in node at (1,1,3);    
+\end{tikzpicture}
