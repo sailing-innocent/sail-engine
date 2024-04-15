@@ -1,0 +1,19 @@
+a single binary random variable $x\in \{0, 1\}$, the probability of $x = 1$ will be denoted by the parameter $\mu$ so that 
+$p(x=1|\mu) = \mu$. And $p(x=0|\mu) = 1 - \mu$
+
+The  the probability distribution over x can be written:
+$Bern(x|\mu) = \mu^x(1-\mu)^{1-x}$, which is known as *Bernoulli* distribution.
+
+Its mean and Variance:
+
+$$E[x] = \mu$$
+
+$$var[x] = \mu(1-\mu)$$
+
+Now Suppose we have a data set $\mathcal{D} = \{x_1, x_2, \dots, x_N\}$ of observed values of x. We can construct likelihood function:
+
+$$p(\mathcal{D}|\mu)$$
+
+Then we can maximize likelihood function, or equivalently maximizing the logarithm.
+
+$$\mu_{ML} = \frac{1}{N}\Sigma_{n=1}^{N}x_n$$

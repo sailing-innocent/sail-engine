@@ -1,0 +1,72 @@
+The goal of reinforcement learning 
+
+$p_{\theta}(\tau)=p_{\theta}(s_1,a_1,\dots, s_T,a_T)=p(s_1)\prod_{t=1}^T\pi_{\theta}(a_t,s_t)p(s_{t+1}|s_t,a_t)$
+
+$\theta^{*}=argmax_{\theta}E_{\tau\sim p_\theta(\tau)}[\Sigma_t r(s_t, a_t)]$
+
+$\tau$ means a trajectory, 
+our goal is to make the expectation of reward maximize, 
+but we have no idea what the reward may be. 
+
+So we can use "Sampling" method, 
+replay for multiple times and evaluate 
+the expectation of reward according to the sample's reward.
+
+e.g. replay N times
+
+$J(\theta)=E_{\tau\sim p_{\theta}(\tau)}[\Sigma_t{r(s_t,a_t)}]\approx \frac{1}{N}\Sigma_{i=1}^N\Sigma_t r(s_{i,t},a_{i,t})$
+
+direct policy differentiation
+
+$J(\theta)=\int p_\theta(\tau)r(\tau)d\tau$
+
+given $r_{\tau}=\Sigma_{t=1}^T r(s_t,a_t)$ is constant for $\theta$
+
+$\nabla_{\theta}J(\theta)=\int\nabla_{\theta}p_{\theta}(\tau)r(\tau)d\tau=\int p_{\theta}(\tau)\nabla_{\theta}\log{p_{\theta}(\tau)}r(\tau)d\tau=E_{\tau\sim p_{\theta}(\tau)}[\nabla_{\theta}\log{p_\theta(\tau)r(\tau)}]$
+
+Then we want to calculate $\log{p_\theta(\tau)}$
+
+given $p_{\theta}(\tau)=p(s_1)\prod_{t=1}^T\pi_{\theta}(a_t|s_t)p(s_{t+1}|s_t,a_t)$
+
+Then the log could convert the prod to sum
+
+$\log{p_{\theta}(\tau)} = \log{p(s_1)}+\Sigma_{t=1}^T\log{\pi_\theta(a_t|s_t)+\log{p(s_{t+1}|s_t,a_t)}}$
+
+
+now we may find that, the $\log{p(s_1)}$ and $\log{p(s_{t+1}|s_t,a_t)}$ is independent on $\theta$, so now we can transform 
+
+$\nabla_{\theta}J(\theta)=E_{\tau\sim p_{\theta}(\tau)}[(\Sigma_{t=1}^T\nabla_{\theta} \log{\pi_{\theta}(a_t|s_t)})(\Sigma_{t=1}^T r(s_t,a_t))]$
+
+Evaluate the policy gradient
+
+recall we have the approximation 
+
+$J(\theta)\approx \frac{1}{N}\Sigma_i\Sigma_t r(s_{i,t},a_{i,t})$
+
+Thus we can approximate the gradient 
+
+$\nabla_\theta J(\theta) \approx \frac{1}{N}\Sigma_{i=1}^N(\Sigma_{t=1}^T\nabla_\theta\log{\pi_{\theta}(a_{i,t}|s_{i,t})})(\Sigma_{t}r(s_t, a_t))$
+
+Then $\theta = \theta + \alpha \nabla_{\theta}J(\theta)$
+
+\subparagraph{REINFORCE algorithm}
+
+\begin{enumerate}
+\item sample $\{\tau^i\}$ from $\pi_{\theta}(a_t, s_t)$ (run the policy)
+\item $\nabla_{\theta}J(\theta)\approx \Sigma_i((\Sigma_t \nabla_\theta \log{\pi_\theta(a_t^i,s_t^i)})(\Sigma_t r(s_t^i,a_t^i)))$
+\item $\theta\leftarrow \theta + \alpha\nabla_\theta J(\theta)$
+\end{enumerate}
+
+What is $\Sigma_t \nabla_\theta \log{\pi_\theta(a_{i,t},s_{i,t})}$?
+
+Comparison to maximum likelihood
+
+$\pi_\theta(a_t|s_t)$ could be something like neural network. 
+For example, Gaussian Policies will use a neural network 
+to generate the mean of distribution of policy
+
+$\pi_{\theta}(a_t|s_t)=\mathcal{N}(f_{nn}(s_t);\Sigma)$
+
+$\log{\pi_\theta(a_t|s_t)}=-\frac{1}{2}|f(s_t)-a_t|_{\Sigma}^2+ const$
+
+$\nabla_{\theta}\log{\pi_\theta(a_t|s_t)}=-\frac{1}{2}\Sigma^{-1}(f(s_t)-a_t)\frac{df}{d\theta}$

@@ -1,0 +1,147 @@
+\documentclass{article}
+
+\usepackage{arxiv/arxiv}
+
+\usepackage{amsmath}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{cleveref}       % smart cross-referencing
+\usepackage{lipsum}         % Can be removed after putting your text content
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{doi}
+
+\title{Deep Reinforcement Learning Homework 01}
+
+\author{
+    \hspace{1mm}Zhu Zihang \\
+    Nanjing University\\
+    Nanjing, Jiangsu Province\\
+    \texttt{522022150087@smail.nju.edu.cn}
+}
+
+\hypersetup{
+    pdftitle={drl_homework_01},
+    pdfsubject={},
+    pdfauthor={Zihang Zhu},
+    pdfkeywords={Deep Reinforcement Learning, Homework 01},
+}
+
+\begin{document}
+
+\maketitle
+
+\paragraph{Homework 01: Policy Gradient }
+
+Policy Gradient is a method 
+that optimize the policy function $\pi(a,s)$ directly.
+In this section we are going to use Policy Gradient Method to 
+solve two problems 
+
+\begin{enumerate}
+    \item the point maze navigation problem
+    \item the MuJoco HalfCheet running problem
+\end{enumerate}
+
+We are going to implement 
+
+\begin{enumerate}
+    \item Vanilla Policy Gradient -- REINFORCE
+    \item Natural Gradient Policy
+    \item Trust-Region Policy Gradient -- TRPO 
+    \item Proximal Policy Gradient -- PPO
+\end{enumerate}
+
+\paragraph{Policy Gradient}
+
+\input{reinforce_intro_doc_en}
+
+But we may see, that the $\alpha$ is hard to set for vanilla policy gradient 
+and the matrix is prone to ill-cases and hard to solve. 
+
+Thus, we will introduce Natural Gradient Method.
+
+\subparagraph{Natural Policy Gradient}
+
+\input{kl_divergence}
+
+The KL divergence of p and q is the Hessian of KL, we can estimate it with Fisher information matrix (FIM)
+
+\begin{itemize}
+\item Hessian: A square matrix of second-order partial derivatives
+\item Fisher information: a way of measuring the amount of infromation than an observable random variable X carries about an unknown parmter $\theta$ upon which the probability of X depends
+\end{itemize}
+
+$F(\theta)=E_{x\sim \pi_{\theta}}(\nabla_\theta(\log{\pi_\theta(x)})\nabla_{\theta}\log{\pi_{\theta}(x)^T})$
+\begin{itemize}
+\item input: intial policy parameters $\theta_0$
+\item for k = 0,1, 2...
+    \begin{itemize}
+        \item  collect trajectory $\mathcal{D}_k$ on policy $\pi_k=\pi(\theta_k)$
+        \item estimate advantages $\hat{A_t^{\pi_k}}$ using any advantage estimation algorithm
+        \item form sample estimates for policy gradient g and KL-divergence Hessian / Fisher Information Matrix $\hat{H}_k$
+    \end{itemize}
+\item Compute Natural Policy Gradient update: $\theta_{k+1}=\theta + \sqrt{\frac{2\epsilon}{\hat{g}_k^T\hat{H}_k\hat{g}_k}}\hat{H}_k^{-1}\hat{g}_k$
+\end{itemize}
+
+\subparagraph{Fisher Informantion Matrix}
+
+\input{fisher_information_matrix}
+
+\paragraph{Experiment}
+
+Here we implement our method based on pytorch and conduct our experiments based on gym.
+
+\subparagraph{Point Navigation}
+
+\begin{itemize}
+\item inherited from gym.Environment
+\item action space: $[-0.1, 0.1]^2$ the movement of point
+\item observation with target position $[-0.5,0.5]^2$ and agent position $[-0.5,0.5]^2$
+\end{itemize}
+
+\subparagraph{MuJoco HalfCheet}
+
+This environment is part of the Mujoco envrionmetns which contains general information about the environment
+
+\begin{itemize}
+\item Action Space: Box(-1.0, 1.0, (6,), float32)
+    \begin{itemize}
+    \item dim 6
+    \item 0 torque applied on the back thigh rotor 
+    \item back shin rotor
+    \item back foot rotor
+    \item front thigh rotor
+    \item front shin rotor
+    \item front foot rotor
+    \end{itemize}
+\item Observatoion Space Box(-inf, inf, (17,), float64), positional values of different body parts of the cheetah
+    \begin{itemize}
+        \item by default, observations to not include x-coordinate of the cheetah's center of mass, it may be included by passing 
+            exclude\_current\_positions\_from\_observation=False, then the observation dim becomes 18
+        \item first 8 are position
+        \item last 9 are velocity
+        \item episode end: truncates when the episode length is greater than 1000
+    \end{itemize}
+\item import \textit{gymnasium.make("HalfCheetah-v4")}
+\item A Cat-Like Robot Real-Time Learning to Run
+\item 2-dim robot consisting of 9 links and 8 joints connecting them
+\item goal: apply the torque on the joints to make the cheetah run forward as fast as possible
+\item reward: the distance, positive for moving forward and negative for moving backward
+    \begin{itemize}
+        \item forward\_reward: A reward of moving forward which is measured as \textit{forward\_reward\_weight * (X-coordinate-before - x-coordinate-after)/dt}
+        \item ctrl\_cost: penalising the cheetah if it takes actions that are too large
+    \end{itemize}
+\item the torso and head of the cheetah are fixed
+\item torque can only be applied on the other 6 joints over the front and back thighs
+\end{itemize}
+
+\input{result_01}
+
+\end{document}

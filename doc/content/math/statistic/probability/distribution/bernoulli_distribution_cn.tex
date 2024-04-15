@@ -1,0 +1,16 @@
+对于一个二值随机向量 $x\in \{0, 1\}$, $x = 1$ 的概率记作 $\mu$，即$p(x=1|\mu) = \mu$，$p(x=0|\mu) = 1 - \mu$
+
+于是x的概率分布被称作“伯努利分布”，可以写成：
+$Bern(x|\mu) = \mu^x(1-\mu)^{1-x}$
+
+
+$$E[x] = \mu$$
+$$var[x] = \mu(1-\mu)$$
+
+假设我们有数据集 $\mathcal{D} = \{x_1, x_2, \dots, x_N\}$，我们可以构建似然函数：
+
+$$p(\mathcal{D}|\mu)=\prod\limits_{n=1}\limits^{N}p(x_n|\mu)=\prod\limits_{n=1}\limits^{N} \mu^{x_n}(1-\mu)^{1-x_n}$$
+
+进而通过优化方法来最大化似然函数，从而估计最符合数据集观测结果的伯努利分布参数（$\mu_{ML}$）
+
+$$\mu_{ML} = \frac{1}{N}\Sigma_{n=1}^{N}x_n$$

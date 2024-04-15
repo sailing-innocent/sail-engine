@@ -48,7 +48,7 @@
 % TIKZ & PGFPLOTS
 \RequirePackage{tikz}
 \usetikzlibrary{shapes.symbols}	% 稍后定义 hint 环境所需
-\usetikzlibrary{3d}
+\usetikzlibrary{3d, math}
 \RequirePackage{pgfplots}
 \RequirePackage{pgfplotstable}
 

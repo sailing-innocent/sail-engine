@@ -1,0 +1,15 @@
+We can easily calculate the distance between two points in a Euclidean Coordinate, 
+but how to calculate the distance between two probability distribution $p(x)$ and $q(x)$?
+
+$$D_{KL}(p(x)||q(x))=\Sigma_i{p(x_i)log\frac{p(x_i)}{q(x_i)}}$$ 
+
+and for Discrete Distribution
+
+$$D_{KL}(p(x)||q(x))=\int_x p(x)\log{\frac{p(x)}{q(x)}}dx$$
+
+The KL divergence of 0 indicates the two distributions are identical.
+
+Suppose two Gaussian Distribution:
+
+$p(x)=\mathcal{N}(\mu_1,\sigma_1^2)$ and $q(x)=\mathcal{N}(\mu_2,\sigma_2^2)$
+

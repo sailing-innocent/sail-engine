@@ -1,0 +1,9 @@
+$$\hat{y} = f(x) = \theta_0 + \theta_1 x$$
+
+$$min_{\theta}L(\theta) = \frac{1}{2}\Sigma_{i=1}^{n} (f(x_i) - y_i)^2$$
+
+$$\frac{\partial L}{\partial \theta_0} = \Sigma_{i=1}^{n}(\theta_0 + \theta_1 x_i - y_i) = n\theta_0 +\Sigma_{i=1}^{n} x_i \theta_1 - \Sigma_{i=1}^{n} y_i = 0$$  
+
+$$\frac{\partial L}{\partial \theta_1} = \Sigma_{i=1}^{n}x_i(\theta_0+\theta_1x_i-y_i) = \Sigma_{i=1}^{n}x_i \theta_0 + \Sigma_{i=1}^{n}x_i^2 \theta_1 - \Sigma_{i=1}^{n}x_iy_i$$
+
+$$\left\{\begin{aligned}\hat\theta_1 &= \frac{n\Sigma_{i=1}^{n}x_iy_i-\Sigma_{i=1}^{n}x_i\Sigma_{i=1}^{n}y_i}{n\Sigma_{i=1}^{n}x_i^2-\Sigma_{i=1}^{n}x_i\Sigma_{i=1}^{n}x_i} \\ \hat\theta_0 &= \frac{\Sigma_{i=1}^{n}y_i - \Sigma_{i=1}^{n}x_i \hat\theta_1}{n}\end{aligned}\right.$$

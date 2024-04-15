@@ -17,7 +17,11 @@
             \caption{Result}
         \end{subfigure}
         \begin{subfigure}{0.68\linewidth}
-            \begin{lstlisting}
+            \begin{lstlisting}[
+                language=tex, % 设置语言
+                basicstyle=\ttfamily, % 设置字体族
+                breaklines=true % 自动换行
+            ]
 \begin{tikzpicture}[execute at end picture=%
     {
         \begin{pgfonlayer}{background}

@@ -8,5 +8,6 @@ add_content("update_2024_03", {
 
 add_content("update_2024_04", {
     "fig_pack_20240403",
-    "profile_3dgs_diff_trainer"
+    "profile_3dgs_diff_trainer",
+    "parallel_prefix_sum"
 })

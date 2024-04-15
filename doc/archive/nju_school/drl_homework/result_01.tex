@@ -1,0 +1,21 @@
+\paragraph{Code Framework}
+
+our result is reserved on this public git repository: \url{https://github.com/sailing-innocent/drl_homework}
+
+\paragraph{Result}
+
+\subparagraph{Policy Gradient + Navigation 2D} with 500 episods and learning rate -0.0005
+
+We can see the reward is apprximate to 0
+
+\subparagraph{Policy Gradient + HalfCheetah} with 5000 episodes and learning rate -0.0005
+
+The reward gradually move to positive (means the robot walks!) and has an average to 1500.
+
+\subparagraph{Natural Policy Gradient + Nav2D} with 500 episods and learning rate -0.0005
+
+as you can see, for the same parameter it indeed get converged rapidly.
+
+The training for our NGP on HalfCheetah has some trouble with
+ the ill-posed matrix computing eigen value, 
+ currently I don't have any idea how to save it.
