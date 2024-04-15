@@ -1,0 +1,25 @@
+The Core Concepts of 3D Reconstruction
+
+\paragraph{Images}
+
+Images are the most common form of data in 
+computer vision. They are represented as a 2D grid 
+of pixels, where each pixel has a value 
+representing the intensity of light at that point. 
+The intensity can be represented in 
+different color spaces, such as RGB, 
+grayscale, or others. A typical RGB images of resolution $1024\times 768$
+can be represented as a 3D tensor of shape $1024\times 768\times 3$, where 
+each value entry is a scalar in the range of $[0.0, 1.0]$.
+\\
+
+Images can be captured from various sources, 
+such as cameras, satellites, or medical scanners.
+When 3D reconstruction, multi-view images are typically 
+our only sources of data to get start with. 
+However, images themselves are lacking 3D information prior,
+thus, we need to model our "camera" and "scene" to eliminate
+the possible dimensions of space defined by the images.
+
+\paragraph{Camera}
+

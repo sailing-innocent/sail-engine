@@ -1,4 +1,4 @@
-add_latex("master_final_thesis",
+add_latex("master_final_thesis_draft",
 {
     -- template
     "njuthesis", 
