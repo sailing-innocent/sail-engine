@@ -1,0 +1,17 @@
+Classic HDR Recovery Methods directly accumulates 
+multiple LDR images taken from a fixed camera pose 
+to recover HDR image, which are prone to ghosting artifacts
+because of dynamic scenes or camera motion.
+
+To cope with this limitation, several methods suggests
+to use a set of LDR images taken from different camera poses
+to recover HDR image using image alignment techniques, 
+such as image wraping and optimal flows.
+
+However, they still suffer from large camera motion and 
+occlusion due to the imperfect alignment.
+
+Learning-based approach required ground truth.
+
+Recent stutides adopt the differential rendering framework, suggests 
+to recover HDR image by calibrating the entire HDR radiance field.
