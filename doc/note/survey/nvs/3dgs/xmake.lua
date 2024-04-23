@@ -3,6 +3,8 @@ add_latex("survey_3dgs_en", {
     "bib_gaussian", -- bib
     -- subcontent
     "nvs_with_radiance_field_doc_en",
+    "point_based_render_doc_en",
+    "diff_render_doc_en",
     "gs_principle_doc_en",
     "diff_gs_doc_en"
 }, "main_en", "pdflatex")

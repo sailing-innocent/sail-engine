@@ -1,0 +1,1 @@
+add_content("point_based_render_doc_en")

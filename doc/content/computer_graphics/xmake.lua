@@ -5,3 +5,4 @@ add_content("cg_app_intro_slide_cn", {
     "fig_pack_graphics_application"
 })
 
+includes("point_based_graphics")

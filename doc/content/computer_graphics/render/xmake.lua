@@ -21,3 +21,5 @@ add_content("ray_march_slide_cn", {
     "fig_ray_march_shade",
     "fig_volume_rendering"
 })
+
+includes("diff_render")
