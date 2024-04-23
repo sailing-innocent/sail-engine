@@ -7,9 +7,6 @@
 
 #include "SailInno/gaussian/diff_gs_tile_sampler.h"
 #include "SailInno/util/graphic/image.h"
-#include "luisa/dsl/var.h"
-#include <luisa/dsl/sugar.h>
-#include <luisa/dsl/printer.h>
 
 using namespace luisa;
 using namespace luisa::compute;

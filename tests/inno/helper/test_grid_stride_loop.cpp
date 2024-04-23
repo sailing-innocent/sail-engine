@@ -6,13 +6,7 @@
  */
 
 #include "test_util.h"
-#include <luisa/runtime/context.h>
-#include <luisa/runtime/device.h>
-#include <luisa/runtime/stream.h>
-#include <luisa/dsl/printer.h>
-#include <luisa/dsl/sugar.h>
-#include <luisa/runtime/buffer.h>
-
+#include "luisa/luisa-compute.h"
 #include "SailInno/helper/grid_stride_loop.h"
 #include <vector>
 
