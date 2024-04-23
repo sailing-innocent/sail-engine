@@ -1,0 +1,12 @@
+A Radiance Field is a complex, 
+multi-variable function, denoted as $f_c(\vec{x},\vec{d})$, 
+which represents the intensity of radiance in a scene. 
+This function considers each color $c$, 
+every point $\vec{x}$, and all directions $\vec{d}$. 
+Due to its complexity, it's often impractical to 
+express this function explicitly as a mathematical equation. 
+Instead, researchers employ various approximation methods 
+such as Neural Networks, Grids, Hashes, or 3D Gaussians. 
+Once the Radiance Field is generated, it enables the synthesis of novel scene views. 
+This is achieved by integrating the radiance intensity along the rays extending from the camera to the scene, 
+or by projecting the radiance intensity onto the image plane.

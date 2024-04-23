@@ -16,9 +16,8 @@
 \RequirePackage{cleveref}
 \RequirePackage{lipsum}
 \RequirePackage{graphicx}
-\RequirePackage{natbib}
+% \RequirePackage{natbib}
 \RequirePackage{doi}
-
 \RequirePackage{subcaption}
 
 \RequirePackage{tikz}

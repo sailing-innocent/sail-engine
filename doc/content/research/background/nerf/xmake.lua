@@ -14,6 +14,7 @@
 -- add_nerf_content("nerf_intro_doc_en")
 -- add_nerf_content("nerf_intro_doc_cn")
 -- add_nerf_content("nerf_intro_slide_en")
+add_content("radiance_field_brief_doc_en")
 
 add_content("nerf_intro_slide_cn", {
     "ray_march_slide_cn",

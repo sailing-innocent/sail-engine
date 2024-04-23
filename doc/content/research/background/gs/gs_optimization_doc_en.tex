@@ -1,0 +1,17 @@
+Here we introduce the overall optimization process of 
+the Gaussian Splatting Algorithm. 
+
+After initializing the Gaussian Parameters $\{\mathcal{G}\}$, repeatedly perform the following steps:
+
+\begin{enumerate}
+    \item randomly choose a view $\mathcal{P}$ from dataset and its corresponding ground truth image $\mathcal{I}_{gt}$
+    \item Calculate the output image $\mathcal{I}_{w\times h}$ using the Forward Pass
+    \item Calculate the loss function $\mathcal{L}$ between the output image $\mathcal{I}_{w\times h}$ and the ground truth image $\mathcal{I}_{gt}$
+    \item Calculate the derivative of the loss function with respect to the output image $\frac{\partial \mathcal{L}}{\partial \mathcal{I}}$
+    \item Calculate the derivative of the output image with respect to the input Gaussian Parameters $\{\mathcal{G}\}$: $\frac{\partial \mathcal{I}}{\partial \mathcal{G}}$ and back-propagate the derivatives from the output image to the input Gaussian Parameters $\{\mathcal{G}\}$: $\frac{\partial \mathcal{L}}{\partial \mathcal{G}} = \frac{\partial \mathcal{L}}{\partial \mathcal{I}}\frac{\partial \mathcal{I}}{\partial \mathcal{G}}$ using the Backward Pass
+    \item Update the Gaussian Parameters $\{\mathcal{G}\}$ using gradient descent
+\end{enumerate}
+
+The optimization process is repeated until the Gaussian Parameters $\{\mathcal{G}\}$ converge to the optimal solution, 
+where the output image $\mathcal{I}$ is close enough to the ground truth image $\mathcal{I}_{gt}$. 
+We will save the optimal Gaussian Parameters $\hat{\{\mathcal{G}\}}$ for the next stage of evaluation.

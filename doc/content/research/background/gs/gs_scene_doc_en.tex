@@ -1,0 +1,14 @@
+The 3D Gaussian Splatting method interprets a scene 
+as a collection of $N$ 3D Gaussians, forming a characteristic point cloud. 
+Each Gaussian is characterized by its mean $\mathbf{m}_i \in R^3$, 
+covariance matrix $\mathbf{C}_i$, density $\rho_i\in R$, and color $\mathbf{c}_i\in R^3$.
+
+The covariance matrix $\mathbf{C}_i$, a $3\times 3$ matrix, 
+determines the Gaussian's shape. 
+It can be computed from a standard Gaussian through a combination of scaling and rotation transformations. 
+The scaling transformation, represented by $s_i\in R^3$, indicates the scaling factor along each axis. 
+The rotation transformation, represented by a normalized quaternion $q_i\in R^4$, signifies the rotation.
+
+In practice, the gaussian color is computed using Spherical Harmonics (SH) coefficients. 
+This approach effectively captures the anisotropic properties of the radiance field across different directions.
+For D degree SH, the color $\mathbf{c}_i$ is represented as a vector of $(D+1)^2$ coefficients.

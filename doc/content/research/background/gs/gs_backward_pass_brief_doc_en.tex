@@ -1,0 +1,14 @@
+Given the loss function $\mathcal{L}$, 
+the derivative of the loss function with respect to the 
+output image is $\frac{\partial \mathcal{L}}{\partial \mathcal{I}}$.
+
+When it comes to backward pass, 
+we use the gradient of the output image 
+with respect to the input Gaussian Parameters $\{\mathcal{G}\}$: 
+$\frac{\partial \mathcal{I}}{\partial \mathcal{G}}$, 
+then we can back-propagate the derivatives from the output image 
+to the input Gaussian Parameters 
+
+$$\frac{\partial \mathcal{L}}{\partial \mathcal{G}} = \frac{\partial \mathcal{L}}{\partial \mathcal{I}}\frac{\partial \mathcal{I}}{\partial \mathcal{G}}$$
+
+And we can use this derivative to update the Gaussian Parameters using gradient descent in the optimization stage.

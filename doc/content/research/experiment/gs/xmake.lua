@@ -5,3 +5,5 @@ add_content("profile_3dgs_diff_param", {
 add_content("profile_3dgs_diff_trainer", {
     "tab_3dgs_profile_diff_train_psnr_result_mip360"
 })
+
+add_content("reprod_3dgs_doc_en")

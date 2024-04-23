@@ -1,5 +1,6 @@
 includes("gs")
 includes("nerf")
+includes("nvs")
 
 add_content("research_background_slide_cn", {
     "fig_overview_graphics",
