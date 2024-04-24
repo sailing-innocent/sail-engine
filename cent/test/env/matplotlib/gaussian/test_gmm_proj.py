@@ -62,10 +62,9 @@ def plot_gmm_proj(means, covariances, title):
 
     plt.title(title)
 
-@pytest.mark.current 
+@pytest.mark.app
 def test_vis_gmm_proj():
     means = np.array([[0.5, 0.5], [-0.5, -0.5]])
     covariances = np.array([[[1.0, 0.0], [0.0, 1.0]], [[2.0, -1.0], [-1.0, 1.0]]])
-
     plot_gmm_proj(means, covariances, "Gaussian Mixture Projection")
     plt.show()

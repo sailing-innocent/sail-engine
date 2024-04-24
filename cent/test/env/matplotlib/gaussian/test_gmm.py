@@ -35,6 +35,5 @@ def plot_gaussians(means, covariances, title):
 def test_vis_gmm():
     means = np.array([[0.5, 0.5], [-0.5, -0.5]])
     covariances = np.array([[[1.0, 0.0], [0.0, 1.0]], [[2.0, -1.0], [-1.0, 1.0]]])
-
     plot_gaussians(means, covariances, "Gaussian Mixture")
     plt.show()
