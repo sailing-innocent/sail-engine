@@ -1,0 +1,30 @@
+\paragraph{研究代码框架}
+
+作为图形学的研究生，对于代码框架的要求多且繁杂。一方面需要大量的C/C++基础库造轮子，另一方面需要python和深度学习库来做训练。甚至还需要承担一部分报告论文的排版工作。
+
+整个研究代码框架的搭建是我在南大的研究生第一年的主要成果。现如今基本覆盖了我绝大部分的自我研究需求。
+
+整个框架主要包括
+
+\begin{itemize}
+    \item 纯C++的基础库sail
+    \item 基于底层图形API的功能库ing 
+    \item 基于luisa-compute的功能库inno 
+    \item 基于python的综合库cent 
+\end{itemize}
+
+\paragraph{基础库sail}
+
+最开始学C++建立的基础库，是所有后续代码框架的根基。在2023年一月熟悉xmake之后重构了一次，后续又有若干次重构，从纯头文件库变成了基础功能库。
+
+\paragraph{功能库ing}
+
+最开始学习图形API(OpenGL, Vulkan, CUDA)过程中建立的库，在2023年一月根据xmake重构了一次，在刚开始鲸吞GaussianSplatting的过程中又进行了一些重构。是很多算法功能的基础开发库，利用稳定的API来实现基础的构思。
+
+\paragraph{功能库inno}
+
+功能库inno的实现最晚，主要是在2023年的三月到六月开始使用LuisaCompute实现一个基于SPH算法的流体模拟仿真项目。暂时依然沿用那一套package框架方案，只是拓展了开发可微渲染器的功能，支持python binding。主要利用LuisaCompute的开发效率和社区环境进行深入参与维护，并合并各个子模块的功能。
+
+\paragraph{综合库cent}
+
+cent是与研究的信息管理系统交互的主要媒介，其doc子文件夹用xmake构建了一个编译项目框架，可以支持多种笔记，报告，论文的排版产出，无缝与信息管理系统vault同步。同时也是各种初步实现，原型的集散地。也是底层功能库封装的调用地点。cent使用pytest来整体管理多输出的python项目。
