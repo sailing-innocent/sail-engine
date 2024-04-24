@@ -1,8 +1,17 @@
-TODO: CUDA based tile Renderer
+First we need to use cuda to parallelize the rendering and write the image buffer out with stbi image library, as shown in Figure \ref{fig:reprod_gs_cuda_debug_img}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{demo_reprod_gs_cuda_debug_img.png}
     \caption{Debug Write Image }
     \label{fig:reprod_gs_cuda_debug_img}
+\end{figure}
+
+Then we can split tiles, as shown in Figure \ref{fig:reprod_gs_cuda_debug_tile}, we use chessboard to show each block tile.
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=\textwidth]{demo_reprod_gs_cuda_debug_tile.png}
+        \caption{The Tile rendering}
+    \label{fig:reprod_gs_cuda_debug_tile}
 \end{figure}

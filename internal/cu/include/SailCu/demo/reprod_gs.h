@@ -16,6 +16,7 @@ public:
 	ReprodGs() = default;
 	~ReprodGs() = default;
 	void debug_img(int w, int h, std::span<float> h_out) noexcept;
+	void debug_tile(int w, int h, std::span<float> h_out) noexcept;
 };
 
 }// namespace sail::cu

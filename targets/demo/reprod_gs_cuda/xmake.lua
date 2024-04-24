@@ -18,3 +18,4 @@ function demo_reprod_gs_cuda(name)
 end
 
 demo_reprod_gs_cuda("debug_img")
+demo_reprod_gs_cuda("debug_tile")

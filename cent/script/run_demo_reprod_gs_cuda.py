@@ -5,7 +5,8 @@ if __name__ == "__main__":
     cmd_prefix = "demo_rgcu_"
     target_prefix = "demo_reprod_gs_cuda_"
     targets = [
-        "debug_img"
+        "debug_img",
+        "debug_tile"
     ]
     for target in targets:
         cmd = f"{cmd_prefix}{target}"
