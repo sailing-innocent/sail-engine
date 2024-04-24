@@ -47,8 +47,8 @@ function add_ppm(name)
 end
 
 
-rule("latex.python_figure")
-    set_extensions(".py")
+rule("latex.drawio")
+    set_extensions(".drawio")
     add_deps("latex.indirect_content")
     on_load(function (target)
         local ofile = path.join(target:autogendir({root=true}), target:name() .. ".png")
@@ -58,11 +58,21 @@ rule("latex.python_figure")
         import("lib.detect.find_tool")
         import("core.project.depend")
         import("utils.progress")
-        local ofile = path.join(target:autogendir({root=true}), target:name() .. ".png")
-        local py = assert(find_tool("python", {check="--version"}), "python not found!")
-        os.vrunv(py.program, {sourcefile, "--target", ofile})
-        progress.show(opt.progress, "building pyscript figure %s", ofile)
-    end)
-    on_link(function (target)
+        -- first build
+        local sfile = path.join(os.projectdir(), sourcefile)
+        local ofile = path.join(os.projectdir(), target:autogendir({root=true}), target:name() .. ".png")
+        depend.on_changed(function()
+            local py = assert(find_tool("python", {check="--version"}), "python not found!")
+            os.vrunv(py.program, {"doc/script/drawio2png.py", "--drawio", sourcefile, "--png", ofile})
+            progress.show(opt.progress, "building drawio %s", ofile)
+        end, {files = {sfile, ofile} })
     end)
 rule_end()
+
+function add_drawio(name)
+    target(name)
+        add_rules("latex.drawio")
+        add_files( name .. ".drawio")
+    target_end()
+end
+
