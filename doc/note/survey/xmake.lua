@@ -1,3 +1,5 @@
 includes("graphics")
 includes("vision")
 includes("nvs")
+includes("aigc")
+includes("machine_learning")

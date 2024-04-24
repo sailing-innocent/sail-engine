@@ -18,3 +18,7 @@ includes("rtow")
 if get_config("enable_llvm") then 
     includes("k_compiler")
 end
+
+if get_config("enable_cuda") then 
+    includes("reprod_gs_cuda")
+end 

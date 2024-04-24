@@ -1,0 +1,7 @@
+Because CUDA lacks a built-in swapchain buffering function, typically, 
+the rendering implementation with CUDA is done through interoperation with existing graphics APIs, such as OpenGL, DirectX or Vulkan.
+
+But for this project, we only need to render image to a host buffer and write to a png file. So the first step is to find a way to export image.
+
+\paragraph{STBI write image}
+
