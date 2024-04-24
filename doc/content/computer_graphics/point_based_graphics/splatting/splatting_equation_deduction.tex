@@ -1,0 +1,37 @@
+
+
+\input{volume_render_equation}
+
+Now we assume the extinction function is the weighted 
+sum of coefficients and reconstruction kernels
+\begin{equation}
+g(x)=\sum\limits_{k}\limits^{} g_kr_k(\mathbf{x})
+\label{eq:extinction_function}
+\end{equation}
+
+
+This reconstruction kernel reflects the position and shape for individual particles.
+
+We substitude the equation (\ref{eq:extinction_function}) into the volume rendering equation (\ref{eq:volume_render_equation}):
+
+$$I_{\lambda}(\hat{\mathbf{x}})=
+\sum\limits_{k}\limits^{} 
+(
+    \int_0^L c_\lambda(\hat{\mathbf{x}},\xi)g_kr_k(\hat{\mathbf{x}},\xi)
+    \prod\limits_{j }\limits^{} e^{
+        g_j \int_0^\xi r_j(\hat{\mathbf{x}},\mu)d\mu
+    } d\xi
+)$$
+
+To compute this function mathematically, we often use assumptions
+
+\begin{enumerate}
+    \item use simplified reconstruction kernel, e.g. Gaussian Kernel.
+    \item the local support of each reconstruction won't overlap with each other along the ray.
+    \item the reconstruction kernels can be ordered front to back
+    \item the emission coefficient is constant 
+\end{enumerate}
+
+Further more, we use the Taylor expansion for the exponential function, and we can get the final equation for Splatting:
+
+\input{splatting_equation}

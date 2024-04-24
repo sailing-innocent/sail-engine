@@ -1,3 +1,4 @@
+includes("volume")
 add_content("rasterize_intro_slide_cn", {
     "fig_rasterization_render",
     "fig_raster_result_render"

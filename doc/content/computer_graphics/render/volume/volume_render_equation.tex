@@ -1,0 +1,19 @@
+\begin{equation}
+I_\lambda(\hat{\mathbf{x}})=
+\int_0^L c_\lambda(\hat{\mathbf{x}}, \xi)
+g(\hat{\mathbf{x}},\xi)
+e^{-\int_0^\xi g(\hat{\mathbf{x}},\mu)d\mu}
+d\xi
+\label{eq:volume_render_equation}
+\end{equation}
+
+where $g(\mathbf{x})$ is the \textit{extinction function}
+that defines the rate of light occlusion, 
+and $c_\lambda(\mathbf{x})$ is an emission coefficient.
+
+The exponential term is \textit{attenuation factor}, 
+and the production of $c_\lambda(x)g(x)$ is also called source term, 
+describing the light intensity scattered in the direction of light of ray 
+$\hat{x}$ at point x.
+
+

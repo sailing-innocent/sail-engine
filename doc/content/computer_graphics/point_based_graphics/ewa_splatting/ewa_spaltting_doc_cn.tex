@@ -1,0 +1,35 @@
+\paragraph{EWA Splatting 原理}
+
+本部分介绍\textit{EWA Splatting}，一个经典的使用点云进行真实感图像渲染的方法。想要理解EWA Splatting，最简单的方式是利用信号与系统中的重采样理论。
+
+该方法将空间中的光场分布视作若干高斯分布的点云：
+
+\begin{enumerate}
+    \item 高斯分布均值位置 $\bf{p}$，是一个空间中的三维坐标
+    \item 高斯分布的$3\times 3$协方差矩阵$V$，可以理解为一个旋转变换R和一个拉伸变换S的组合 $V=R^TS^TSR$，
+        可以简单理解为把一个标准的球形沿着任意三个正交方向的拉伸变形之后得到的椭球
+    \item 服从该高斯分布的特征$\bf{X}$，包括颜色和透明度 
+\end{enumerate}
+
+高斯变换有几个优良的性质
+
+\begin{enumerate}
+    \item 高斯分布经过傅里叶变换在频域中仍为高斯分布
+    \item 高斯分布中的参数$X$经过仿射变换$Y=MX$之后对于Y仍然为高斯分布
+    \item 对于非仿射变换（比如透视投影）我们也可以计算其局部线性的Jacobian
+    \item 对于正交投影（比如一个3D Gaussian投射到2D相机）可以直接通过取cov子阵的方法得到一个降维的Gaussian
+\end{enumerate}
+
+这样，经过高斯变换之后的点云渲染全过程都是可以追溯，可以微分的。这就是渲染器之所以能够可微的基础。
+
+EWA Splatting经过如下变换在屏幕空间中制作图像
+
+\begin{enumerate}
+    \item 计算相机的视角变换矩阵和仿射变换矩阵的Jacobian
+    \item 将空间转化为为相机局部坐标(变换$\bf{p}$，不变V)
+    \item 将相机表面为若干小块(tile)，每个小块负责渲染$16\times 16$个像素
+    \item 对于每一个tile，可以得到会投影到这个tile上的高斯分布，并将他们按照z轴大小排序
+    \item 在NDC中向着相机平面投影，将3D高斯转换为相机平面上的2D高斯分布
+    \item 进行band-limit处理来防止aliasing 
+    \item 并依排序顺序进行$\alpha$混合，最终得到图像
+\end{enumerate}
