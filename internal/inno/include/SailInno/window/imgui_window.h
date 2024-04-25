@@ -48,8 +48,8 @@ private:
 public:
 	ImGuiWindow() noexcept = default;
 
-	void create() noexcept;
-	void destroy() noexcept;
+	// void create() noexcept;
+	// void destroy() noexcept;
 };
 
 }// namespace sail::inno
