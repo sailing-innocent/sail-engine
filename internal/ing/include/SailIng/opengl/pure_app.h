@@ -36,7 +36,6 @@ protected:
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 	static void process_input_callback(GLFWwindow* window);
 
-protected:
 	std::string m_title = "ING_GL_Pure";
 	unsigned int m_resw = 800;
 	unsigned int m_resh = 600;

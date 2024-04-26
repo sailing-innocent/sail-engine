@@ -12,7 +12,7 @@ if has_config("enable_cuda") then
 end
 
 if has_config("enable_gl") then 
-    -- includes("gl")
+    includes("gl")
 end
 
 if has_config("enable_llvm") then 

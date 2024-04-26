@@ -28,16 +28,24 @@ sail_add_test("basic", "io", {
 })
 sail_add_test("basic", "leetcode", {})
 sail_add_test("basic", "dummy", {"SailDummy"})
-if get_config("enable_inno") then 
+if has_config("enable_inno") then 
     sail_add_test("inno", "util", {"SailInno"})
     sail_add_test("inno", "helper", {"SailInno"})
 end 
-if get_config("enable_ing") then 
+if has_config("enable_ing") then 
     sail_add_test("ing", "util", {"SailIng"})
-    if get_config("enable_dx") then 
+    if has_config("enable_dx") then 
         sail_add_test("ing", "dx", {"SailIng"})
     end
 end 
-if get_config("enable_cuda") then 
+if has_config("enable_cuda") then 
     sail_add_test("cu", "util", {"SailCu"})
+end 
+
+if has_config("enable_gl") then 
+    -- sail_add_test("gl", "util", {"SailGL"})
+end
+
+if has_config("enable_llvm") then 
+    sail_add_test("llvm", "ast", {"SailLLVM"})
 end 
