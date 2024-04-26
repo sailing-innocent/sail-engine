@@ -10,4 +10,5 @@
 using namespace sail::inno;
 
 int main(int args, char* argv[]) {
+	return 0;
 }

@@ -2,6 +2,7 @@ SHARED_MODULE("SailLLVM", "SAIL_LLVM", engine_version)
     add_includedirs("include", { public = true })
     add_files("src/**.cpp")
     add_deps("SailBase")
+    
     local llvm_path = get_config("llvm_path")
     add_includedirs(llvm_path .. "/include", {public=true})
     add_linkdirs(llvm_path .. "/lib", {public=true})
