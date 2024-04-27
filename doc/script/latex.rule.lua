@@ -18,6 +18,15 @@ function add_content(name, deps, srclist)
     target_end()
 end
 
+function add_pack(name, deps)
+    -- only for deps pack
+    target(name)
+        set_kind("phony")
+        add_deps(deps)
+    target_end()
+end 
+
+
 function add_dat(name)
     target(name)
         add_rules("latex.content")
