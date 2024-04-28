@@ -26,7 +26,9 @@ document.body.addEventListener("wheel", (e) => {
         }
     }
 }, { passive: false });
-const root = ReactDOM.createRoot(document.body);
+
+const container = document.getElementById('root');
+const root = ReactDOM.createRoot(container);
 const App = () => {
     return <ChakraProvider>
         <div className={styles.container}>
