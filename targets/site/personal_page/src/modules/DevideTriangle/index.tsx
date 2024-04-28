@@ -3,10 +3,11 @@ import useCanvasSize from "@/hooks/useCanvasSize"
 import useWebGPU from "@/hooks/useWebGPU";
 
 import styles from './index.scss';
-import vert from '@/shaders/gasket2d/vert.wgsl'
-import frag from '@/shaders/gasket2d/frag.wgsl'
+import vert from '@/shaders/devide_triangle/vert.wgsl'
+import frag from '@/shaders/devide_triangle/frag.wgsl'
+import { vec3, mix } from '@/utils/vec3'
 
-const Gasket2D = () => {
+const DevideTriangle = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const canvasSize = useCanvasSize();
     const { adapter, device, canvas, context, format } = useWebGPU(canvasRef.current)
@@ -21,6 +22,34 @@ const Gasket2D = () => {
         }
         context.configure(canvsConfig)
 
+        const points: vec3[] = [];
+        function triangle(a: vec3, b: vec3, c: vec3) {
+            points.push(a);
+            points.push(b);
+            points.push(c);
+        };
+        const vertices: vec3[] = []
+        const a = new vec3(-0.5, -0.5, 0.0);
+        const b = new vec3(0.5, -0.5, 0.0);
+        const c = new vec3(0.0, 0.5, 0.0);
+        vertices.push(a);
+        vertices.push(b);
+        vertices.push(c);
+        function devideTriangle(a: vec3, b: vec3, c: vec3, count: number) {
+            if (count === 0) {
+                triangle(a, b, c);
+            }
+            else {
+                const ab = mix(a, b, 0.5);
+                const ac = mix(a, c, 0.5);
+                const bc = mix(b, c, 0.5);
+                const new_count = count - 1;
+                devideTriangle(a, ab, ac, new_count);
+                devideTriangle(b, bc, ab, new_count);
+                devideTriangle(c, ac, bc, new_count);
+            }
+        }
+
         const createBuffer = (device: GPUDevice, data: any, usage: number) => {
             const buffer = device.createBuffer({
                 size: data.byteLength,
@@ -32,11 +61,14 @@ const Gasket2D = () => {
             buffer.unmap();
             return buffer;
         };
-        const position: Float32Array = new Float32Array([
-            -0.5, 0.5, 0.0,
-            -0.5, -0.5, 0.0,
-            0.5, -0.5, 0.0
-        ]);
+
+        devideTriangle(vertices[0], vertices[1], vertices[2], 5);
+        const position = new Float32Array(points.length * 3);
+        for (let i = 0; i < points.length; i++) {
+            position[i * 3 + 0] = points[i].x;
+            position[i * 3 + 1] = points[i].y;
+            position[i * 3 + 2] = points[i].z;
+        }
         const positionBuffer = createBuffer(device, position, GPUBufferUsage.VERTEX);
 
         const pipeline = device.createRenderPipeline({
@@ -84,7 +116,9 @@ const Gasket2D = () => {
         const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor)
         passEncoder.setPipeline(pipeline)
         passEncoder.setVertexBuffer(0, positionBuffer)
-        passEncoder.draw(3, 1, 0, 0)
+
+        // passEncoder.draw(3, 1, 0, 0)
+        passEncoder.draw(points.length, 1, 0, 0)
         passEncoder.end()
 
         device.queue.submit([commandEncoder.finish()])
@@ -101,4 +135,4 @@ const Gasket2D = () => {
     )
 }
 
-export default Gasket2D;
+export default DevideTriangle;

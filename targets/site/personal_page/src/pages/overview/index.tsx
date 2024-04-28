@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styles from './index.scss';
-import SimpleRectangle from '@/modules/SimpleRectangle';
+import SimpleRectangle from '@/modules/SimpleTriangle';
 import Resume from '@/modules/Resume';
 import { Link } from 'react-router-dom';
 

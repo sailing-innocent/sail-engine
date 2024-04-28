@@ -6,7 +6,7 @@ import styles from './index.scss';
 import vert from '@/shaders/simple-triangle/vert.wgsl'
 import frag from '@/shaders/simple-triangle/frag.wgsl'
 
-const SimpleRectangle = () => {
+const SimpleTriangle = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const canvasSize = useCanvasSize();
     const { adapter, device, canvas, context, format } = useWebGPU(canvasRef.current)
@@ -69,4 +69,4 @@ const SimpleRectangle = () => {
     )
 }
 
-export default SimpleRectangle;
+export default SimpleTriangle;

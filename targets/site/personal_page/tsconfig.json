@@ -26,13 +26,6 @@
             "node_modules/@webgpu/types"
         ]
     },
-    "ts-node": {
-        "compilerOptions": {
-            "module": "commonjs"
-        },
-        "transpileOnly": true,
-        "files": true
-    },
     "exclude": [
         "tests",
         "node_modules",
