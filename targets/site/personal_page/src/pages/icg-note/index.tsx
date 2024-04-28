@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './index.scss';
 import SimpleRectangle from '@/modules/SimpleRectangle';
+import Gasket2D from '@/modules/Gasket2D';
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 
 const IcgNote = () => {
@@ -11,7 +12,7 @@ const IcgNote = () => {
                     <Tabs>
                         <TabList>
                             <Tab>Simple Rectangle</Tab>
-                            <Tab>Two</Tab>
+                            <Tab>Gasket 2D</Tab>
                             <Tab>Three</Tab>
                         </TabList>
                         <TabPanels>
@@ -19,7 +20,7 @@ const IcgNote = () => {
                                 <SimpleRectangle />
                             </TabPanel>
                             <TabPanel>
-                                <p>two!</p>
+                                <Gasket2D />
                             </TabPanel>
                             <TabPanel>
                                 <p>three!</p>
