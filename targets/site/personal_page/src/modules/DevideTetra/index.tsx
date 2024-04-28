@@ -25,10 +25,10 @@ const DevideTetra = () => {
         const points: vec3[] = [];
         const colors: vec3[] = [];
         const base_colors = [
-            new vec3(1.0, 0.0, 0.0),
-            new vec3(0.0, 1.0, 0.0),
-            new vec3(0.0, 0.0, 1.0),
-            new vec3(0.0, 0.0, 0.0),
+            new vec3(1.0, 0.0, 0.5),
+            new vec3(0.0, 0.2, 0.5),
+            new vec3(0.0, 0.8, 0.5),
+            new vec3(0.5, 0.5, 0.5),
         ]
         function triangle(a: vec3, b: vec3, c: vec3, color_idx: number) {
             points.push(a);
@@ -39,16 +39,17 @@ const DevideTetra = () => {
             colors.push(base_colors[color_idx]);
         };
         function tetra(a: vec3, b: vec3, c: vec3, d: vec3) {
-            triangle(a, b, c, 0);
+            triangle(a, c, b, 0);
             triangle(a, c, d, 1);
-            triangle(a, d, b, 2);
-            triangle(b, d, c, 3);
+            triangle(a, b, d, 2);
+            triangle(b, c, d, 3);
         }
+
         const vertices: vec3[] = []
-        const a = new vec3(-0.5, -0.5, 0.0);
-        const b = new vec3(0.5, -0.5, 0.0);
-        const c = new vec3(0.0, 0.5, 0.0);
-        const d = new vec3(0.0, 0.0, 0.0);
+        const a = new vec3(-0.5, -0.5, 1.0);
+        const b = new vec3(0.5, -0.5, 1.0);
+        const c = new vec3(0.0, 0.5, 0.5);
+        const d = new vec3(0.0, -0.0, 0.0);
 
         vertices.push(a);
         vertices.push(b);
@@ -68,9 +69,9 @@ const DevideTetra = () => {
                 const cd = mix(c, d, 0.5);
                 const new_count = count - 1;
                 devideTetra(a, ab, ac, ad, new_count);
-                devideTetra(b, bd, ab, bc, new_count);
-                devideTetra(c, cd, ac, bc, new_count);
-                devideTetra(d, ad, bd, cd, new_count);
+                devideTetra(ab, b, bc, bd, new_count);
+                devideTetra(ac, bc, c, cd, new_count);
+                devideTetra(ad, bd, cd, d, new_count);
             }
         }
 
@@ -86,7 +87,7 @@ const DevideTetra = () => {
             return buffer;
         };
 
-        devideTetra(vertices[0], vertices[1], vertices[2], vertices[3], 5);
+        devideTetra(vertices[0], vertices[1], vertices[2], vertices[3], 3);
 
         const position = new Float32Array(points.length * 3);
         for (let i = 0; i < points.length; i++) {
@@ -164,7 +165,7 @@ const DevideTetra = () => {
         const renderPassDescriptor: GPURenderPassDescriptor = {
             colorAttachments: [{
                 view: textureView,
-                clearValue: { r: 0, g: 0, b: 0, a: 1 },
+                clearValue: { r: 1.0, g: 1.0, b: 1.0, a: 1 },
                 loadOp: 'clear',
                 storeOp: 'store'
             }],
