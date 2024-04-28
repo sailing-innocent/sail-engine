@@ -1,0 +1,19 @@
+.container {
+    padding: 0;
+    margin: 0;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    min-width: 1080px;
+    min-height: 720px;
+    position: fixed;
+    display: flex;
+
+    .side_block {
+        width: 500px;
+    }
+
+    .main_block {
+        flex-grow: 1;
+    }
+}

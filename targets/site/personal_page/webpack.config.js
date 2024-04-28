@@ -37,7 +37,10 @@ module.exports = {
                 test: /\.(md|markdown)$/,
                 use: "file-loader"
             },
-            { test: /\.wgsl$/, type: "asset/source" }
+            { 
+                test: /\.wgsl$/, 
+                type: "asset/source" 
+            }
         ]
     },
     resolve: {

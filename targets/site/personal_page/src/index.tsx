@@ -1,7 +1,10 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom/client';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 import styles from './index.scss';
 import Overview from '@/pages/overview';
+import IcgNote from './pages/icg-note';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ChakraProvider } from '@chakra-ui/react'
 
 // prevent control zoom in/out
 document.addEventListener('keydown', function (event) {
@@ -25,9 +28,17 @@ document.body.addEventListener("wheel", (e) => {
 }, { passive: false });
 const root = ReactDOM.createRoot(document.body);
 const App = () => {
-    return <div className={styles.container}>
-        <Overview />
-    </div>
+    return <ChakraProvider>
+        <div className={styles.container}>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/overview" element={<Overview />} />
+                    <Route path="/" element={<IcgNote />} />
+                </Routes>
+            </BrowserRouter>
+        </div>
+    </ChakraProvider>
+
 };
 
 root.render(<App />);
