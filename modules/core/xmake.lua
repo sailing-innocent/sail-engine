@@ -1,4 +1,3 @@
-
 STATIC_COMPONENT("SailGuid", "SailCore")
     set_optimize("fastest")
     LIBRARY_DEPENDENCY("SailBase", engine_version)

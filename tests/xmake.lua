@@ -14,8 +14,8 @@ local function sail_add_test(folder, name, deps)
         end)
         add_deps("external_doctest")
         local match_str = path.join(name, "**.cpp")
-        add_includedirs("framework")
-        add_files(path.join("framework/test_util.cpp"), path.join(folder, match_str))
+        add_includedirs("_framework")
+        add_files(path.join("_framework/test_util.cpp"), path.join(folder, match_str))
         for _, dep in ipairs(deps) do
             add_deps(dep)
         end
@@ -28,6 +28,10 @@ sail_add_test("basic", "io", {
 })
 sail_add_test("basic", "leetcode", {})
 sail_add_test("basic", "dummy", {"SailDummy"})
+
+-- Core
+sail_add_test("core", "math", {"SailCore"})
+
 if has_config("enable_inno") then 
     sail_add_test("inno", "util", {"SailInno"})
     sail_add_test("inno", "helper", {"SailInno"})

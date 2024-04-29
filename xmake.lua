@@ -31,6 +31,7 @@ includes("assets")
 includes("external") -- external dependencies
 
 add_requires("eastl") -- for stl
+
 includes("modules") -- core engine
 includes("internal") -- internal independent extensions
 
