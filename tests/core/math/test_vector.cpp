@@ -39,6 +39,11 @@ int test_vector() {
 	T expect = eastl::inner_product(data1.begin(), data1.end(), data2.begin(), static_cast<T>(0));
 	CHECK(result == doctest::Approx(expect));
 
+	// norm 2
+	T norm = v1.norm();
+	T expect_norm = std::sqrt(dot(v1, v1));
+	CHECK(norm == doctest::Approx(expect_norm));
+
 	// cross product
 	if constexpr (N == 3) {
 		Vector<T, N> v4 = cross(v1, v2);

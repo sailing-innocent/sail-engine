@@ -9,6 +9,7 @@
 
 #include "SailMath/type/arithemetic.hpp"
 #include <EASTL/array.h>
+#include <cmath>
 
 namespace sail {
 
@@ -85,6 +86,10 @@ public:
 			result += lhs[i] * rhs[i];
 		}
 		return result;
+	}
+	// norm
+	[[nodiscard]] T norm() const noexcept {
+		return std::sqrt(dot(*this, *this));
 	}
 	// cross product
 	friend Vector cross(const Vector& lhs, const Vector& rhs) {
