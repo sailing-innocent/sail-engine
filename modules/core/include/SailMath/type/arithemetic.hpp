@@ -16,7 +16,13 @@ namespace sail {
 // TODO：dual number
 
 template<typename T>
-static constexpr bool is_arithemetic_v = std::is_integral_v<T> || std::is_floating_point_v<T>;
+static constexpr bool is_real_v = std::is_floating_point_v<T>;
+
+template<typename T>
+concept RealT = is_real_v<T>;
+
+template<typename T>
+static constexpr bool is_arithemetic_v = std::is_integral_v<T> || is_real_v<T>;
 
 template<typename T>
 concept ArithemeticT = is_arithemetic_v<T>;
