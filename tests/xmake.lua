@@ -29,8 +29,7 @@ sail_add_test("basic", "io", {
 sail_add_test("basic", "leetcode", {})
 sail_add_test("basic", "dummy", {"SailDummy"})
 
--- Core
--- sail_add_test("core", "math", {"SailCore"})
+sail_add_test("scene", "node", {"SailScene"})
 
 if has_config("enable_inno") then 
     sail_add_test("inno", "util", {"SailInno"})
