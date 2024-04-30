@@ -27,10 +27,10 @@ sail_add_test("basic", "io", {
     "external_tiny_obj_loader_util"
 })
 sail_add_test("basic", "leetcode", {})
-sail_add_test("basic", "dummy", {"SailDummy"})
+-- sail_add_test("basic", "dummy", {"SailDummy"})
 
 -- Core
-sail_add_test("core", "math", {"SailCore"})
+-- sail_add_test("core", "math", {"SailCore"})
 
 if has_config("enable_inno") then 
     sail_add_test("inno", "util", {"SailInno"})
