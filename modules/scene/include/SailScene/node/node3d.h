@@ -10,6 +10,8 @@
 #include "SailContainer/stl.h"// for vector, unique_ptr, shared_ptr
 #include "SailMath/transform.hpp"
 
+#include <iostream>
+
 namespace sail {
 
 class SAIL_SCENE_API Node3D {
@@ -28,17 +30,28 @@ public:
 	virtual ~Node3D();
 	Node3D(const Node3D&) = delete;
 	Node3D& operator=(const Node3D&) = delete;
-	Node3D(Node3D&&) = delete;
-	Node3D& operator=(Node3D&&) = delete;
+	Node3D(Node3D&&);
+	Node3D& operator=(Node3D&&);
 
 	[[nodiscard]] Node3D& operator[](int index) noexcept {
 		return *__children[index];
 	}
-	void add_child(shared_ptr<Node3D> child);
-	// TODO: remove child
-	void set_parent(shared_ptr<Node3D> parent);
-	shared_ptr<Node3D> get_parent() const;
-	void set_visible(bool visible);
+	void add_child(shared_ptr<Node3D> child) {
+		__children.emplace_back(std::move(child));
+	}
+
+	// TODO: remove child with hash
+	void set_parent(shared_ptr<Node3D> parent) {
+		std::cout << "Setting parent for " << __name << " to " << parent->get_name() << std::endl;
+		__parent = std::move(parent);
+		__is_root = false;
+	}
+	shared_ptr<Node3D> get_parent() const {
+		return __parent;
+	}
+	void set_visible(bool visible) {
+		__is_visible = visible;
+	}
 	[[nodiscard]] bool is_visible() const;
 	void set_local_transform(const math::Transform3D& transform);// relative to parent
 	[[nodiscard]] const math::Transform3D& get_local_transform() const noexcept;

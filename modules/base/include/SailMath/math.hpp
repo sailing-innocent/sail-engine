@@ -33,4 +33,17 @@ T scale(const T& m, const vec3& v) {
 	return glm::scale(m, v);
 }
 
+template<typename T>
+T pi() {
+	return glm::pi<T>();
+}
+
+inline quat angleAxis(float angle, const vec3& axis) {
+	return glm::angleAxis(angle, axis);
+}
+
+inline quat normalize(const quat& q) {
+	return glm::normalize(q);
+}
+
 }}// namespace sail::math
