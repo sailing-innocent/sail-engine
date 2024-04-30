@@ -1,16 +1,15 @@
 #include "test_util.h"
 
-#include <glm/glm.hpp>
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/quaternion.hpp>
+#include "SailMath/math.hpp"
 
-namespace sail {
+namespace sail::test {
 
 int test_glm() {
+	using namespace sail::math;
 	// vector
-	glm::vec4 v1(1.0f, 2.0f, 3.0f, 4.0f);
+	vec4 v1(1.0f, 2.0f, 3.0f, 4.0f);
 	// matrix
-	glm::mat4 m1(1.0f);
+	mat4 m1(1.0f);
 	m1[0][0] = 1.0f;
 	m1[1][0] = 2.0f;
 	m1[1][1] = 2.0f;
@@ -23,7 +22,7 @@ int test_glm() {
 	// 0, 0, 0, 4
 
 	// matrix * vector
-	glm::vec4 v2 = m1 * v1;
+	vec4 v2 = m1 * v1;
 
 	// 1*1 + 2*2 + 0*3 + 0*4 = 5
 	// 0*1 + 2*2 + 0*3 + 0*4 = 4
@@ -34,7 +33,7 @@ int test_glm() {
 	CHECK(v2.z == doctest::Approx(9.0f));
 	CHECK(v2.w == doctest::Approx(16.0f));
 
-	glm::mat4 m2(1.0f);
+	mat4 m2(1.0f);
 	// 1, 2, 3, 4
 	// 5, 6, 7, 8
 	// 9, 10, 11, 12
@@ -46,7 +45,7 @@ int test_glm() {
 	}
 
 	// matrix * matrix
-	glm::mat4 m3 = m1 * m2;
+	mat4 m3 = m1 * m2;
 	// 1*1 + 2*5 + 0*9 + 0*13 = 11
 	// 0*1 + 2*5 + 0*9 + 0*13 = 10
 	// 0*1 + 0*5 + 3*9 + 0*13 = 27
@@ -82,24 +81,24 @@ int test_glm() {
 	CHECK(m3[3][3] == doctest::Approx(64.0f));
 
 	// quaternion
-	glm::quat q1(1.0f, 2.0f, 3.0f, 4.0f);
+	quat q1(1.0f, 2.0f, 3.0f, 4.0f);
 	// norm
 	q1 = glm::normalize(q1);
 	CHECK(q1.w == doctest::Approx(0.1825741858f));
 
 	// to matrix
-	glm::mat4 m4 = glm::mat4_cast(q1);
+	mat4 m4 = mat4_cast(q1);
 	// from euler
 	glm::vec3 euler(1.0f, 2.0f, 3.0f);
-	glm::quat q2 = glm::quat(euler);
-	glm::mat4 m5 = glm::mat4_cast(q2);
+	quat q2 = quat(euler);
+	mat4 m5 = mat4_cast(q2);
 
 	// quat * quat
-	glm::quat q3 = q1 * q2;
+	quat q3 = q1 * q2;
 	// matrix * matrix
-	glm::mat4 m6 = m4 * m5;
+	mat4 m6 = m4 * m5;
 	// check if they are the same
-	glm::mat4 m7 = glm::mat4_cast(q3);
+	mat4 m7 = mat4_cast(q3);
 
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
@@ -109,10 +108,10 @@ int test_glm() {
 
 	// from axis angle
 	glm::vec3 axis(1.0f, 0.0f, 0.0f);
-	glm::quat q4 = glm::angleAxis(3.14159265359f, axis);
+	quat q4 = glm::angleAxis(3.14159265359f, axis);
 	// from euler
 	glm::vec3 euler2(3.14159265359f, 0.0f, 0.0f);
-	glm::quat q5 = glm::quat(euler2);
+	quat q5 = quat(euler2);
 
 	// check if they are the same
 	CHECK(q4.w == doctest::Approx(q5.w));
@@ -123,10 +122,10 @@ int test_glm() {
 	return 0;
 }
 
-}// namespace sail
+}// namespace sail::test
 
 TEST_SUITE("basic::dummy") {
 	TEST_CASE("test_glm") {
-		CHECK(sail::test_glm() == 0);
+		CHECK(sail::test::test_glm() == 0);
 	}
 }

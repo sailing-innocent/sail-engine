@@ -30,7 +30,6 @@ includes("assets")
 
 includes("external") -- external dependencies
 
-add_requires("eastl") -- for stl
 add_requires("glm") -- for math calculation
 
 includes("modules") -- core engine
