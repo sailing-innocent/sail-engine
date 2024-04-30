@@ -1,7 +1,9 @@
 #include "SailScene/node/node3d.h"
 
 namespace sail {
+
 Node3D::~Node3D() {}
+
 void Node3D::add_child(shared_ptr<Node3D> child) {
 	__children.emplace_back(std::move(child));
 }
@@ -16,6 +18,10 @@ void Node3D::set_visible(bool visible) {
 
 void Node3D::set_local_transform(const math::Transform3D& transform) {
 	m_local_transform = transform;
+	// mark dirty for all child
+	for (auto& child : __children) {
+		child->mark_dirty();
+	}
 }
 const math::Transform3D& Node3D::get_local_transform() const noexcept {
 	return m_local_transform;
