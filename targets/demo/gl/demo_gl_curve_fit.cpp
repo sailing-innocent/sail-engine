@@ -52,9 +52,7 @@ public:
 				dEdw += (forward(samples_x[j]) - samples_y[j]) * std::pow(samples_x[j], n);
 			}
 			res.push_back(dEdw);
-			// std::cout << dEdw << ",";
 		}
-		// std::cout << std::endl;
 		return res;
 	}
 

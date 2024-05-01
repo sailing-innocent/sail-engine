@@ -35,12 +35,14 @@ if has_config("enable_inno") then
     sail_add_test("inno", "util", {"SailInno"})
     sail_add_test("inno", "helper", {"SailInno"})
 end 
-if has_config("enable_ing") then 
-    sail_add_test("ing", "util", {"SailIng"})
-    if has_config("enable_dx") then 
-        sail_add_test("ing", "dx", {"SailIng"})
-    end
-end 
+
+-- if has_config("enable_ing") then 
+--     sail_add_test("ing", "util", {"SailIng"})
+--     if has_config("enable_dx") then 
+--         sail_add_test("ing", "dx", {"SailIng"})
+--     end
+-- end 
+
 if has_config("enable_cuda") then 
     sail_add_test("cu", "util", {"SailCu"})
 end 

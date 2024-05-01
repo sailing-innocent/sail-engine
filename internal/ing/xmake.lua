@@ -1,4 +1,4 @@
-add_requires("imgui", {configs = {glfw_opengl3 = true, vulkan = true}})
+
 if get_config("enable_gl") then 
     add_requires("glfw")
 end 

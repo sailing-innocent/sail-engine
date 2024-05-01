@@ -2,13 +2,6 @@ function add_ing_demo(name)
     add_demo("demo_ing_" .. name, {"SailIng"})
 end 
 
-if get_config("enable_gl") then
-    add_ing_demo("gl_terrain")
-    if get_config("enable_cuda") then
-        add_ing_demo("gl_cuda_app")
-    end
-end
-
 if get_config("enable_vk") then
     add_ing_demo("vk_basic")
     add_ing_demo("vk_hello")

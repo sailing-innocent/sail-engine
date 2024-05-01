@@ -23,21 +23,30 @@ includes("xmake/default_options.lua")
 includes("xmake/rules.lua")
 
 -- assets 
-
 includes("assets") 
 
--- modules
-
+-- external and requirements
+add_requires("glm") -- for math calculation
+add_requires("glfw", {
+    configs = {
+        vulkan = true
+    }
+}) -- for window management
+add_requires("imgui", {configs = {glfw_opengl3 = true, vulkan = true}}) -- for ui
+if get_config("enable_vk") then
+    add_requires("vulkansdk", {optional = true})
+end
 includes("external") -- external dependencies
 
-add_requires("glm") -- for math calculation
-
+-- internal and core modules
 includes("modules") -- core engine
 includes("internal") -- internal independent extensions
 
+-- targets
 includes("tests") -- tests
 includes("targets")
 
+-- documentation
 if get_config("enable_doc") then
     includes("doc") -- documentation
 end
