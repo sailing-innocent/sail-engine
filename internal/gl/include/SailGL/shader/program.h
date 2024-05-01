@@ -15,6 +15,8 @@
 
 namespace sail::gl {
 
+using std::string_view;
+
 class SAIL_GL_API ShaderProgram {
 public:
 	ShaderProgram(std::string name);
@@ -24,7 +26,11 @@ public:
 
 	void use();
 	// setter
-	void set_mat4(const std::string& name, const glm::mat4& mat);
+	void set_mat4(const string_view name, const glm::mat4& mat) const noexcept;
+	void set_bool(const string_view name, bool value) const noexcept;
+	void set_int(const string_view name, int value) const noexcept;
+	void set_float(const string_view name, float value) const noexcept;
+	void set_float4(const string_view name, float v0, float v1, float v2, float v3) const noexcept;
 
 protected:
 	unsigned int m_id;

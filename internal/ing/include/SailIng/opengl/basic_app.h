@@ -28,7 +28,6 @@ public:// cons/des tructor
 		destroy_window();
 	}
 
-public:// override method
 	void init() override;
 	bool tick(int count = 0) override;
 	void init_buffers() override;

@@ -59,8 +59,24 @@ void ShaderProgram::use() {
 
 // setters
 
-void ShaderProgram::set_mat4(const std::string& name, const glm::mat4& mat) {
-	glUniformMatrix4fv(glGetUniformLocation(m_id, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
+void ShaderProgram::set_mat4(const string_view name, const glm::mat4& mat) const noexcept {
+	glUniformMatrix4fv(glGetUniformLocation(m_id, name.data()), 1, GL_FALSE, glm::value_ptr(mat));
+}
+
+void ShaderProgram::set_bool(const string_view name, bool value) const noexcept {
+	glUniform1i(glGetUniformLocation(m_id, name.data()), static_cast<int>(value));
+}
+
+void ShaderProgram::set_int(const string_view name, int value) const noexcept {
+	glUniform1i(glGetUniformLocation(m_id, name.data()), value);
+}
+
+void ShaderProgram::set_float(const string_view name, float value) const noexcept {
+	glUniform1f(glGetUniformLocation(m_id, name.data()), value);
+}
+
+void ShaderProgram::set_float4(const string_view name, float v0, float v1, float v2, float v3) const noexcept {
+	glUniform4f(glGetUniformLocation(m_id, name.data()), v0, v1, v2, v3);
 }
 
 }// namespace sail::gl
