@@ -22,20 +22,20 @@ int test_node_3d() {
 	}
 	std::cout << std::endl;
 
-	Node3D node;
-	auto p_node = make_shared<Node3D>(std::forward<Node3D>(node));
+	SceneNode3D node;
+	auto p_node = make_shared<SceneNode3D>(std::forward<SceneNode3D>(node));
 	p_node->set_name("RootNode");
 	p_node->set_local_transform(t);
 
-	Node3D child1;
-	auto p_child1 = make_shared<Node3D>(std::forward<Node3D>(child1));
+	SceneNode3D child1;
+	auto p_child1 = make_shared<SceneNode3D>(std::forward<SceneNode3D>(child1));
 	p_child1->set_name("SubNode1");
 	math::quat q1 = math::angleAxis(90.0f / 180.0f * math::pi<float>(), v);
-	math::Transform3D t1(q, v, s);
+	math::Transform3D t1(q1, v, s);
 	p_child1->set_local_transform(t1);
 
-	Node3D child2;
-	auto p_child2 = make_shared<Node3D>(std::forward<Node3D>(child2));
+	SceneNode3D child2;
+	auto p_child2 = make_shared<SceneNode3D>(std::forward<SceneNode3D>(child2));
 	p_child2->set_name("SubNode2");
 
 	p_node->add_child(p_child1);

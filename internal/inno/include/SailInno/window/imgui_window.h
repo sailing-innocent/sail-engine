@@ -1,55 +1,60 @@
 #pragma once
+/**
+ * @file imgui_window.h
+ * @brief The ImGUI Window 
+ * @author sailing-innocent
+ * @date 2024-05-01
+ */
+
 #include "SailInno/core/runtime.h"
-
 #include <luisa/runtime/device.h>
+#include <luisa/gui/window.h>
 
 namespace sail::inno {
-class IOService;
-struct GLFWwindow;
-struct ImGuiContext;
-}// namespace sail::inno
-
-namespace luisa::compute {
-class SwapChain;
-template<typename T>
-class Image;
-class Sampler;
-}// namespace luisa::compute
-
-namespace sail::inno {
-
 using namespace luisa;
 using namespace luisa::compute;
 
 class SAIL_INNO_API ImGuiWindow {
 public:
-	struct Config {
-		uint2 size{1280u, 720u};
-		bool resizable{true};
-		bool fullscreen{false};
-		uint back_buffers_count{2u};
-		[[nodiscard]] static Config default_config() noexcept { return {}; }
-	};
+	struct Config {};
 
 private:
-	class ContextGuard {
-	private:
-		ImGuiWindow* _self;
-
-	public:
-	};
+	class ContextGaurd {};
 
 public:
 	class Impl;
 
 private:
-	luisa::unique_ptr<Impl> _pimpl;
+	unique_ptr<Impl> mp_impl;
 
 public:
-	ImGuiWindow() noexcept = default;
+	ImGuiWindow() noexcept;
+	~ImGuiWindow() noexcept;
+	// delete copy
+	ImGuiWindow(const ImGuiWindow&) = delete;
+	ImGuiWindow& operator=(const ImGuiWindow&) = delete;
+	// keep move
+	ImGuiWindow(ImGuiWindow&&) noexcept;
+	ImGuiWindow& operator=(ImGuiWindow&&) noexcept;
 
-	// void create() noexcept;
-	// void destroy() noexcept;
+	// lifecycle
+	void create() noexcept {}
+	void destroy() noexcept {}
+
+	// context
+
+	// resource
+	[[nodiscard]] GLFWwindow* handle() const noexcept;
+	[[nodiscard]] Window& window() noexcept;
+	[[nodiscard]] Window const& window() const noexcept;
+
+	[[nodiscard]] bool valid() const noexcept { return mp_impl != nullptr; }
+	[[nodiscard]] operator bool() const noexcept { return valid(); }
+	[[nodiscard]] bool should_close() const noexcept;
+	void set_should_close(bool b = true) noexcept;
+
+	void prepare_frame() noexcept;// call event handle, imgui new frame etc. and makes the context current
+	void render_frame() noexcept; // calls imgui render, swapbuffer
 };
 
 }// namespace sail::inno

@@ -10,15 +10,13 @@
 #include "SailContainer/stl.h"// for vector, unique_ptr, shared_ptr
 #include "SailMath/transform.hpp"
 
-#include <iostream>
-
 namespace sail {
 
-class SAIL_SCENE_API Node3D {
+class SAIL_SCENE_API SceneNode3D {
 protected:
 	string __name;
-	vector<shared_ptr<Node3D>> __children;
-	shared_ptr<Node3D> __parent = nullptr;
+	vector<shared_ptr<SceneNode3D>> __children;
+	shared_ptr<SceneNode3D> __parent = nullptr;
 	bool __is_root = false;
 	bool __is_visible = true;
 	bool __updated = false;
@@ -26,27 +24,26 @@ protected:
 	math::Transform3D m_global_transform;
 
 public:
-	Node3D() = default;
-	virtual ~Node3D();
-	Node3D(const Node3D&) = delete;
-	Node3D& operator=(const Node3D&) = delete;
-	Node3D(Node3D&&);
-	Node3D& operator=(Node3D&&);
+	SceneNode3D() = default;
+	virtual ~SceneNode3D();
+	SceneNode3D(const SceneNode3D&) = delete;
+	SceneNode3D& operator=(const SceneNode3D&) = delete;
+	SceneNode3D(SceneNode3D&&);
+	SceneNode3D& operator=(SceneNode3D&&);
 
-	[[nodiscard]] Node3D& operator[](int index) noexcept {
+	[[nodiscard]] SceneNode3D& operator[](int index) noexcept {
 		return *__children[index];
 	}
-	void add_child(shared_ptr<Node3D> child) {
+	void add_child(shared_ptr<SceneNode3D> child) {
 		__children.emplace_back(std::move(child));
 	}
 
 	// TODO: remove child with hash
-	void set_parent(shared_ptr<Node3D> parent) {
-		std::cout << "Setting parent for " << __name << " to " << parent->get_name() << std::endl;
-		__parent = std::move(parent);
+	void set_parent(shared_ptr<SceneNode3D> parent) {
+		__parent = parent;
 		__is_root = false;
 	}
-	shared_ptr<Node3D> get_parent() const {
+	shared_ptr<SceneNode3D> get_parent() const {
 		return __parent;
 	}
 	void set_visible(bool visible) {

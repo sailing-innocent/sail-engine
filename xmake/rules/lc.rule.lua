@@ -16,10 +16,16 @@ on_load(function(target)
             public = true
         })
     end
-    target:add("links", "lc-core", "lc-vstl", "lc-dsl", "lc-gui", "lc-runtime", "lc-ast", "lc-ext-eastl",
-        "lc-ext-spdlog", {
-            public = true
+    -- required for glfw & imgui
+    if is_plat("windows") then
+        target:add("syslinks", {
+            "User32", "Gdi32", "Shell32"
         })
+    end
+    target:add("links", "lc-core", "lc-vstl", "lc-dsl", "lc-gui", "lc-runtime", "lc-ast", "lc-ext-eastl",
+    "lc-ext-spdlog", "lc-ext-glfw", "lc-ext-imgui", {
+        public = true
+    })
 end)
 rule_end()
 
@@ -38,7 +44,7 @@ after_build(function(target)
     local bin_table = {
         "DirectML", "dstorage", "dstoragecore", "dxcompiler", "dxil", 
         "lc-ast", "lc-backend-dx", "lc-core", "lc-ir",
-        "lc-ext-eastl", "lc-ext-imgui", "lc-gui", "lc-runtime", "lc-validation-layer",
+        "lc-ext-eastl", "lc-ext-imgui", "lc-gui", "lc-runtime", "lc-validation-layer", "lc-ext-imgui",
     }
     local cuda_background_bin_table = {
         -- luisa ext lcub

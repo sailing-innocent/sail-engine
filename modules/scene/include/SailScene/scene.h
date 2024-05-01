@@ -10,15 +10,14 @@
 
 namespace sail {
 
-class Node3D;
+class SceneNode3D;
 class SAIL_SCENE_API Scene {
-	shared_ptr<Node3D> __root;
+	shared_ptr<SceneNode3D> __root;
 
 public:
-	Scene();
+	Scene() = default;
 	~Scene();
 	void update();
-	void render();
 };
 
 }// namespace sail
