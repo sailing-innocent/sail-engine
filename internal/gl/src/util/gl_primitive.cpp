@@ -8,6 +8,7 @@
 #include "SailGL/util/gl_primitive.h"
 
 namespace sail::gl {
+
 using std::span;
 
 void GLPrimitive::appendVertices(const span<float> _vertices) {

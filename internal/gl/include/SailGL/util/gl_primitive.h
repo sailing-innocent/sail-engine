@@ -127,7 +127,7 @@ public:
 class SAIL_GL_API GLTriangleList : public GLPrimitive {
 public:
 	GLTriangleList() = default;
-	GLTriangleList(span<GLTriangle>& triangles) {
+	explicit GLTriangleList(span<GLTriangle> triangles) {
 		for (auto tr : triangles) {
 			appendPrimitive(tr);
 		}

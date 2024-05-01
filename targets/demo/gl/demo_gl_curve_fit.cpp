@@ -1,9 +1,11 @@
 // demo_curve_fit
-#include "SailIng/opengl/basic_app.h"
+#include "SailGL/dummy_app/primitive.h"
 
 #include <iostream>
 #include <random>
 #include <functional>
+
+using namespace sail::gl;
 
 namespace sail::test {
 
@@ -39,7 +41,7 @@ public:
 		os << std::endl;
 		return os;
 	}
-	const int order() const { return mOrder; }
+	int order() const { return mOrder; }
 	std::vector<float>& params() { return mParams; }
 
 	std::vector<float> ESM_dir(std::vector<float>& samples_x, std::vector<float>& samples_y, int samples_N) {
@@ -73,7 +75,7 @@ public:
 		draw_axis();
 		m_app.init();
 	}
-	void draw_points(ing::GLPointList points) { m_app.addPoints(points); }
+	void draw_points(GLPointList points) { m_app.addPoints(points); }
 
 	void draw_fn(std::function<float(float)> fn,
 				 std::vector<float> color = {0.0f, 1.0f, 0.0f, 1.0f}) {
@@ -88,32 +90,31 @@ public:
 
 		float y_disp = disp(fn(data[0]), y_min, y_max);
 		float x_disp = disp(data[0], x_min, x_max);
-		ing::GLPoint startPoint(x_disp, y_disp);
+		GLPoint startPoint(x_disp, y_disp);
 		startPoint.setColor(color);
-		ing::GLPoint prevPoint = startPoint;
+		GLPoint prevPoint = startPoint;
 		for (auto i = 1; i < N; i++) {
 			y_disp = disp(fn(data[i]), y_min, y_max);
 			x_disp = disp(data[i], x_min, x_max);
-			ing::GLPoint point(x_disp, y_disp);
+			GLPoint point(x_disp, y_disp);
 			point.setColor(color);
-			ing::GLLine line(prevPoint, point);
-			// std::cout << point.vertices()[0] << "," << data[i] << std::endl;
+			GLLine line(prevPoint, point);
 			m_app.addLine(line);
 			prevPoint = point;
 		}
 	}
 	void draw_axis() {
 		std::vector<float> blue{0.0f, 0.0f, 1.0f, 1.0f};
-		ing::GLPoint x_left(x_min);
+		GLPoint x_left(x_min);
 		x_left.setColor(blue);
-		ing::GLPoint x_right(x_max);
+		GLPoint x_right(x_max);
 		x_right.setColor(blue);
-		ing::GLPoint y_top(0.0f, y_max);
+		GLPoint y_top(0.0f, y_max);
 		y_top.setColor(blue);
-		ing::GLPoint y_buttom(0.0f, y_min);
+		GLPoint y_buttom(0.0f, y_min);
 		y_buttom.setColor(blue);
-		ing::GLLine x_axis(x_left, x_right);
-		ing::GLLine y_axis(y_buttom, y_top);
+		GLLine x_axis(x_left, x_right);
+		GLLine y_axis(y_buttom, y_top);
 		m_app.addLine(x_axis);
 		m_app.addLine(y_axis);
 	}
@@ -124,7 +125,7 @@ public:
 	}
 
 private:
-	ing::INGGLBasicApp m_app;
+	GLPrimitiveApp m_app;
 	float x_min = -1.0f;
 	float x_max = 1.0f;
 	float y_min = -1.0f;
@@ -153,7 +154,7 @@ int main() {
 	std::vector<float> samples_x;
 	std::vector<float> samples_y;
 	std::vector<float> yellow = {1.0f, 1.0f, 0.0f, 1.0f};
-	ing::GLPointList sample_points;
+	GLPointList sample_points;
 	for (auto i = 0; i < sample_N; i++) {
 		float sample_x = sample_x_min + (sample_x_max - sample_x_min) * u(e);
 		float sample_y = fn(sample_x) + u(e) * 0.2 - 0.1;
@@ -161,10 +162,9 @@ int main() {
 		samples_y.push_back(sample_y);
 		float disp_x = disp(sample_x, -1.0, 1.0);
 		float disp_y = disp(sample_y, -1.0, 1.0);
-		ing::GLPoint sample_p(disp_x, disp_y);
+		GLPoint sample_p(disp_x, disp_y);
 
 		sample_p.setColor(yellow);
-		// std::cout << sample_p.vertices()[0] << "," << sample_p.vertices()[1] << std::endl;
 		sample_points.appendPrimitive(sample_p);
 	}
 	app.draw_points(sample_points);
@@ -185,8 +185,6 @@ int main() {
 			app.draw_fn(poly, fcolor);
 		}
 	}
-	// app.draw()
-	// app.fit(samples)
 	app.init();
 	app.show();
 

@@ -29,7 +29,7 @@ class SAIL_GL_API GLPrimitiveApp : public GLPureDummyApp {
 	OffsetState m_offset_state;
 
 public:
-	GLPrimitiveApp() = default;
+	GLPrimitiveApp() noexcept;
 	GLPrimitiveApp(
 		string _title,
 		unsigned int _resw,
@@ -52,6 +52,24 @@ public:
 	void init_shaders();
 
 	// primitive loader
+	void addTriangles(GLTriangleList& _triangles) {
+		mp_triangles->appendPrimitive(_triangles);
+	}
+	void addTriangle(GLTriangle& _triangle) {
+		mp_triangles->appendPrimitive(_triangle);
+	}
+	void addLines(GLLineList& _lines) {
+		mp_lines->appendPrimitive(_lines);
+	}
+	void addLine(GLLine& _line) {
+		mp_lines->appendPrimitive(_line);
+	}
+	void addPoints(GLPointList& _points) {
+		mp_points->appendPrimitive(_points);
+	}
+	void addPoints(GLPoint& _point) {
+		mp_points->appendPrimitive(_point);
+	}
 
 protected:
 	std::string m_title = "GL Primitive App";
