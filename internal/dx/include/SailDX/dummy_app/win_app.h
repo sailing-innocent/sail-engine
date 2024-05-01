@@ -6,15 +6,16 @@
  * @brief The Basic Class for Win App
  */
 
-#include "SailIng/app.h"
+#include "SailDX/config.h"
+#include "SailDummy/app.h"
 #include "win32_utils.h"
 
-namespace sail::ing {
+namespace sail::dx {
 
-class SAIL_ING_API INGWinApp : public INGApp {
+class SAIL_DX_API DXWinApp : public DummyApp {
 public:
-	INGWinApp(UINT width, UINT height, std::string name);
-	virtual ~INGWinApp();
+	DXWinApp(UINT width, UINT height, std::string name);
+	virtual ~DXWinApp();
 	// self method
 	virtual void logic_tick() = 0;
 	virtual void render_tick() = 0;
@@ -43,6 +44,6 @@ protected:
 
 private:
 	std::string m_title;
-};// class INGWinApp
+};// class DXWinApp
 
-}// namespace sail::ing
+}// namespace sail::dx

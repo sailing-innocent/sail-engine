@@ -1,6 +1,6 @@
 #pragma once
 /**
-* @file ing_drx_common.h
+* @file drx_common.h
 * @brief The common header for DirectX
 */
 

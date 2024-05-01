@@ -5,42 +5,42 @@
  * @brief The Implementation of Basic Pure Win App
  */
 
-#include "SailIng/directx/pure_win.h"
+#include "SailDX/dummy_app/pure_win.h"
 
-namespace sail::ing {
+namespace sail::dx {
 
-INGPureWinApp::INGPureWinApp(UINT width, UINT height, std::string name) : INGWinApp(width, height, name) {
+DXPureWinApp::DXPureWinApp(UINT width, UINT height, std::string name) : DXWinApp(width, height, name) {
 }
 
-INGPureWinApp::~INGPureWinApp() {
+DXPureWinApp::~DXPureWinApp() {
 }
 
-void INGPureWinApp::init() {
+void DXPureWinApp::init() {
 	// nothing to do
 }
 
-bool INGPureWinApp::tick(int count) {
+bool DXPureWinApp::tick(int count) {
 	logic_tick();
 	render_tick();
 	return true;
 }
 
-void INGPureWinApp::logic_tick() {
+void DXPureWinApp::logic_tick() {
 	// nothing to do
 }
 
-void INGPureWinApp::render_tick() {
+void DXPureWinApp::render_tick() {
 	PAINTSTRUCT ps;
 	HDC hdc = BeginPaint(Win32Utils::get_hwnd(), &ps);
 	FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
 	EndPaint(Win32Utils::get_hwnd(), &ps);
 }
 
-void INGPureWinApp::terminate() {
+void DXPureWinApp::terminate() {
 	// nothing to do
 }
 
-void INGPureWinApp::on_key_down(UINT8 key) {
+void DXPureWinApp::on_key_down(UINT8 key) {
 	switch (key) {
 		case VK_SPACE:
 			MessageBox(0, _T("Hello World!"), _T("Hello"), MB_OK);
@@ -48,4 +48,4 @@ void INGPureWinApp::on_key_down(UINT8 key) {
 	}
 }
 
-}// namespace sail::ing
+}// namespace sail::dx

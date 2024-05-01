@@ -7,16 +7,16 @@
  */
 
 #include "win_app.h"
-#include "ing_drx_common.h"
+#include "drx_common.h"
 
 using Microsoft::WRL::ComPtr;
 
-namespace sail::ing {
+namespace sail::dx {
 
-class SAIL_ING_API INGPureDXApp : public INGWinApp {
+class SAIL_DX_API DXPureDXApp : public DXWinApp {
 public:
-	INGPureDXApp(UINT width, UINT height, std::string name);
-	virtual ~INGPureDXApp();
+	DXPureDXApp(UINT width, UINT height, std::string name);
+	virtual ~DXPureDXApp();
 	// life cycle
 	void init() override;
 	bool tick(int count) override;
@@ -58,4 +58,4 @@ protected:
 	virtual void wait_for_previous_frame();
 };
 
-}// namespace sail::ing
+}// namespace sail::dx

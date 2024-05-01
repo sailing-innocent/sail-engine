@@ -8,12 +8,12 @@
 
 #include "win_app.h"
 
-namespace sail::ing {
+namespace sail::dx {
 
-class SAIL_ING_API INGPureWinApp : public INGWinApp {
+class SAIL_DX_API DXPureWinApp : public DXWinApp {
 public:
-	INGPureWinApp(UINT width, UINT height, std::string name);
-	virtual ~INGPureWinApp();
+	DXPureWinApp(UINT width, UINT height, std::string name);
+	virtual ~DXPureWinApp();
 	// life cycle
 	void init() override;
 	bool tick(int count) override;
@@ -26,4 +26,4 @@ public:
 	void on_size_changed(UINT width, UINT height, bool minimized) override{};
 };
 
-}// namespace sail::ing
+}// namespace sail::dx

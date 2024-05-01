@@ -1,16 +1,22 @@
-#include "SailIng/directx/triangle.h"
+/**
+ * @file triangle.cpp
+ * @brief The Implementation of Triangle DX App
+ * @author sailing-innocent
+ * @date 2024-05-02
+ */
+#include "SailDX/dummy_app/triangle.h"
 
-namespace sail::ing {
+namespace sail::dx {
 
-INGTriangleDXApp::INGTriangleDXApp(UINT width, UINT height, std::string name)
-	: INGPureDXApp(width, height, name)// set frame index & rtv_descriptor_size
+DXTriangleApp::DXTriangleApp(UINT width, UINT height, std::string name)
+	: DXPureDXApp(width, height, name)// set frame index & rtv_descriptor_size
 	  ,
 	  m_viewport(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height)), m_scissor_rect(0, 0, static_cast<LONG>(width), static_cast<LONG>(height)) {
 	// get asset path
 	// aspect ratio
 }
 
-void INGTriangleDXApp::load_assets() {
+void DXTriangleApp::load_assets() {
 	// create empty root signature
 	{
 		CD3DX12_ROOT_SIGNATURE_DESC root_signature_desc;
@@ -107,7 +113,7 @@ void INGTriangleDXApp::load_assets() {
 	}
 }
 
-void INGTriangleDXApp::populate_command_list() {
+void DXTriangleApp::populate_command_list() {
 	// reset command allocator and command list
 	ThrowIfFailed(m_command_allocator->Reset());
 	ThrowIfFailed(m_command_list->Reset(m_command_allocator.Get(),
@@ -148,4 +154,4 @@ void INGTriangleDXApp::populate_command_list() {
 	ThrowIfFailed(m_command_list->Close());
 }
 
-}// namespace sail::ing
+}// namespace sail::dx

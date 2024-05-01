@@ -5,12 +5,13 @@
 #include "tchar.h"
 #include "win_app.h"
 
-namespace sail::ing {
-class INGWinApp;
+namespace sail::dx {
 
-class SAIL_ING_API Win32Utils {
+class DXWinApp;
+
+class SAIL_DX_API Win32Utils {
 public:
-	static int run(INGWinApp* pApp, HINSTANCE hInstance, int nCmdShow);
+	static int run(DXWinApp* pApp, HINSTANCE hInstance, int nCmdShow);
 	static HWND get_hwnd() { return m_hwnd; }
 
 protected:
@@ -20,4 +21,4 @@ private:
 	static HWND m_hwnd;
 };
 
-}// namespace sail::ing
+}// namespace sail::dx

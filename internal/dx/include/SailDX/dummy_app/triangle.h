@@ -8,14 +8,15 @@
 
 #include "pure_dx.h"
 
-namespace sail::ing {
+namespace sail::dx {
+
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;
 
-class SAIL_ING_API INGTriangleDXApp : public INGPureDXApp {
+class SAIL_DX_API DXTriangleApp : public DXPureDXApp {
 public:
-	INGTriangleDXApp(UINT width, UINT height, std::string name);
-	virtual ~INGTriangleDXApp() {}
+	DXTriangleApp(UINT width, UINT height, std::string name);
+	virtual ~DXTriangleApp() {}
 
 protected:
 	struct Vertex {
@@ -37,4 +38,4 @@ protected:
 	void populate_command_list() override;
 };
 
-}// namespace sail::ing
+}// namespace sail::dx

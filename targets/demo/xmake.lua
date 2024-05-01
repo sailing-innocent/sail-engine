@@ -1,4 +1,4 @@
-
+-- rhi
 if get_config("enable_gl") then 
     includes("gl")
     includes("learn_ogl")
@@ -15,10 +15,7 @@ end
 if get_config("enable_inno") then 
     includes("inno") -- based on LuisaCompute
 end 
-
--- if get_config("enable_ing") then 
---     includes("ing")
--- end 
+-- tutorial
 includes("ray_march")
 includes("rtow")
 -- the cpp 20 not support features (modules ...)

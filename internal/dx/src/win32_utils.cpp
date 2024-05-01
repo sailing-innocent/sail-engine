@@ -1,10 +1,15 @@
-#include "SailIng/directx/win32_utils.h"
-
-namespace sail::ing {
+/**
+ * @file win32_utils.cpp
+ * @brief The Win32 Utils
+ * @author sailing-innocent
+ * @date 2024-05-02
+ */
+#include "SailDX/dummy_app/win32_utils.h"
+namespace sail::dx {
 
 HWND Win32Utils::m_hwnd = nullptr;
 
-int Win32Utils::run(INGWinApp* pApp, HINSTANCE hInstance, int nShowCmd) {
+int Win32Utils::run(DXWinApp* pApp, HINSTANCE hInstance, int nShowCmd) {
 	// parse the command line
 	WNDCLASSEX wc;
 	wc.cbSize = sizeof(WNDCLASSEX);
@@ -61,13 +66,13 @@ int Win32Utils::run(INGWinApp* pApp, HINSTANCE hInstance, int nShowCmd) {
 
 LRESULT CALLBACK Win32Utils::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	if (msg == WM_CREATE) {
-		// Save the INGWinApp* passed in to CreateWindow.
+		// Save the DXWinApp* passed in to CreateWindow.
 		LPCREATESTRUCT pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
 		SetWindowLongPtr(hWnd,
 						 GWLP_USERDATA,
 						 reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
 	}
-	INGWinApp* pApp = reinterpret_cast<INGWinApp*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	DXWinApp* pApp = reinterpret_cast<DXWinApp*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
 	switch (msg) {
 		case WM_SIZE:
@@ -128,4 +133,4 @@ LRESULT CALLBACK Win32Utils::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-}// namespace sail::ing
+}// namespace sail::dx

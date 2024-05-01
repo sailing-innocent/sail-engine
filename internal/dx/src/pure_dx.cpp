@@ -5,22 +5,22 @@
  * @brief The impl for Basic Pure Win App with DirectX 12
  */
 
-#include "SailIng/directx/pure_dx.h"
+#include "SailDX/dummy_app/pure_dx.h"
 
-namespace sail::ing {
+namespace sail::dx {
 
-INGPureDXApp::INGPureDXApp(UINT width, UINT height, std::string name)
-	: INGWinApp(width, height, name), m_frame_index(0), m_rtv_descriptor_size(0) {
+DXPureDXApp::DXPureDXApp(UINT width, UINT height, std::string name)
+	: DXWinApp(width, height, name), m_frame_index(0), m_rtv_descriptor_size(0) {
 }
 
-INGPureDXApp::~INGPureDXApp() {}
+DXPureDXApp::~DXPureDXApp() {}
 
-void INGPureDXApp::init() {
+void DXPureDXApp::init() {
 	load_pipeline();
 	load_assets();
 }
 
-void INGPureDXApp::load_pipeline() {
+void DXPureDXApp::load_pipeline() {
 	UINT dxgiFactoryFlags = 0;
 	ComPtr<IDXGIFactory4> factory;
 	ThrowIfFailed(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&factory)));
@@ -122,9 +122,9 @@ void INGPureDXApp::load_pipeline() {
 	}
 }
 
-void INGPureDXApp::get_hardware_adapter(_In_ IDXGIFactory1* p_factory,
-										_Outptr_result_maybenull_ IDXGIAdapter1** pp_adapter,
-										bool request_high_performance_adapter) {
+void DXPureDXApp::get_hardware_adapter(_In_ IDXGIFactory1* p_factory,
+									   _Outptr_result_maybenull_ IDXGIAdapter1** pp_adapter,
+									   bool request_high_performance_adapter) {
 	*pp_adapter = nullptr;
 	ComPtr<IDXGIAdapter1> adapter;
 	ComPtr<IDXGIFactory6> factory6;
@@ -177,24 +177,24 @@ void INGPureDXApp::get_hardware_adapter(_In_ IDXGIFactory1* p_factory,
 	*pp_adapter = adapter.Detach();
 }
 
-void INGPureDXApp::load_assets() {
+void DXPureDXApp::load_assets() {
 	// plane window, no asset
 }
 
-bool INGPureDXApp::tick(int count) {
+bool DXPureDXApp::tick(int count) {
 	logic_tick();
 	render_tick();
 	return true;
 }
 
-void INGPureDXApp::terminate() {
+void DXPureDXApp::terminate() {
 	wait_for_previous_frame();
 	CloseHandle(m_fence_event);
 }
 
-void INGPureDXApp::logic_tick() {}
+void DXPureDXApp::logic_tick() {}
 
-void INGPureDXApp::render_tick() {
+void DXPureDXApp::render_tick() {
 
 	populate_command_list();
 
@@ -205,7 +205,7 @@ void INGPureDXApp::render_tick() {
 	wait_for_previous_frame();
 }
 
-void INGPureDXApp::populate_command_list() {
+void DXPureDXApp::populate_command_list() {
 
 	// reset command allocator and command list
 	ThrowIfFailed(m_command_allocator->Reset());
@@ -238,7 +238,7 @@ void INGPureDXApp::populate_command_list() {
 	ThrowIfFailed(m_command_list->Close());
 }
 
-void INGPureDXApp::wait_for_previous_frame() {
+void DXPureDXApp::wait_for_previous_frame() {
 	// flush
 	const UINT64 fence = m_fence_value;
 	ThrowIfFailed(m_command_queue->Signal(m_fence.Get(), fence));
@@ -255,7 +255,7 @@ void INGPureDXApp::wait_for_previous_frame() {
 
 // callbacks
 
-void INGPureDXApp::on_key_down(UINT8 key) {
+void DXPureDXApp::on_key_down(UINT8 key) {
 	switch (key) {
 		case VK_ESCAPE:
 			DestroyWindow(Win32Utils::get_hwnd());
@@ -266,4 +266,4 @@ void INGPureDXApp::on_key_down(UINT8 key) {
 	}
 }
 
-}// namespace sail::ing
+}// namespace sail::dx
