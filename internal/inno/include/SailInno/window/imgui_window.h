@@ -7,8 +7,12 @@
  */
 
 #include "SailInno/core/runtime.h"
+#include "luisa/vstl/config.h"
 #include <luisa/runtime/device.h>
 #include <luisa/gui/window.h>
+
+struct GLFWwindow;
+struct ImGuiContext;
 
 namespace sail::inno {
 using namespace luisa;
@@ -16,10 +20,34 @@ using namespace luisa::compute;
 
 class SAIL_INNO_API ImGuiWindow {
 public:
-	struct Config {};
+	struct Config {
+		uint2 size = {1280, 720};
+		bool resizable = true;
+		bool fullscreen = false;
+
+		[[nodiscard]] static Config default_config() noexcept {
+			return {};
+		}
+	};
 
 private:
-	class ContextGaurd {};
+	class ContextGaurd {
+		ImGuiWindow* mp_self;
+
+	public:
+		// delete copy and move
+		ContextGaurd(const ContextGaurd&) = delete;
+		ContextGaurd& operator=(const ContextGaurd&) = delete;
+		ContextGaurd(ContextGaurd&&) = delete;
+		ContextGaurd& operator=(ContextGaurd&&) = delete;
+
+		explicit ContextGaurd(ImGuiWindow* self) noexcept : mp_self{self} {
+			mp_self->push_context();
+		}
+		~ContextGaurd() noexcept {
+			mp_self->pop_context();
+		}
+	};
 
 public:
 	class Impl;
@@ -28,7 +56,7 @@ private:
 	unique_ptr<Impl> mp_impl;
 
 public:
-	ImGuiWindow() noexcept;
+	ImGuiWindow(Device& device, Stream& stream) noexcept;
 	~ImGuiWindow() noexcept;
 	// delete copy
 	ImGuiWindow(const ImGuiWindow&) = delete;
@@ -38,10 +66,13 @@ public:
 	ImGuiWindow& operator=(ImGuiWindow&&) noexcept;
 
 	// lifecycle
-	void create() noexcept {}
-	void destroy() noexcept {}
+	void create(Device& device, Stream& stream) noexcept;
+	void destroy() noexcept;
 
 	// context
+	[[nodiscard]] ImGuiContext* context() const noexcept;
+	void push_context() noexcept;
+	void pop_context() noexcept;
 
 	// resource
 	[[nodiscard]] GLFWwindow* handle() const noexcept;

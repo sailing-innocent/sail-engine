@@ -5,6 +5,8 @@
  * @date 2024-05-01
  */
 
+#include "imgui_internal.h"
+#include <mutex>
 #if defined(_WIN32)
 #define GLFW_EXPOSE_NATIVE_WIN32
 #endif
@@ -37,8 +39,19 @@
 namespace sail::inno {
 
 namespace detail {
-struct GUIObjectData {};
-struct GUIVertex {};
+
+struct GUIObjectData {
+	uint tex_id;
+	std::array<float, 2> pos;
+	std::array<float, 2> size;
+};
+
+struct GUIVertex {
+	std::array<float, 2> pos;
+	std::array<float, 2> uv;
+	uint32_t col;
+};
+
 [[nodiscard]] inline auto glfw_window_native_handle(GLFWwindow* window) noexcept {
 #if defined(_WIN32)
 	return reinterpret_cast<uint64_t>(glfwGetWin32Window(window));
@@ -51,12 +64,108 @@ struct GUIVertex {};
 // The Implementation
 // -----------------------
 class ImGuiWindow::Impl {
-	class CtxGaurd {};
 	Window m_main_window;
+	Device& m_device;
+	Stream& m_stream;
+	ImGuiContext* mp_context;
+
+	class CtxGuard {
+	private:
+		ImGuiContext* mp_curr_ctx;
+		ImGuiContext* mp_prev_ctx;
+
+	public:
+		explicit CtxGuard(ImGuiContext* ctx) noexcept
+			: mp_curr_ctx(ctx),
+			  mp_prev_ctx(ImGui::GetCurrentContext()) {
+			ImGui::SetCurrentContext(mp_curr_ctx);
+		}
+
+		~CtxGuard() noexcept {
+			auto* curr_ctx = ImGui::GetCurrentContext();
+			LUISA_ASSERT(curr_ctx == mp_curr_ctx, "ImGui context is not restored correctly");
+			ImGui::SetCurrentContext(mp_prev_ctx);
+		}
+
+		CtxGuard(const CtxGuard&) = delete;
+		CtxGuard& operator=(const CtxGuard&) = delete;
+		CtxGuard(CtxGuard&&) = delete;
+		CtxGuard& operator=(CtxGuard&&) = delete;
+	};
+
+private:
+	template<typename F>
+	decltype(auto) _with_context(F&& f) noexcept {
+		CtxGuard guard{mp_context};
+		return luisa::invoke(std::forward<F>(f));
+	}
+
+	// callbacks
+	void _on_imgui_destroy_window(ImGuiViewport* vp) noexcept {
+		// sync
+		if (
+			auto* glfw_window = static_cast<GLFWwindow*>(vp->PlatformHandle);
+			glfw_window != m_main_window.window()) {
+			// _platform_swapchains.remove(glfw_window);
+			// _platform_framebuffers.remove(glfw_window);
+		}
+	}
 
 public:
-	Impl() = default;
+	Impl(Device& device, Stream& stream) noexcept
+		: m_device(device),
+		  m_stream(stream),
+		  m_main_window("Name", 800, 600, true, false) {
+		// raster state
+		// vert attrib
+		// mesh format
+		// draw shader
+		// initialize GLFW
+		static std::once_flag once_flag;
+		std::call_once(once_flag, [] {
+			// set error callback
+			if (!glfwInit()) [[unlikely]] {
+				LUISA_ERROR_WITH_LOCATION("Failed to initialize GLFW.");
+			}
+		});
+		// create main swapchain
+		// TODO: install user callbacks
+
+		// imgui config
+		_with_context([this] {
+			auto io = ImGui::GetIO();
+			io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;// Enable Multi-Viewport / Platform Windows
+			// register GLFW window
+			ImGui_ImplGlfw_InitForOther(m_main_window.window(), true);
+
+			// register renderer
+
+			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) [[likely]] {
+				auto& platform_io = ImGui::GetPlatformIO();
+				static constexpr auto imgui_get_this = [] {
+					return ImGui::GetCurrentContext() ?
+							   static_cast<Impl*>(ImGui::GetIO().BackendRendererUserData) :
+							   nullptr;
+				};
+				platform_io.Renderer_CreateWindow = [](ImGuiViewport* vp) {
+					// create swapchain
+					// create framebuffer
+				};
+				platform_io.Renderer_DestroyWindow = [](ImGuiViewport* vp) {
+					if (auto self = imgui_get_this()) {
+						self->_on_imgui_destroy_window(vp);
+					}
+				};
+			}
+		});
+
+		// create texture array
+		// create shaders
+	}
 	~Impl() noexcept {}
+
+	// resource
+	[[nodiscard]] auto context() const noexcept { return mp_context; }
 	// lifecycle
 	[[nodiscard]] bool should_close() const noexcept {
 		return static_cast<bool>(glfwWindowShouldClose(m_main_window.window()));
@@ -81,8 +190,46 @@ private:
 // The API Definition
 // -----------------------
 
-ImGuiWindow::ImGuiWindow() noexcept {}
+ImGuiWindow::ImGuiWindow(Device& device, Stream& stream) noexcept {
+	this->create(device, stream);
+}
 ImGuiWindow::~ImGuiWindow() noexcept = default;
+
+void ImGuiWindow::create(Device& device, Stream& stream) noexcept {
+	destroy();
+	mp_impl = luisa::make_unique<Impl>(device, stream);
+}
+
+void ImGuiWindow::destroy() noexcept {
+	mp_impl = nullptr;
+}
+
+ImGuiContext* ImGuiWindow::context() const noexcept {
+	LUISA_ASSERT(mp_impl, "ImGuiWindow not created.");
+	return mp_impl->context();
+}
+
+void ImGuiWindow::push_context() noexcept {
+	LUISA_ASSERT(mp_impl, "ImGuiWindow not created.");
+	// auto& stack = detail::imgui_context_stack();
+	// auto curr_ctx = ImGui::GetCurrentContext();
+	// stack.emplace_back(curr_ctx);
+	// auto ctx = mp_impl->context();
+	// ImGui::SetCurrentContext(ctx);
+	// detail::imgui_context_stack().emplace_back(ctx);
+}
+
+void ImGuiWindow::pop_context() noexcept {
+	LUISA_ASSERT(mp_impl, "ImGuiWindow not created.");
+	// if (auto& stack = detail::imgui_context_stack();
+	// 	!stack.empty() && stack.back() == _impl->context()) {
+	// 	stack.pop_back();
+	// 	auto ctx = stack.empty() ? nullptr : stack.back();
+	// 	ImGui::SetCurrentContext(ctx);
+	// } else {
+	// 	LUISA_WARNING_WITH_LOCATION("Invalid ImGui context stack.");
+	// }
+}
 
 bool ImGuiWindow::should_close() const noexcept {
 	LUISA_ASSERT(mp_impl, "ImGuiWindow is not created");

@@ -23,8 +23,8 @@ int main(int args, char* argv[]) {
 
 	};
 	ImGuiWindow window{
-		// device
-		// stream
+		device,
+		stream
 		// io
 		// name
 		// shader path
