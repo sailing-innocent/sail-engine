@@ -3,7 +3,6 @@ function add_ing_demo(name)
 end 
 
 if get_config("enable_gl") then
-    add_ing_demo("gl_pure_app")
     add_ing_demo("gl_basic_app")
     add_ing_demo("gl_scene_app")
     add_ing_demo("gl_curve_fit")

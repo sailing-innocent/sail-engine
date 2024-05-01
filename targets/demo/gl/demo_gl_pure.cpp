@@ -10,7 +10,10 @@
 int main() {
 	sail::gl::GLPureDummyApp app{};
 	app.init();
-	while (app.tick()) {
+	int max_iter = 20;
+	while (max_iter-- > 0) {
+		app.tick();
 	}
+
 	return 0;
 }
