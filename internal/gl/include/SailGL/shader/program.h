@@ -24,7 +24,7 @@ public:
 
 	void use();
 	// setter
-	void set_mat4(const std::string& name, glm::mat4& mat);
+	void set_mat4(const std::string& name, const glm::mat4& mat);
 
 protected:
 	unsigned int m_id;

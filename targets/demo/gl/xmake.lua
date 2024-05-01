@@ -3,3 +3,4 @@ function add_demo_gl(name)
 end
 
 add_demo_gl("pure")
+add_demo_gl("scene")

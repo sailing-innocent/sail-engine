@@ -21,13 +21,13 @@ public:
 	explicit Camera(const glm::vec3& pos,
 					const glm::vec3& target,
 					const glm::vec3& up,
-					const float fov,
+					const float fov_deg,
 					const float aspect,
 					const float znear,
 					const float zfar,
 					CameraType type = CameraType::kFlipZ);
-	glm::mat4 view_matrix() noexcept;
-	glm::mat4 proj_matrix() noexcept;
+	const glm::mat4& view_matrix() noexcept;
+	const glm::mat4& proj_matrix() noexcept;
 
 	// getter & setter
 	glm::vec3 cam_pos() const noexcept { return m_cam_pos; }
@@ -58,9 +58,9 @@ public:
 		m_proj_matrix = proj_matrix;
 		m_is_proj_dirty = false;
 	}
-	float fov() const noexcept { return m_fov; }
-	void set_fov(const float fov) noexcept {
-		m_fov = fov;
+	float fov() const noexcept { return m_fov_rad; }
+	void set_fov(const float fov_rad) noexcept {
+		m_fov_rad = fov_rad;
 		m_is_proj_dirty = true;
 	}
 	float aspect() const noexcept { return m_aspect; }
@@ -90,7 +90,7 @@ private:
 	glm::mat4 m_proj_matrix;
 	bool m_is_view_dirty = true;
 	bool m_is_proj_dirty = true;
-	float m_fov;
+	float m_fov_rad;
 	float m_aspect;
 	float m_znear;
 	float m_zfar;

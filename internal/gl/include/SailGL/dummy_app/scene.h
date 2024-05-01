@@ -6,40 +6,41 @@
  * @date 2024-05-01
  */
 
-#include "SailGL/dummy_app/pure.h"
 #include "SailGL/shader/program.h"
-#include "SailGL/util/mesh_loader.h"
-#include "SailGL/util/camera.h"
+#include "SailGL/dummy_app/pure.h"
+#include "SailDummy/util/mesh.h"
+#include "SailDummy/util/camera.h"
 
 #include <vector>
 #include <memory>
 #include <string>
 
-namespace sail::ing {
+namespace sail::gl {
 
-class SAIL_ING_API INGGLSceneApp : public INGGLPureApp {
+using std::string_view;
+using std::unique_ptr;
+using std::vector;
+
+class SAIL_GL_API GLSceneDummyApp : public GLPureDummyApp {
 public:
-	INGGLSceneApp();
-	~INGGLSceneApp() {
+	GLSceneDummyApp();
+	~GLSceneDummyApp() {
 		destroy_buffers();
 		destroy_window();
 	}
-	void load_mesh(std::string mesh_path);
-
-public:
+	void load_mesh(string_view mesh_path);
 	bool tick(int count = 0) override;
 	void init_buffers() override;
 
 protected:
-	std::vector<float> m_vertices;
-	std::vector<unsigned int> m_indices;
+	vector<float> m_vertices;
+	vector<unsigned int> m_indices;
 	unsigned int VAO, VBO, EBO;
-	std::unique_ptr<ing::ogl::ShaderProgram> mp_shader_program;
+	unique_ptr<ShaderProgram> mp_shader_program;
 
 private:
-	ing::MeshLoader m_mesh_loader;
-	std::vector<MeshData> m_meshes;
-	std::shared_ptr<INGFlipZCamera> mp_camera;
+	vector<dummy::MeshData> m_meshes;
+	unique_ptr<dummy::Camera> mp_camera;
 };// class INGGLSceneApp
 
-}// namespace sail::ing
+}// namespace sail::gl

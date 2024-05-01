@@ -59,7 +59,7 @@ void ShaderProgram::use() {
 
 // setters
 
-void ShaderProgram::set_mat4(const std::string& name, glm::mat4& mat) {
+void ShaderProgram::set_mat4(const std::string& name, const glm::mat4& mat) {
 	glUniformMatrix4fv(glGetUniformLocation(m_id, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
 }
 
