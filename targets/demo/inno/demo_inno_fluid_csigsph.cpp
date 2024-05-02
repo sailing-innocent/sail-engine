@@ -16,9 +16,9 @@
 #include "SailInno/vis/point_painter.h"
 #include "SailInno/util/camera.h"
 
-#include "SailInno/solver/sph/fluid_builder.h"
-#include "SailInno/solver/sph/fluid_particles.h"
-#include "SailInno/solver/sph/solver.h"
+#include "SailInno/solver/csigsph/fluid_builder.h"
+#include "SailInno/solver/csigsph/fluid_particles.h"
+#include "SailInno/solver/csigsph/solver.h"
 
 using namespace luisa;
 using namespace luisa::compute;
@@ -35,15 +35,15 @@ int test_fluid_sph(Device& device) {
 	constexpr float stiffB = 100.0f;
 	constexpr int support_size = 4;
 
-	inno::sph::SPHSolver solver{};
-	auto config = inno::sph::SPHSolverConfig{
+	inno::csigsph::SPHSolver solver{};
+	auto config = inno::csigsph::SPHSolverConfig{
 		.world_size = 1.0f,
 		.sph_model_kind = model_kind,
 		.least_iter = 3};
 
-	auto param = inno::sph::SPHParam{
+	auto param = inno::csigsph::SPHParam{
 		.delta_time = dt,
-		.bound_kind = inno::sph::SPHBoundKind::WATERFALL,
+		.bound_kind = inno::csigsph::SPHBoundKind::WATERFALL,
 		.dx = dx,
 		.h_fac = dx * support_size,
 		.alpha = alpha,
@@ -51,7 +51,7 @@ int test_fluid_sph(Device& device) {
 	solver.config(config);
 	solver.param(param);
 	// generate initial fluid data
-	inno::sph::FluidBuilder builder{solver};
+	inno::csigsph::FluidBuilder builder{solver};
 	auto fluid_data = builder.grid(
 		make_float3(0.25f, 0.25f, 0.5f),
 		make_float3(0.5f),
