@@ -1,19 +1,16 @@
 /**
- * @author Oncle-Ha
- * @date 2023-04-06
+ * @file neighbor.cpp
+ * @brief The Neighbor Implementation
+ * @author sailing-innocent
+ * @date 2024-05-02
  */
 
-#include "fluid_particles.h"
-#include "sph.h"
-#include "neighbor.h"
-
-// #include <deprecate/lcub/lcub.h>
-// #include <backends/cuda/cuda_command_encoder.h>
-// #include <lcub/device_scan.h>
+#include "SailInno/solver/csigsph/solver.h"
+#include "SailInno/solver/csigsph/neighbor.h"
 
 // CORE IMPLEMENTATION
-namespace inno::csigsph {
-void Neighbor::compile() noexcept {
+namespace sail::inno::csigsph {
+void Neighbor::compile(Device& device) noexcept {
 	using namespace luisa;
 	using namespace luisa::compute;
 
@@ -57,7 +54,7 @@ void Neighbor::compile() noexcept {
 		return res;
 	};
 
-	lazy_compile(solver().device(), clear_cell,
+	lazy_compile(device, clear_cell,
 				 [&](Int count, BufferInt count_in_cell) {
 		set_block_size(n_blocks);
 		grid_stride_loop(count,
@@ -67,7 +64,7 @@ void Neighbor::compile() noexcept {
 	});
 
 	// count = part
-	lazy_compile(solver().device(), count_sort_cell_sum,
+	lazy_compile(device, count_sort_cell_sum,
 				 [&](Int count, Int n_grids, Float cell_size,
 					 BufferFloat3 part_pos) {
 		set_block_size(n_blocks);
@@ -83,7 +80,7 @@ void Neighbor::compile() noexcept {
 	});
 
 	// count = part
-	lazy_compile(solver().device(), copy_from_tmp,
+	lazy_compile(device, copy_from_tmp,
 				 [&](Int count, BufferInt part_id, BufferFloat3 part_pos, BufferFloat3 part_vel) {
 		set_block_size(n_blocks);
 		grid_stride_loop(count,
@@ -95,7 +92,7 @@ void Neighbor::compile() noexcept {
 	});
 
 	// count = part
-	lazy_compile(solver().device(), count_sort_result,
+	lazy_compile(device, count_sort_result,
 				 [&](Int count, Int n_grids, Float cell_size, BufferInt part_id, BufferFloat3 part_pos, BufferFloat3 part_vel) {
 		set_block_size(n_blocks);
 		grid_stride_loop(count,
@@ -114,7 +111,7 @@ void Neighbor::compile() noexcept {
 	});
 
 	//// count = cell
-	lazy_compile(solver().device(), cal_block,
+	lazy_compile(device, cal_block,
 				 [&](Int count) {
 		set_block_size(n_blocks);
 		grid_stride_loop(count,
@@ -127,7 +124,7 @@ void Neighbor::compile() noexcept {
 	});
 
 	// count = part
-	lazy_compile(solver().device(), count_sort_cell_sum_2,
+	lazy_compile(device, count_sort_cell_sum_2,
 				 [&](Int count, Int n_grids, Int num_cells, Float cell_size, BufferFloat3 part_pos) {
 		set_block_size(n_blocks);
 		grid_stride_loop(count,
@@ -149,7 +146,7 @@ void Neighbor::compile() noexcept {
 	});
 
 	// count = part
-	lazy_compile(solver().device(), count_sort_result_2,
+	lazy_compile(device, count_sort_result_2,
 				 [&](Int count) {
 		set_block_size(n_blocks);
 		grid_stride_loop(count,
@@ -164,7 +161,7 @@ void Neighbor::compile() noexcept {
 	});
 
 	// count = part
-	lazy_compile(solver().device(), find_middle_value,
+	lazy_compile(device, find_middle_value,
 				 [&](Int count, Int n_particles, Int num_cells, Int n_hashs) {
 		set_block_size(n_blocks);
 		grid_stride_loop(
@@ -209,7 +206,7 @@ void Neighbor::compile() noexcept {
 	});
 
 	// count = cell
-	lazy_compile(solver().device(), arrange_task,
+	lazy_compile(device, arrange_task,
 				 [&](Int count, Int num_cells) {
 		set_block_size(n_blocks);
 		grid_stride_loop(count,
@@ -240,10 +237,10 @@ void Neighbor::compile() noexcept {
 		});
 	});
 }
-}// namespace inno::csigsph
+}// namespace sail::inno::csigsph
 
 // API IMPLEMENTATION
-namespace inno::csigsph {
+namespace sail::inno::csigsph {
 Neighbor::Neighbor(SPHSolver& solver) noexcept : SPHExecutor{solver} {
 	m_task = luisa::make_unique<Task>();
 	m_cell = luisa::make_unique<Cell>();
@@ -254,23 +251,21 @@ void Neighbor::reset() noexcept {
 	m_size = solver().particles().size();
 	m_cell_size = solver().param().h_fac;
 	// cell_size should not less than min_cell_size to avoid too many grids
-	if (m_cell_size < solver().config().min_cell_size)
+	if (m_cell_size < solver().config().min_cell_size) {
 		m_cell_size = solver().config().min_cell_size;
+	}
 	m_num_grids = (solver().config().world_size / m_cell_size) + 1;
 	m_num_cells = m_num_grids * m_num_grids * m_num_grids;
 	m_num_tasks = m_capacity / 32 + m_num_cells;
 	m_num_hashs = m_num_cells * 2;
 	m_num_thread_up = get_thread_up(m_size);// upper limit
 
-	LUISA_INFO("Cell size:{}", m_cell_size);
-	LUISA_INFO("Thread num:{}", m_num_thread_up);
+	// LUISA_INFO("Cell size:{}", m_cell_size);
+	// LUISA_INFO("Thread num:{}", m_num_thread_up);
 }
 
-void Neighbor::create() noexcept {
-	// using namespace lcub;
-	using namespace inno::primitive;
+void Neighbor::create(Device& device) noexcept {
 	reset();
-
 	// allocate memory
 	m_capacity = solver().config().n_capacity;
 	int max_num_grids = (solver().config().world_size / solver().config().min_cell_size) + 1;
@@ -280,15 +275,15 @@ void Neighbor::create() noexcept {
 	size_t num_cells = max_num_cells;
 	size_t num_tasks = max_num_tasks;
 
-	allocate(solver().device(), m_capacity);
-	m_task->allocate(solver().device(), num_tasks);
-	m_cell->allocate(solver().device(), num_cells);
+	allocate(device, m_capacity);
+	m_task->allocate(device, num_tasks);
+	m_cell->allocate(device, num_cells);
 
 	// get temp storage size
 	size_t temp_storage_size = -1;
-	solver().device_parallel().scan_exclusive_sum<int>(temp_storage_size, m_cell->particle_count_hash, m_cell->particle_offset_hash, num_cells << 1);
+	solver().device_parallel().scan_exclusive_sum<int>(temp_storage_size, m_cell->particle_count_hash, m_cell->particle_offset_hash, 0, num_cells << 1);
 	// create temp storage
-	m_scan_temp->allocate(solver().device(), temp_storage_size);
+	m_scan_temp->allocate(device, temp_storage_size);
 }
 
 void Neighbor::allocate(luisa::compute::Device& device, size_t size) noexcept {
@@ -306,10 +301,7 @@ void Neighbor::allocate(luisa::compute::Device& device, size_t size) noexcept {
 	m_data_gpu = device.create_buffer<int>(4);
 	m_data_cpu.resize(4);
 }
-void Neighbor::solve(luisa::compute::CommandList& cmdlist) noexcept {
-	// using namespace lcub;
-	using namespace inno::primitive;
-
+void Neighbor::solve(Device& device, CommandList& cmdlist) noexcept {
 	int num_cells = m_num_cells;
 	int num_particles = m_size;
 	int n_grids = m_num_grids;
@@ -317,32 +309,37 @@ void Neighbor::solve(luisa::compute::CommandList& cmdlist) noexcept {
 	float cell_size = m_cell_size;
 	auto& particles = solver().particles();
 
+	// LUISA_INFO("[Neighbor] num_cells:{} num_particles:{} n_grids:{} n_hashs:{} cell_size:{}", num_cells, num_particles, n_grids, n_hashs, cell_size);
 	// Count particles in each cell
-	cmdlist << solver().filler().fill(m_cell->particle_count, 0)
-			<< solver().filler().fill(m_cell->task_count, 0)
+	cmdlist << solver().filler().fill(device, m_cell->particle_count, 0)
+			<< solver().filler().fill(device, m_cell->task_count, 0)
 			<< (*count_sort_cell_sum)(num_particles, n_grids, cell_size, particles.m_pos).dispatch(num_particles);
-	solver().device_parallel().scan_exclusive_sum<int>(cmdlist, m_scan_temp->temp_storage, m_cell->particle_count, m_cell->particle_offset, num_cells);
+	// LUISA_INFO("Count particles in each cell");
+	solver().device_parallel().scan_exclusive_sum<int>(cmdlist, m_scan_temp->temp_storage, m_cell->particle_count, m_cell->particle_offset, 0, num_cells);
 
+	// LUISA_INFO("Sort particles in each cell");
 	cmdlist << (*count_sort_result)(num_particles, n_grids, cell_size, particles.m_id, particles.m_pos, particles.m_vel).dispatch(num_particles)
-
 			// Count tasks in each cell
 			<< (*cal_block)(num_cells).dispatch(num_cells)
 			<< (*copy_from_tmp)(num_particles, particles.m_id, particles.m_pos, particles.m_vel).dispatch(num_particles);
-	solver().device_parallel().scan_exclusive_sum<int>(cmdlist, m_scan_temp->temp_storage, m_cell->task_count, m_cell->task_offset, num_cells);
+	solver().device_parallel().scan_exclusive_sum<int>(cmdlist, m_scan_temp->temp_storage, m_cell->task_count, m_cell->task_offset, 0, num_cells);
+
+	// LUISA_INFO("Compute task count and offset");
 
 	// Count hash for each particle
-	cmdlist << solver().filler().fill(m_cell->particle_count_hash, 0)
+	cmdlist << solver().filler().fill(device, m_cell->particle_count_hash, 0)
 			<< (*count_sort_cell_sum_2)(num_particles, n_grids, num_cells, cell_size, particles.m_pos).dispatch(num_particles);
-	solver().device_parallel().scan_exclusive_sum<int>(cmdlist, m_scan_temp->temp_storage, m_cell->particle_count_hash, m_cell->particle_offset_hash, num_cells << 1);
+	solver().device_parallel().scan_exclusive_sum<int>(cmdlist, m_scan_temp->temp_storage, m_cell->particle_count_hash, m_cell->particle_offset_hash, 0, num_cells << 1);
 
 	cmdlist << (*count_sort_result_2)(num_particles).dispatch(num_particles)
-
 			// Find dividing line between sparse and dense particles
 			// [Sparse, Dense]
 			<< (*find_middle_value)(num_particles, num_particles, num_cells, n_hashs).dispatch(num_particles)
 			// Arrange particles for each task
 			<< (*arrange_task)(num_cells, num_cells).dispatch(num_cells)
 			<< m_data_gpu.copy_to(m_data_cpu.data());
+
+	// LUISA_INFO("[Neighbor] midlle:{} offset:{} task:{} thread:{}", m_middle, m_bt_offset, m_num_task, m_num_thread_up);
 }
 
 int Neighbor::get_thread_up(int x) noexcept {
@@ -358,7 +355,7 @@ void Neighbor::after_solve() noexcept {
 	int n_blocks = solver().config().n_blocks;
 	int p_blocks = (m_num_task * solver().config().n_threads + n_blocks - 1) / n_blocks;
 	m_num_thread_up = (p_blocks + m_bt_offset) * n_blocks;
-	LUISA_INFO("[Neighbor] midlle:{} offset:{} task:{} thread:{}", m_middle, m_bt_offset, m_num_task, m_num_thread_up);
+	// LUISA_INFO("[Neighbor] midlle:{} offset:{} task:{} thread:{}", m_middle, m_bt_offset, m_num_task, m_num_thread_up);
 }
 
-}// namespace inno::csigsph
+}// namespace sail::inno::csigsph

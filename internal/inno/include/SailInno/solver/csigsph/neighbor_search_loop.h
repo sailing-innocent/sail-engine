@@ -1,17 +1,15 @@
 #pragma once
 /**
- * @file source/package/solver/fluid/sph/neighbor_search_loop.h
+ * @file neighbor_search_loop.h
+ * @brief The Neighbor Search
  * @author sailing-innocent
- * @date 2023-02-23
- * @brief The Neighbor Search Interface
+ * @date 2024-05-02
  */
+#include <luisa/luisa-compute.h>
+#include "SailInno/solver/csigsph/neighbor.h"
+#include "SailInno/solver/csigsph/fluid_particles.h"
 
-#include <luisa/dsl/sugar.h>
-#include "neighbor.h"
-#include "fluid_particles.h"
-
-namespace sail::inno::sph {
-
+namespace sail::inno::csigsph {
 using SMEM_int = luisa::compute::Shared<int>;
 using SMEM_int_ptr = luisa::shared_ptr<luisa::compute::Shared<int>>;
 using SMEM_float = luisa::compute::Shared<float>;
@@ -20,9 +18,8 @@ using SMEM_float3 = luisa::compute::Shared<luisa::float3>;
 using SMEM_float3_ptr = luisa::shared_ptr<luisa::compute::Shared<luisa::float3>>;
 
 class Neighbor;
-class SPHFluidParticles;
+class FluidParticles;
 
-#define INVALID_CELL_INDEX -1
 inline luisa::compute::Int3 cell_index_to_ijk_neig(
 	luisa::compute::UInt index,
 	const luisa::compute::Int& n_grids) noexcept {
@@ -46,17 +43,15 @@ inline luisa::compute::Int cell_pos_to_cell_index_neig(
 	return res;
 };
 
-inline auto ijk_to_cell_index_neig =
-	[](
-		luisa::compute::UInt3& coord,
-		const luisa::compute::Int& n_grids) noexcept {
+inline auto ijk_to_cell_index_neig = [](
+										 luisa::compute::UInt3& coord,
+										 const luisa::compute::Int& n_grids) noexcept {
 	using T = luisa::compute::vector_expr_element_t<decltype(coord)>;
 	auto p = luisa::compute::clamp(coord, 0u, luisa::compute::UInt(n_grids - 1));
 	return p.x + p.y * n_grids + p.z * n_grids * n_grids;
 };
 
-inline auto pos_to_cell_index_neig =
-	[](luisa::compute::Float3& pos, const luisa::compute::Int& n_grids, const luisa::compute::Float& cell_size) noexcept {
+inline auto pos_to_cell_index_neig = [](luisa::compute::Float3& pos, const luisa::compute::Int& n_grids, const luisa::compute::Float& cell_size) noexcept {
 	luisa::compute::UInt3 coord;
 	for (auto i = 0; i < 3; i++) coord[i] = luisa::compute::UInt(pos[i] / cell_size);
 	return ijk_to_cell_index_neig(coord, n_grids);
@@ -77,7 +72,7 @@ inline void initialize(
 	UInt idx = thread_id().x;
 	Int bi = Int(idx / n_threads);// bi <= 1
 	Int bj = Int(idx % n_threads);
-	auto& p_cell = neighbor.cell_state();
+	auto& p_cell = neighbor.cell();
 
 	$if(bj < 9) {
 
@@ -175,7 +170,7 @@ inline luisa::compute::Int read_32_data(
 template<typename BeginF, typename LoopF, typename EndF>
 inline void neig_search(
 	Neighbor& neighbor,
-	SPHFluidParticles& particles,
+	FluidParticles& particles,
 	luisa::compute::Int& self_index,
 	BeginF&& f_read,
 	LoopF&& f_loop,
@@ -187,7 +182,7 @@ inline void neig_search(
 	using namespace luisa;
 	using namespace luisa::compute;
 
-	auto& p_cell = neighbor.cell_state();
+	auto& p_cell = neighbor.cell();
 
 	UInt self_p = UInt(self_index);
 	Float3 pos_a;
@@ -197,7 +192,7 @@ inline void neig_search(
 	f_read(self_p, pos_a, vel_a, w_a);
 
 	// The grid construction depends on the old position.
-	Float3 pos_old = particles.m_d_pos->read(self_p);
+	Float3 pos_old = particles.m_pos->read(self_p);
 	auto c = pos_to_cell_index_neig(pos_old, n_grids, cell_size);
 	auto cell_pos = cell_index_to_ijk_neig(UInt(c), n_grids);
 
@@ -241,7 +236,7 @@ inline void neig_search(
 template<typename BeginF, typename NewSmemF, typename LoadSmemF, typename LoopF, typename EndF>
 inline void task_search(
 	Neighbor& neighbor,
-	SPHFluidParticles& particles,
+	FluidParticles& particles,
 	const luisa::compute::Int n_grids,
 	const luisa::compute::Int n_threads,
 	const luisa::compute::Int n_cta,
@@ -254,17 +249,15 @@ inline void task_search(
 	using namespace luisa;
 	using namespace luisa::compute;
 
-	auto& p_cell = neighbor.cell_state();
-	auto& p_task = neighbor.task_state();
+	auto& p_cell = neighbor.cell();
+	auto& p_task = neighbor.task();
 
 	auto t = dispatch_id().x;// index of global thread
 	auto block_x = block_id().x;
 	auto thread_x = thread_id().x;// index of block thread
-
-	Int middle = neighbor.state().middle;
-	Int offset_b = neighbor.state().bt_offset;
-	Int num_thread_end = neighbor.state().num_thread_up;
-
+	Int middle = neighbor.m_data_gpu->read(0);
+	Int offset_b = neighbor.m_data_gpu->read(1);
+	Int num_thread_end = neighbor.m_data_gpu->read(3);
 	$if(block_x < UInt(offset_b))// Sparse
 	{
 		$if(t < UInt(middle)) {
@@ -276,7 +269,7 @@ inline void task_search(
 				n_grids, n_threads, n_cta, cell_size);
 		};
 	}
-	$elif(t < UInt(num_thread_end))// Dense
+	$elif(t < UInt(num_thread_end))// Densy
 	{
 		Int densy_block = Int(block_x - offset_b);
 		Int task_idx = densy_block * n_cta + thread_x / n_threads;
@@ -342,15 +335,13 @@ inline void task_search(
 					Float3 pos_i;
 					Float3 vel_i;
 					Float w_i;
-					if (search_part_pos_ptr) {
+					if (search_part_pos_ptr != NULL)
 						pos_i = (*search_part_pos_ptr)[i];
-					}
-					if (search_part_vel_ptr) {
+					if (search_part_vel_ptr != NULL)
 						vel_i = (*search_part_vel_ptr)[i];
-					}
-					if (search_part_w_ptr) {
+					if (search_part_w_ptr != NULL)
 						w_i = (*search_part_w_ptr)[i];
-					}
+
 					// compute content
 					f_loop(pos_a, pos_i, vel_a, vel_i, w_a, w_i, res);
 				};
@@ -365,4 +356,4 @@ inline void task_search(
 	};
 }
 
-}// namespace sail::inno::sph
+}// namespace sail::inno::csigsph

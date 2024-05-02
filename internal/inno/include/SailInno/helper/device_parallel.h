@@ -67,10 +67,13 @@ public:
 		size_t temp_storage_size = 0;
 		get_temp_size(temp_storage_size, num_item);
 		LUISA_ASSERT(temp_storage_size <= temp_buffer.size(), "temp_buffer size is not enough");
+		// LUISA_INFO("temp_storage_size: {}", temp_storage_size);
+
 		prescan_array_recursive<Type4Byte>(
 			cmdlist,
 			temp_buffer, d_in, d_out,
 			num_item, 0, 0);
+		// LUISA_INFO("scan_exclusive_sum done");
 		// add for all // brute force
 		std::string_view key = luisa::compute::Type::of<Type4Byte>()->description();
 		auto* ms_add_it = ms_add_map.find(key);
