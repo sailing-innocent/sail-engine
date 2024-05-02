@@ -24,12 +24,11 @@ int main(int args, char* argv[]) {
 	};
 	ImGuiWindow window{
 		device,
-		stream
+		stream,
 		// io
-		// name
-		// shader path
-		// window config
-	};
+		"ImGui Window",
+		"shader_path",
+		window_cfg};
 
 	// render pipeline
 	// window set callback

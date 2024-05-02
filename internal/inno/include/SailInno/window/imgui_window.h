@@ -11,8 +11,20 @@
 #include <luisa/runtime/device.h>
 #include <luisa/gui/window.h>
 
+// IOService
+
 struct GLFWwindow;
 struct ImGuiContext;
+
+namespace luisa::compute {
+class Swapchain;
+
+template<typename T>
+class Image;
+
+class Sampler;
+
+}// namespace luisa::compute
 
 namespace sail::inno {
 using namespace luisa;
@@ -21,30 +33,31 @@ using namespace luisa::compute;
 class SAIL_INNO_API ImGuiWindow {
 public:
 	struct Config {
-		uint2 size = {1280, 720};
-		bool resizable = true;
-		bool fullscreen = false;
+		uint2 size{1280u, 720u};
+		bool resizable{true};
+		bool fullscreen{false};
+		bool hdr{false};
+		bool vsync{false};
+		uint back_buffer_count{2u};
 
-		[[nodiscard]] static Config default_config() noexcept {
-			return {};
-		}
+		[[nodiscard]] static Config default_config() noexcept { return {}; }
 	};
 
 private:
-	class ContextGaurd {
+	class ContextGuard {
 		ImGuiWindow* mp_self;
 
 	public:
 		// delete copy and move
-		ContextGaurd(const ContextGaurd&) = delete;
-		ContextGaurd& operator=(const ContextGaurd&) = delete;
-		ContextGaurd(ContextGaurd&&) = delete;
-		ContextGaurd& operator=(ContextGaurd&&) = delete;
+		ContextGuard(const ContextGuard&) = delete;
+		ContextGuard& operator=(const ContextGuard&) = delete;
+		ContextGuard(ContextGuard&&) = delete;
+		ContextGuard& operator=(ContextGuard&&) = delete;
 
-		explicit ContextGaurd(ImGuiWindow* self) noexcept : mp_self{self} {
+		explicit ContextGuard(ImGuiWindow* self) noexcept : mp_self{self} {
 			mp_self->push_context();
 		}
-		~ContextGaurd() noexcept {
+		~ContextGuard() noexcept {
 			mp_self->pop_context();
 		}
 	};
@@ -56,7 +69,13 @@ private:
 	unique_ptr<Impl> mp_impl;
 
 public:
-	ImGuiWindow(Device& device, Stream& stream) noexcept;
+	ImGuiWindow(
+		Device& device,
+		Stream& stream,
+		// IOService
+		luisa::string name,
+		luisa::filesystem::path const& shader_dir,
+		const Config& config = Config::default_config()) noexcept;
 	~ImGuiWindow() noexcept;
 	// delete copy
 	ImGuiWindow(const ImGuiWindow&) = delete;
@@ -66,7 +85,13 @@ public:
 	ImGuiWindow& operator=(ImGuiWindow&&) noexcept;
 
 	// lifecycle
-	void create(Device& device, Stream& stream) noexcept;
+	void create(
+		Device& device,
+		Stream& stream,
+		// IOService
+		luisa::string name,
+		luisa::filesystem::path const& shader_dir,
+		const Config& config = Config::default_config()) noexcept;
 	void destroy() noexcept;
 
 	// context
@@ -78,6 +103,8 @@ public:
 	[[nodiscard]] GLFWwindow* handle() const noexcept;
 	[[nodiscard]] Window& window() noexcept;
 	[[nodiscard]] Window const& window() const noexcept;
+	[[nodiscard]] Swapchain& swapchain() const noexcept;
+	[[nodiscard]] Image<float>& framebuffer() const noexcept;
 
 	[[nodiscard]] bool valid() const noexcept { return mp_impl != nullptr; }
 	[[nodiscard]] operator bool() const noexcept { return valid(); }
@@ -86,6 +113,19 @@ public:
 
 	void prepare_frame() noexcept;// call event handle, imgui new frame etc. and makes the context current
 	void render_frame() noexcept; // calls imgui render, swapbuffer
+								  // register textures
+	template<typename F>
+	decltype(auto) with_context(F&& f) noexcept {
+		ContextGuard g{this};
+		return luisa::invoke(std::forward<F>(f));
+	}
+
+	template<typename F>
+	void with_frame(F&& f) noexcept {
+		prepare_frame();
+		luisa::invoke(std::forward<F>(f));
+		render_frame();
+	}
 };
 
 }// namespace sail::inno
