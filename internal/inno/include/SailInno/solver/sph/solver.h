@@ -80,8 +80,8 @@ public:
 	void create(Device& device) noexcept;
 	void compile(Device& device) noexcept;
 	void init_upload(Device& device, CommandList& cmdlist) noexcept;
-	void reset(CommandList& cmdlist) noexcept;
-	void step(CommandList& cmdlist) noexcept;
+	void reset(Device& device, CommandList& cmdlist) noexcept;
+	void step(Device& device, CommandList& cmdlist) noexcept;
 
 	// component getter
 

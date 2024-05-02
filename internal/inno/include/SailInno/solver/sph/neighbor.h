@@ -37,6 +37,7 @@ class SAIL_INNO_API Neighbor : public SPHExecutor {
 
 public:
 	// ctor & dtor
+	Neighbor(SPHSolver& solver) noexcept;
 	class TaskState {
 		friend class Neighbor;
 
@@ -48,6 +49,7 @@ public:
 	private:
 		void allocate(Device& device, size_t size);
 	};
+
 	class CellState {
 		friend class Neighbor;
 
@@ -62,14 +64,11 @@ public:
 	private:
 		void allocate(Device& device, size_t size);
 	};
-	// temp scan storage
-	Buffer<int> m_temp_storage;// for scan
-
-	Neighbor(SPHSolver& solver) noexcept;
 	NeighborState& state() noexcept { return m_state; }
 	TaskState& task_state() noexcept { return *mp_task_state; }
 	CellState& cell_state() noexcept { return *mp_cell_state; }
-
+	// temp scan storage
+	Buffer<int> m_temp_storage;// for scan
 	// resources
 	Buffer<int> m_hash;
 	Buffer<int> m_cell_index;
@@ -89,7 +88,7 @@ public:
 	int m_threads_upper_limit = 0;
 
 	size_t size() const noexcept { return m_size; }
-	void solve(CommandList& cmdlist) noexcept;
+	void solve(Device& device, CommandList& cmdlist) noexcept;
 
 private:
 	// life cycle
@@ -114,6 +113,13 @@ private:
 	// shaders
 	U<Shader<1, int, Buffer<int>>> ms_clear_cell;
 	U<Shader<1, int, int, float, Buffer<float3>>> ms_count_sort_cell_sum;
+	// copy from tmp
+	// count sort result
+	// cal block
+	// count sort cell sum 2
+	// count sort result 2
+	// find middle value
+	// arrange task
 };
 
 }// namespace sail::inno::sph

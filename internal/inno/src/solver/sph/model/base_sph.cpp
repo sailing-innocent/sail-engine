@@ -41,9 +41,7 @@ void BaseSPH::compile(Device& device) noexcept {
 		grid_stride_loop(count, [&particles, &delta_time](Int p) noexcept {
 			Float3 x = particles.m_d_pos->read(p);
 			Float3 v = particles.m_d_vel->read(p);
-
 			// update v
-
 			// update x
 			x = x + v * delta_time;
 		});

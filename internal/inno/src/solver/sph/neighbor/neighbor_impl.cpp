@@ -46,6 +46,8 @@ void Neighbor::allocate(Device& device, size_t size) noexcept {
 	tmp_id = device.create_buffer<int>(size);
 	tmp_pos = device.create_buffer<float3>(size);
 	tmp_vel = device.create_buffer<float3>(size);
+
+	// NeighborState
 }
 
 void Neighbor::reset() noexcept {
@@ -62,7 +64,6 @@ void Neighbor::reset() noexcept {
 	// allocate tasks
 	m_num_tasks = (m_capacity + 32 - 1) / 32 + m_num_cells;
 	m_num_hashs = m_num_cells * 2;
-
 	m_state.num_thread_up = get_thread_up(m_size);// upper limit
 }
 
@@ -83,11 +84,12 @@ void Neighbor::create(Device& device) noexcept {
 	mp_cell_state->allocate(device, num_cells);
 	// get temp storage size
 	size_t temp_storage_size = -1;
-	solver().device_parallel().scan_exclusive_sum<int>(temp_storage_size,
-													   mp_cell_state->particle_count_hash,
-													   mp_cell_state->particle_offset_hash,
-													   0,
-													   num_cells << 1);
+	solver().device_parallel().scan_exclusive_sum<int>(
+		temp_storage_size,
+		mp_cell_state->particle_count_hash,
+		mp_cell_state->particle_offset_hash,
+		0,
+		num_cells << 1);
 	// allocate temp_storage
 	m_temp_storage = device.create_buffer<int>(temp_storage_size);
 }
@@ -97,8 +99,8 @@ int Neighbor::get_thread_up(int x) noexcept {
 	return (x / block_int + 2) * block_int;
 }
 
-void Neighbor::solve(CommandList& cmdlist) noexcept {
-	// core solve algorithm
+void Neighbor::solve(Device& device, CommandList& cmdlist) noexcept {
+	// build up neighbor search data structure
 	int num_cells = m_num_cells;
 	int num_particles = m_size;
 	int n_grids = m_num_grids;
@@ -106,8 +108,22 @@ void Neighbor::solve(CommandList& cmdlist) noexcept {
 	float cell_size = m_cell_size;
 	auto& particles = solver().particles();
 
+	// clear the particle count and task count
+	cmdlist
+		<< solver().filler().fill(device, mp_cell_state->particle_count, 0)
+		<< solver().filler().fill(device, mp_cell_state->task_count, 0);
+
 	// count particles in each cell
+	cmdlist << (*ms_count_sort_cell_sum)(num_particles, n_grids, cell_size, particles.m_d_pos).dispatch(num_particles);
 	// scan to get the offset
+	solver().device_parallel().scan_exclusive_sum<int>(
+		cmdlist,
+		m_temp_storage, mp_cell_state->particle_count, mp_cell_state->particle_offset,
+		0,
+		num_cells);
+
+	// sort cells
+
 	// count task in each cell
 	// scan to get the offset
 	// count hash for each partilce

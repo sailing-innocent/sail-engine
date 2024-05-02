@@ -83,7 +83,8 @@ int test_fluid_sph(Device& device) {
 
 	while (mp_vis->running()) {
 		// physics step
-		solver.step(cmdlist);
+		// includes accel rebuild and allocate
+		solver.step(device, cmdlist);
 		stream << cmdlist.commit() << synchronize();
 		// render step
 		mp_vis->vis(cmdlist);

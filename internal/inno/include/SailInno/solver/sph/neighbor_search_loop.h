@@ -46,15 +46,17 @@ inline luisa::compute::Int cell_pos_to_cell_index_neig(
 	return res;
 };
 
-inline auto ijk_to_cell_index_neig = [](
-										 luisa::compute::UInt3& coord,
-										 const luisa::compute::Int& n_grids) noexcept {
+inline auto ijk_to_cell_index_neig =
+	[](
+		luisa::compute::UInt3& coord,
+		const luisa::compute::Int& n_grids) noexcept {
 	using T = luisa::compute::vector_expr_element_t<decltype(coord)>;
 	auto p = luisa::compute::clamp(coord, 0u, luisa::compute::UInt(n_grids - 1));
 	return p.x + p.y * n_grids + p.z * n_grids * n_grids;
 };
 
-inline auto pos_to_cell_index_neig = [](luisa::compute::Float3& pos, const luisa::compute::Int& n_grids, const luisa::compute::Float& cell_size) noexcept {
+inline auto pos_to_cell_index_neig =
+	[](luisa::compute::Float3& pos, const luisa::compute::Int& n_grids, const luisa::compute::Float& cell_size) noexcept {
 	luisa::compute::UInt3 coord;
 	for (auto i = 0; i < 3; i++) coord[i] = luisa::compute::UInt(pos[i] / cell_size);
 	return ijk_to_cell_index_neig(coord, n_grids);
@@ -274,7 +276,7 @@ inline void task_search(
 				n_grids, n_threads, n_cta, cell_size);
 		};
 	}
-	$elif(t < UInt(num_thread_end))// Densy
+	$elif(t < UInt(num_thread_end))// Dense
 	{
 		Int densy_block = Int(block_x - offset_b);
 		Int task_idx = densy_block * n_cta + thread_x / n_threads;
@@ -340,13 +342,15 @@ inline void task_search(
 					Float3 pos_i;
 					Float3 vel_i;
 					Float w_i;
-					if (search_part_pos_ptr != NULL)
+					if (search_part_pos_ptr) {
 						pos_i = (*search_part_pos_ptr)[i];
-					if (search_part_vel_ptr != NULL)
+					}
+					if (search_part_vel_ptr) {
 						vel_i = (*search_part_vel_ptr)[i];
-					if (search_part_w_ptr != NULL)
+					}
+					if (search_part_w_ptr) {
 						w_i = (*search_part_w_ptr)[i];
-
+					}
 					// compute content
 					f_loop(pos_a, pos_i, vel_a, vel_i, w_a, w_i, res);
 				};

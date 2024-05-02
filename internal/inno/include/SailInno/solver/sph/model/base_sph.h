@@ -26,7 +26,7 @@ protected:
 	virtual void compile(Device& device) noexcept;
 	virtual void iteration(CommandList& cmdlist) noexcept;
 
-protected:
+	// shaders
 	U<Shader<1, int, float, float>> ms_update_state;
 };
 

@@ -21,6 +21,7 @@ namespace sail::inno::sph {
 SPHSolver::SPHSolver() noexcept {
 	mp_particles = luisa::make_unique<SPHFluidParticles>(*this);
 	mp_buffer_filler = luisa::make_unique<BufferFiller>();
+	mp_neighbor = luisa::make_unique<Neighbor>(*this);
 	mp_device_parallel = luisa::make_unique<DeviceParallel>();
 }
 
@@ -42,24 +43,33 @@ void SPHSolver::config(const SPHSolverConfig& config) noexcept {
 void SPHSolver::create(Device& device) noexcept {
 	mp_particles->create(device);
 	mp_sph_model->create(device);
+	mp_neighbor->create(device);
 	mp_device_parallel->create(device);
 }
 
 void SPHSolver::compile(Device& device) noexcept {
 	mp_sph_model->compile(device);
+	mp_neighbor->compile(device);
+	// bounding
 }
 
 void SPHSolver::init_upload(Device& device, CommandList& cmdlist) noexcept {
 	mp_particles->init_upload(device, cmdlist);
 }
 
-void SPHSolver::reset(CommandList& cmdlist) noexcept {
+void SPHSolver::reset(Device& device, CommandList& cmdlist) noexcept {
+	mp_particles->reset(device, cmdlist);
+	// mp_sph_model->reset(device, cmdlist);
+	mp_neighbor->reset();// only reset the number config
 }
 
-void SPHSolver::step(CommandList& cmdlist) noexcept {
+void SPHSolver::step(Device& device, CommandList& cmdlist) noexcept {
 	luisa::Clock clock;
 
 	for (size_t i = 0; i < m_config.max_iter; i++) {
+		// update the search accel structure
+		mp_neighbor->solve(device, cmdlist);
+
 		if (m_config.model_kind == SPHModelKind::DUMMY) {
 			mp_sph_model->iteration(cmdlist);
 		} else if (m_config.model_kind == SPHModelKind::WCSPH) {
@@ -67,6 +77,7 @@ void SPHSolver::step(CommandList& cmdlist) noexcept {
 		} else if (m_config.model_kind == SPHModelKind::PCISPH) {
 			mp_sph_model->iteration(cmdlist);
 		}
+		// bounding
 	}
 }
 

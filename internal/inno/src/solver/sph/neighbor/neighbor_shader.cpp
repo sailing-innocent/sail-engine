@@ -6,8 +6,9 @@
  */
 
 #include "SailInno/solver/sph/neighbor.h"
-
 #include <luisa/dsl/sugar.h>
+#include "SailInno/helper/grid_stride_loop.h"
+#include "SailInno/solver/sph/solver.h"
 
 namespace sail::inno::sph {
 
@@ -15,23 +16,25 @@ void Neighbor::compile(Device& device) noexcept {
 	using namespace luisa;
 	using namespace luisa::compute;
 
-	// const auto dim = 3;
-	// const auto n_blocks = solver().config().n_blocks;
-	// const int n_blocks_int = int(n_blocks);
-	// const auto n_threads = solver().config().n_threads;
+	const auto dim = 3;
+	const auto n_blocks = solver().config().n_blocks;
+	const int n_blocks_int = int(n_blocks);
+	const auto n_threads = solver().config().n_threads;
 
-	// // Callable
-	// Callable ijk_to_cell_index = [&](UInt3 coord, Int n_grids) noexcept {
-	//     using T = vector_expr_element_t<decltype(coord)>;
-	//     auto p = clamp(coord, 0u, luisa::compute::UInt(n_grids - 1));
-	//     return p.x + p.y * n_grids + p.z * n_grids * n_grids;
-	// };
+	// Callable
+	Callable ijk_to_cell_index = [&](UInt3 coord, Int n_grids) noexcept {
+		using T = vector_expr_element_t<decltype(coord)>;
+		auto p = clamp(coord, 0u, luisa::compute::UInt(n_grids - 1));
+		return p.x + p.y * n_grids + p.z * n_grids * n_grids;
+	};
 
-	// Callable pos_to_cell_index = [&](Float3 pos, Int n_grids, Float cell_size) noexcept {
-	//     UInt3 coord;
-	//     for (auto i = 0; i < dim; i++) coord[i] = UInt(pos[i] / cell_size);
-	//     return ijk_to_cell_index(coord, n_grids);
-	// };
+	Callable pos_to_cell_index = [&](Float3 pos, Int n_grids, Float cell_size) noexcept {
+		UInt3 coord;
+		for (auto i = 0; i < dim; i++) {
+			coord[i] = UInt(pos[i] / cell_size);
+		}
+		return ijk_to_cell_index(coord, n_grids);
+	};
 
 	// auto ceil_int = [&](auto a, auto b) noexcept { return (a + b - 1) / b; };
 	// auto floor_int = [&](auto a, auto b) noexcept { return a / b; };
@@ -64,23 +67,23 @@ void Neighbor::compile(Device& device) noexcept {
 	//                                   });
 	//              });
 
-	// // count = part
-	// lazy_compile(solver().device(), count_sort_cell_sum,
-	//              [&](Int count, Int n_grids, Float cell_size,
-	//                  BufferFloat3 part_pos) {
-	//                  set_block_size(n_blocks);
-	//                  grid_stride_loop(count,
-	//                                   [&](Int i) noexcept {
-	//                                       Float3 pos = part_pos.read(i);
-	//                                       UInt c = pos_to_cell_index(pos, n_grids, cell_size);
-	//                                       m_hash->write(i, Int(c));
+	// count = part
+	lazy_compile(device, ms_count_sort_cell_sum,
+				 [&](Int count, Int n_grids, Float cell_size,
+					 BufferFloat3 part_pos) {
+		set_block_size(n_blocks);
+		grid_stride_loop(count,
+						 [&](Int i) noexcept {
+			Float3 pos = part_pos.read(i);
+			UInt c = pos_to_cell_index(pos, n_grids, cell_size);
+			m_hash->write(i, Int(c));
 
-	//                                       Int index = m_cell->particle_count->atomic(c).fetch_add(1);
-	//                                       m_index->write(i, index);
-	//                                   });
-	//              });
+			Int index = mp_cell_state->particle_count->atomic(c).fetch_add(1);
+			m_index->write(i, index);
+		});
+	});
 
-	// // count = part
+	// count = part
 	// lazy_compile(solver().device(), copy_from_tmp,
 	//              [&](Int count, BufferInt part_id, BufferFloat3 part_pos, BufferFloat3 part_vel) {
 	//                  set_block_size(n_blocks);
