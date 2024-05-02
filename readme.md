@@ -9,4 +9,4 @@ Sail Engine 是将我之前积攒下来代码的合并，利用动态库将之�
 
 HighLight
 - internal/inno/diff_render/中实现了一个GaussianSplatting的LC复现
-- internal/inno/solver/sph 中正在迁移一个基于SPH的流体模拟……
+- internal/inno/solver/csigsph/ 实现了一个SPH的流体模拟 可以通过 demo_inno_fluid_sph 示例查看
