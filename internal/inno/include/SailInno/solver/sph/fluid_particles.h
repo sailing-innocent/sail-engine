@@ -40,7 +40,7 @@ public:
 private:
 	void create(Device& device) noexcept;
 	void init_upload(Device& device, CommandList& cmdlist) noexcept;
-	void reset(CommandList& cmdlist) noexcept;
+	void reset(Device& device, CommandList& cmdlist) noexcept;
 	void allocate(Device& device, size_t size) noexcept;
 
 	size_t m_size;

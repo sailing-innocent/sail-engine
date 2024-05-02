@@ -12,8 +12,7 @@
 namespace sail::inno::sph {
 
 SPHFluidParticles::SPHFluidParticles(SPHSolver& solver) noexcept
-	: SPHExecutor(solver) {
-}
+	: SPHExecutor(solver) {}
 
 void SPHFluidParticles::create(Device& device) noexcept {
 	m_max_size = solver().config().n_capacity;
@@ -56,16 +55,16 @@ void SPHFluidParticles::init_upload(Device& device, CommandList& cmdlist) noexce
 	LUISA_ASSERT(m_max_size >= m_size, "The size of particle must smaller than capacity.");
 	LUISA_ASSERT(m_h_pos.size() == m_size, "The size of pos must equal to m_size.");
 	LUISA_ASSERT(m_h_id.size() == m_size, "The size of id must equal to m_size.");
-
-	cmdlist << m_d_pos.view(0, m_size).copy_from(m_h_pos.data())
-			<< m_d_id.view(0, m_size).copy_from(m_h_id.data())
-			<< solver().filler().fill(device, m_d_vel.view(0, m_size), float3(0.0f));
-	// TODO: velocity fill 0
+	reset(device, cmdlist);
 }
 
-void SPHFluidParticles::reset(CommandList& cmdlist) noexcept {
+void SPHFluidParticles::reset(Device& device, CommandList& cmdlist) noexcept {
 	using namespace luisa;
 	using namespace luisa::compute;
+	LUISA_ASSERT(m_max_size >= m_size, "The size of particle must smaller than capacity.");
+	cmdlist << m_d_pos.view(0, m_size).copy_from(m_h_pos.data())
+			<< m_d_id.view(0, m_size).copy_from(m_h_id.data())
+			<< solver().filler().fill(device, m_d_vel.view(0, m_size), make_float3(0.0f));// clear vel
 }
 
 }// namespace sail::inno::sph

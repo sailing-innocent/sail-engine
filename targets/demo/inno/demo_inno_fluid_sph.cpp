@@ -27,7 +27,6 @@ namespace sail::inno::test {
 
 int test_fluid_sph(Device& device) {
 	Stream stream = device.create_stream(StreamTag::GRAPHICS);
-
 	// parameters
 	constexpr float dt = 0.001f;
 	constexpr float dx = 0.005f;
@@ -39,12 +38,12 @@ int test_fluid_sph(Device& device) {
 	solver.config(config);
 	solver.create(device);
 
+	// generate initial fluid data
 	inno::sph::SPHFluidBuilder builder{solver};
 	auto fluid_data = builder.grid(
 		make_float3(0.25f, 0.25f, 0.5f),
 		make_float3(0.5f),
 		dx * 2);
-
 	builder.place_particles(fluid_data);
 
 	CommandList cmdlist;

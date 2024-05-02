@@ -3,7 +3,7 @@
 /**
  * @file solver/fluid/sph/solver.h
  * @author sailing-innocent
- * @date 2023-02-22
+ * @date 2024-02-22
  * @brief Fluid Solver
  */
 
@@ -65,13 +65,7 @@ struct SPHSolverParam {
 // 1. create `solver = SPHSolver()`
 // 2. config `solver.config(config)`
 
-class SAIL_INNO_API SPHSolver {
-	using Device = luisa::compute::Device;
-	using Stream = luisa::compute::Stream;
-	using CommandList = luisa::compute::CommandList;
-	template<typename T>
-	using Buffer = luisa::compute::Buffer<T>;
-
+class SAIL_INNO_API SPHSolver : public LuisaModule {
 public:
 	SPHSolver() noexcept;
 	~SPHSolver() noexcept;
