@@ -1,5 +1,3 @@
-\paragraph{EWA Splatting}
-
 EWA Splatting \cite{zwickerEWAVolumeSplatting2001} \cite{zwickerEWASplatting2002} 
 is a high-quality splatting method based on Gaussian kernels.
 The idea is based on Heckbert's EWA (Elliptical Weighted Average) filter for texture mapping.
@@ -8,25 +6,18 @@ The idea is based on Heckbert's EWA (Elliptical Weighted Average) filter for tex
 
 \input{splatting_equation_deduction}
 
-The coordinate $\hat{\mathbf{x}}=(x_0,x_1)$ is called 
-the screen space coordinate, and we can say that 
-$I_\lambda(\hat{\mathbf{x}})$ and $q_k(\hat{\mathbf{x}})$
-are defined in \textit{screen space}
+\subparagraph{Gaussian Kernel}
 
-splatting is attractive because it only requires the 
-precomputed 2D convolution kernels. In contrast, ray
-casting methods require the 3D convolution kernels.
+Here we apply Multi-Variable Gaussian Kernel (\ref{eq:multi_variable_gaussian}) to the splatting equation.
+
+\input{multi_variable_gaussian_equation}
 
 \subparagraph{EWA Volome Resampling Filter}
 
-The splatting equation (\ref{eq:splatting_equation}) represents
-the output image as a continuous 2D function, 
-but in practice, it will be sampled at discrete pixel locations.
-So it has to be band-limited to respect to Nyquist frequency of the grid, 
-to avoid aliasing.
+The splatting equation (\ref{eq:splatting_equation}) represents the output image as a continuous 2D function, 
+but in practice, it will be sampled at discrete pixel locations. So it has to be band-limited to respect to Nyquist frequency of the grid, to avoid aliasing.
 
-By appling an appropriate low-pass filter $h(\hat{\mathbf{x}})$,
-we have 
+By appling an appropriate low-pass filter $h(\hat{\mathbf{x}})$,we have 
 
 $$(I_\lambda \otimes h)(\hat{\mathbf{x}})=
     \int_{\mathbb{R}^2}\sum\limits_{k }\limits^{} 

@@ -24,3 +24,7 @@ add_content("ray_march_slide_cn", {
 })
 
 includes("diff_render")
+-- brief
+
+add_content("rendering_brief_doc_cn")
+add_content("rendering_brief_doc_en")

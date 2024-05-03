@@ -1,0 +1,1 @@
+add_content("multi_variable_gaussian_equation")

@@ -1,6 +1,7 @@
 add_content("gs_scene_doc_en")
 includes("brief")
 includes("details")
+
 add_content("gs_principle_doc_en", {
     "gs_scene_doc_en",
     "gs_forward_pass_brief_doc_en",
@@ -15,5 +16,9 @@ add_content("gaussian_intro_slide_cn", {
 })
 
 add_content("gaussian_update_slide_cn", {
+    "bib_gaussian"
+})
+
+add_content("gaussian_intro_doc_cn", {
     "bib_gaussian"
 })

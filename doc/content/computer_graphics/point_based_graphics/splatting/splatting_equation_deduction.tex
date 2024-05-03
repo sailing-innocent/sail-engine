@@ -1,14 +1,14 @@
 
 
-\input{volume_render_equation}
+\input{volume_render_equation_brief_en}
 
 Now we assume the extinction function is the weighted 
 sum of coefficients and reconstruction kernels
+
 \begin{equation}
 g(x)=\sum\limits_{k}\limits^{} g_kr_k(\mathbf{x})
 \label{eq:extinction_function}
 \end{equation}
-
 
 This reconstruction kernel reflects the position and shape for individual particles.
 
@@ -19,7 +19,7 @@ $$I_{\lambda}(\hat{\mathbf{x}})=
 (
     \int_0^L c_\lambda(\hat{\mathbf{x}},\xi)g_kr_k(\hat{\mathbf{x}},\xi)
     \prod\limits_{j }\limits^{} e^{
-        g_j \int_0^\xi r_j(\hat{\mathbf{x}},\mu)d\mu
+        -g_j \int_0^\xi r_j(\hat{\mathbf{x}},\mu)d\mu
     } d\xi
 )$$
 
@@ -35,3 +35,7 @@ To compute this function mathematically, we often use assumptions
 Further more, we use the Taylor expansion for the exponential function, and we can get the final equation for Splatting:
 
 \input{splatting_equation}
+
+The coordinate $\hat{\mathbf{x}}=(x_0,x_1)$ is called the screen space coordinate, and we can say that $I_\lambda(\hat{\mathbf{x}})$ and $q_k(\hat{\mathbf{x}})$ are defined in \textit{screen space}
+
+splatting is attractive because it only requires the precomputed 2D convolution kernels. In contrast, ray casting methods require the 3D convolution kernels.
