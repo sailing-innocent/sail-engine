@@ -1,11 +1,10 @@
+#pragma once
 /**
  * @file dummy.cuh
  * @brief The Dummy Kernel
  * @author sailing-innocent
  * @date 2024-05-05
  */
-
-#include <cuda.h>
 
 namespace sail::cu {
 
