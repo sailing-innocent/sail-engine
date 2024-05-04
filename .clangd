@@ -1,0 +1,5 @@
+CompileFlags:
+  Remove: -rdc=true
+  Add:
+    - --cuda-gpu-arch=sm_86
+    - --cuda-path=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.3

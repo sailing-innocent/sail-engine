@@ -100,7 +100,6 @@ def test_backward_inno_reprod_color():
                 compare_show([target_img_np, result_img_np, vanilla_result_img_np, pano_np])
                 # compare_show([target_img_np, result_img_np])
                 # print("gausssian features: ", gs.get_features[:10])
-
             gs.optimizer.step()
             gs.optimizer.zero_grad()
 

@@ -7,7 +7,6 @@ __pycache__
 .pytest_cache
 output
 config.json
-.vscode
 pnpm-lock.yaml
 node_modules
 dist

@@ -6,20 +6,21 @@
 */
 
 #include "SailCu/dummy.h"
+#include "SailCu/kernel/dummy.cuh"
 
 namespace sail::cu {
-
-__global__ void cuda_add(int* d_array, int N) {
-	int idx = blockIdx.x * blockDim.x + threadIdx.x;
-	if (idx < N) {
-		d_array[idx] += 1;
-	}
-}
 
 void cuda_inc(int* d_array, int N) {
 	int block_size = 256;
 	int grid_size = (N + block_size - 1) / block_size;
-	cuda_add<<<grid_size, block_size>>>(d_array, N);
+	cuda_inc_kernel<<<grid_size, block_size>>>(d_array, N);
+	cudaDeviceSynchronize();
+}
+
+void cuda_add(int* d_array_a, int* d_array_b, int* d_array_c, int N) {
+	int block_size = 256;
+	int grid_size = (N + block_size - 1) / block_size;
+	cuda_add_kernel<<<grid_size, block_size>>>(d_array_a, d_array_b, d_array_c, N);
 	cudaDeviceSynchronize();
 }
 

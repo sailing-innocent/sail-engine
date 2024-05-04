@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import pytest 
 from math import hypot
 
@@ -9,8 +7,6 @@ class Vector:
         self.y = y
 
     def __repr__(self):
-        # for debugger print()
-        # __str__ is only for string, if no __str__, it will use __repr__ instead
         return 'Vector(%r,%r)' % (self.x, self.y)
 
     def __abs__(self):

@@ -10,5 +10,6 @@
 namespace sail::cu {
 
 void SAIL_CU_API cuda_inc(int* d_array, const int N);
+void SAIL_CU_API cuda_add(int* d_array_a, int* d_array_b, int* d_array_c, const int N);
 
 }// namespace sail::cu

@@ -1,6 +1,6 @@
 #include "SailCu/dummy.h"
 #include "test_util.h"
-#include "cuda_runtime.h"
+#include "cuda_runtime_api.h"// cuMemcpy, cuMalloc
 
 namespace sail::test {
 
