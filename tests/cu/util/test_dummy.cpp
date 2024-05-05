@@ -19,6 +19,8 @@ int test_cuda_inc() {
 	for (int i = 0; i < N; i++) {
 		CHECK(h_array[i] == i + 1);
 	}
+	cudaFree(d_array);
+	delete[] h_array;
 	return 0;
 }
 
@@ -45,6 +47,12 @@ int test_cuda_add() {
 	for (int i = 0; i < N; i++) {
 		CHECK(h_array_c[i] == i + i * i);
 	}
+	cudaFree(d_array_a);
+	cudaFree(d_array_b);
+	cudaFree(d_array_c);
+	delete[] h_array_a;
+	delete[] h_array_b;
+	delete[] h_array_c;
 	return 0;
 }
 
