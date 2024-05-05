@@ -7,6 +7,7 @@
 
 #include "SailCu/dummy.h"
 #include "SailCu/kernel/dummy.cuh"
+#include <span>
 
 namespace sail::cu {
 

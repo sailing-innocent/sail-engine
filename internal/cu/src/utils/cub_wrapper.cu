@@ -9,7 +9,6 @@
 
 #include <cuda.h>
 #include <cub/cub.cuh>
-// #include <iostream>
 
 namespace sail::cu {
 
@@ -18,7 +17,6 @@ void cub_inclusive_sum(int* d_in, int* d_out, int N) {
 	size_t temp_storage_bytes = 0;
 	cub::DeviceScan::InclusiveSum(d_temp_storage, temp_storage_bytes, d_in, N);
 	cudaDeviceSynchronize();
-	// std::cout << "temp_storage_bytes: " << temp_storage_bytes << std::endl;
 	cudaMalloc(&d_temp_storage, temp_storage_bytes);
 	cub::DeviceScan::InclusiveSum(d_temp_storage, temp_storage_bytes, d_in, d_out, N);
 	cudaFree(d_temp_storage);
