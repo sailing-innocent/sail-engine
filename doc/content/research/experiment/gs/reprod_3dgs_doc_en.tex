@@ -1,2 +1,11 @@
-Here we reproduce the results of the original paper.
+\paragraph{Novel View Synthesis on MipNeRF360 Dataset}
 
+\begin{table}
+    \input{tab_psnr_mip360_3dgs_reprod}
+\end{table}
+
+The MipNeRF360 dataset consists 9 real-world scene reconstructed by COMSOL, 5 outdoors and 4 indoors, and only 3 outdoors scenes are public available (bicycle )
+
+We reproduce the experiment on 7 public scenes, and repeat for 3 times to avoid randomness and floating point error, and the results are shown in Table \ref{tab:psnr_mip360_3dgs_reprod}.
+
+Here we follow the experiment setting given by the source code, using 4x downsampling rate for outdoor images and 2x for indoor, training 30000 iterations and test on llff hold out 8 views.

@@ -8,5 +8,6 @@ add_latex("survey_3dgs_en", {
     "point_based_render_intro_doc_en",
     "diff_render_doc_en",
     "gs_principle_doc_en",
-    "diff_gs_doc_en"
+    "diff_gs_doc_en",
+    "reprod_3dgs_doc_en"
 }, "main_en", "pdflatex")

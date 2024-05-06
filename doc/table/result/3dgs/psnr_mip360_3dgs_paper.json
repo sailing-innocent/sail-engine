@@ -1,0 +1,27 @@
+{
+    "data": [
+        [
+            "25.246",
+            "27.410",
+            "26.550",
+            "30.632",
+            "28.700",
+            "30.317",
+            "31.980"
+        ]
+    ],
+    "cols": [
+        "bicycle",
+        "garden",
+        "stump",
+        "room",
+        "counter",
+        "kitchen",
+        "bonsai"
+    ],
+    "rows": [
+        "vanilla_paper"
+    ],
+    "caption": "Mip360 PSNR",
+    "label": ""
+}

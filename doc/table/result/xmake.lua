@@ -1,6 +1,8 @@
+includes("3dgs")
 -- includes("nerf_reprod")
 -- includes("3dgs_reprod")
 -- includes("3dgs_reimpl")
+
 includes("3dgs_profile")
 includes("3dgs_sparse_profile")
 -- includes("algorithm")

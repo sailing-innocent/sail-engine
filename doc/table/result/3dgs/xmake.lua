@@ -1,0 +1,1 @@
+add_json_table("tab_psnr_mip360_3dgs_reprod")
