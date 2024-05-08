@@ -55,6 +55,6 @@
     "caption": "Mip360 PSNR (PBD-GS Compare)",
     "label": "tab:psnr_mip360_pbd_gs",
     "compare": {
-        "rank": 2
+        "rank": 3
     }
 }

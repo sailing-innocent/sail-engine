@@ -45,6 +45,6 @@
     "caption": "Mip360 SSIM (PBD-GS Compare)",
     "label": "tab:ssim_mip360_pbd_gs",
     "compare": {
-        "rank": 1
+        "rank": 2
     }
 }
