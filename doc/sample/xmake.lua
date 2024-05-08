@@ -6,7 +6,8 @@ if (get_config("doc_all")) then
     includes("use_eccv")
     includes("aljabr")
     includes("use_acmart")
-    includes("use_asset")
+
 end 
+includes("use_asset")
 includes("use_arxiv")   
 includes("use_tikz")

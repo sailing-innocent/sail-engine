@@ -1,5 +1,5 @@
 if get_config("doc_all") then 
-    includes("sample")
-end 
 
+end 
+includes("sample")
 includes("result")

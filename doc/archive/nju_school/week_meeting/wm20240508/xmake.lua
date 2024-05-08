@@ -1,0 +1,3 @@
+-- add_latex("wm20240508_zzh_doc", {
+--     "si_template"
+-- }, "doc_cn")

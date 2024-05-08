@@ -1,0 +1,41 @@
+{
+    "caption": "Sample Table Compare Max Color Json",
+    "label": "tab:json_compare_sample",
+    "compare": {
+        "rank": 2,
+        "rank_metric": "max"
+    },
+    "cols": [
+        "value1",
+        "value2",
+        "value3"
+    ],
+    "rows": [
+        "data01",
+        "data02",
+        "data03",
+        "data04"
+    ],
+    "data": [
+        [
+            1,
+            2,
+            3
+        ],
+        [
+            8,
+            5,
+            7
+        ],
+        [
+            4,
+            9,
+            13
+        ],
+        [
+            11,
+            12,
+            10
+        ]
+    ]
+}
