@@ -71,7 +71,8 @@
 \RequirePackage{color}
 \RequirePackage{xcolor}
 
-\RequirePackage{listings}
+\RequirePackage{colortbl} % 表格颜色
+\RequirePackage{listings} % 代码块
 
 % 设置天眉所需
 \RequirePackage{fancyhdr}

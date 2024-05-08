@@ -3,7 +3,7 @@
     "label": "tab:json_compare_sample",
     "compare": {
         "rank": 2,
-        "rank_metric": "max"
+        "metric": "min"
     },
     "cols": [
         "value1",

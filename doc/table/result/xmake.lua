@@ -5,6 +5,8 @@ includes("3dgs")
 
 includes("3dgs_profile")
 includes("3dgs_sparse_profile")
+includes("nvs")
+includes("pbd_gs")
 -- includes("algorithm")
 -- add_json_table("tab_regression")
 -- add_json_table("tab_gaussian")

@@ -1,14 +1,29 @@
 这里主要介绍PBD-GS(Position Based Dynamic Aided Gaussian Splatting for better Kernel Reconstruction，我暂时拟定的名字)的想法，原理和初步实验结果。
 
-\section{渲染和体渲染}
-
-\input{rendering_brief_doc_cn}
+一些前言介绍的部分直接写的英文，因为后续可能会修改为论文的introduction部分
 
 \section{基于点的体渲染方法}
-TODO
+\input{point_based_render_intro_doc_en}
+
+\section{新视角生成任务}
+
+\input{nvs_intro_doc_cn}
+
 \section{Gaussian Splatting方法}
-TODO
+\input{gs_principle_doc_en}
+
 \section{我的idea}
-TODO
+
+核心的想法就在于基于点云的体渲染方法中有一句： the local support of each reconstruction won’t overlap with each other along the ray，要求两个点之间的距离不能过近，否则信号重建的过程中会出现偏差。【WIP】（此处需要示意图）
+
+于是，在优化过程中，如果引入点云内部的动力学，在反向过程中，对于相邻的两个高斯，引入一个新的Loss
+
+$\mathcal{L}_{recon} = e^{-\frac{1}{2}\frac{d^2}{\sigma_z^2}}$
+
+这个loss代表重建损失，其中$\sigma_z$代表在深度方向上的协方差矩阵分量，d代表相邻两个高斯的深度差。
+
+通过这个loss反向传递的梯度，相当于点云彼此之间通过自身的协方差矩阵和自身位置定义了一个势场，将其他点“推开”，这也是为何要取名"Positional Based Dynamic Aided Gaussian Splatting"
+
 \section{初步实验结果}
-TODO 
+
+\input{exp_pbd_gs_detail_doc_cn}

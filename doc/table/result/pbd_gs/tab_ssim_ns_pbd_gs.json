@@ -1,0 +1,33 @@
+{
+    "data": [
+        [
+            0.0,
+            0.9548380,
+            0.9869854,
+            0.9853600,
+            0.9825621,
+            0.9603493,
+            0.0,
+            0.0
+        ]
+    ],
+    "cols": [
+        "Lego",
+        "Chair",
+        "Drums",
+        "Ficus",
+        "Hotdog",
+        "Materials",
+        "Mic",
+        "Ship"
+    ],
+    "rows": [
+        "3dgs paper",
+        "pbd-gs"
+    ],
+    "caption": "PSNR on NeRF Blender Dataset (PBD-GS Compare)",
+    "label": "tab:psnr_ns_pbd_gs",
+    "compare": {
+        "rank": 3
+    }
+}

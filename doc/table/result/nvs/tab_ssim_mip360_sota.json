@@ -1,0 +1,40 @@
+{
+    "data": [
+        [
+            0.771,
+            0.868,
+            0.775,
+            0.914,
+            0.905,
+            0.922,
+            0.938
+        ],
+        [
+            0.766,
+            0.866,
+            0.771,
+            0.919,
+            0.908,
+            0.927,
+            0.941
+        ]
+    ],
+    "cols": [
+        "bicycle",
+        "garden",
+        "stump",
+        "room",
+        "counter",
+        "kitchen",
+        "bonsai"
+    ],
+    "rows": [
+        "3dgs",
+        "3dgs-reprod"
+    ],
+    "caption": "Mip360 SSIM (SOTA)",
+    "label": "tab:ssim_mip360_sota",
+    "compare": {
+        "rank": 3
+    }
+}
