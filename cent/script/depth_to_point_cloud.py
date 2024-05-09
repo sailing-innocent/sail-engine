@@ -18,7 +18,6 @@ if __name__ == "__main__":
     depth_img_path = "asset/image/depth.png"
     depth_img = np.array(Image.open(depth_img_path))
     scales = 1000.0
-    
     # shape
     assert depth_img.shape == (480, 640)
     assert depth_img.dtype == np.int32

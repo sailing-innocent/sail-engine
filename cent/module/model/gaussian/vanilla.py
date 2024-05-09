@@ -2,9 +2,7 @@ import torch
 from torch import nn 
 import numpy as np 
 from plyfile import PlyData, PlyElement
-
 import os 
-
 from module.data.point_cloud import BasicPointCloud
 from module.utils.torch.math import inverse_sigmoid, strip_symmetric
 from module.utils.torch.transform import qvec2R, T2Sigma
@@ -12,7 +10,6 @@ from module.utils.torch.sh import RGB2SH
 from module.utils.np.func import discrete_exp_func
 
 class GaussianModel:
-
     def setup_functions(self):
         def build_covariance_from_scaling_rotation(scaling, scaling_modifier, rotation):
             R = qvec2R(rotation)
