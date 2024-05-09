@@ -5,7 +5,7 @@
  * @date 2023-12-30
  * @brief Luisa Compute Based Spherical Harmonics Utils
  */
-#include "SailInno/sail_inno.h"
+#include "SailInno/config.h"
 #include "luisa/dsl/sugar.h"
 
 namespace sail::inno::util {

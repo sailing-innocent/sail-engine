@@ -5,9 +5,9 @@
  * @brief Inno Path Tracer Demo
  */
 
-#include "SailInno/window/imgui_window.h"
+// #include "SailInno/window/imgui_window.h"
 
-using namespace sail::inno;
+// using namespace sail::inno;
 
 int main(int args, char* argv[]) {
 	return 0;

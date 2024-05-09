@@ -6,7 +6,7 @@
  * @brief Luisa Compute Based Camera
  */
 
-#include "SailInno/sail_inno.h"
+#include "SailInno/config.h"
 #include <luisa/runtime/buffer.h>
 #include <luisa/dsl/sugar.h>
 

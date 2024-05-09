@@ -6,7 +6,7 @@
  * @date 2023-12-27
  * @brief The GPU Scene Base Class
 */
-#include "SailInno/sail_inno.h"
+#include "SailInno/config.h"
 #include <luisa/runtime/device.h>
 #include <luisa/runtime/buffer.h>
 #include <luisa/dsl/sugar.h>

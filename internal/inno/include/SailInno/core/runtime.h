@@ -6,7 +6,7 @@
  * @date 2023-06-25
  */
 
-#include "SailInno/sail_inno.h"
+#include "SailInno/config.h"
 
 #include <luisa/dsl/sugar.h>
 #include <luisa/runtime/context.h>
