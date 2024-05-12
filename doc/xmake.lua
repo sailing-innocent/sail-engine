@@ -17,5 +17,3 @@ includes("content")
 includes("note")
 includes("archive")
 includes("publish")
-
-includes("pbd_gs")

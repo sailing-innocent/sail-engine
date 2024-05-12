@@ -75,4 +75,3 @@ function add_drawio(name)
         add_files( name .. ".drawio")
     target_end()
 end
-

@@ -11,3 +11,9 @@ add_content("update_2024_04", {
     "profile_3dgs_diff_trainer",
     "parallel_prefix_sum"
 })
+
+add_content("update_2024_05", {
+    "fig_gs_overfit_ficus",
+    "fig_gs_overfit_ns",
+    "fig_gs_overfit_m360"
+})
