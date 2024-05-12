@@ -1,9 +1,10 @@
-set_xmakever("2.8.7")
+set_xmakever("2.9.1")
 set_project("SailEngine")
 engine_version = "0.1.0"
 add_rules("mode.release", "mode.debug")
 set_toolchains("clang-cl")
 set_exceptions("cxx")
+set_runtimes("MD")
 add_cxflags("/GS", "/Gd", {
     tools = {"clang_cl", "cl"}
 })

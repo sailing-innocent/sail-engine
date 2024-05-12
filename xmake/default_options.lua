@@ -51,6 +51,13 @@ option("enable_llvm")
     set_showmenu(true)
 option_end()
 
+option("doc_all")
+set_default(false)
+set_showmenu(true)
+set_description("with all document")
+option_end()
+
+-- workspace path
 option("llvm_path")
     set_default("D:/env/llvm/release")
     set_showmenu(true)
@@ -59,12 +66,6 @@ option_end()
 option("latex_out")
 set_default("D:/workspace/doc")
 set_showmenu(true)
-option_end()
-
-option("doc_all")
-set_default(false)
-set_showmenu(true)
-set_description("with all document")
 option_end()
 
 option("ex_data_path")

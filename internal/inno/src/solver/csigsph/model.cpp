@@ -9,7 +9,6 @@
 #include "SailInno/solver/csigsph/solver.h"
 #include "SailInno/solver/csigsph/neighbor.h"
 #include "SailInno/solver/csigsph/neighbor_search_loop.h"
-#include <winuser.h>
 
 // CORE IMPLEMENTATION
 namespace sail::inno::csigsph {
