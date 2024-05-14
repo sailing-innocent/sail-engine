@@ -1,6 +1,8 @@
 set_xmakever("2.9.1")
 set_project("SailEngine")
 engine_version = "0.1.0"
+add_repositories("sail-repo xrepo")
+
 add_rules("mode.release", "mode.debug")
 set_toolchains("clang-cl")
 set_exceptions("cxx")
@@ -27,7 +29,10 @@ includes("xmake/rules.lua")
 includes("assets") 
 
 -- external and requirements
-add_requires("glm") -- for math calculation
+add_requires("glm", {
+    version = "1.0.1-sail"
+}) -- for math calculation
+
 add_requires("glfw", {
     configs = {
         vulkan = true
