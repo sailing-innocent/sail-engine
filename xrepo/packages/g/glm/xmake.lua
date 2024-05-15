@@ -1,5 +1,5 @@
 package("glm")
-    add_versions("1.0.1-sail", "650250979303a649e21f87b5ccd02672af1ea6954b911342ea491f351ceb7122")
+    add_versions("2024.05.15-sail", "650250979303a649e21f87b5ccd02672af1ea6954b911342ea491f351ceb7122")
     set_homepage("")
     set_description("OpenGL Mathematics (GLM) is a header only C++ mathematics library for graphics software based on the OpenGL Shading Language (GLSL) specifications.")
     add_urls("")

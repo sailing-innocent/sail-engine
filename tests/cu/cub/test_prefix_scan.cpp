@@ -1,5 +1,5 @@
 #include "test_util.h"
-#include "SailCu/utils/cub_warpper.h"
+#include "SailCu/utils/cub_wrapper.h"
 #include <cuda_runtime_api.h>
 
 // WIP: bug in cub_inclusive_sum

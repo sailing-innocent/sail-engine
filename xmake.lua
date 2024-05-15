@@ -29,29 +29,21 @@ includes("xmake/rules.lua")
 includes("assets") 
 
 -- external and requirements
-add_requires("glm", {
-    version = "1.0.1-sail"
-}) -- for math calculation
+add_requires("glm", {version = "2024.05.15-sail"}) 
+add_requires("eastl", {version = "2024.05.15-sail"})
+add_requires("imgui", {configs = {glfw_opengl3 = true, vulkan = true},}) -- for ui
+add_requires("glfw", {configs = {vulkan = true}}) -- for window management
 
-add_requires("glfw", {
-    configs = {
-        vulkan = true
-    }
-}) -- for window management
-add_requires("imgui", {configs = {glfw_opengl3 = true, vulkan = true}}) -- for ui
 if get_config("enable_vk") then
     add_requires("vulkansdk", {optional = true})
 end
 includes("external") -- external dependencies
-
 -- internal and core modules
 includes("modules") -- core engine
 includes("internal") -- internal independent extensions
-
 -- targets
 includes("tests") -- tests
 includes("targets")
-
 -- documentation
 if get_config("enable_doc") then
     includes("doc") -- documentation
