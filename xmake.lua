@@ -7,7 +7,7 @@ add_rules("mode.release", "mode.debug")
 set_toolchains("clang-cl")
 set_exceptions("cxx")
 set_runtimes("MD")
-add_cxflags("/GS", "/Gd", {
+add_cxflags("/GS", "/Gd", { 
     tools = {"clang_cl", "cl"}
 })
 add_cxflags("cxflags", "/Zc:preprocessor", {
