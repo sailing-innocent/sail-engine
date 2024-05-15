@@ -5,7 +5,7 @@
  * @date 2024-05-05
  */
 
-#include "SailCu/utils/cub_warpper.h"
+#include "SailCu/utils/cub_wrapper.h"
 
 #include <cuda.h>
 #include <cub/cub.cuh>

@@ -1,6 +1,6 @@
 #pragma once
 /**
- * @file cub_warpper.h
+ * @file cub_wrapper.h
  * @brief the warpper of cub
  * @author sailing-innocent
  * @date 2024-05-05
