@@ -31,7 +31,6 @@
         // pch优化的位置
         "--pch-storage=disk",
         // CUDA PATH
-        // "--cuda-path=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.3"
     ],
     "files.exclude": {
         "**/.git": false

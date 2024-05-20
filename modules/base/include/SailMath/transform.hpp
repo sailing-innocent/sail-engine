@@ -17,7 +17,7 @@ class Transform3D {
 public:
 	Transform3D() : __mat4(1.0f) {}
 	// copy constructor
-	Transform3D(const Transform3D& t) : __mat4(t.__mat4) {}
+	Transform3D(const Transform3D& t) = default;
 	Transform3D operator=(const Transform3D& t) {
 		__mat4 = t.__mat4;
 		return *this;

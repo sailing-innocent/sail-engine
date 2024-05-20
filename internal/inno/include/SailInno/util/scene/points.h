@@ -35,7 +35,6 @@ public:
 	void create(Device& device) noexcept override;
 	void init(CommandList& cmdlist) noexcept override;
 
-public:
 	// getter
 	int num_points() const noexcept { return m_data.num_points; }
 	BufferView<float> xyz() noexcept { return m_data.xyz_buf.view(); }
