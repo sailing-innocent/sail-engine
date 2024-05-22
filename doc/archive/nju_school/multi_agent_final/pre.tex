@@ -1,0 +1,65 @@
+\documentclass{njupre/njupre}
+\title[title] {Text-Guided Synthesis of Crowd Animation}
+\subtitle{SIGGRAPH 2024 Paper, final pre for MARL course}
+\author[Zhu Zihang]{\texorpdfstring{Zhu Zihang \\ \smallskip \textit{522022150087@smail.nju.edu.cn}}{}}
+\date[2024-05-23]{\textit{2024-05-23}}
+\begin{document}
+\begin{frame}
+    \titlepage 
+\end{frame}
+
+\begin{frame}
+    \frametitle{TOC}
+    \tableofcontents 
+\end{frame}
+
+\begin{frame}
+    \frametitle{Text-Guided Synthesis of Crowd Animation}
+    \begin{figure}
+        \includegraphics[width=\textwidth]{fig_teaser_tgsca.png}
+        \caption{Generating realistic crowd animation given an environment map}
+    \end{figure}
+    \begin{quote}
+        Researchers from HKU and Tencent find a technique \cite{jiTextGuidedSynthesisCrowd2024}
+        of using LLM and Diffusion Model to automately generate realistic crowd animation.
+    \end{quote}
+\end{frame}
+
+\section{Introduction}
+\subsection{Crowd Animation}
+\input{crowd_animation_brief_slide_en}
+\subsection{LLM}
+\input{llm_brief_slide_en}
+\subsection{Diffusion Model}
+\input{diffusion_model_intro_slide_en}
+
+\section{Method}
+\subsection{Overview}
+\input{overview}
+\subsection{Semantic Inference}
+\input{semantic_infer}
+\subsection{Diffusion Training}
+\input{diffusion_train}
+\subsection{Dataset Generation}
+\input{dataset_gen}
+
+\section{Evaluation}
+\subsection{Qualitative Evaluation}
+\input{qualitative_exp}
+\subsection{Quantitative Evaluation}
+\input{quantitative_exp}
+\subsection{User Study}
+\input{user_study}
+
+\section{Conclusion}
+\input{conclusion}
+
+\begin{frame}[allowframebreaks]{Reference}
+    \bibliography{ref}
+    \bibliographystyle{plain}
+\end{frame}
+\begin{frame}
+    \frametitle{Thank You}
+    Thanks for watching
+\end{frame}
+\end{document}

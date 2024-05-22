@@ -1,0 +1,45 @@
+\begin{frame}
+    \frametitle{Crowd Animation}
+    Task
+    \begin{quote}
+        Given a description of environment, generate a realistic crowd moving animation 
+    \end{quote}
+    We want:
+    \begin{enumerate}
+        \item Collision-free 
+        \item Avoid unnatural effects
+        \item Apply the right path
+    \end{enumerate}
+    But 
+    \begin{enumerate}
+        \item The environement has various semantic meanings
+        \item The Interaction of crowd and environemt is multi-modal
+        \item Physically-correct simulation is computational expensive
+    \end{enumerate}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Main Methods for Crowd Animation}
+    \begin{columns}[c]
+        \begin{column}{0.3\textwidth}
+            \begin{figure}
+                \includegraphics[width=\textwidth]{fig_navigation_field.png}
+                \caption{Flow-Based Method\cite{patilDirectingCrowdSimulations2011}}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.3\textwidth}
+            \begin{figure}
+                \includegraphics[width=\textwidth]{fig_maslow_hierarchy_of_needs.png}
+                \caption{Entity-Based Method}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.3\textwidth}
+            \begin{figure}
+                \includegraphics[width=\textwidth]{fig_agent_based_crowd.png}
+                \caption{Agent-Based Method \cite{tanakaGuidanceFieldVector2016}}
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+

@@ -1,0 +1,34 @@
+\begin{frame}
+    \frametitle{Images for Diffusion Model}
+    for each group i, we will predict its:
+    \begin{enumerate}
+        \item $I_s^i$ the starting point probability distribution
+        \item $I_g^i$ the goal point probability distribution
+        \item $I_v^i$ the velocity field (navigation field)
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{LDM Principle}
+    \begin{enumerate}
+        \item data distribution $d_0\sim q(d_0)$
+        \item gradually inject noise $d_{0:T}\sim q(d_{1:T}|d_0)q(d_0)$
+        \item a learnable model is trained to reverse 
+        \item reparameterize to predict the noise potential $\epsilon_\theta(d^t,t,h)$
+        \item the prediction of image $d_{t-1}\sim \mathcal{N}(\frac{1}{\sqrt{\alpha_t}}(d_t-\frac{\beta_t}{\sqrt{1-\tilde{\alpha_t}}}\epsilon_\theta(d_t,t,h)), \sigma_t I)$
+        \item h is the latent signal that can be encoded from CLIP or other images
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Jointly Prediction}
+    for each group j:
+    $$h^j=CLIP(s^j)$$
+    $$I^j_{s,g,t-1}= \frac{1}{\sqrt{\alpha_t}}(d_t-\frac{\beta_t}{\sqrt{1-\tilde{\alpha_t}}}\epsilon_\theta(I^j_{s,g,t},I_e,t,h^j))$$
+    $$I^j_{v,t-1}= \frac{1}{\sqrt{\alpha_t}}(d_t-\frac{\beta_t}{\sqrt{1-\tilde{\alpha_t}}}\epsilon_\theta(I^j_{v,t},I_e,I_s,I_g,t,h^j))$$
+
+    \begin{quote}
+        Two Diffusion Models trained seperately, on 4 RTX 4090 with 192h, 50 epoch for start and goal diffusion and 200 epoch for velocity field diffusion
+    \end{quote}
+\end{frame}
+

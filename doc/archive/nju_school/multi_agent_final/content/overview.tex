@@ -1,0 +1,39 @@
+\begin{frame}
+    \frametitle{The Overall Pipeline}
+    \begin{figure}
+        \includegraphics[width=\textwidth]{fig_pipeline_tgsca.png}
+        \caption{The Overall Pipeline}
+    \end{figure}
+\end{frame}
+\begin{frame}
+    \frametitle{Input}
+    \begin{enumerate}
+        \item a given environment map with one-hot encoding $I_e = C\times H\times W$ image, where C is the number of semantic types
+        \item a rough text-based description $T$ (optionally including number of agents, groups..)
+    \end{enumerate}
+    \begin{quote}
+        Many people are entering from the entrance located 
+        at the bottom right of the map, 
+        passing through the right access pathway 
+        and getting into the top right door. 
+        The crowd in another direction that 
+        wants to leave the subway passes through the left passage 
+        from the top left of the map and leaves at the bottom left.
+    \end{quote}
+\end{frame}
+\begin{frame}
+    \frametitle{Semantic Types}
+    \begin{figure}
+        \includegraphics[width=\textwidth]{fig_semantic_type_tgsca.png}        
+        \caption{The Semantic Types}
+    \end{figure}
+\end{frame}
+\begin{frame}
+    \frametitle{Objective}
+    \begin{enumerate}
+        \item the agent-controler pair: $$\mathcal{A}=\{x^0,\pi(x)\rightarrow \dot{x}\}$$
+        \item the agent's position at t time: $x^t$
+        \item moving direction is calculated by $\dot{x^t}=\pi(x^t)$
+        \item runtime agent simulation with CARLA \cite{dosovitskiyCARLAOpenUrban2017}
+    \end{enumerate}
+\end{frame}
