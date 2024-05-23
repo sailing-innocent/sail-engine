@@ -9,3 +9,4 @@ end
 
 includes("demo")
 includes("binding")
+includes("site")

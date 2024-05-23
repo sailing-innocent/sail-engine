@@ -1,0 +1,7 @@
+target("webui")
+    add_rules("web")
+    add_files("**.html")
+    add_files("**.css")
+    add_files("**.js")
+    add_files("server.py")
+target_end()
