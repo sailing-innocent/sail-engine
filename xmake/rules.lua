@@ -1,6 +1,5 @@
 includes("rules/lc.rule.lua")
 includes("rules/py.rule.lua")
-includes("rules/web.rule.lua")
 includes("rules/cuda.rule.lua")
 includes("rules/sail.module.lua")
 includes("rules/sail.asset.lua")
