@@ -1,0 +1,2 @@
+includes("doc")
+includes("slide")

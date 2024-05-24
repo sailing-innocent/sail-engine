@@ -90,7 +90,7 @@
 \defbeamertemplate*{headline}{nju theme}{%
   \leavevmode%
   \@tempdimb=6.4375ex%
-    \pgfdeclareimage[height=.95\@tempdimb]{logo}{njupre/njulogo.png}%
+    \pgfdeclareimage[height=.95\@tempdimb]{logo}{njupre/njulogo.jpg}%
     \pgfdeclareimage[height=1.\@tempdimb]{title_logo}{njupre/njuname.png}%
     \pgfdeclareimage[height=1.\@tempdimb]{sme_logo}{njupre/njusme.png}%
   \logo{\pgfuseimage{logo}}%

@@ -893,7 +893,7 @@
     \pdfbookmark[0]{\njut@cap@cover}{cover}
     \begin{center}
         \vskip 10mm
-        \includegraphics[width=1.96cm]{njuthesis/njulogo.png} \\%南大logo
+        \includegraphics[width=1.96cm]{njuthesis/njulogo.jpg} \\%南大logo
         \includegraphics[height=2cm]{njuthesis/njuname.png} \\%南大名字
         \vskip 8mm
             {\bf\kaishu\zihao{1}\makebox[10em][s]{\njut@cap@cover@thesis}}\\
