@@ -1,6 +1,4 @@
 # A simple agent showing how to interact with gym
-# deprecate 2023-09-28
-
 import pytest
 import gymnasium as gym
 
@@ -43,4 +41,3 @@ def test_simple_agent():
         print(episode_reward)
     env.close()
     assert True 
-

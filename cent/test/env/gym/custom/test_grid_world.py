@@ -177,7 +177,7 @@ class GridWorld(gym.Env):
             self.window = None
             self.clock = None
 
-@pytest.mark.app
+@pytest.mark.current
 def test_grid_world():
     grid_world = GridWorld(render_mode='human')
     grid_world.reset()
