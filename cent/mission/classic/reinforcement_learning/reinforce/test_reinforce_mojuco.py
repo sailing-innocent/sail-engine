@@ -17,7 +17,6 @@ from tqdm import tqdm
 
 
 plt.rcParams["figure.figsize"] = (10, 5)
-
 # class PolicyNetwork
 
 class PolicyNetwork(nn.Module):
