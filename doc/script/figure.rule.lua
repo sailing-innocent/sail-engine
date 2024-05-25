@@ -18,6 +18,7 @@ rule("latex.graphviz")
     end)
 rule_end()
 
+
 rule("latex.ppm_image")
     set_extensions(".ppm")
     add_deps("latex.indirect_content")

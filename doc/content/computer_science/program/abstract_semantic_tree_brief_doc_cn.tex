@@ -1,0 +1,10 @@
+抽象语法树是一种编程表达方法，可以把文本转化为结构化统一的树形，进而方便后续的优化操作。抽象语法树广泛用于编译器的构建过程，解析文本构建抽象语法树往往是所有编译过程的第一步。
+
+如图\ref{fig:ast_example}所示，程序$(2.2-\frac{x}{11})+(7\cos{y})$ 可以展现为四个二元操作符(Binary Operator)$+,-,*,/$和一个函数操作符(Call Operator)$\cos$和字面量符号(literal variable)的组合
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=0.8\textwidth]{fig_ast_example.png}
+        \caption{The Example of Abstract Syntax Tree $(2.2-\frac{x}{11})+(7\cos{y})$}
+    \label{fig:ast_example}
+\end{figure}
