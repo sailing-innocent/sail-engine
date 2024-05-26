@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{si_template/cn_note}[2023/08/15 Class for sailing-innocent's Personal Chinese Notes]
+\ProvidesClass{si_template/cn_book}[2024/05/26 Class for sailing-innocent's Personal Chinese Book]
 
 \RequirePackage{kvoptions}
 \RequirePackage{etoolbox}
@@ -22,7 +22,7 @@
 % Package Loading
 % ---------------
 % based on article class
-\LoadClass{article}
+\LoadClass{book}
 \RequirePackage{fontspec} % XeLaTeX
 \RequirePackage[CJKchecksingle]{xeCJK} % XeCJK
 \RequirePackage{CJKnumb} % 使用 CJK 数字
@@ -63,6 +63,9 @@
 \RequirePackage{graphicx}
 \RequirePackage{subcaption}
 
+% chapter bib
+\RequirePackage{chapterbib}
+
 % for color
 \RequirePackage{soul}
 \RequirePackage{color}
@@ -90,11 +93,43 @@
 \onehalfspacing	% 行距
 %\raggedbottom	% 减小页面空白
 \setlength{\parindent}{2em}	% 设置适合于汉语排版的段落缩进
+
+% 扩展 \frontmatter: 制作封面和目录
+\g@addto@macro\frontmatter{
+    \ifdefempty{\@SI@coverpage}{
+        \relax
+    }{%
+        \pagestyle{empty}
+        \renewcommand{\thepage}{C\arabic{page}}%	封面部分页码以 C 开头 
+        \input{\@SI@coverpage}
+        % recover
+        \pagestyle{fancy}		% 复原页面风格为 fancy
+        \pagenumbering{roman}	% 页码复原为小写罗马字母
+    }
+    \setcounter{page}{1}
+    \thispagestyle{empty}
+    \addtocontents{toc}{\protect\thispagestyle{empty}}
+    \renewcommand{\contentsname}{目录}
+    \tableofcontents	% 印出目录
+}
+
 % 汉化图表引用
 \renewcommand{\figurename}{图}
 \renewcommand{\tablename}{表}
 \renewcommand{\listfigurename}{图片索引}
 \renewcommand{\listtablename}{表格索引}
+
+% 将 figure 和 table 索引加入目录: 使用 etoolbox 提供的 patching
+\pretocmd{\listoffigures}{%
+	\cleardoublepage
+	\phantomsection
+	\addcontentsline{toc}{chapter}{\listfigurename}
+}{}{}
+\pretocmd{\listoftables}{%
+	\cleardoublepage
+	\phantomsection
+	\addcontentsline{toc}{chapter}{\listtablename}
+}{}{}
 
 % 输入字体设置
 % 设置 xeCJK 字体及中文数字
@@ -178,6 +213,10 @@
 
     % 设置天眉
     \pagestyle{fancy}
+    \renewcommand{\chaptermark}[1]{\markboth{
+            第 \thechapter 章\quad #1
+        }{}}
+
     \renewcommand{\sectionmark}[1]{\markright{\S\arabic{section} \quad #1}}
     \fancyhf{} % 先清空
     \fancyhead[EC]{\CJKfamily{hei2}\footnotesize{\leftmark}\vspace{1mm}}
@@ -189,5 +228,9 @@
     \addtolength{\headheight}{0.5pt}
 }
 
-\AtBeginDocument{}
+\AtBeginDocument{
+    % 重置 \Re, \Im, \emptyset. 由于可能用到 unicode-math, 这必须在 \begin{document} 后进行.
+}
+
+
 \AtEndDocument{}
