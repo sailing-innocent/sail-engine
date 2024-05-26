@@ -1,1 +1,18 @@
-这是主要的介绍
+这是一篇即将在SIGGRAPH2024上发表的论文《文本提示的人群动画生成》(\texttt{Text-Guided Synthesis of Crowd Animation})。来自香港大学和腾讯光子北美的研究者研究了如何使用大语言模型(Large Language Model, LLM)和扩散模型(Diffusion Model)来自动生成逼真的人群动画。
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{fig_teaser_tgsca.png}
+    \caption{Generating realistic crowd animation given an environment map}
+    \label{fig:teaser_tgsca}
+\end{figure}
+
+如图\ref{fig:teaser_tgsca}所示，这篇论文从一个给定的环境语义地图和一段描述人群行动的文本开始，逐步生成了一个逼真的人群动画控制率，可以通过这个控制率在成熟的商业引擎中渲染出逼真的人群动画。
+
+真实感人群动画，人群动画模拟一直和多智能体领域密切相关，这一篇论文虽然是用动画领域的思路撰写，但其中对大语言模型和扩散模型的应用也对多智能体的研究很有启发意义。
+
+\subsection{人群动画}
+\input{crowd_animation_brief_doc_cn}
+\subsection{大语言模型}
+\input{llm_brief_doc_cn}
+\subsection{扩散模型}
+\input{diffusion_model_intro_doc_cn}

@@ -1,1 +1,33 @@
-真是主要的分析
+因为基于文本提示的人群动画生成任务在大模型出现之前几乎不存在，也没有现成的验证指标可以参考。所以，为了验证生成的效果，作者展示了定性和定量的结果，并进行了用户调研。
+
+\subsection{定性实验结果}
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{fig_res_1_tgsca.png}
+    \caption{The Scenario with Large Group}
+    \label{fig:res_1}
+\end{figure}
+
+如图\ref{fig:res_1}所示，展示了一个比较大的人群在广场中央试图经过广场出口的场景，可以看到人群在广场中央聚集，然后逐渐向出口移动。该定性实验展示了模型可以生成数量比较大的人群行为，并且人群的行为比较符合实际情况。
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{fig_res_2_tgsca.png}
+    \caption{The Scenraio with 6 Different groups}
+    \label{fig:res_2}
+\end{figure}
+
+如图\ref{fig:res_2}所示，展示了一个包含6个不同群体的场景，每个群体的行为都不同。该定性实验展示了模型可以生成多个不同群体的行为，并且每个群体的行为都比较符合实际情况。
+
+\subsection{定量实验结果}
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{fig_quant_res_tgsca.png}
+    \caption{Quantative Result}
+    \label{fig:quant_res}
+\end{figure}
+
+如图\ref{fig:quant_res}所示，展示了定量实验的结果。作者使用了三个指标来评价生成的人群行为的质量，分别是ATD（Agent Trajectory Distance），SSR（Strict Success Rate）和RSR（Relax Successful Rate）。其中ATD是评价生成的人群行为与真实人群行为的距离，SSR是严格成功率，RSR是宽松成功率。实验结果表明，生成的人群行为与真实人群行为的距离比较小，且成功率比较高。
+
+\subsection{用户调研结果}
+
+作者还进行了用户调研，挑选了12名用户参与调研。调研结果表明，10名用户对生成的人群行为比较满意，认为生成的人群行为比较符合实际情况，且比对比方法更加自然。

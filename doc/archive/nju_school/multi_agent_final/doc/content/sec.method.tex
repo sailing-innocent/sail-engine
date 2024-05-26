@@ -1,1 +1,83 @@
-这是主要的方法
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{fig_pipeline_tgsca.png}
+    \caption{The Overall Pipeline}
+    \label{fig:pipeline}
+\end{figure}
+
+该论文的整体方法流程如图\ref{fig:pipeline}所示
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{fig_semantic_type_tgsca.png}        
+    \caption{The Semantic Types}
+    \label{fig:semantic_type}
+\end{figure}
+
+我们首先得到如图\ref{fig:semantic_type}所示的语义类型，包括：障碍类型，通道类型，出口-入口等。并输入一段文本描述，如：
+\begin{quote}
+    很多人在从地图右下角的出口处进入，然后经过地图中央偏右的通道，向左上角的入口处移动。另一处人群从地图左上角的出口处进入，然后经过地图中央偏左的通道，向右下角的入口处移动。
+\end{quote}
+
+这样的文本描述当然是不精确的，我们需要借用GPT-4将其转换为一个标准化的语义结构$\{s^j\}$然后对每一个语义结构进行CLIP编码，得到训练每一个扩散模型的潜空间信号$h^j$。最后通过两重扩散模型生成速度场$I_v^j$，起始点分布概率图$I_s^j$和目标点分布概率图$I_g^j$，并通过局部避障算法RVO进行速度场修正，最终得到一个合理的人群行为模拟。
+
+\subsection{文本格式化}
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{fig_semantic_struct_tgsca.png}
+    \caption{The Canonical Semantic Structure}
+    \label{fig:semantic_struct}
+\end{figure}
+
+如图\ref{fig:semantic_struct}所示，我们首先将自然语言描述转化为一个标准化的语义结构，这个结构包含了若干个关键元素，包括：
+场景描述，人群信息，出口-入口，规划路径上的特殊位置。
+
+\subsection{扩散模型训练}
+
+对于每一组人群i，我们需要生成如下三张地图：
+
+\begin{enumerate}
+    \item 起始点分布概率图$I_s^i$
+    \item 目标点分布概率图$I_g^i$
+    \item 速度场$I_v^i$
+\end{enumerate}
+
+但是经过前期测试，发现直接用一个扩散模型生成上述图像的效果并不好，所以研究者采取了两重扩散模型来解决这个问题，首先用一个扩散模型生成$I_s^i$和$I_g^i$，将生成好的起始-目标点分布作为约束，监督另一个扩散模型生成$I_v^i$。
+
+潜空间扩散模型的原理如下：
+\begin{enumerate}
+    \item 给定一张真实图片，通过逐步加噪声的方式可以将其转化为一张噪声图片，这个过程可以看作是一个逐步扩散的过程，因此被称为扩散模型。
+    \item 模型会在每一步加噪声的过程中，学习一个逆向去噪的变换，从而拥有了从噪声中逐步恢复出真实的图片的能力。
+    \item 通过参数替换，每一个去噪变换最终可以转换为学习一个特殊的噪声分布$\epsilon_\theta(d^t,t,h)$
+    \item 预测的图片分布：$d_{t-1}\sim \mathcal{N}(\frac{1}{\sqrt{\alpha_t}}(d_t-\frac{\beta_t}{\sqrt{1-\tilde{\alpha_t}}}\epsilon_\theta(d_t,t,h)), \sigma_t I)$
+    \item 此处h是潜空间信号，可以用CLIP或者其他图片编码得到
+\end{enumerate}
+
+对于每一个组j，我们首先用CLIP嵌入得到$h^j$，然后用两个扩散模型分别训练起始-目标点分布和速度场，训练过程如下：
+$$h^j=CLIP(s^j)$$
+
+$$I^j_{s,g,t-1}= \frac{1}{\sqrt{\alpha_t}}(d_t-\frac{\beta_t}{\sqrt{1-\tilde{\alpha_t}}}\epsilon_\theta(I^j_{s,g,t},I_e,t,h^j))$$
+
+$$I^j_{v,t-1}= \frac{1}{\sqrt{\alpha_t}}(d_t-\frac{\beta_t}{\sqrt{1-\tilde{\alpha_t}}}\epsilon_\theta(I^j_{v,t},I_e,I_s,I_g,t,h^j))$$
+
+研究者在4块RTX 4090上训练了两个扩散模型，每个模型训练了50个epoch，速度场模型训练了200个epoch，总共训练了192小时。
+
+\subsection{数据集构造}
+
+为了构建训练的数据集，我们需要
+
+\begin{enumerate}
+    \item 利用语义元素变换生成若干语义地图，并通过人工挑选出合适的若干场景
+    \item 随机自动在地图边缘生成出口-入口对
+    \item 对于任意一个出口-入口对，生成一个规划路径，排除无法生成合理路径的场景
+    \item 对规划可行路径生成标准化的语句描述
+\end{enumerate}
+
+
+\begin{figure}[H]
+    \includegraphics[width=0.8\textwidth]{fig_vel_adjust_tgsca.png}
+    \caption{Veloicity Field Adjustment}
+    \label{fig:vel_adjust}
+\end{figure}
+
+
+在生成合理路径图之后，我们可以直接得到一个速度场，但是这个速度场不能避免智能体的局部碰撞，因此我们需要局部避障算法RVO\cite{vandenbergReciprocalVelocityObstacles2008}来进行速度场修正，如图\ref{fig:vel_adjust}所示。
+

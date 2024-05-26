@@ -1,0 +1,17 @@
+扩散模型是一种新的流行AI模型，可以用来生成逼真的图像。
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{fig_ddpm.png}
+    \caption{DDPM \cite{hoDenoisingDiffusionProbabilistic2020}}
+    \label{fig:ddpm}
+\end{figure}
+
+如图\ref{fig:ddpm}所示，扩散模型的方法和之前基于GAN网络或者VAE网络的方法有很大不同，它并不是直接预测生成图片的分布，而是采用一个逐步扩散的方式来从噪声中恢复出真实的图片。具体来说，给定一张真实图片，通过逐步加噪声的方式可以将其转化为一张噪声图片，这个过程可以看作是一个逐步扩散的过程，因此被称为扩散模型。而模型会在每一步加噪声的过程中，学习一个逆向去噪的变换，从而拥有了从噪声中逐步恢复出真实的图片的能力。通过参数替换，每一个去噪变换最终可以转换为学习一个特殊的噪声分布$\epsilon(\theta)$，并且数学上可以利用高斯分布的特殊性质，将多步噪声变换合并为一个单步噪声变换，从而可以通过一个单步噪声变换来生成图片。
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{fig_ldm.png}
+    \caption{Latent Diffusion Model}
+    \label{fig:ldm}
+\end{figure}
+
+如图\ref{fig:ldm}，在扩散模型的基础上，潜空间扩散模型\cite{rombachHighResolutionImageSynthesis2022} 则引入了注意力机制和潜在空间的扩散变换，极大提升了生成模型的分辨率。给扩散模型的推广带来了新的思路，从此扩散模型开始逐步成为生成模型的主流方法之一。

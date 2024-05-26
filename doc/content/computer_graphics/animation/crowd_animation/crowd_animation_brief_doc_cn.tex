@@ -1,0 +1,45 @@
+\paragraph{人群动画} 在游戏，电影等内容生产的过程中，为了给存在许多人的环境，比如地铁，广场，马路等更真实的体验，我们往往希望能给环境添加具有真实感的人群动画。人群动画的任务是给定一个环境描述，生成一段有真实感的人群运动控制率，进而在底层的动画引擎中驱动人物网格体来生成逼真的人群动画。
+
+\paragraph{人群动画的挑战} 我们希望人群动画尽可能真实，这就要求人群动画需要
+
+\begin{enumerate}
+    \item 避免碰撞，避免人物之间的重叠
+    \item 避免不自然的效果，比如人物之间的穿越，或者恶意挤压某个人物轨迹导致不自然折返
+    \item 按照正确的路径行走，每一个人物的目的和其轨迹需要符合逻辑。
+\end{enumerate}
+
+但是在模拟的过程中，我们会遇到一些问题：
+
+\begin{enumerate}
+    \item 环境的语义多样，不同的环境描述会导致不同的人群行为
+    \item 人群和环境的交互是多模态的，不同的人群行为会导致不同的环境变化
+    \item 物理正确的模拟是计算密集型的，需要大量的计算资源
+\end{enumerate}
+
+\paragraph{人群动画的主要方法} 人群动画的主要方法有三类：
+
+\begin{figure}
+    \centering
+        \begin{subfigure}{0.3\linewidth}
+            \includegraphics[width=\textwidth]{fig_navigation_field.png}
+            \caption{Flow-Based Method}
+            \label{fig:flow_based_method}
+        \end{subfigure}
+        \begin{subfigure}{0.3\linewidth}
+            \includegraphics[width=\textwidth]{fig_maslow_hierarchy_of_needs.png}
+            \caption{Entity-Based Method}
+            \label{fig:entity_based_method}
+        \end{subfigure}
+        \begin{subfigure}{0.3\linewidth}
+            \includegraphics[width=\textwidth]{fig_agent_based_crowd.png}
+            \caption{Agent-Based Method}
+            \label{fig:agent_based_method}
+        \end{subfigure}
+\end{figure}
+
+\begin{enumerate}
+    \item 基于流的方法：如图\ref{fig:flow_based_method}通过流场来控制人群的运动，比如\cite{patilDirectingCrowdSimulations2011}
+    \item 基于实体的方法：如图\ref{fig:entity_based_method}通过实体之间的关系来控制人群的运动,往往会涉及依稀心理学中的知识，构建基于规则的人工智能
+    \item 基于智能体的方法：如图\ref{fig:agent_based_method}通过智能体之间的交互来控制人群的运动，比如\cite{tanakaGuidanceFieldVector2016}
+\end{enumerate}
+
