@@ -27,15 +27,16 @@ includes("xmake/rules.lua")
 
 -- assets 
 includes("assets") 
-
--- external and requirements
-add_requires("glm", {version = "2024.05.15-sail"}) 
-add_requires("eastl", {version = "2024.05.15-sail"})
-add_requires("imgui", {version = "2024.05.27-sail"}) 
+-- external dependencies
 add_requires("glfw", {configs = {vulkan = true}})
 if get_config("enable_vk") then
     add_requires("vulkansdk")
 end
+-- self xrepo dependencies
+add_requires("glm", {version = "2024.05.15-sail"}) 
+add_requires("eastl", {version = "2024.05.15-sail"})
+add_requires("imgui", {version = "2024.05.27-sail"}) 
+-- self dependencies
 includes("external") -- external dependencies
 -- internal and core modules
 includes("modules") -- core engine
