@@ -10,3 +10,5 @@ config.json
 pnpm-lock.yaml
 node_modules
 dist
+
+compile_commands.json
