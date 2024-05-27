@@ -31,11 +31,10 @@ includes("assets")
 -- external and requirements
 add_requires("glm", {version = "2024.05.15-sail"}) 
 add_requires("eastl", {version = "2024.05.15-sail"})
-add_requires("imgui", {configs = {glfw_opengl3 = true, vulkan = true},}) -- for ui
-add_requires("glfw", {configs = {vulkan = true}}) -- for window management
-
+add_requires("imgui", {version = "2024.05.27-sail"}) 
+add_requires("glfw", {configs = {vulkan = true}})
 if get_config("enable_vk") then
-    add_requires("vulkansdk", {optional = true})
+    add_requires("vulkansdk")
 end
 includes("external") -- external dependencies
 -- internal and core modules
