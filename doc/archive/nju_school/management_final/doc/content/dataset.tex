@@ -1,1 +1,9 @@
-为了让遗传编码策略可以成功，需要构筑一个训练集进行训练。作者提出了如下方法来构筑这个训练集。
+在车间调度问题语境下有很多现成的经典问题来测量每一个方法的效果好坏，覆盖了从难到易多样的车间调度情况，我们会使用这部分数据集来训练我们的遗传编程框架。此外，这些成熟方法的下限是已知的，这给我们的归一化对比带来方便。
+
+\begin{figure}[H]
+    \includegraphics[width=0.6\textwidth]{fig_dataset_idr.png}
+    \caption{Used Dataset}
+    \label{fig:dataset_idr}
+\end{figure}
+
+图\label{fig:dataset_idr}展示了研究者用到的数据集。研究者按照奇数偶均分训练集和测试集。这样可以保证训练集和测试集的分布尽可能相似。

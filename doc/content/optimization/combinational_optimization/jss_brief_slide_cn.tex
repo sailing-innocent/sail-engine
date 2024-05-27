@@ -1,0 +1,28 @@
+\begin{frame}
+    \frametitle{车间调度问题}
+    \begin{enumerate}
+        \item m个机器(Machine)$\mathcal{M}=\{M_1,M_2,\dots,M_m\}$
+        \item n个工序(Job)$\mathcal{J}=\{J_1,J_2,\dots,J_n\}$
+        \item 每一个工序包括若干操作(Operation)$\{O_1,O_2,\dots\}$
+        \item 工序的操作是固定的，但往往不需要每一个工序操作都一致，每一个操作都需要在指定的那台机器上完成。每一个工序操作都需要耗费一定的资源和时间。
+    \end{enumerate}
+\end{frame}
+\begin{frame}
+    \frametitle{车间调度问题}
+    \begin{enumerate}
+        \item 车间调度问题最终希望找到一个最优的操作序列$x\in \mathcal{X}$ 使得每一个操作都只在每一个机器上完成一次，完成所有工序的同时，使得消耗的代价（时间，资源）最少。
+        \item 这个操作序列可以描述为一个$n\times m$的矩阵，矩阵的每一列指的是要在这台机器上运行的工序。定义一个代价函数$C:\mathcal{X}\rightarrow [0,\infty]$，代表总用时，这样JSS问题就可以写成
+    \end{enumerate}
+    $$\hat{x}=argmin_{x\in \mathcal{X}}C(x)$$
+\end{frame}
+
+\begin{frame}
+    \frametitle{常用的目标函数}
+    常用的目标函数有最小标记占用（Minimization of the makespan）和加权总误工(Total Weighted Tardiness)两种
+
+    \begin{enumerate}
+        \item $J_m|C_{max}$: 最小标记占用指的是所有工序完成时最长机器占用时间，每一个工序任务的完成时间被称为标记占用markspan，最小markspan就是目标将总占用时长最小化
+        \item $J_m|\sum w_jT_j$ 指的是从消费者看来，不同产品的及时程度有一个重要性权重，加权总误工指的是对不同工序完成时间按照这个重要性加权得到的指标。
+    \end{enumerate}
+\end{frame}
+

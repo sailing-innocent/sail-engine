@@ -3,3 +3,23 @@
 在这个遗传编码策略中，支持四种简单的二元算子$+,-,\times,\%$和一些常用的函数算子$abs,min,max$。引入条件算子$if$来构建相对复杂的程序。程序的名词表如表\ref{tab:terminal}所示，提供了从外部条件中获得的常量信息。
 
 \input{tab.terminal}
+
+在这个系统中，一个GP策略被表达为$\Delta^I(\mathcal{J,M,R})$，分配了每一个工序在序列中的优先级。最开始的时候，在没有任何记录情况下初始化一个GP，RFT的初始值是当前策略的总执行时间，RWT和RNWT的初始值则设定为过半机器完成的时间。
+
+为了验证生成策略的有效性，需要运行在一系列实例$\mathbb{I}=\{I_1,\dots,I_T\}$上作为训练集，记录所有运行结果。因为不同工序结果之间实际意义相差很大吗，我们会对其进行一定的归一化
+
+$$dev(\Delta^I,I_n)=\frac{Obj(\Delta^I,I_n)-Ref(I_n)}{Ref(I_n)}$$
+
+其中$Obj(\Delta^I,I_n)$是目标函数值，$Ref(I_n)$是当前实例上的参考目标值。这样我们就能得到一个GP系统的适应性指标
+
+$$dev_{avg}(\Delta^I)=\frac{\sum\limits_{I_n\in \mathbb{I}}\limits^{} dev(\Delta^I, I_n)}{|\mathbb{I}|}$$
+
+在目标函数为$J_m||C_{max}$时候，参考目标为其他方法所获得的目标值下界。因为取到了下界，所以此处的dev永远非负。如果适应指标接近0，则以为着GP可以迭代产生近似最优的解法。对于$J_m||\sum \omega_jT_J$ 情况，下界不是总能取得，我们会采用EDD方法得到的参考目标。
+
+\begin{figure}[H]
+    \includegraphics[width=0.6\textwidth]{fig_algorithm_2_idr.png}
+    \caption{GP Algorithmn to envolve IDRs}
+    \label{fig:algorithm_gp_idr}
+\end{figure}
+
+整体算法如图\ref{fig:algorithm_gp_idr}所示，更多对GP符号组合的探讨会在后文展开。

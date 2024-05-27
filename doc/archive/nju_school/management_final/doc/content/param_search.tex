@@ -1,1 +1,15 @@
-为了让模型达到最优的效果，需要搜索最合适的参数组合。
+为了让模型达到最优的效果，需要搜索最合适的参数组合。表\ref{tab:hyper_param}展示了初始化的超参数。
+
+\input{tab.hyper_param}
+
+研究者采用了一种随机对半分的策略来初始化遗传编程种群，具体来说，就是将一半数目的种群进行“全初始化”，达到语法树的最大深度并
+包含全部的算子。另一半则没有这一层要求，倾向于让其“生长”。
+
+在语法树更新的过程中，遗传编程算法的交配和突变方法如图\ref{fig:gp_subtree_idr}所示
+
+\begin{figure}[H]
+    \includegraphics[width=0.6\textwidth]{fig_gp_subtree_idr.png}
+    \caption{遗传编程操作}
+    \label{fig:gp_subtree_idr}
+\end{figure}
+

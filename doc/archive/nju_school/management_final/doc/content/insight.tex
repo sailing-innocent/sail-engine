@@ -1,22 +1,39 @@
-在算法的基础上，作者尝试进一步分析如何最优化可迭代的发包策略
-
-与过往只实现单独策略$\pi$不同，一个可迭代的发包策略最终会产生一系列的发包策略序列 $\pi^0,\pi^1,\pi^2,\dots,\pi^n$
+在算法的基础上，作者尝试进一步分析如何最优化可迭代的发包策略。与过往只实现单独策略$\pi$不同，一个可迭代的发包策略最终会产生一系列的发包策略序列 $\pi^0,\pi^1,\pi^2,\dots,\pi^n$
 
 \subsection{IDR的初始化}
 
-为了避免不合适的初始化导致最终的结果变差。
+为了避免不合适的初始化导致最终的结果变差。在之前的讨论中研究者采用了一种启发式的方式来构建$\mathcal{R}^0$，但同时我们也可以将其看做一个常量函数，作为语法树中的一个节点加入整体的遗传编程迭代过程中。
 
 \subsection{IDR的参数邻域搜索}
 
-为了避免陷入局部最优化
+陷入局部最优化是车间调度问题的常见现象，过去算法克服这一难点的主要方式是引入邻域搜索算法如模拟退火，禁忌搜索等。但是这些方法在迭代发包策略中的应用较为困难。
+
+为此，研究者引入参数邻域搜索（Variable Neighbor Search, VNC）算法如图\ref{fig:vns_idr}所示
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{fig_algorithm_3_idr.png}
+    \caption{带邻域搜索的IDR策略}
+    \label{fig:vns_idr}
+\end{figure}
 
 \subsection{优化后的IDR结果}
 
+经过上述两个优化最终得到如图\ref{fig:result_enhanced}所示的结果
+
 \begin{enumerate}
-    \item IDR-P 
-    \item IDR-VNS
+    \item IDR-P：引入假节点的IDR
+    \item IDR-VNS：引入邻域参数搜索的IDR
 \end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{fig_result_3_idr.png}
+    \caption{带初始化邻域搜索的IDR策略结果}
+    \label{fig:result_enhanced}
+\end{figure}
+
 
 \subsection{前瞻策略}
 
-前瞻策略(Look Ahead Strategy)
+前瞻策略(Look Ahead Strategy)换成动态的生成

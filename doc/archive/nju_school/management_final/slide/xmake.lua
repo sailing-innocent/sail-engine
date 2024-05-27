@@ -1,4 +1,5 @@
 add_latex("management_final_pre",
 {
-    "njupre"
+    "njupre",
+    "jss_brief_slide_cn"
 }, "pre")
