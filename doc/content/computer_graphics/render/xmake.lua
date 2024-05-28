@@ -1,8 +1,5 @@
 includes("volume")
-add_content("rasterize_intro_slide_cn", {
-    "fig_rasterization_render",
-    "fig_raster_result_render"
-})
+add_content("rasterize_intro_slide_cn", {"figs_raster"})
 
 add_content("ray_tracing_intro_slide_cn", {
     "fig_ray_tracing_render",
