@@ -1,0 +1,28 @@
+\begin{frame}
+    \frametitle{终端符号表}
+    \input{tab.terminal}
+    \begin{quote}
+        程序的名词表如表\ref{tab:terminal}所示，提供了从外部条件中获得的常量信息。
+    \end{quote}
+\end{frame}
+
+\begin{frame}
+    \begin{enumerate}
+        \item 一个GP策略被表达为$\Delta^I(\mathcal{J,M,R})$，分配了每一个工序在序列中的优先级
+        \item 运行在一系列实例$\mathbb{I}=\{I_1,\dots,I_T\}$上作为训练集
+        \item 因为不同场景结果之间实际意义相差很大吗，我们会对其进行一定的归一化
+            $$dev(\Delta^I,I_n)=\frac{Obj(\Delta^I,I_n)-Ref(I_n)}{Ref(I_n)}$$
+        \item 其中$Obj(\Delta^I,I_n)$是目标函数值，$Ref(I_n)$是当前实例上的参考目标值。这样我们就能得到一个GP系统的适应性指标
+        \item $$dev_{avg}(\Delta^I)=\frac{\sum\limits_{I_n\in \mathbb{I}}\limits^{} dev(\Delta^I, I_n)}{|\mathbb{I}|}$$
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{遗传编码更新算法}
+    \begin{figure}[H]
+        \includegraphics[width=0.6\textwidth]{fig_algorithm_2_idr.png}
+        \caption{GP Algorithmn to envolve IDRs}
+        \label{fig:algorithm_gp_idr}
+    \end{figure}
+    整体算法如图\ref{fig:algorithm_gp_idr}所示，更多对GP符号组合的探讨会在后文展开。
+\end{frame}

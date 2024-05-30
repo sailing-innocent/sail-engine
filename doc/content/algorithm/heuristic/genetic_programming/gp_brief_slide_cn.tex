@@ -1,0 +1,21 @@
+\begin{frame}
+    \frametitle{遗传算法}
+    \begin{enumerate}
+        \item 经典的遗传算法(Genetic Algorithm)指的是将数值程序的解看做一长串字符，并通过字符种群的随机杂交(crossover)突变(mutation)，并通过目标函数来进行筛选(selection)来最终启发式地优化到最优解。
+        \item 遗传算法有跳出局部最优达到全局最优的能力
+        \item 遗传算法受限于初始化的水平和参数选择
+    \end{enumerate}
+\end{frame}
+
+\input{abstract_semantic_tree_brief_slide_cn}
+
+\begin{frame}
+    \frametitle{遗传编程}
+    \begin{enumerate}
+        \item 遗传编程(Genetic Programming)就是作用在抽象语法树上的遗传算法
+        \item 交叉crossover: 从两个个体中各自选择一个节点，并将个体A中自节点往下的子树删除，并将个体B的子树复制到个体A的节点下。
+        \item 复制replication: 部分个体会简单的复制到下一个种群
+        \item 突变mutation: 突变策略非常多样，可能是随机替换选择某一个叶子节点，也可能是对某一条支路随机裁剪。
+        \item 选择Selection: 对于每一个种群，执行得到目标函数，设定选择标准，只有达到标准的个体可以进行下一代的繁殖操作。
+    \end{enumerate}
+\end{frame}

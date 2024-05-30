@@ -1,4 +1,5 @@
 includes("volume")
+includes("shading")
 add_content("rasterize_intro_slide_cn", {"figs_raster"})
 
 add_content("ray_tracing_intro_slide_cn", {

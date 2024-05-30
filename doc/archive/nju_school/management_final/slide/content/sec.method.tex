@@ -1,0 +1,45 @@
+\begin{frame}
+    \frametitle{方法}
+    \begin{enumerate}
+        \item 迭代发包策略
+        \item 遗传编码计算IDR
+        \item 训练集的构建
+        \item 参数和训练细节
+    \end{enumerate}
+\end{frame}
+
+\subsection{迭代发包策略}
+\input{idr}
+\subsection{遗传编码计算IDR}
+\input{gp_idr}
+\subsection{训练细节}
+\begin{frame}
+    \frametitle{训练集的构建}
+    \begin{figure}[H]
+        \includegraphics[width=0.6\textwidth]{fig_dataset_idr.png}
+        \caption{Used Dataset}
+        \label{fig:dataset_idr}
+    \end{figure}
+    \begin{quote}
+    图\label{fig:dataset_idr}展示了研究者用到的数据集。研究者按照奇数偶均分训练集和测试集。这样可以保证训练集和测试集的分布尽可能相似。
+    \end{quote}    
+\end{frame}
+\begin{frame}
+    \frametitle{初始化参数}
+    \input{tab.hyper_param}
+    \begin{quote}
+        为了让模型达到最优的效果，需要搜索最合适的参数组合。表\ref{tab:hyper_param}展示了初始化的超参数。
+        
+        研究者采用了一种随机对半分的策略来初始化遗传编程种群，具体来说，就是将一半数目的种群进行“全初始化”，达到语法树的最大深度并包含全部的算子。另一半则没有这一层要求，倾向于让其“生长”。
+    \end{quote}    
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{遗传编程操作}
+    \begin{figure}[H]
+        \includegraphics[width=0.4\textwidth]{fig_gp_subtree_idr.png}
+        \caption{遗传编程操作}
+        \label{fig:gp_subtree_idr}
+    \end{figure}    
+\end{frame}

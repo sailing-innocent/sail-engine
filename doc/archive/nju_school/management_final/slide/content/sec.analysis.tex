@@ -1,0 +1,70 @@
+\begin{frame}
+    \frametitle{算法分析}
+    \begin{enumerate}
+        \item 结果分析
+        \item 进一步优化
+    \end{enumerate}
+\end{frame}
+
+\subsection{结果分析}
+\begin{frame}
+    \frametitle{$J_m|C_{max}$结果}
+    \begin{figure}
+        \includegraphics[width=0.6\textwidth]{fig_result_1_idr.png}
+        \caption{$J_W|C_{max}$结果}
+        \label{fig:result_1}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{$J_W|\sum \omega_jT_j$结果}
+    \begin{figure}
+        \includegraphics[width=0.6\textwidth]{fig_result_2_idr.png}
+        \caption{$J_W|\sum \omega_jT_j$结果}
+        \label{fig:result_2}
+    \end{figure}    
+\end{frame}
+
+\subsection{进一步优化}
+
+\begin{frame}
+    \frametitle{优化方向}
+    \begin{enumerate}
+        \item IDR-P：引入假节点的IDR    
+        \begin{quote}
+            为了避免不合适的初始化导致最终的结果变差。在之前的讨论中研究者采用了一种启发式的方式来构建$\mathcal{R}^0$，但同时我们也可以将其看做一个常量函数，作为语法树中的一个节点加入整体的遗传编程迭代过程中。
+        \end{quote}
+        \item IDR-VNS：引入邻域参数搜索的IDR
+    \end{enumerate}
+
+\end{frame}
+\begin{frame}
+    \frametitle{IDR的参数邻域搜索}
+    为避免陷入局部最优化，研究者引入参数邻域搜索（Variable Neighbor Search, VNC）算法如图\ref{fig:vns_idr}所示
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.6\textwidth]{fig_algorithm_3_idr.png}
+        \caption{带邻域搜索的IDR策略}
+        \label{fig:vns_idr}
+    \end{figure}
+\end{frame}
+\begin{frame}
+    \frametitle{优化IDR结果对比}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.6\textwidth]{fig_result_3_1_idr.png}
+        \caption{$J_W|C_{max}$结果}
+        \label{fig:result_enhanced_1}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{优化IDR结果对比}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.6\textwidth]{fig_result_3_2_idr.png}
+        \caption{$J_W|\sum \omega_jT_j$结果}
+        \label{fig:result_enhanced_2}
+    \end{figure}
+\end{frame}

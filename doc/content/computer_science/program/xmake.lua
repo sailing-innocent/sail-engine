@@ -6,3 +6,7 @@ target_end()
 add_content("abstract_semantic_tree_brief_doc_cn", {
     "fig_ast_example"
 })
+
+add_content("abstract_semantic_tree_brief_slide_cn", {
+    "fig_ast_example"
+})

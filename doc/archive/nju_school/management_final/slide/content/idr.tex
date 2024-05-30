@@ -1,0 +1,31 @@
+\begin{frame}
+    \frametitle{迭代发包策略}
+    \begin{enumerate}
+        \item 一个传统的发包策略可以描述为一个优先级函数$\Sigma(\mathcal{J,M})$
+        \item 不同于传统的发包策略，可迭代发包策略可以描述为$\Sigma^I(\mathcal{M, J, R})$，此处$\mathcal{R}$为已经发生的调度结果的记录。整个算法如图\ref{fig:algorithm_idr}所示
+        \item $o_{j,l}$指的是对工序j的第l个操作
+        \item $L_k$是第k机器的就绪时间
+        \item $p(\sigma)$是每一个操作$\sigma$耗费的事件\
+        \item $r(\sigma)$指的是该操作的就绪时间
+        \item $m(\sigma)$是操作$\sigma$需要执行的机器序号
+        \item $next(\sigma)$指的是在本序列中下一个操作，如果是最后一个操作，则为null
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{迭代发包策略}
+    \begin{figure}[H]
+        \includegraphics[width=0.6\textwidth]{fig_algorithm_1_idr.png}
+        \caption{The Iterative Dispatching Rule}
+        \label{fig:algorithm_idr}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{算法分析}
+    \begin{enumerate}
+        \item 在算法的最开始，记录为$\mathcal{R^0}$，4-12步重复计划了一个无延迟的规划，在每一个规划确定之后，都会与上一个目标函数$Obj*$对比，目标函数初始值为正无穷大，如果下一个目标函数值比上一个小，则更新目标函数值。重复构建新的目标策略，知道最终目标函数值没有变化。
+
+        \item 迭代发包策略的时间复杂度小于$\left[\frac{Obj_I-LB}{\epsilon}\right]$，此处$Obj_I$是初始策略的目标函数，LB是问题的理想下界，$\epsilon$是最小的可能更新。明显这个迭代的发包策略的构建可以在有限时间内结束。
+    \end{enumerate}
+\end{frame}
