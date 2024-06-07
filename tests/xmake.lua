@@ -37,8 +37,8 @@ if has_config("enable_inno") then
 end 
 
 if has_config("enable_cuda") then
-    -- sail_add_test("cu", "cub", {"SailCu"})
-    -- sail_add_test("cu", "util", {"SailCu"})
+    sail_add_test("cu", "cub", {"SailCu"})
+    sail_add_test("cu", "util", {"SailCu"})
 end 
 if has_config("enable_gl") then 
     -- sail_add_test("gl", "util", {"SailGL"})

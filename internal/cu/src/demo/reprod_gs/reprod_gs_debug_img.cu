@@ -14,7 +14,7 @@ __global__ void debug_img_shader(int w, int h, float* d_out) {
 	d_out[3 * idx + 2] = 0.0f;
 }
 
-void ReprodGs::debug_img(int w, int h, std::span<float> h_out) noexcept {
+void ReprodGs::debug_img(int w, int h, std::vector<float> h_out) noexcept {
 	float* d_out;
 	cudaMalloc(&d_out, 3 * w * h * sizeof(float));
 	dim3 block(16, 16);

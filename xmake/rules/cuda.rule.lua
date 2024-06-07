@@ -22,8 +22,6 @@ rule("sail.cuda")
         local cuda_path = os.getenv("CUDA_PATH")
         if cuda_path then
             os.cp(path.join(cuda_path, "bin/*.dll"), target:targetdir())
-            -- for indirect dispatch
-            -- os.cp(path.join(cuda_path, "lib/x64/cudadevrt.lib"), target:targetdir())
         end
     end)
 rule_end()

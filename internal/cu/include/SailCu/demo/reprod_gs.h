@@ -7,7 +7,7 @@
 */
 
 #include "SailCu/config.h"
-#include <span>
+#include <vector>
 
 namespace sail::cu {
 
@@ -15,8 +15,8 @@ class SAIL_CU_API ReprodGs {
 public:
 	ReprodGs() = default;
 	~ReprodGs() = default;
-	void debug_img(int w, int h, std::span<float> h_out) noexcept;
-	void debug_tile(int w, int h, std::span<float> h_out) noexcept;
+	void debug_img(int w, int h, std::vector<float> h_out) noexcept;
+	void debug_tile(int w, int h, std::vector<float> h_out) noexcept;
 };
 
 }// namespace sail::cu

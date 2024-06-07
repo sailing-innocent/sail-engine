@@ -7,7 +7,7 @@
 */
 #include <cstdint>
 #include "SailCu/config.h"
-#include <span>
+#include <array>
 
 namespace sail::cu {
 
@@ -20,7 +20,7 @@ public:
 		float* d_source_pix,// the source pano image data
 		// params
 		const int ph,			 // res height h, the total resolution 3, h, 2h
-		std::span<float, 3> dir, // direction x,y,z
+		std::array<float, 3> dir,// direction x,y,z
 		const float fov_y,		 // field of view
 		const int h, const int w,// the sampled image res 3 x h x w
 		// output
@@ -29,7 +29,7 @@ public:
 		int64_t d_source_pix,
 		// params
 		const int ph,			 // res height h, the total resolution 3, h, 2h
-		std::span<float, 3> dir, // direction x,y,z
+		std::array<float, 3> dir,// direction x,y,z
 		const float fov_y,		 // field of view
 		const int h, const int w,// the sampled image res 3 x h x w
 		int64_t d_target_pix) noexcept;

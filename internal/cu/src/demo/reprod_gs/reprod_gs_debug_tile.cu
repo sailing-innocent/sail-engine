@@ -29,7 +29,7 @@ __global__ void debug_tile_shader(int w, int h, int BLOCK_X, int BLOCK_Y, float*
 	}
 }
 
-void ReprodGs::debug_tile(int w, int h, std::span<float> h_out) noexcept {
+void ReprodGs::debug_tile(int w, int h, std::vector<float> h_out) noexcept {
 	float* d_out;
 	cudaMalloc(&d_out, 3 * w * h * sizeof(float));
 	dim3 block(16, 16);
