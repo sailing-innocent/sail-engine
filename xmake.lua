@@ -1,9 +1,8 @@
-set_xmakever("2.9.1")
+set_xmakever("2.9.2")
+add_rules("mode.release", "mode.debug")
 set_project("SailEngine")
 engine_version = "0.1.0"
 add_repositories("sail-repo xrepo")
-set_languages("c++20", "clatest")
-add_rules("mode.release", "mode.debug")
 set_toolchains("clang-cl")
 set_exceptions("cxx")
 set_runtimes("MD")
@@ -19,12 +18,10 @@ if is_mode("debug") then
 else
     set_targetdir("bin/release")
 end
-
 -- default options
 includes("xmake/default_options.lua")
 -- rules 
 includes("xmake/rules.lua")
-
 -- assets 
 includes("assets") 
 -- external dependencies
@@ -38,13 +35,13 @@ add_requires("imgui", {version = "2024.05.27-sail"})
 add_requires("glfw", {configs = {vulkan = true}})
 
 -- self dependencies
+set_languages("c++20")
 includes("external") -- external dependencies
--- internal and core modules
 includes("modules") -- core engine
 includes("internal") -- internal independent extensions
 -- targets
--- includes("tests") -- tests
--- includes("targets")
+includes("tests") -- tests
+includes("targets")
 -- documentation
 if get_config("enable_doc") then
     includes("doc") -- documentation

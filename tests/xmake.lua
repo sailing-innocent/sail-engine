@@ -1,3 +1,4 @@
+
 local function sail_add_test(folder, name, deps)
     target("test_" .. folder .. "_" .. name)
         set_kind("binary")
@@ -37,6 +38,7 @@ if has_config("enable_inno") then
 end 
 
 if has_config("enable_cuda") then
+    set_languages("c++17") -- fuck nvcc
     sail_add_test("cu", "cub", {"SailCu"})
     sail_add_test("cu", "util", {"SailCu"})
 end 
