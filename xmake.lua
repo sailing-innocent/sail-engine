@@ -43,9 +43,11 @@ includes("external") -- external dependencies
 includes("modules") -- core engine
 includes("internal") -- internal independent extensions
 -- targets
-includes("tests") -- tests
-includes("targets")
+-- includes("tests") -- tests
+-- includes("targets")
 -- documentation
 if get_config("enable_doc") then
     includes("doc") -- documentation
 end
+
+-- includes("cent")

@@ -22,8 +22,9 @@ on_load(function(target)
             "User32", "Gdi32", "Shell32"
         })
     end
-    target:add("links", "lc-core", "lc-vstl", "lc-dsl", "lc-gui", "lc-runtime", "lc-ast", "lc-ext-eastl",
-    "lc-ext-spdlog", "lc-ext-glfw", "lc-ext-imgui", {
+    target:add("links", "lc-core", "lc-vstl", "lc-dsl", "lc-gui", "lc-runtime", "lc-ast",
+    "lc-ext-imgui", "lc-ext-glfw", "lc-ext-reproc", "lc-ext-spdlog",
+    {
         public = true
     })
 end)
@@ -44,7 +45,7 @@ after_build(function(target)
     local bin_table = {
         "DirectML", "dstorage", "dstoragecore", "dxcompiler", "dxil", 
         "lc-ast", "lc-backend-dx", "lc-core", "lc-ir",
-        "lc-ext-eastl", "lc-ext-imgui", "lc-gui", "lc-runtime", "lc-validation-layer", "lc-ext-imgui",
+         "lc-gui", "lc-runtime", "lc-validation-layer", "lc-ext-imgui", "lc-ext-glfw", "lc-ext-reproc", "lc-ext-spdlog",
     }
     local cuda_background_bin_table = {
         -- luisa ext lcub

@@ -2,7 +2,7 @@ rule("sail.cuda")
     on_config(function(target)
     end)
     on_load(function(target)
-        target:set("cuda.rdc", true)
+        target:set("cuda.rdc", false)
         local cuda_path = os.getenv("CUDA_PATH")
         if cuda_path then
             target:add("sysincludedirs", path.join(cuda_path, "include"), {public=true})

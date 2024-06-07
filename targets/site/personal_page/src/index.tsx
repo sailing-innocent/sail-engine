@@ -34,8 +34,8 @@ const App = () => {
         <div className={styles.container}>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/overview" element={<Overview />} />
-                    <Route path="/" element={<IcgNote />} />
+                    <Route path="/" element={<Overview />} />
+                    <Route path="/icg-note" element={<IcgNote />} />
                 </Routes>
             </BrowserRouter>
         </div>

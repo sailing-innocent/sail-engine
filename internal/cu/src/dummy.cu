@@ -5,6 +5,7 @@
  * @author sailing-innocent
 */
 
+#include "cuda_runtime.h"
 #include "SailCu/dummy.h"
 #include "SailCu/kernel/dummy.cuh"
 
