@@ -5,5 +5,6 @@ STATIC_COMPONENT("SailGuid", "SailCore")
 
 SHARED_MODULE("SailCore", "SAIL_CORE", engine_version)
     add_includedirs("include", {public = true})
+    add_packages("glm", "eastl", {public = true})
     add_files("src/core/build.*.cpp")
     add_deps("SailBase")

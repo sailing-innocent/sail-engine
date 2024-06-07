@@ -4,4 +4,6 @@ end
 -- if get_config("enable_ing") then 
 --     includes("ingpy")
 -- end
-includes("sailcupy")
+if get_config("enable_cuda") then 
+    -- includes("sailcupy")
+end 

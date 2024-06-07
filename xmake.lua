@@ -2,13 +2,13 @@ set_xmakever("2.9.1")
 set_project("SailEngine")
 engine_version = "0.1.0"
 add_repositories("sail-repo xrepo")
-
+set_languages("c++20", "clatest")
 add_rules("mode.release", "mode.debug")
 set_toolchains("clang-cl")
 set_exceptions("cxx")
 set_runtimes("MD")
 add_cxflags("/GS", "/Gd", { 
-    tools = {"clang_cl", "cl"}
+    tools = {"clang-cl", "cl"}
 })
 add_cxflags("cxflags", "/Zc:preprocessor", {
     tools = "cl"
@@ -28,7 +28,6 @@ includes("xmake/rules.lua")
 -- assets 
 includes("assets") 
 -- external dependencies
-add_requires("glfw", {configs = {vulkan = true}})
 if get_config("enable_vk") then
     add_requires("vulkansdk")
 end
@@ -36,6 +35,8 @@ end
 add_requires("glm", {version = "2024.05.15-sail"}) 
 add_requires("eastl", {version = "2024.05.15-sail"})
 add_requires("imgui", {version = "2024.05.27-sail"}) 
+add_requires("glfw", {configs = {vulkan = true}})
+
 -- self dependencies
 includes("external") -- external dependencies
 -- internal and core modules

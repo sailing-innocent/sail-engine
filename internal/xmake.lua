@@ -2,7 +2,7 @@ if has_config("enable_inno") then
     includes("inno")
 end
 if has_config("enable_cuda") then 
-    includes("cu")
+    -- includes("cu")
 end
 if has_config("enable_gl") then 
     includes("gl")
