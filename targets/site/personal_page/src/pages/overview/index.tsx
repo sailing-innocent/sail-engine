@@ -4,6 +4,7 @@ import SimpleTriangle from '@/modules/SimpleTriangle';
 import Resume from '@/modules/Resume';
 import { Link } from 'react-router-dom';
 
+
 const Overview = () => {
     return (
         <>

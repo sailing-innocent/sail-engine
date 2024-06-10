@@ -46,5 +46,3 @@ includes("targets")
 if get_config("enable_doc") then
     includes("doc") -- documentation
 end
-
--- includes("cent")
