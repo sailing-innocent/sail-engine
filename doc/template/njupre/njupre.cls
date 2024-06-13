@@ -13,8 +13,10 @@
 % Math Support
 \RequirePackage{amsmath}
 \RequirePackage{tikz}
+\usetikzlibrary{positioning}
 \usetikzlibrary{shapes.symbols}	% 稍后定义 hint 环境所需
 \usetikzlibrary{3d}
+
 \RequirePackage{pgfplots}
 \RequirePackage{pgfplotstable}
 

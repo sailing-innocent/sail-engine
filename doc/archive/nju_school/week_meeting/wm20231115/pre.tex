@@ -1,6 +1,6 @@
 \documentclass{njupre/njupre}
 \title[组会]{组会报告}
-\subtitle{研究进展\today}
+\subtitle{研究进展 20231115}
 \author[朱子航]{\texorpdfstring{朱子航 \\ \smallskip \textit{522022150087@smail.nju.edu.cn}}{}}
 \date[2023-11-15]{\texorpdfstring{2023-11-15 组会}{}}
 \begin{document}
@@ -13,6 +13,7 @@
 \end{frame}
 \section{Gaussian Splatting实验部分}
 \sectionframe{Gaussian Splatting 实验部分}
+
 \subsection{NeRF Blender Synthetic 数据集}
 \input{nerf_blender_dataset_intro_slide_cn}
 \subsection{Mip360 数据集}
@@ -24,11 +25,11 @@
 \begin{figure}
     \centering
     \begin{subfigure}{0.25\linewidth}
-        \includegraphics[width=\textwidth]{"fig_gs_nerf_gt.png"}
+        \includegraphics[width=\textwidth]{fig_gs_nerf_gt.png}
         \caption{Ground Truth}
     \end{subfigure}
     \begin{subfigure}{0.25\linewidth}
-        \includegraphics[width=\textwidth]{"fig_gs_nerf_res.png"}
+        \includegraphics[width=\textwidth]{fig_gs_nerf_res.png}
         \caption{Result}
     \end{subfigure}
 \end{figure}
@@ -38,13 +39,12 @@
     $$MSE = \frac{1}{mn}\Sigma_{i=0}^{m-1}\Sigma_{j=0}^{n-1}[I(i,j) - K(i,j)]^2$$
     $$PSNR = 10 log_{10}(\frac{MAX_I^2}{MSE})$$ 
 \end{quote}
+
 \end{frame}
 
 \begin{frame}
 \frametitle{Gaussian复现结果}
-\begin{table}
-    \input{tab_gaussian_nerf}
-\end{table}
+【原始数据缺失】
 \end{frame}
 
 \section{其他进展}

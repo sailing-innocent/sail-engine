@@ -1,6 +1,4 @@
 includes("3dgs")
--- includes("nerf_reprod")
--- includes("3dgs_reprod")
 -- includes("3dgs_reimpl")
 
 includes("3dgs_profile")

@@ -1,1 +1,0 @@
-add_json_table("tab_3dgs_reprod_eval_psnr_result")

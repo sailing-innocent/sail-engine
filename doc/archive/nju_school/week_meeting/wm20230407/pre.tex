@@ -6,9 +6,7 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{amsmath}
-
 % defines
-
 %----------------------------------------------------------------------------------------
 %	STYLES AND THEME
 %----------------------------------------------------------------------------------------
@@ -22,37 +20,22 @@
 \usepackage{inconsolata}
 \usepackage[default]{lato}
 \useinnertheme{rectangles}
-
 \useoutertheme{shadow}
-
-%----------------------------------------------------------------------------------------
-%	PRESENTATION INFORMATION
-%----------------------------------------------------------------------------------------
-
-
 \title[title]{ Recent Research Progress }
-
 \subtitle{Since 20230407}
-
 \author[Zhu Zihang]{\texorpdfstring{Zhu Zihang \\ \smallskip \textit{sailing-innocent@foxmail.com}}{}}
-
 \date[\today]{\texorpdfstring{Weekly Meeting \\ 20230407}{}}
-
 \begin{document}
-
 \begin{frame}
     \titlepage
 \end{frame}
-
 \begin{frame}
     \frametitle{TOC}
     \tableofcontents
 \end{frame}
 
 \section{AIGC}
-
 \subsection{GAN: Generative Adversarial Networks}
-
 \begin{frame}
     \frametitle{Generative Adversarial Networks}
     \begin{itemize}
@@ -61,62 +44,25 @@
         \item Application
     \end{itemize}
 \end{frame}
-
 \input{gan_intro_slide_en}
-
-\begin{frame}
-    \frametitle{Use pix2pix to generate Terrain}
-    \begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
-        \begin{column}{0.32\textwidth} % Left column width
-            \begin{figure}
-                \includegraphics[width=\linewidth]{fig_real_A_wm20230407.png}
-                \caption{Real A}
-            \end{figure}
-        \end{column}
-        \begin{column}{0.32\textwidth} % Right column width
-            \begin{figure}
-                \includegraphics[width=\linewidth]{fig_fake_B_wm20230407.png}
-                \caption{Fake B}
-            \end{figure}
-        \end{column}
-        \begin{column}{0.32\textwidth} % Right column width
-            \begin{figure}
-                \includegraphics[width=\linewidth]{fig_real_b_wm20230407.png}
-                \caption{Real B}
-            \end{figure}
-        \end{column}
-    \end{columns}
-\end{frame}
+\input{exp_pix2pix_gen_terrain_result_slide_en}
 
 \subsection{Diffusion Model}
 
 \begin{frame}
     \frametitle{Diffusion Model}
-
     \begin{itemize}
         \item Milestones
         \item Principle
         \item Application (Stable Diffusion, LoRA, etc.)
     \end{itemize}
-
 \end{frame}
 
-\begin{frame}
-    \frametitle{MileStones}
-    \begin{itemize}
-        \item 2015: Deep Unsupervised Learning Using Nonequilibrium Thermodynamics \cite{sohl-dicksteinDeepUnsupervisedLearning2015}
-        \item 2020: Denoising Diffusion Probabilistic Model \cite{hoDenoisingDiffusionProbabilistic2020}
-        \item 2022: Stable Diffusion \cite{rombachHighResolutionImageSynthesis2022}
-        \item 2023: Control Net \cite{zhangAddingConditionalControl2023}
-        \item 2023: A recent Survey by Pecking University \cite{yangDiffusionModelsComprehensive2023}
-    \end{itemize}
-\end{frame}
-
+\input{diffusion_model_intro_slide_en}
 \begin{frame}
     \frametitle{Principal}
     TBD
 \end{frame}
-
 \begin{frame}
     \frametitle{Application}
     \begin{figure}
@@ -124,46 +70,8 @@
         \caption[short]{Stable Diffusion WebUI \href{https://github.com/AUTOMATIC1111/stable-diffusion-webui}{github}}
     \end{figure}
 \end{frame}
-
-\begin{frame}
-    \frametitle{FineTuning: LoRA}
-    \begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
-        \begin{column}{0.3\textwidth} % Left column width
-            \begin{figure}
-                \includegraphics[width=0.8\linewidth]{fig_lora_principle.png}
-                \caption{\href{http://arxiv.org/abs/2106.09685}{LoRA}}
-            \end{figure}
-        \end{column}
-        \begin{column}{0.68\textwidth} % Right column width
-            \begin{itemize}
-                \item init B with 0, making $BAx = 0$
-                \item $h = (W+BA)x$
-            \end{itemize}
-        \end{column}
-    \end{columns}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Result with LoRA}
-
-    \begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
-        \begin{column}{0.48\textwidth} % Left column width
-            \begin{figure}
-                \includegraphics[width=\linewidth]{fig_lora_before_wm20230407.png}
-                \caption{Without LoRA}
-            \end{figure}
-        \end{column}
-        \begin{column}{0.48\textwidth} % Right column width
-            \begin{figure}
-                \includegraphics[width=\linewidth]{fig_lora_after_wm20230407.png}
-                \caption{with LoRA trained with 50 sketch images 15000 steps}
-            \end{figure}
-        \end{column}
-    \end{columns}
-    \begin{quote}prompt: house, river, blue, sketch
-    \end{quote}
-\end{frame}
-
+\input{lora_brief_slide_en}
+\input{exp_lora_sketch_style_result_slide_en}
 \begin{frame}
     \frametitle{ControlNet Hackathon}
     \begin{figure}
@@ -204,7 +112,6 @@
         \caption[short]{\href{https://github.com/LuisaGroup/LuisaCompute}{LuisaCompute Github\cite{zhengLuisaRenderHighPerformanceRendering2022}}}
     \end{figure}
 \end{frame}
-
 \begin{frame}
     \frametitle{Huang's Work}
     \begin{figure}

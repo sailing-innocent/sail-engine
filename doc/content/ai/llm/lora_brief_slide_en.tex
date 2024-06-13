@@ -1,0 +1,17 @@
+\begin{frame}
+    \frametitle{LoRA: Low Rank Adaptation}
+    \begin{columns}[c]
+        \begin{column}{0.3\textwidth} % Left column width
+            \begin{figure}
+                \includegraphics[width=0.8\linewidth]{fig_lora_principle.png}
+                \caption{\href{http://arxiv.org/abs/2106.09685}{LoRA}}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.68\textwidth} % Right column width
+            \begin{itemize}
+                \item init B with 0, making $BAx = 0$
+                \item $h = (W+BA)x$
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
