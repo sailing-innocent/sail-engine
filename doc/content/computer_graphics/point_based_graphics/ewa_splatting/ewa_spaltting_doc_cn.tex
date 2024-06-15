@@ -1,6 +1,8 @@
-\paragraph{EWA Splatting 原理}
+本部分介绍\textit{EWA Splatting}\cite{zwickerEWAVolumeSplatting2001} \cite{zwickerEWASplatting2002} ，这个名字来源于贴图映射(Texture Mapping)中的一个经典方法椭圆权重各向异向核(Elliptical Weighted Annistropic Kernel)，其实就是高斯核。EWA Splatting是一个经典的使用点云进行真实感图像渲染的方法。
 
-本部分介绍\textit{EWA Splatting}，一个经典的使用点云进行真实感图像渲染的方法。想要理解EWA Splatting，最简单的方式是利用信号与系统中的重采样理论。
+\subparagraph{Splatting Equation}
+
+想要理解EWA Splatting，最简单的方式是利用信号与系统中的重采样理论。
 
 该方法将空间中的光场分布视作若干高斯分布的点云：
 
