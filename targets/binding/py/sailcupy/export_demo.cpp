@@ -8,13 +8,6 @@ void export_demo(pybind11::module& m) {
 		.def(pybind11::init<>())
 		.def("forward", &DummyDiffRender::forward_py)
 		.def("backward", &DummyDiffRender::backward_py);
-	// pybind11::class_<ing::VanillaDiffGaussian>(m, "VanillaDiffGaussian")
-	// 	.def(pybind11::init<>())
-	// 	.def("forward", &ing::VanillaDiffGaussian::forward_py);
-
-	// pybind11::class_<ing::DummyRender>(m, "DummyRender")
-	// 	.def(pybind11::init<>())
-	// 	.def("forward", &ing::DummyRender::forward_py);
 }
 
 }// namespace sail::cu::py

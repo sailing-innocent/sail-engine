@@ -3,5 +3,6 @@ add_latex("management_final_doc", {
     "asset_icon_nju_small",
     "jss_brief_doc_cn",
     "gp_brief_doc_cn",
-    "figs_idr"
+    "figs_idr",
+    "bib_course"
 })

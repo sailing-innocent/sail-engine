@@ -1,6 +1,4 @@
-用ing框架构建了一个最基础的可微渲染器，并将其bind到pytorch框架中使用
-
-实现于2023年12月17日初始化如下
+用ing框架构建了一个最基础的可微渲染器，并将其bind到pytorch框架中使用，实现于2023年12月17日初始化如下
 
 \begin{figure}[H]
     \centering
@@ -17,6 +15,33 @@
             \caption{Initial Target}
         \end{subfigure}
 \end{figure}
+
+迭代的过程
+
+\begin{figure}[H]
+    \centering
+        \begin{subfigure}{0.19\linewidth}
+            \includegraphics[width=\textwidth]{fig_result_ddr_source_0_dummy_diff_raster}
+            \caption{Source 0}
+        \end{subfigure}
+        \begin{subfigure}{0.19\linewidth}
+            \includegraphics[width=\textwidth]{fig_result_ddr_source_5_dummy_diff_raster}
+            \caption{Source 5}
+        \end{subfigure}
+        \begin{subfigure}{0.19\linewidth}
+            \includegraphics[width=\textwidth]{fig_result_ddr_source_15_dummy_diff_raster}
+            \caption{Source 15}
+        \end{subfigure}
+        \begin{subfigure}{0.19\linewidth}
+            \includegraphics[width=\textwidth]{fig_result_ddr_source_25_dummy_diff_raster}
+            \caption{Source 25}
+        \end{subfigure}
+        \begin{subfigure}{0.19\linewidth}
+            \includegraphics[width=\textwidth]{fig_result_ddr_source_final_dummy_diff_raster}
+            \caption{Final}
+        \end{subfigure}
+\end{figure}
+
 
 进行迭代后的最终效果
 
@@ -36,9 +61,12 @@
         \end{subfigure}
 \end{figure}
 
+
+
+
 全过程loss下降曲线
 
-\begin{figure}[H]
-    \input{pgf_ing_dummy_diff_raster}
-    \caption{Loss Function}
-\end{figure}
+% \begin{figure}[H]
+%     \input{pgf_ing_dummy_diff_raster}
+%     \caption{Loss Function}
+% \end{figure}

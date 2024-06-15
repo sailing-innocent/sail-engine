@@ -4,7 +4,6 @@ from module.blender.scene.simple import simple_cube
 from module.blender.util.ops import brender 
 from app.blender_render_engine.dummy import DummyRenderEngine
 import bpy 
-import os 
 
 @blender_executive
 def dummy_render(rootdir):

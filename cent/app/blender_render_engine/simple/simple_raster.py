@@ -1,7 +1,7 @@
 import bpy 
 import numpy as np 
-from app.scene.render.scene import Scene 
-from app.renderer.dummy.inno_impl import DummyRenderer
+from cent.app.scene.render.scene import Scene 
+from cent.app.renderer.dummy.inno_impl import DummyRenderer
 
 class SimpleRasterEngine(bpy.types.RenderEngine):
     bl_idname = "SIMPLE_RASTER"
