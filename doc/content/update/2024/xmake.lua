@@ -17,3 +17,6 @@ add_content("update_2024_05", {
     "fig_gs_overfit_ns",
     "fig_gs_overfit_m360"
 })
+add_content("update_2024_06", {
+    "dummy_diff_raster_doc_cn"
+})
