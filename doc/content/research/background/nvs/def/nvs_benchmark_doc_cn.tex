@@ -1,0 +1,13 @@
+新视角生成任务判定任务成功的指标是预测视角的图片和数据集中的Grond Truth尽可能接近，所以性能指标基本都是两个图片之间进行对比的策略，假设图片分辨率为$w\times h$，图片可以表达为$h\times w\times 3$的浮点数组。
+
+
+假设对于一个测试集中的视角$V_i$，可以预测出其对应的图片$I_{pred}$，在测试集中找到其Groud Truth $I_{gt}$，对比两个图片的相似度。
+
+常用的性能指标有三个，PSNR, SSIM, LPIPS，其中PSNR是最简单的均方误差进行-20log转换为分贝之后的值，但是在有些场景表征图片相似度会出现问题（比如两个亮度不同但是内容完全相同的图片，可能会比内容不同的图片相差更大），所以后续研究者提出SSIM和LPIPS等更多的图片相似度指标，具体可以参考论文。
+
+\begin{enumerate}
+    \item 峰值信噪比(Peak Signal Noise Ratio, PSNR), $PSNR{I_{pred},I_{gt}}=-20\log{\frac{1}{w\times h\times 3}\sum\limits_{i,j,c}\limits^{W\times H\times 3} (I_{pred}[i,j,c]-I_{gt}[i,j,c])^2}$
+    \item SSIM 
+    \item LPIPS
+\end{enumerate}
+

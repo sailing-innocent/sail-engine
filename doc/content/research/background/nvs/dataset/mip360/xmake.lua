@@ -10,6 +10,6 @@
 add_content("dataset_mip360_intro_doc_cn", {
     "tab_psnr_mip360_sota"
 })
-add_content("mip360_dataset_intro_slide_cn", {
+add_content("dataset_mip360_intro_slide_cn", {
     "fig_pack_demo_mip360"
 })
