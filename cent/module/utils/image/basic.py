@@ -1,4 +1,4 @@
-from module.data.image_info import ImageInfo
+from ...data.image_info import ImageInfo
 import numpy as np 
 import matplotlib.pyplot as plt 
 from loguru import logger

@@ -1,6 +1,6 @@
-from module.dataset.base import BaseDataset, BaseDatasetConfig
-from module.data.camera_info import CameraInfo 
-from module.data.image_info import ImageInfo 
+from ...dataset.base import BaseDataset, BaseDatasetConfig
+from ...data.camera_info import CameraInfo 
+from ...data.image_info import ImageInfo 
 
 from typing import List 
 from dataclasses import dataclass 

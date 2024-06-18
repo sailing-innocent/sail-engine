@@ -1,7 +1,5 @@
 import numpy as np 
-from dataclasses import dataclass 
 
-@dataclass 
 class CameraInfo:
     R: np.array = np.eye(3)
     T: np.array = np.zeros(3)
@@ -9,6 +7,14 @@ class CameraInfo:
     FovX: float = 0.6911112070083618
     ResW: int = 800
     ResH: int = 800
+
+    def __init__(self, R, T, FovY, FovX, ResW, ResH):
+        self.R = R
+        self.T = T
+        self.FovY = FovY
+        self.FovX = FovX
+        self.ResW = ResW
+        self.ResH = ResH
 
     def to_dict(self):
         return {

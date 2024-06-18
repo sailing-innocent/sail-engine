@@ -1,7 +1,7 @@
 
 from plyfile import PlyData, PlyElement
 import numpy as np
-from module.data.point_cloud import BasicPointCloud
+from ...data.point_cloud import BasicPointCloud
 
 def fetchPly(path):
     plydata = PlyData.read(path)

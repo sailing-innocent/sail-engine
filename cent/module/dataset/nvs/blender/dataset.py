@@ -1,16 +1,16 @@
 from ..base import NVSDatasetConfig, NVSDataset
 from ..base import CameraImagePair, RayColorPair
 
-from module.utils.image.basic import Image
-from module.data.image_info import ImageInfo
-from module.data.camera_info import CameraInfo
+from ....utils.image.basic import Image
+from ....data.image_info import ImageInfo
+from ....data.camera_info import CameraInfo
 
 import os 
 import json 
 import numpy as np 
 from tqdm import tqdm 
 
-from module.utils.pointcloud.io import fetchPly
+from ....utils.pointcloud.io import fetchPly
 
 class NeRFBlenderDatasetConfig(NVSDatasetConfig):
     def __init__(self, env_config):

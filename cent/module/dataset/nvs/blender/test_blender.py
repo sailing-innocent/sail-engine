@@ -10,7 +10,6 @@ def test_nerf_blender():
     config = NeRFBlenderDatasetConfig(env_config)
     dataset = NeRFBlenderDataset(config)
     assert len(dataset) == 100
-
     for cam, img in dataset:
         assert img.data.shape == (800, 800, 3)
         plt.imshow(img.data)
