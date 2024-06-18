@@ -41,7 +41,7 @@ option_end()
 
 -- doc
 option("enable_doc")
-    set_default(true)
+    set_default(false)
     set_showmenu(true)
 option_end()
 

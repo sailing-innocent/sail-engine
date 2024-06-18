@@ -1,8 +1,8 @@
 set_xmakever("2.9.2")
 add_rules("mode.release", "mode.debug")
-set_project("SailEngine")
 engine_version = "0.1.0"
 add_repositories("sail-repo xrepo")
+
 set_toolchains("clang-cl")
 set_exceptions("cxx")
 set_runtimes("MD")
