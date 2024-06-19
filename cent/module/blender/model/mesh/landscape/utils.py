@@ -1,6 +1,6 @@
 import bpy 
 from bpy_extras import object_utils
-from module.blender.util.noise import si_noise
+from ....util.noise import si_noise
 import numpy as np 
 
 def create_mesh_object(context, verts, edges, faces, name):

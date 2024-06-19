@@ -4,7 +4,7 @@ import bpy, bmesh
 from mathutils import Matrix
 from bpy_extras.image_utils import load_image
 
-from module.blender.camera.basic import create_basic_camera
+from ..camera.basic import create_basic_camera
 import numpy as np 
 
 def vis_view(img_src: np.array, c2w: np.array = np.eye(4), name="img"):

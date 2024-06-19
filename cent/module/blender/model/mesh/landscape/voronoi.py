@@ -6,7 +6,7 @@ import scipy.spatial as spatial
 from random import random
 import colorsys
 
-from module.blender.material.basic import create_basic_material
+from ....material.basic import create_basic_material
 
 # Convert hsv values to gamma corrected rgb values
 # Based on: http://stackoverflow.com/questions/17910543/convert-gamma-rgb-curves-to-rgb-curves-with-no-gamma/
